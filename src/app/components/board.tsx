@@ -1,14 +1,23 @@
-import type { Square } from "@/model/square";
+import type Square from "./square";
 
 type BoardProps = {
   boardsize: number;
-  squares: Square[];
+  squares: ReturnType<typeof Square>[];
 };
 
 export default function Board(props: BoardProps) {
   return (
-    <div className="rounded-xl size-32 border-8 p-4 text-xl">
+    <div>
       {props.boardsize}
+      <div className="grid grid-cols-3 grid-rows-3 h-full">
+        {props.squares.map((component, _index) => {
+          return (
+            <div key={`square_${component.props.number}`} className="h-fit">
+              {component}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
