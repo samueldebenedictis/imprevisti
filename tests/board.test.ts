@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { Board, SquaresBuilder } from "@/model/board";
 import { Player } from "@/model/player";
-import { Square } from "@/model/square";
+import { Square } from "@/model/square/square";
 
 describe("Board", () => {
   test("Build from size", () => {

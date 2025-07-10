@@ -1,5 +1,5 @@
 import type { Player } from "./player";
-import { Square } from "./square";
+import { Square } from "./square/square";
 
 export type BoardT = InstanceType<typeof Board>;
 

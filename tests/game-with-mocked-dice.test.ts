@@ -20,7 +20,7 @@ vi.mock("@/model/dice", () => {
 import { SquaresBuilder } from "@/model/board";
 import { Dice } from "@/model/dice";
 import { Game } from "@/model/game";
-import { MoveSquare, Square } from "@/model/square";
+import { MoveSquare, Square } from "@/model/square/square";
 
 describe("Game with mocked dice", () => {
   afterAll(() => {

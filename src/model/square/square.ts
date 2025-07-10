@@ -1,4 +1,4 @@
-import type { GameContext } from "./gameContext";
+import type { GameContext } from "../gameContext.js";
 
 export class Square {
   private number: number;
