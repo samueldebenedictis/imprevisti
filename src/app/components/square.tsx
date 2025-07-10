@@ -44,7 +44,7 @@ export default function Square(props: SquareProps) {
   const image = buildings[props.buildingIndex];
   const colorClass = borderColor(props.borderColor || "black");
   const classNameBase =
-    "size-48 p-4 m-1 grid content-center justify-items-center h-full ";
+    "size-48 p-2 m-1 grid content-center justify-items-center h-full ";
   const className = [classNameBase, colorClass].join(" ");
   return (
     <div className={className}>
@@ -58,7 +58,9 @@ export default function Square(props: SquareProps) {
             alt="building"
           />
           <div className="w-full absolute top-0 left-2">
-            <span className="font-extrabold text-2xl">{props.number}</span>
+            <span className="font-extrabold text-4xl font-londrina">
+              {props.number}
+            </span>
           </div>
         </div>
       </div>

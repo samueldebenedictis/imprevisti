@@ -4,6 +4,6 @@ export default function Home() {
   return Square({
     number: 1,
     buildingIndex: 0,
-    backgroundColorGradient: "blue",
+    borderColor: "blue",
   });
 }

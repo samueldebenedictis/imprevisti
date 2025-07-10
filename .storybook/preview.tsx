@@ -1,7 +1,23 @@
 import type { Preview } from "@storybook/react";
-
+import { Geist, Geist_Mono, Londrina_Shadow } from "next/font/google";
 import "../src/app/globals.css";
 import "./storybook.css";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+const londrinaShadow = Londrina_Shadow({
+  weight: "400",
+  variable: "--font-londrina-shadow",
+  subsets: ["latin"],
+});
 
 const preview: Preview = {
   parameters: {
@@ -19,7 +35,15 @@ const preview: Preview = {
       },
     },
   },
-  decorators: [(Story) => <Story />],
+  decorators: [
+    (Story) => (
+      <div
+        className={`${geistSans.variable} ${geistMono.variable} ${londrinaShadow.variable}`}
+      >
+        <Story />
+      </div>
+    ),
+  ],
 };
 
 export default preview;
