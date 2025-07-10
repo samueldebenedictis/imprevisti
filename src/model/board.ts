@@ -1,8 +1,6 @@
 import type { Player } from "./player";
 import { Square } from "./square";
 
-export type BoardT = InstanceType<typeof Board>;
-
 export class Board {
   private squares: Square[];
   private playersPosition: Map<Player, number>;

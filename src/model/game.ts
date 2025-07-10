@@ -1,4 +1,4 @@
-import { Board, type BoardT } from "./board";
+import { Board } from "./board";
 import type { Card } from "./card";
 import { Deck } from "./deck";
 import { Dice } from "./dice";
@@ -8,7 +8,7 @@ import { SpecialSquare, type Square } from "./square/square";
 
 export class Game {
   private boardSize: number;
-  private board: BoardT;
+  private board: Board;
 
   private players: Player[];
   private turn: number;
