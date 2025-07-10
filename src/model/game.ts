@@ -1,15 +1,18 @@
 import type { BoardT } from "./board";
 import { Dice } from "./dice";
 import { Player } from "./player";
-import { MoveSquare } from "./square";
+import { SpecialSquare } from "./square";
 
 export class Game {
   private boardSize: number;
   private board: BoardT;
+
   private players: Player[];
   private turn: number;
   private round: number;
+
   private dice: Dice;
+
   private gameEnded: boolean;
   private winner: Player | undefined;
 
@@ -35,7 +38,7 @@ export class Game {
     this.gameEnded = true;
   };
 
-  private movePlayer = (newPosition: number, actualPlayer: Player) => {
+  movePlayer = (newPosition: number, actualPlayer: Player) => {
     const landingPosition =
       newPosition >= this.boardSize ? this.boardSize : newPosition;
 
@@ -43,14 +46,7 @@ export class Game {
       this.endGameAndSetWinner(actualPlayer);
     }
 
-    const landingSquare = this.board.getSquares()[landingPosition];
-    if (landingSquare instanceof MoveSquare) {
-      const specialMoveValue = landingSquare.getValue();
-      this.movePlayer(newPosition + specialMoveValue, actualPlayer);
-      return;
-    }
-
-    return actualPlayer.setPosition(landingPosition);
+    actualPlayer.setPosition(landingPosition);
   };
 
   /**
@@ -62,9 +58,15 @@ export class Game {
     if (!this.gameEnded) {
       const actualPlayer = this.players[this.turn];
       const diceValue = this.dice.roll();
-      // TODO: refactor check sul dado e updatePlayer solo con valori > 0
       const newPosition = actualPlayer.getPosition() + diceValue;
+
       this.movePlayer(newPosition, actualPlayer);
+
+      const landingSquare = this.board.getSquares()[actualPlayer.getPosition()];
+      if (landingSquare instanceof SpecialSquare) {
+        const command = landingSquare.getCommand();
+        command.execute(this, actualPlayer);
+      }
 
       if (this.turn === this.players.length - 1) {
         this.turn = 0;

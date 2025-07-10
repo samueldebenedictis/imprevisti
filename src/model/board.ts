@@ -1,15 +1,16 @@
+import type { Player } from "./player";
 import { Square } from "./square";
 
 export type BoardT = InstanceType<typeof Board>;
 
 class Board {
-  private squares: Square[];
+  private squares: { square: Square; playersOn: Player[] }[];
 
   constructor(board: Square[]) {
-    this.squares = board;
+    this.squares = board.map((square) => ({ square, playersOn: [] }));
   }
 
-  getSquares = () => this.squares;
+  getSquares = () => this.squares.map((el) => el.square);
 }
 
 export class BoardBuilder {

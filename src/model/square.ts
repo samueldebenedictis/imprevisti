@@ -1,3 +1,6 @@
+import type { Game } from "./game";
+import type { Player } from "./player";
+
 export class Square {
   private id: number;
 
@@ -9,8 +12,12 @@ export class Square {
   getNumber = () => this.id + 1;
 }
 
+export interface Command {
+  execute(game: Game, player: Player): void;
+}
+
 export abstract class SpecialSquare extends Square {
-  isSpecial = () => true;
+  abstract getCommand(): Command;
 }
 
 export class MoveSquare extends SpecialSquare {
@@ -22,6 +29,28 @@ export class MoveSquare extends SpecialSquare {
   getValue() {
     return this.moveValue;
   }
+  getCommand(): Command {
+    return new MovePlayerCommand(this.moveValue);
+  }
 }
 
-export class ChanceSquare extends SpecialSquare {}
+class MovePlayerCommand implements Command {
+  constructor(private moveValue: number) {}
+
+  execute(game: Game, player: Player): void {
+    const newPosition = player.getPosition() + this.moveValue;
+    game.movePlayer(newPosition, player);
+  }
+}
+
+export class ChanceSquare extends SpecialSquare {
+  getCommand(): Command {
+    throw new Error("Method not implemented.");
+  }
+}
+
+export class GoToStart extends MoveSquare {
+  constructor(id: number) {
+    super(id, -id);
+  }
+}

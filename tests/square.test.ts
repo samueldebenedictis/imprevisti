@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { MoveSquare, Square } from "@/model/square";
+import { MoveSquare, SpecialSquare, Square } from "../src/model/square";
 
 describe("Square", () => {
   test("Get number, get id", () => {
@@ -7,12 +7,11 @@ describe("Square", () => {
     expect(square.getNumber()).toBe(1);
     expect(square.getId()).toBe(0);
   });
-
   test("Special", () => {
     const square = new MoveSquare(0, 1);
     expect(square.getNumber()).toBe(1);
     expect(square.getId()).toBe(0);
-    expect(square.isSpecial()).toBeTruthy();
+    expect(square).toBeInstanceOf(SpecialSquare);
     expect(square.getValue()).toBe(1);
   });
 });
