@@ -11,7 +11,8 @@ export class Board {
   }
 
   getSquares = () => this.squares;
-  getPlayerPosition = (player: Player) => this.playersPosition.get(player);
+  getPlayerPosition = (player: Player) =>
+    this.playersPosition.get(player) as number;
   movePlayer = (player: Player, position: number) => {
     this.playersPosition.set(player, position);
   };

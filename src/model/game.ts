@@ -38,6 +38,9 @@ export class Game {
 
   getBoard = () => this.board;
   getPlayers = () => this.players;
+
+  getPlayerPosition = (player: Player) => this.board.getPlayerPosition(player);
+
   getTurn = () => this.turn;
   getRound = () => this.round;
 
@@ -68,15 +71,12 @@ export class Game {
     if (!this.gameEnded) {
       const actualPlayer = this.players[this.turn];
       const diceValue = this.dice.roll();
-      const newPosition =
-        (this.board.getPlayerPosition(actualPlayer) as number) + diceValue;
+      const newPosition = this.getPlayerPosition(actualPlayer) + diceValue;
 
       this.movePlayer(newPosition, actualPlayer);
 
       const landingSquare =
-        this.board.getSquares()[
-          this.board.getPlayerPosition(actualPlayer) as number
-        ];
+        this.board.getSquares()[this.getPlayerPosition(actualPlayer)];
       if (landingSquare instanceof SpecialSquare) {
         const command = landingSquare.getCommand();
         command.execute(
