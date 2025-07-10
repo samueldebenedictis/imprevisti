@@ -3,46 +3,37 @@ import { Square } from "./square";
 
 export type BoardT = InstanceType<typeof Board>;
 
-class Board {
-  private squares: { square: Square; playersOn: Player[] }[];
+export class Board {
+  private squares: Square[];
+  private playersPosition: Map<Player, number>;
 
-  constructor(board: Square[]) {
-    this.squares = board.map((square) => ({ square, playersOn: [] }));
+  constructor(squares: Square[], players: Player[]) {
+    this.squares = squares;
+    this.playersPosition = new Map(players.map((p) => [p, 0]));
   }
 
-  getSquares = () => this.squares.map((el) => el.square);
+  getSquares = () => this.squares;
+  getPlayerPosition = (player: Player) => this.playersPosition.get(player);
+  movePlayer = (player: Player, position: number) => {
+    this.playersPosition.set(player, position);
+  };
 }
 
-export class BoardBuilder {
-  private board: Square[] | undefined;
+export class SquaresBuilder {
+  private squares: Square[] | undefined;
   private boardSize: number | undefined;
-
-  setBoard = (squareArray: Square[]) => {
-    this.board = squareArray;
-    return this;
-  };
 
   setBoardSize = (size: number) => {
     this.boardSize = size;
     return this;
   };
 
-  buildWithSpecificBoard() {
-    if (this.board === undefined) {
-      throw new Error("Board not defined");
-    }
-    return new Board(this.board);
-  }
-
-  buildWithSize() {
+  build() {
     if (this.boardSize === undefined) {
       throw new Error("Size not defined");
     }
-    const squaresNumbers = Array.from(
-      { length: this.boardSize },
-      (_, i) => i + 1,
-    );
-    const b = squaresNumbers.map((n) => new Square(n));
-    return new Board(b);
+    const squaresNumbers = Array.from({ length: this.boardSize }, (_, i) => i);
+    this.squares = squaresNumbers.map((n) => new Square(n));
+    return this.squares;
   }
 }

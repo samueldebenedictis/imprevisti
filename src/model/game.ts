@@ -1,7 +1,10 @@
-import type { BoardT } from "./board";
+import { Board, type BoardT } from "./board";
+import type { Card } from "./card";
+import { Deck } from "./deck";
 import { Dice } from "./dice";
+import { GameContext } from "./gameContext";
 import { Player } from "./player";
-import { SpecialSquare } from "./square";
+import { SpecialSquare, type Square } from "./square";
 
 export class Game {
   private boardSize: number;
@@ -12,21 +15,28 @@ export class Game {
   private round: number;
 
   private dice: Dice;
+  private deck: Deck;
 
   private gameEnded: boolean;
   private winner: Player | undefined;
 
-  constructor(board: BoardT, playersName: string[]) {
-    this.boardSize = board.getSquares().length;
-    this.board = board;
+  constructor(
+    squares: Square[],
+    playersName: string[],
+    cards: Card[] = [],
+    diceFaces = 6,
+  ) {
     this.players = playersName.map((name, i) => new Player(i, name));
+    this.board = new Board(squares, this.players);
+    this.boardSize = this.board.getSquares().length;
     this.round = 1;
     this.turn = 0;
-    this.dice = new Dice(6);
+    this.dice = new Dice(diceFaces);
+    this.deck = new Deck(cards);
     this.gameEnded = false;
   }
 
-  getBoard = () => this.board.getSquares();
+  getBoard = () => this.board;
   getPlayers = () => this.players;
   getTurn = () => this.turn;
   getRound = () => this.round;
@@ -46,7 +56,7 @@ export class Game {
       this.endGameAndSetWinner(actualPlayer);
     }
 
-    actualPlayer.setPosition(landingPosition);
+    this.board.movePlayer(actualPlayer, landingPosition);
   };
 
   /**
@@ -58,14 +68,26 @@ export class Game {
     if (!this.gameEnded) {
       const actualPlayer = this.players[this.turn];
       const diceValue = this.dice.roll();
-      const newPosition = actualPlayer.getPosition() + diceValue;
+      const newPosition =
+        (this.board.getPlayerPosition(actualPlayer) as number) + diceValue;
 
       this.movePlayer(newPosition, actualPlayer);
 
-      const landingSquare = this.board.getSquares()[actualPlayer.getPosition()];
+      const landingSquare =
+        this.board.getSquares()[
+          this.board.getPlayerPosition(actualPlayer) as number
+        ];
       if (landingSquare instanceof SpecialSquare) {
         const command = landingSquare.getCommand();
-        command.execute(this, actualPlayer);
+        command.execute(
+          new GameContext(
+            actualPlayer,
+            this.board,
+            this.players,
+            this.deck,
+            this.dice,
+          ),
+        );
       }
 
       if (this.turn === this.players.length - 1) {

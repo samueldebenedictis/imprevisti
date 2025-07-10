@@ -1,19 +1,17 @@
-import type { Game } from "./game";
-import type { Player } from "./player";
+import type { GameContext } from "./gameContext";
 
 export class Square {
-  private id: number;
+  private number: number;
 
   constructor(id: number) {
-    this.id = id;
+    this.number = id;
   }
 
-  getId = () => this.id;
-  getNumber = () => this.id + 1;
+  getNumber = () => this.number;
 }
 
 export interface Command {
-  execute(game: Game, player: Player): void;
+  execute(context: GameContext): void;
 }
 
 export abstract class SpecialSquare extends Square {
@@ -34,23 +32,25 @@ export class MoveSquare extends SpecialSquare {
   }
 }
 
+export class GoToStart extends MoveSquare {
+  constructor(id: number) {
+    super(id, -id);
+  }
+}
+
 class MovePlayerCommand implements Command {
   constructor(private moveValue: number) {}
 
-  execute(game: Game, player: Player): void {
-    const newPosition = player.getPosition() + this.moveValue;
-    game.movePlayer(newPosition, player);
+  execute(context: GameContext): void {
+    const newPosition =
+      (context.board.getPlayerPosition(context.player) as number) +
+      this.moveValue;
+    context.board.movePlayer(context.player, newPosition);
   }
 }
 
 export class ChanceSquare extends SpecialSquare {
   getCommand(): Command {
     throw new Error("Method not implemented.");
-  }
-}
-
-export class GoToStart extends MoveSquare {
-  constructor(id: number) {
-    super(id, -id);
   }
 }
