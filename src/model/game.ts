@@ -1,3 +1,4 @@
+import { Battle } from "./battle";
 import { Board } from "./board";
 import type { Card } from "./card";
 import { Deck } from "./deck";
@@ -66,8 +67,9 @@ export class Game {
    * Il giocatore attuale lancia il dado e aggiorna la sua posizione.
    * Il turno ed eventualmente il round vengono incrementati.
    * Se un giocatore arriva all'ultima casella vince e il gioco termina.
+   * Restituisce un oggetto Battle se si verifica una collisione, altrimenti null.
    */
-  playTurn = () => {
+  playTurn = (): Battle | null => {
     if (!this.gameEnded) {
       const actualPlayer = this.players[this.turn];
       const diceValue = this.dice.roll();
@@ -75,29 +77,95 @@ export class Game {
 
       this.movePlayer(newPosition, actualPlayer);
 
-      const landingSquare =
-        this.board.getSquares()[this.getPlayerPosition(actualPlayer)];
-      if (landingSquare instanceof SpecialSquare) {
-        const command = landingSquare.getCommand();
-        command.execute(
-          new GameContext(
-            actualPlayer,
-            this.board,
-            this.players,
-            this.deck,
-            this.dice,
-          ),
-        );
+      // Check for collision immediately after move
+      const collision = this.checkForCollision(actualPlayer);
+      if (collision) {
+        // Battle needs to be resolved externally
+        return collision;
       }
 
-      if (this.turn === this.players.length - 1) {
-        this.turn = 0;
-        this.round++;
-      } else {
-        this.turn++;
-      }
+      // Continue with existing special square logic
+      this.processSpecialSquareEffects(actualPlayer);
+
+      this.advanceTurn();
     } else {
       throw new Error("playTurn not avalaible, the game is already ended");
     }
+    return null;
+  };
+
+  /**
+   * Processes special square effects for the given player.
+   */
+  private processSpecialSquareEffects = (player: Player) => {
+    const landingSquare =
+      this.board.getSquares()[this.getPlayerPosition(player)];
+    if (landingSquare instanceof SpecialSquare) {
+      const command = landingSquare.getCommand();
+      command.execute(
+        new GameContext(
+          player,
+          this.board,
+          this.players,
+          this.deck,
+          this.dice,
+        ),
+      );
+    }
+  };
+
+  /**
+   * Advances to the next turn and round if necessary.
+   */
+  private advanceTurn = () => {
+    if (this.turn === this.players.length - 1) {
+      this.turn = 0;
+      this.round++;
+    } else {
+      this.turn++;
+    }
+  };
+
+  /**
+   * Checks if the current player collides with other players on the same square.
+   * Returns a Battle object if collision occurs, null otherwise.
+   */
+  private checkForCollision = (currentPlayer: Player): Battle | null => {
+    const position = this.getPlayerPosition(currentPlayer);
+    const playersOnSquare = this.board.getPlayersOnSquare(position);
+    
+    if (playersOnSquare.length > 1) {
+      // Find the other player (not the current one)
+      const otherPlayer = playersOnSquare.find(p => p !== currentPlayer);
+      if (otherPlayer) {
+        return new Battle(currentPlayer, otherPlayer);
+      }
+    }
+    return null;
+  };
+
+  /**
+   * Resolves a battle by moving the winner forward one position.
+   * Returns a new Battle object if another collision occurs, null otherwise.
+   */
+  resolveBattle = (battle: Battle, winner: Player): Battle | null => {
+    // Validate that the winner is part of the battle
+    battle.resolveBattle(winner);
+    
+    // Move winner forward one position
+    const currentPos = this.getPlayerPosition(winner);
+    this.movePlayer(currentPos + 1, winner);
+    
+    // Check for new collision recursively
+    const newCollision = this.checkForCollision(winner);
+    if (newCollision) {
+      // Another battle needed
+      return newCollision;
+    }
+    
+    // Process special square effects on new position
+    this.processSpecialSquareEffects(winner);
+    
+    return null;
   };
 }

@@ -42,7 +42,7 @@ describe("Game with mocked dice", () => {
     expect(game.getBoard().getPlayerPosition(players[0])).toBe(1);
     expect(game.getBoard().getPlayerPosition(players[1])).toBe(0);
 
-    game.playTurn();
+    const battle = game.playTurn();
 
     expect(game.getBoard().getPlayerPosition(players[0])).toBe(1);
     expect(game.getBoard().getPlayerPosition(players[1])).toBe(1);
