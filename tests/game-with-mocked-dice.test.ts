@@ -17,6 +17,7 @@ vi.mock("@/model/dice", () => {
   };
 });
 
+import type { Battle } from "@/model/battle";
 import { SquaresBuilder } from "@/model/board";
 import { Dice } from "@/model/dice";
 import { Game } from "@/model/game";
@@ -43,14 +44,15 @@ describe("Game with mocked dice", () => {
     expect(game.getBoard().getPlayerPosition(players[1])).toBe(0);
 
     const battle = game.playTurn();
+    game.resolveBattle(battle as Battle, players[0]);
 
-    expect(game.getBoard().getPlayerPosition(players[0])).toBe(1);
+    expect(game.getBoard().getPlayerPosition(players[0])).toBe(2);
     expect(game.getBoard().getPlayerPosition(players[1])).toBe(1);
 
     game.playTurn();
 
     expect(game.getBoard().getPlayerPosition(players[0])).toBe(2);
-    expect(game.getBoard().getPlayerPosition(players[1])).toBe(1);
+    expect(game.getBoard().getPlayerPosition(players[1])).toBe(2);
   });
 
   test("Test special move square forward", () => {
