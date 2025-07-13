@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { MoveSquare, SpecialSquare, Square } from "../src/model/square/square";
+import { MoveSquare, SpecialSquare, Square } from "../src/model/square";
 
 describe("Square", () => {
   test("Get number, get id", () => {

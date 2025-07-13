@@ -5,7 +5,7 @@ import { Deck } from "./deck";
 import { Dice } from "./dice";
 import { GameContext } from "./gameContext";
 import { Player } from "./player";
-import { SpecialSquare, type Square } from "./square/square";
+import { SpecialSquare, type Square } from "./square";
 
 export class Game {
   private boardSize: number;
