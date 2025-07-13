@@ -103,13 +103,7 @@ export class Game {
     if (landingSquare instanceof SpecialSquare) {
       const command = landingSquare.getCommand();
       command.execute(
-        new GameContext(
-          player,
-          this.board,
-          this.players,
-          this.deck,
-          this.dice,
-        ),
+        new GameContext(player, this.board, this.players, this.deck, this.dice),
       );
     }
   };
@@ -133,10 +127,10 @@ export class Game {
   private checkForCollision = (currentPlayer: Player): Battle | null => {
     const position = this.getPlayerPosition(currentPlayer);
     const playersOnSquare = this.board.getPlayersOnSquare(position);
-    
+
     if (playersOnSquare.length > 1) {
       // Find the other player (not the current one)
-      const otherPlayer = playersOnSquare.find(p => p !== currentPlayer);
+      const otherPlayer = playersOnSquare.find((p) => p !== currentPlayer);
       if (otherPlayer) {
         return new Battle(currentPlayer, otherPlayer);
       }
@@ -151,21 +145,21 @@ export class Game {
   resolveBattle = (battle: Battle, winner: Player): Battle | null => {
     // Validate that the winner is part of the battle
     battle.resolveBattle(winner);
-    
+
     // Move winner forward one position
     const currentPos = this.getPlayerPosition(winner);
     this.movePlayer(currentPos + 1, winner);
-    
+
     // Check for new collision recursively
     const newCollision = this.checkForCollision(winner);
     if (newCollision) {
       // Another battle needed
       return newCollision;
     }
-    
+
     // Process special square effects on new position
     this.processSpecialSquareEffects(winner);
-    
+
     return null;
   };
 }

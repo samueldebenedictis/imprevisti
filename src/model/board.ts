@@ -16,14 +16,14 @@ export class Board {
   movePlayer = (player: Player, position: number) => {
     this.playersPosition.set(player, position);
   };
-  
+
   /**
    * Returns all players currently on the specified square position.
    */
   getPlayersOnSquare = (position: number): Player[] => {
     return Array.from(this.playersPosition.entries())
-      .filter(([player, pos]) => pos === position)
-      .map(([player, pos]) => player);
+      .filter(([_player, pos]) => pos === position)
+      .map(([player, _pos]) => player);
   };
 }
 
