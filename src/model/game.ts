@@ -7,6 +7,10 @@ import { GameContext } from "./gameContext";
 import { Player } from "./player";
 import { SpecialSquare, type Square } from "./square";
 
+/**
+ * Classe principale che gestisce la logica del gioco da tavolo.
+ * Coordina tutti i componenti del gioco: giocatori, tabellone, dadi, carte e battaglie.
+ */
 export class Game {
   private boardSize: number;
   private board: Board;
@@ -21,6 +25,13 @@ export class Game {
   private gameEnded: boolean;
   private winner: Player | undefined;
 
+  /**
+   * Crea una nuova partita con i parametri specificati.
+   * @param squares - Array delle caselle che compongono il tabellone
+   * @param playersName - Array dei nomi dei giocatori
+   * @param cards - Array delle carte del gioco (opzionale, default array vuoto)
+   * @param diceFaces - Numero di facce del dado (opzionale, default 6)
+   */
   constructor(
     squares: Square[],
     playersName: string[],
@@ -37,21 +48,60 @@ export class Game {
     this.gameEnded = false;
   }
 
+  /**
+   * Restituisce il tabellone di gioco.
+   * @returns L'istanza del tabellone corrente
+   */
   getBoard = () => this.board;
+
+  /**
+   * Restituisce tutti i giocatori della partita.
+   * @returns Array di tutti i giocatori
+   */
   getPlayers = () => this.players;
 
+  /**
+   * Restituisce la posizione attuale del giocatore specificato.
+   * @param player - Il giocatore di cui si vuole conoscere la posizione
+   * @returns Posizione del giocatore sul tabellone
+   */
   getPlayerPosition = (player: Player) => this.board.getPlayerPosition(player);
 
+  /**
+   * Restituisce l'indice del turno corrente.
+   * @returns Indice del giocatore che deve giocare il turno corrente
+   */
   getTurn = () => this.turn;
+
+  /**
+   * Restituisce il numero del round corrente.
+   * @returns Numero del round attuale (inizia da 1)
+   */
   getRound = () => this.round;
 
+  /**
+   * Restituisce il vincitore della partita, se presente.
+   * @returns Il giocatore vincitore o undefined se la partita non è ancora terminata
+   */
   getWinner = () => this.winner;
 
+  /**
+   * Termina la partita e imposta il vincitore.
+   * @param player - Il giocatore vincitore
+   */
   private endGameAndSetWinner = (player: Player) => {
     this.winner = player;
     this.gameEnded = true;
   };
 
+  /**
+   * Sposta un giocatore alla nuova posizione specificata.
+   * Se la posizione supera la dimensione del tabellone, il giocatore viene posto all'ultima casella e vince.
+   * Controlla automaticamente le collisioni con altri giocatori.
+   * @param newPosition - La nuova posizione desiderata
+   * @param actualPlayer - Il giocatore da spostare
+   * @returns Un oggetto Battle se si verifica una collisione, null altrimenti
+   */
   movePlayer = (newPosition: number, actualPlayer: Player): Battle | null => {
     const landingPosition =
       newPosition >= this.boardSize ? this.boardSize : newPosition;
@@ -97,7 +147,10 @@ export class Game {
   };
 
   /**
-   * Processes special square effects for the given player.
+   * Elabora gli effetti delle caselle speciali per il giocatore specificato.
+   * Verifica se la casella su cui si trova il giocatore è una casella speciale
+   * ed esegue il comando associato.
+   * @param player - Il giocatore per cui elaborare gli effetti della casella
    */
   private processSpecialSquareEffects = (player: Player) => {
     const landingSquare =
@@ -111,7 +164,8 @@ export class Game {
   };
 
   /**
-   * Advances to the next turn and round if necessary.
+   * Avanza al turno successivo e incrementa il round se necessario.
+   * Quando tutti i giocatori hanno giocato il loro turno, inizia un nuovo round.
    */
   private advanceTurn = () => {
     if (this.turn === this.players.length - 1) {
@@ -123,8 +177,9 @@ export class Game {
   };
 
   /**
-   * Checks if the current player collides with other players on the same square.
-   * Returns a Battle object if collision occurs, null otherwise.
+   * Controlla se il giocatore corrente è in collisione con altri giocatori sulla stessa casella.
+   * @param currentPlayer - Il giocatore da controllare per le collisioni
+   * @returns Un oggetto Battle se si verifica una collisione, null altrimenti
    */
   private checkForCollision = (currentPlayer: Player): Battle | null => {
     const position = this.getPlayerPosition(currentPlayer);
@@ -141,8 +196,11 @@ export class Game {
   };
 
   /**
-   * Resolves a battle by moving the winner forward one position.
-   * Returns a new Battle object if another collision occurs, null otherwise.
+   * Risolve una battaglia spostando il vincitore di una posizione in avanti.
+   * Controlla se si verifica una nuova collisione nella posizione di destinazione.
+   * @param battle - L'oggetto battaglia da risolvere
+   * @param winner - Il giocatore vincitore della battaglia
+   * @returns Un nuovo oggetto Battle se si verifica un'altra collisione, null altrimenti
    */
   resolveBattle = (battle: Battle, winner: Player): Battle | null => {
     // Validate that the winner is part of the battle
@@ -162,5 +220,9 @@ export class Game {
     return null;
   };
 
+  /**
+   * Metodo placeholder per la funzionalità mimo.
+   * Attualmente non implementato.
+   */
   playMime = () => {};
 }

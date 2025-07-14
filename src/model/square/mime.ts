@@ -1,4 +1,4 @@
-const _mimeAnimals = [
+export const mimeAnimals = [
   {
     livello: "facile",
     animali: [
@@ -45,12 +45,12 @@ const _mimeAnimals = [
   },
 ];
 
-const _mimeWorks = [
+export const mimeWorks = [
   {
     livello: "facile",
     lavori: [
       { nome: "Studente", emoji: "🧑‍🎓" },
-      { nome: "Impiegato d’ufficio", emoji: "🧑‍💼" },
+      { nome: "Impiegato d'ufficio", emoji: "🧑‍💼" },
       { nome: "Insegnante", emoji: "🧑‍🏫" },
       { nome: "Cuoco", emoji: "🧑‍🍳" },
     ],
@@ -85,7 +85,7 @@ const _mimeWorks = [
   },
 ];
 
-const _mimeSports = [
+export const mimeSports = [
   {
     livello: "facile",
     sport: [
@@ -115,32 +115,32 @@ const _mimeSports = [
   },
 ];
 
-const _mimeObjects = [
+export const mimeObjects = [
   {
     livello: "facile",
-    sport: [
-      { nome: "Calcio", emoji: "⚽" },
-      { nome: "Basket", emoji: "🏀" },
-      { nome: "Nuoto", emoji: "🏊‍♂️" },
-      { nome: "Corsa", emoji: "🏃‍♂️" },
+    oggetti: [
+      { nome: "Telefono", emoji: "📱" },
+      { nome: "Libro", emoji: "📖" },
+      { nome: "Tazza", emoji: "☕" },
+      { nome: "Orologio", emoji: "⌚" },
     ],
   },
   {
     livello: "medio",
-    sport: [
-      { nome: "Tennis", emoji: "🎾" },
-      { nome: "Boxe", emoji: "🥊" },
-      { nome: "Sci", emoji: "⛷️" },
-      { nome: "Pallavolo", emoji: "🏐" },
+    oggetti: [
+      { nome: "Macchina fotografica", emoji: "📷" },
+      { nome: "Chitarra", emoji: "🎸" },
+      { nome: "Ombrello", emoji: "☂️" },
+      { nome: "Lente d’ingrandimento", emoji: "🔍" },
     ],
   },
   {
     livello: "difficile",
-    sport: [
-      { nome: "Golf", emoji: "🏌️‍♂️" },
-      { nome: "Equitazione", emoji: "🏇" },
-      { nome: "Scherma", emoji: "🤺" },
-      { nome: "Skateboard", emoji: "🛹" },
+    oggetti: [
+      { nome: "Trapano", emoji: "🛠️" },
+      { nome: "Forbici", emoji: "✂️" },
+      { nome: "Stampante", emoji: "🖨️" },
+      { nome: "Joystick", emoji: "🕹️" },
     ],
   },
 ];
