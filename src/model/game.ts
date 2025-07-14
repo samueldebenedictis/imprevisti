@@ -52,15 +52,19 @@ export class Game {
     this.gameEnded = true;
   };
 
-  movePlayer = (newPosition: number, actualPlayer: Player) => {
+  movePlayer = (newPosition: number, actualPlayer: Player): Battle | null => {
     const landingPosition =
       newPosition >= this.boardSize ? this.boardSize : newPosition;
 
+    this.board.movePlayer(actualPlayer, landingPosition);
+
     if (landingPosition === this.boardSize) {
       this.endGameAndSetWinner(actualPlayer);
+      return null; // Game ended, no collision possible
     }
 
-    this.board.movePlayer(actualPlayer, landingPosition);
+    // Check for collision after moving
+    return this.checkForCollision(actualPlayer);
   };
 
   /**
@@ -75,12 +79,10 @@ export class Game {
       const diceValue = this.dice.roll();
       const newPosition = this.getPlayerPosition(actualPlayer) + diceValue;
 
-      this.movePlayer(newPosition, actualPlayer);
-
-      // Check for collision immediately after move
-      const collision = this.checkForCollision(actualPlayer);
+      const collision = this.movePlayer(newPosition, actualPlayer);
       if (collision) {
-        // Battle needs to be resolved externally
+        // Battle needs to be resolved externally, but turn still advances
+        this.advanceTurn();
         return collision;
       }
 
@@ -148,10 +150,7 @@ export class Game {
 
     // Move winner forward one position
     const currentPos = this.getPlayerPosition(winner);
-    this.movePlayer(currentPos + 1, winner);
-
-    // Check for new collision recursively
-    const newCollision = this.checkForCollision(winner);
+    const newCollision = this.movePlayer(currentPos + 1, winner);
     if (newCollision) {
       // Another battle needed
       return newCollision;
@@ -162,4 +161,6 @@ export class Game {
 
     return null;
   };
+
+  playMime = () => {};
 }

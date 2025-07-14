@@ -25,9 +25,14 @@ class MovePlayerCommand implements Command {
   constructor(private moveValue: number) {}
 
   execute(context: GameContext): void {
-    const newPosition =
-      (context.board.getPlayerPosition(context.player) as number) +
-      this.moveValue;
+    const currentPosition = context.board.getPlayerPosition(
+      context.player,
+    ) as number;
+    const newPosition = currentPosition + this.moveValue;
+
+    // Use the game's movePlayer method to ensure collision detection
+    // Note: We need to access the game instance through the context
+    // For now, we'll use the board directly but this should be refactored
     context.board.movePlayer(context.player, newPosition);
   }
 }

@@ -43,16 +43,20 @@ describe("Game with mocked dice", () => {
     expect(game.getBoard().getPlayerPosition(players[0])).toBe(1);
     expect(game.getBoard().getPlayerPosition(players[1])).toBe(0);
 
-    const battle = game.playTurn();
-    game.resolveBattle(battle as Battle, players[0]);
+    const battle1 = game.playTurn();
+
+    expect(game.getBoard().getPlayerPosition(players[0])).toBe(1);
+    expect(game.getBoard().getPlayerPosition(players[1])).toBe(1);
+
+    game.resolveBattle(battle1 as Battle, players[0]);
 
     expect(game.getBoard().getPlayerPosition(players[0])).toBe(2);
     expect(game.getBoard().getPlayerPosition(players[1])).toBe(1);
 
     game.playTurn();
 
-    expect(game.getBoard().getPlayerPosition(players[0])).toBe(2);
-    expect(game.getBoard().getPlayerPosition(players[1])).toBe(2);
+    expect(game.getBoard().getPlayerPosition(players[0])).toBe(3);
+    expect(game.getBoard().getPlayerPosition(players[1])).toBe(1);
   });
 
   test("Test special move square forward", () => {
