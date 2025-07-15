@@ -5,6 +5,7 @@
 export class Player {
   private name: string;
   private id: number;
+  private turnsToSkip: number;
 
   /**
    * Crea un nuovo giocatore con ID e nome specificati.
@@ -14,6 +15,7 @@ export class Player {
   constructor(id: number, name: string) {
     this.name = name;
     this.id = id;
+    this.turnsToSkip = 0;
   }
 
   /**
@@ -27,4 +29,25 @@ export class Player {
    * @returns Identificativo del giocatore
    */
   getId = () => this.id;
+
+  /**
+   * Imposta il numero di turni che il giocatore deve saltare.
+   * @param turns - Numero di turni da saltare
+   */
+  skipNextTurn = (turns = 1) => {
+    this.turnsToSkip = turns;
+  };
+
+  /**
+   * Verifica se il giocatore deve saltare il turno corrente.
+   * Se deve saltare, decrementa il contatore dei turni da saltare.
+   * @returns True se il giocatore deve saltare il turno, false altrimenti
+   */
+  mustSkipTurn = () => {
+    if (this.turnsToSkip > 0) {
+      this.turnsToSkip--;
+      return true;
+    }
+    return false;
+  };
 }

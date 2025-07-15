@@ -5,7 +5,7 @@ import { Deck } from "./deck";
 import { Dice } from "./dice";
 import { GameContext } from "./gameContext";
 import { Player } from "./player";
-import { SpecialSquare, type Square } from "./square";
+import { type Mime, MimeSquare, SpecialSquare, type Square } from "./square";
 
 /**
  * Classe principale che gestisce la logica del gioco da tavolo.
@@ -121,11 +121,18 @@ export class Game {
    * Il giocatore attuale lancia il dado e aggiorna la sua posizione.
    * Il turno ed eventualmente il round vengono incrementati.
    * Se un giocatore arriva all'ultima casella vince e il gioco termina.
-   * Restituisce un oggetto Battle se si verifica una collisione, altrimenti null.
+   * Restituisce un oggetto Battle se si verifica una collisione.
+   * Restituisce un oggetto Mime se c'è un mimo da gestire.
    */
-  playTurn = (): Battle | null => {
+  playTurn = (): Battle | Mime | undefined => {
     if (!this.gameEnded) {
       const actualPlayer = this.players[this.turn];
+
+      if (actualPlayer.mustSkipTurn()) {
+        this.advanceTurn();
+        return;
+      }
+
       const diceValue = this.dice.roll();
       const newPosition = this.getPlayerPosition(actualPlayer) + diceValue;
 
@@ -136,14 +143,17 @@ export class Game {
         return collision;
       }
 
-      // Continue with existing special square logic
-      this.processSpecialSquareEffects(actualPlayer);
+      // Process special square effects
+      const action = this.processSpecialSquareEffects(actualPlayer);
+      if (action) {
+        this.advanceTurn();
+        return action;
+      }
 
       this.advanceTurn();
     } else {
       throw new Error("playTurn not avalaible, the game is already ended");
     }
-    return null;
   };
 
   /**
@@ -151,11 +161,23 @@ export class Game {
    * Verifica se la casella su cui si trova il giocatore è una casella speciale
    * ed esegue il comando associato.
    * @param player - Il giocatore per cui elaborare gli effetti della casella
+   * @returns Un oggetto Mime se il giocatore atterra su una MimeSquare, null altrimenti
    */
-  private processSpecialSquareEffects = (player: Player) => {
+  private processSpecialSquareEffects = (player: Player): Mime | undefined => {
     const landingSquare =
       this.board.getSquares()[this.getPlayerPosition(player)];
-    if (landingSquare instanceof SpecialSquare) {
+
+    // Casella MimeSquare
+    if (landingSquare instanceof MimeSquare) {
+      const command = landingSquare.getCommand();
+      // MimeCommand restituisce un Mime
+      const mime = command.execute(
+        new GameContext(player, this.board, this.players, this.deck, this.dice),
+      );
+      return mime;
+
+      // Casella SpecialSquare
+    } else if (landingSquare instanceof SpecialSquare) {
       const command = landingSquare.getCommand();
       command.execute(
         new GameContext(player, this.board, this.players, this.deck, this.dice),
@@ -221,8 +243,44 @@ export class Game {
   };
 
   /**
-   * Metodo placeholder per la funzionalità mimo.
-   * Attualmente non implementato.
+   * Gestisce il successo del mimo.
+   * Sposta il giocatore che ha mimato e il giocatore che ha indovinato di una casella in avanti.
+   * @param mimePlayer - Il giocatore che ha eseguito il mimo
+   * @param guessPlayer - Il giocatore che ha indovinato il mimo
    */
-  playMime = () => {};
+  mimeSuccess = (mimePlayer: Player, guessPlayer: Player) => {
+    const collision1 = this.movePlayer(
+      this.getPlayerPosition(mimePlayer) + 1,
+      mimePlayer,
+    );
+    const collision2 = this.movePlayer(
+      this.getPlayerPosition(guessPlayer) + 1,
+      guessPlayer,
+    );
+    return [collision1, collision2];
+    // TODO: capire come gestire queste eventuali collision
+  };
+
+  /**
+   * Gestisce il fallimento del mimo.
+   * Il giocatore che ha mimato deve saltare il prossimo turno.
+   * @param mimePlayer - Il giocatore che ha eseguito il mimo
+   */
+  mimeFailure = (mimePlayer: Player) => {
+    mimePlayer.skipNextTurn();
+  };
+
+  /**
+   * Risolve un'azione di mimo, applicando gli effetti in base al successo o fallimento.
+   * @param mimeAction - L'oggetto Mime da risolvere.
+   * @param success - True se il mimo è stato indovinato, false altrimenti.
+   * @param guessPlayer - Il giocatore che ha indovinato il mimo (richiesto se success è true).
+   */
+  resolveMime = (mimeAction: Mime, success: boolean, guessPlayer: Player) => {
+    if (success) {
+      this.mimeSuccess(mimeAction.mimePlayer, guessPlayer);
+    } else {
+      this.mimeFailure(mimeAction.mimePlayer);
+    }
+  };
 }

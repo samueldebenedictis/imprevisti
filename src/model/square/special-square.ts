@@ -1,4 +1,6 @@
 import type { GameContext } from "../gameContext";
+import type { Mime } from "./mime-square";
+
 import { Square } from "./square";
 
 /**
@@ -10,7 +12,7 @@ export interface Command {
    * Esegue il comando utilizzando il contesto di gioco fornito.
    * @param context - Contesto di gioco contenente tutte le informazioni necessarie
    */
-  execute(context: GameContext): void;
+  execute(context: GameContext): undefined | Mime;
 }
 
 /**
