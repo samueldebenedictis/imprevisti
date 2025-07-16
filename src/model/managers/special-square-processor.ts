@@ -51,6 +51,11 @@ export class SpecialSquareProcessor {
       this.gameStateManager,
     );
 
+    // Casella normale - nessun effetto speciale
+    if (!this.isSpecialSquare) {
+      return undefined;
+    }
+
     // Casella MimeSquare - restituisce un oggetto Mime
     if (landingSquare instanceof MimeSquare) {
       const command = landingSquare.getCommand();
@@ -62,9 +67,6 @@ export class SpecialSquareProcessor {
       const command = landingSquare.getCommand();
       command.execute(gameContext);
     }
-
-    // Casella normale - nessun effetto speciale
-    return undefined;
   }
 
   /**

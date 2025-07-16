@@ -67,5 +67,20 @@ describe("Game", () => {
     expect(game.getBoard().getPlayerPosition(players[0])).toBe(1);
     expect(game.getBoard().getPlayerPosition(players[1])).toBe(0);
     expect(game.getWinner()?.getName()).toBe("Renzo");
+    expect(game.isGameEnded()).toBeTruthy();
+  });
+
+  test("Skip turn", () => {
+    const b = new SquaresBuilder().setBoardSize(10).build();
+    const game = new Game(b, ["Renzo", "Lucia"]);
+    const players = game.getPlayers();
+
+    players[0].skipNextTurn();
+    game.playTurn();
+    expect(game.getBoard().getPlayerPosition(players[0])).toBe(0);
+
+    game.playTurn();
+    expect(game.getBoard().getPlayerPosition(players[0])).toBe(0);
+    expect(game.getBoard().getPlayerPosition(players[1])).toBeGreaterThan(0);
   });
 });
