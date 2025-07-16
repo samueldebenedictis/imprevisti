@@ -64,16 +64,17 @@ class MovePlayerCommand implements Command {
    * Esegue il movimento del giocatore.
    * Calcola la nuova posizione basata sulla posizione corrente e il valore di movimento.
    * @param context - Contesto di gioco contenente il giocatore e il tabellone
+   * @returns undefined (nessun mimo da gestire)
    */
-  execute(context: GameContext): void {
+  execute(context: GameContext): undefined {
     const currentPosition = context.board.getPlayerPosition(
       context.player,
     ) as number;
-    const newPosition = currentPosition + this.moveValue;
+    const newPosition = Math.max(0, currentPosition + this.moveValue);
 
-    // Use the game's movePlayer method to ensure collision detection
-    // Note: We need to access the game instance through the context
-    // For now, we'll use the board directly but this should be refactored
+    // Sposta il giocatore alla nuova posizione (non può andare sotto 0)
     context.board.movePlayer(context.player, newPosition);
+    
+    return undefined;
   }
 }

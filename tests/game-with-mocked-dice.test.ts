@@ -43,12 +43,16 @@ describe("Game with mocked dice", () => {
     expect(game.getBoard().getPlayerPosition(players[0])).toBe(1);
     expect(game.getBoard().getPlayerPosition(players[1])).toBe(0);
 
-    const battle1 = game.playTurn();
+    const result1 = game.playTurn();
 
     expect(game.getBoard().getPlayerPosition(players[0])).toBe(1);
     expect(game.getBoard().getPlayerPosition(players[1])).toBe(1);
 
-    game.resolveBattle(battle1 as Battle, players[0]);
+    // Verifica che il risultato sia una battaglia
+    expect(result1.type).toBe('battle');
+    expect(result1.data).toBeDefined();
+
+    game.resolveBattle(result1.data as Battle, players[0]);
 
     expect(game.getBoard().getPlayerPosition(players[0])).toBe(2);
     expect(game.getBoard().getPlayerPosition(players[1])).toBe(1);

@@ -3,27 +3,31 @@ import { Board } from "./board";
 import type { Card } from "./card";
 import { Deck } from "./deck";
 import { Dice } from "./dice";
-import { GameContext } from "./gameContext";
 import { Player } from "./player";
-import { type Mime, MimeSquare, SpecialSquare, type Square } from "./square";
+import { type Mime, type Square } from "./square";
+import {
+  GameStateManager,
+  MovementManager,
+  SpecialSquareProcessor,
+  TurnManager,
+  type GameActionResult,
+  type MovementResult,
+} from "./managers";
 
 /**
  * Classe principale che gestisce la logica del gioco da tavolo.
- * Coordina tutti i componenti del gioco: giocatori, tabellone, dadi, carte e battaglie.
+ * Coordina tutti i componenti del gioco attraverso manager specializzati.
  */
 export class Game {
-  private boardSize: number;
   private board: Board;
-
-  private players: Player[];
-  private turn: number;
-  private round: number;
-
   private dice: Dice;
   private deck: Deck;
 
-  private gameEnded: boolean;
-  private winner: Player | undefined;
+  // Manager per responsabilità specifiche
+  private turnManager: TurnManager;
+  private movementManager: MovementManager;
+  private gameStateManager: GameStateManager;
+  private specialSquareProcessor: SpecialSquareProcessor;
 
   /**
    * Crea una nuova partita con i parametri specificati.
@@ -38,184 +42,92 @@ export class Game {
     cards: Card[] = [],
     diceFaces = 6,
   ) {
-    this.players = playersName.map((name, i) => new Player(i, name));
-    this.board = new Board(squares, this.players);
-    this.boardSize = this.board.getSquares().length;
-    this.round = 1;
-    this.turn = 0;
+    // Inizializzazione componenti base
+    const players = playersName.map((name, i) => new Player(i, name));
+    this.board = new Board(squares, players);
     this.dice = new Dice(diceFaces);
     this.deck = new Deck(cards);
-    this.gameEnded = false;
+
+    // Inizializzazione manager
+    this.turnManager = new TurnManager(players);
+    this.gameStateManager = new GameStateManager(squares.length);
+    this.movementManager = new MovementManager(this.board, this.gameStateManager);
+    this.specialSquareProcessor = new SpecialSquareProcessor(
+      this.board,
+      this.deck,
+      this.dice
+    );
   }
 
   /**
-   * Restituisce il tabellone di gioco.
-   * @returns L'istanza del tabellone corrente
-   */
-  getBoard = () => this.board;
-
-  /**
-   * Restituisce tutti i giocatori della partita.
-   * @returns Array di tutti i giocatori
-   */
-  getPlayers = () => this.players;
-
-  /**
-   * Restituisce la posizione attuale del giocatore specificato.
-   * @param player - Il giocatore di cui si vuole conoscere la posizione
-   * @returns Posizione del giocatore sul tabellone
-   */
-  getPlayerPosition = (player: Player) => this.board.getPlayerPosition(player);
-
-  /**
-   * Restituisce l'indice del turno corrente.
-   * @returns Indice del giocatore che deve giocare il turno corrente
-   */
-  getTurn = () => this.turn;
-
-  /**
-   * Restituisce il numero del round corrente.
-   * @returns Numero del round attuale (inizia da 1)
-   */
-  getRound = () => this.round;
-
-  /**
-   * Restituisce il vincitore della partita, se presente.
-   * @returns Il giocatore vincitore o undefined se la partita non è ancora terminata
-   */
-  getWinner = () => this.winner;
-
-  /**
-   * Termina la partita e imposta il vincitore.
-   * @param player - Il giocatore vincitore
-   */
-  private endGameAndSetWinner = (player: Player) => {
-    this.winner = player;
-    this.gameEnded = true;
-  };
-
-  /**
-   * Sposta un giocatore alla nuova posizione specificata.
-   * Se la posizione supera la dimensione del tabellone, il giocatore viene posto all'ultima casella e vince.
-   * Controlla automaticamente le collisioni con altri giocatori.
-   * @param newPosition - La nuova posizione desiderata
-   * @param actualPlayer - Il giocatore da spostare
-   * @returns Un oggetto Battle se si verifica una collisione, null altrimenti
-   */
-  movePlayer = (newPosition: number, actualPlayer: Player): Battle | null => {
-    const landingPosition =
-      newPosition >= this.boardSize ? this.boardSize : newPosition;
-
-    this.board.movePlayer(actualPlayer, landingPosition);
-
-    if (landingPosition === this.boardSize) {
-      this.endGameAndSetWinner(actualPlayer);
-      return null; // Game ended, no collision possible
-    }
-
-    // Check for collision after moving
-    return this.checkForCollision(actualPlayer);
-  };
-
-  /**
    * Il giocatore attuale lancia il dado e aggiorna la sua posizione.
-   * Il turno ed eventualmente il round vengono incrementati.
-   * Se un giocatore arriva all'ultima casella vince e il gioco termina.
-   * Restituisce un oggetto Battle se si verifica una collisione.
-   * Restituisce un oggetto Mime se c'è un mimo da gestire.
+   * Il turno viene automaticamente incrementato alla fine dell'azione.
+   * @returns Risultato dell'azione di gioco (battaglia, mimo o nessuna azione speciale)
+   * @throws Errore se il gioco è già terminato
    */
-  playTurn = (): Battle | Mime | undefined => {
-    if (!this.gameEnded) {
-      const actualPlayer = this.players[this.turn];
+  playTurn(): GameActionResult {
+    this.validateGameState();
 
-      if (actualPlayer.mustSkipTurn()) {
-        this.advanceTurn();
-        return;
-      }
+    const currentPlayer = this.turnManager.getCurrentPlayer();
 
-      const diceValue = this.dice.roll();
-      const newPosition = this.getPlayerPosition(actualPlayer) + diceValue;
-
-      const collision = this.movePlayer(newPosition, actualPlayer);
-      if (collision) {
-        // Battle needs to be resolved externally, but turn still advances
-        this.advanceTurn();
-        return collision;
-      }
-
-      // Process special square effects
-      const action = this.processSpecialSquareEffects(actualPlayer);
-      if (action) {
-        this.advanceTurn();
-        return action;
-      }
-
-      this.advanceTurn();
-    } else {
-      throw new Error("playTurn not avalaible, the game is already ended");
+    if (currentPlayer.mustSkipTurn()) {
+      this.turnManager.advanceTurn();
+      return { type: 'none' };
     }
-  };
+
+    const result = this.executePlayerTurn(currentPlayer);
+    this.turnManager.advanceTurn();
+
+    return result;
+  }
 
   /**
-   * Elabora gli effetti delle caselle speciali per il giocatore specificato.
-   * Verifica se la casella su cui si trova il giocatore è una casella speciale
-   * ed esegue il comando associato.
-   * @param player - Il giocatore per cui elaborare gli effetti della casella
-   * @returns Un oggetto Mime se il giocatore atterra su una MimeSquare, null altrimenti
+   * Valida che il gioco sia in uno stato valido per continuare.
+   * @throws Errore se il gioco è già terminato
    */
-  private processSpecialSquareEffects = (player: Player): Mime | undefined => {
-    const landingSquare =
-      this.board.getSquares()[this.getPlayerPosition(player)];
-
-    // Casella MimeSquare
-    if (landingSquare instanceof MimeSquare) {
-      const command = landingSquare.getCommand();
-      // MimeCommand restituisce un Mime
-      const mime = command.execute(
-        new GameContext(player, this.board, this.players, this.deck, this.dice),
-      );
-      return mime;
-
-      // Casella SpecialSquare
-    } else if (landingSquare instanceof SpecialSquare) {
-      const command = landingSquare.getCommand();
-      command.execute(
-        new GameContext(player, this.board, this.players, this.deck, this.dice),
-      );
+  private validateGameState(): void {
+    if (this.gameStateManager.isGameEnded()) {
+      throw new Error("Cannot play turn: game has already ended");
     }
-  };
+  }
 
   /**
-   * Avanza al turno successivo e incrementa il round se necessario.
-   * Quando tutti i giocatori hanno giocato il loro turno, inizia un nuovo round.
+   * Esegue il turno di un giocatore specifico.
+   * @param player - Il giocatore che deve giocare il turno
+   * @returns Risultato dell'azione di gioco
    */
-  private advanceTurn = () => {
-    if (this.turn === this.players.length - 1) {
-      this.turn = 0;
-      this.round++;
-    } else {
-      this.turn++;
-    }
-  };
+  private executePlayerTurn(player: Player): GameActionResult {
+    const diceValue = this.dice.roll();
+    const currentPosition = this.board.getPlayerPosition(player);
+    const newPosition = currentPosition + diceValue;
 
-  /**
-   * Controlla se il giocatore corrente è in collisione con altri giocatori sulla stessa casella.
-   * @param currentPlayer - Il giocatore da controllare per le collisioni
-   * @returns Un oggetto Battle se si verifica una collisione, null altrimenti
-   */
-  private checkForCollision = (currentPlayer: Player): Battle | null => {
-    const position = this.getPlayerPosition(currentPlayer);
-    const playersOnSquare = this.board.getPlayersOnSquare(position);
+    // Gestione movimento e collisioni
+    const movementResult = this.movementManager.movePlayerAndCheckCollision(
+      player,
+      newPosition
+    );
 
-    if (playersOnSquare.length > 1) {
-      // Find the other player (not the current one)
-      const otherPlayer = playersOnSquare.find((p) => p !== currentPlayer);
-      if (otherPlayer) {
-        return new Battle(currentPlayer, otherPlayer);
-      }
+    if (movementResult.gameEnded) {
+      return { type: 'none' }; // Gioco terminato, nessuna azione aggiuntiva
     }
-    return null;
-  };
+
+    if (movementResult.collision) {
+      return { type: 'battle', data: movementResult.collision };
+    }
+
+    // Gestione effetti caselle speciali
+    const specialAction = this.specialSquareProcessor.processSquareEffects(
+      player,
+      this.turnManager.getPlayers()
+    );
+
+    // Se è mimo restituisco specialAction
+    if (specialAction) {
+      return { type: 'mime', data: specialAction };
+    }
+
+    return { type: 'none' };
+  }
 
   /**
    * Risolve una battaglia spostando il vincitore di una posizione in avanti.
@@ -224,63 +136,131 @@ export class Game {
    * @param winner - Il giocatore vincitore della battaglia
    * @returns Un nuovo oggetto Battle se si verifica un'altra collisione, null altrimenti
    */
-  resolveBattle = (battle: Battle, winner: Player): Battle | null => {
-    // Validate that the winner is part of the battle
+  resolveBattle(battle: Battle, winner: Player): Battle | null {
+    // Valida che il vincitore sia parte della battaglia
     battle.resolveBattle(winner);
 
-    // Move winner forward one position
-    const currentPos = this.getPlayerPosition(winner);
-    const newCollision = this.movePlayer(currentPos + 1, winner);
-    if (newCollision) {
-      // Another battle needed
-      return newCollision;
+    // Sposta il vincitore in avanti di una posizione
+    const movementResult = this.movementManager.moveWinnerForward(winner);
+
+    if (movementResult.gameEnded) {
+      return null; // Gioco terminato, nessuna collisione possibile
     }
 
-    // Process special square effects on new position
-    this.processSpecialSquareEffects(winner);
+    if (movementResult.collision) {
+      return movementResult.collision; // Nuova battaglia necessaria
+    }
+
+    // Elabora gli effetti delle caselle speciali nella nuova posizione
+    this.specialSquareProcessor.processSquareEffects(
+      winner,
+      this.turnManager.getPlayers()
+    );
 
     return null;
-  };
-
-  /**
-   * Gestisce il successo del mimo.
-   * Sposta il giocatore che ha mimato e il giocatore che ha indovinato di una casella in avanti.
-   * @param mimePlayer - Il giocatore che ha eseguito il mimo
-   * @param guessPlayer - Il giocatore che ha indovinato il mimo
-   */
-  mimeSuccess = (mimePlayer: Player, guessPlayer: Player) => {
-    const collision1 = this.movePlayer(
-      this.getPlayerPosition(mimePlayer) + 1,
-      mimePlayer,
-    );
-    const collision2 = this.movePlayer(
-      this.getPlayerPosition(guessPlayer) + 1,
-      guessPlayer,
-    );
-    return [collision1, collision2];
-    // TODO: capire come gestire queste eventuali collision
-  };
-
-  /**
-   * Gestisce il fallimento del mimo.
-   * Il giocatore che ha mimato deve saltare il prossimo turno.
-   * @param mimePlayer - Il giocatore che ha eseguito il mimo
-   */
-  mimeFailure = (mimePlayer: Player) => {
-    mimePlayer.skipNextTurn();
-  };
+  }
 
   /**
    * Risolve un'azione di mimo, applicando gli effetti in base al successo o fallimento.
-   * @param mimeAction - L'oggetto Mime da risolvere.
-   * @param success - True se il mimo è stato indovinato, false altrimenti.
-   * @param guessPlayer - Il giocatore che ha indovinato il mimo (richiesto se success è true).
+   * @param mimeAction - L'oggetto Mime da risolvere
+   * @param success - True se il mimo è stato indovinato, false altrimenti
+   * @param guessPlayer - Il giocatore che ha indovinato il mimo (richiesto se success è true)
+   * @returns Array con eventuali collisioni risultanti dal movimento dei giocatori
    */
-  resolveMime = (mimeAction: Mime, success: boolean, guessPlayer: Player) => {
-    if (success) {
-      this.mimeSuccess(mimeAction.mimePlayer, guessPlayer);
+  resolveMime(
+    mimeAction: Mime,
+    success: boolean,
+    guessPlayer?: Player
+  ): [Battle | null, Battle | null] {
+    if (success && guessPlayer) {
+      return this.handleMimeSuccess(mimeAction.mimePlayer, guessPlayer);
     } else {
-      this.mimeFailure(mimeAction.mimePlayer);
+      this.handleMimeFailure(mimeAction.mimePlayer);
+      return [null, null];
     }
-  };
+  }
+
+  /**
+   * Gestisce il successo del mimo spostando entrambi i giocatori in avanti.
+   * @param mimePlayer - Il giocatore che ha eseguito il mimo
+   * @param guessPlayer - Il giocatore che ha indovinato il mimo
+   * @returns Array con eventuali collisioni per entrambi i giocatori
+   */
+  private handleMimeSuccess(
+    mimePlayer: Player,
+    guessPlayer: Player
+  ): [Battle | null, Battle | null] {
+    const [result1, result2] = this.movementManager.moveBothPlayersForward(
+      mimePlayer,
+      guessPlayer
+    );
+
+    return [result1.collision, result2.collision];
+  }
+
+  /**
+   * Gestisce il fallimento del mimo facendo saltare il prossimo turno al giocatore.
+   * @param mimePlayer - Il giocatore che ha eseguito il mimo
+   */
+  private handleMimeFailure(mimePlayer: Player): void {
+    mimePlayer.skipNextTurn();
+  }
+
+  // Getter per accesso ai dati del gioco
+  /**
+   * Restituisce il tabellone di gioco.
+   * @returns L'istanza del tabellone corrente
+   */
+  getBoard(): Board {
+    return this.board;
+  }
+
+  /**
+   * Restituisce tutti i giocatori della partita.
+   * @returns Array di tutti i giocatori
+   */
+  getPlayers(): Player[] {
+    return this.turnManager.getPlayers();
+  }
+
+  /**
+   * Restituisce la posizione attuale del giocatore specificato.
+   * @param player - Il giocatore di cui si vuole conoscere la posizione
+   * @returns Posizione del giocatore sul tabellone
+   */
+  getPlayerPosition(player: Player): number {
+    return this.board.getPlayerPosition(player);
+  }
+
+  /**
+   * Restituisce l'indice del turno corrente.
+   * @returns Indice del giocatore che deve giocare il turno corrente
+   */
+  getTurn(): number {
+    return this.turnManager.getCurrentTurn();
+  }
+
+  /**
+   * Restituisce il numero del round corrente.
+   * @returns Numero del round attuale (inizia da 1)
+   */
+  getRound(): number {
+    return this.turnManager.getCurrentRound();
+  }
+
+  /**
+   * Restituisce il vincitore della partita, se presente.
+   * @returns Il giocatore vincitore o undefined se la partita non è ancora terminata
+   */
+  getWinner(): Player | undefined {
+    return this.gameStateManager.getWinner();
+  }
+
+  /**
+   * Verifica se il gioco è terminato.
+   * @returns True se il gioco è terminato, false altrimenti
+   */
+  isGameEnded(): boolean {
+    return this.gameStateManager.isGameEnded();
+  }
 }
