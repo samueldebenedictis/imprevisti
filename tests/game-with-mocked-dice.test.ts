@@ -121,4 +121,69 @@ describe("Game with mocked dice", () => {
     expect(game.getBoard().getPlayerPosition(players[0])).toBe(0);
     expect(game.getBoard().getPlayerPosition(players[1])).toBe(0);
   });
+
+  test("Test special move squares", () => {
+    const s = [
+      new Square(0),
+      new MoveSquare(1, -1),
+      new MoveSquare(2, -1),
+      new MoveSquare(3, -1),
+      new MoveSquare(4, -1),
+    ];
+
+    const game = new Game(s, ["Lucia"]);
+    const players = game.getPlayers();
+
+    expect(game.getBoard().getPlayerPosition(players[0])).toBe(0);
+
+    game.playTurn();
+
+    expect(game.getBoard().getPlayerPosition(players[0])).toBe(0);
+
+    game.playTurn();
+
+    expect(game.getBoard().getPlayerPosition(players[0])).toBe(0);
+  });
+
+  test("Battle after battle", () => {
+    const b = new SquaresBuilder().setBoardSize(10).build();
+    const game = new Game(b, ["Lucia", "Renzo", "Samuel"]);
+    const players = game.getPlayers();
+
+    expect(game.getBoard().getPlayerPosition(players[0])).toBe(0);
+    expect(game.getBoard().getPlayerPosition(players[1])).toBe(0);
+    expect(game.getBoard().getPlayerPosition(players[2])).toBe(0);
+
+    game.playTurn();
+
+    expect(game.getBoard().getPlayerPosition(players[0])).toBe(1);
+    expect(game.getBoard().getPlayerPosition(players[1])).toBe(0);
+    expect(game.getBoard().getPlayerPosition(players[2])).toBe(0);
+
+    const battle1 = game.playTurn();
+
+    expect(game.getBoard().getPlayerPosition(players[0])).toBe(1);
+    expect(game.getBoard().getPlayerPosition(players[1])).toBe(1);
+    expect(game.getBoard().getPlayerPosition(players[2])).toBe(0);
+
+    // Verifica che il risultato sia una battaglia
+    expect(battle1.type).toBe("battle");
+    expect(battle1.data).toBeDefined();
+
+    game.resolveBattle(battle1.data as Battle, players[0]);
+
+    expect(game.getBoard().getPlayerPosition(players[0])).toBe(2);
+    expect(game.getBoard().getPlayerPosition(players[1])).toBe(1);
+    expect(game.getBoard().getPlayerPosition(players[2])).toBe(0);
+
+    const battle2 = game.playTurn();
+
+    expect(game.getBoard().getPlayerPosition(players[0])).toBe(2);
+    expect(game.getBoard().getPlayerPosition(players[1])).toBe(1);
+    expect(game.getBoard().getPlayerPosition(players[2])).toBe(1);
+
+    const battle3 = game.resolveBattle(battle2.data as Battle, players[2]);
+    expect(battle3.type).toBe("battle");
+    expect(battle3.data).toBeDefined();
+  });
 });

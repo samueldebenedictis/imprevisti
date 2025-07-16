@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 import { Card } from "@/model/card";
 import { Game } from "@/model/game";
 import {
+  GoToStartSquare,
   Mime,
   MimeSquare,
   MoveSquare,
@@ -14,11 +15,19 @@ describe("Square", () => {
     const square = new Square(0);
     expect(square.getNumber()).toBe(0);
   });
-  test("Special", () => {
+  test("Move Square", () => {
     const square = new MoveSquare(0, 1);
     expect(square.getNumber()).toBe(0);
     expect(square).toBeInstanceOf(SpecialSquare);
     expect(square.getValue()).toBe(1);
+  });
+
+  test("GoToStart Square", () => {
+    const square = new GoToStartSquare(10);
+    expect(square.getNumber()).toBe(10);
+    expect(square).toBeInstanceOf(SpecialSquare);
+    expect(square).toBeInstanceOf(MoveSquare);
+    expect(square.getValue()).toBe(-10);
   });
 });
 

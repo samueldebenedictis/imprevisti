@@ -51,33 +51,35 @@ export class SpecialSquareProcessor {
       this.gameStateManager,
     );
 
-    // Casella normale - nessun effetto speciale
-    if (!this.isSpecialSquare) {
-      return undefined;
-    }
+    const squareType = this.getSquareType(playerPosition);
 
-    // Casella MimeSquare - restituisce un oggetto Mime
-    if (landingSquare instanceof MimeSquare) {
-      const command = landingSquare.getCommand();
-      return command.execute(gameContext);
-    }
-
-    // Casella SpecialSquare - esegue il comando senza restituire valori
-    if (landingSquare instanceof SpecialSquare) {
-      const command = landingSquare.getCommand();
-      command.execute(gameContext);
+    switch (squareType) {
+      // Casella MimeSquare - restituisce un oggetto Mime
+      case "mime": {
+        const command = (landingSquare as MimeSquare).getCommand();
+        return command.execute(gameContext);
+      }
+      // Casella SpecialSquare - esegue il comando senza restituire valori
+      case "special": {
+        const command = (landingSquare as SpecialSquare).getCommand();
+        return command.execute(gameContext);
+      }
+      // Casella normale - nessun effetto speciale
+      case "normal": {
+        return undefined;
+      }
     }
   }
 
-  /**
-   * Verifica se una casella è una casella speciale (MimeSquare o SpecialSquare).
-   * @param position - La posizione della casella da controllare
-   * @returns True se la casella è speciale, false altrimenti
-   */
-  isSpecialSquare(position: number): boolean {
-    const square = this.board.getSquares()[position];
-    return square instanceof MimeSquare || square instanceof SpecialSquare;
-  }
+  // TODO: rimuovere se non utilizzato
+  // /**
+  //  * Verifica se una casella è una casella speciale (MimeSquare o SpecialSquare).
+  //  * @param position - La posizione della casella da controllare
+  //  * @returns True se la casella è speciale, false altrimenti
+  //  */
+  // isSpecialSquare(position: number): boolean {
+  //   return this.getSquareType(position) !== "normal";
+  // }
 
   /**
    * Restituisce il tipo di casella speciale alla posizione specificata.

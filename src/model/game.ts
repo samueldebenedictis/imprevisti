@@ -132,7 +132,7 @@ export class Game {
     // Gestione effetti caselle speciali
     const specialAction = this.specialSquareProcessor.processSquareEffects(
       player,
-      this.turnManager.getPlayers(),
+      this.getPlayers(),
     );
 
     // Se è mimo restituisco specialAction
@@ -149,7 +149,7 @@ export class Game {
    * @param winner - Il giocatore vincitore della battaglia
    * @returns Un nuovo oggetto Battle se si verifica un'altra collisione, null altrimenti
    */
-  resolveBattle(battle: Battle, winner: Player): Battle | null {
+  resolveBattle(battle: Battle, winner: Player): GameActionResult {
     return this.battleManager.resolveBattle(battle, winner);
   }
 

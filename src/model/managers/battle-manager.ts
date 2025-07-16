@@ -1,8 +1,10 @@
-import { Battle } from "../battle";
+import type { Battle } from "../battle";
 import type { Player } from "../player";
+import { Mime } from "../square";
 import type { MovementManager } from "./movement-manager";
 import type { SpecialSquareProcessor } from "./special-square-processor";
 import type { TurnManager } from "./turn-manager";
+import type { GameActionResult } from "./types";
 
 /**
  * Gestisce la logica delle battaglie tra giocatori.
@@ -28,7 +30,7 @@ export class BattleManager {
    * @param winner - Il giocatore vincitore della battaglia
    * @returns Un nuovo oggetto Battle se si verifica un'altra collisione, null altrimenti
    */
-  resolveBattle(battle: Battle, winner: Player): Battle | null {
+  resolveBattle(battle: Battle, winner: Player): GameActionResult {
     // Valida che il vincitore sia parte della battaglia
     battle.resolveBattle(winner);
 
@@ -36,59 +38,63 @@ export class BattleManager {
     const movementResult = this.movementManager.moveWinnerForward(winner);
 
     if (movementResult.gameEnded) {
-      return null; // Gioco terminato, nessuna collisione possibile
+      return { type: "none" }; // Gioco terminato, nessuna collisione possibile
     }
 
     if (movementResult.collision) {
-      return movementResult.collision; // Nuova battaglia necessaria
+      return { type: "battle", data: movementResult.collision }; // Nuova battaglia necessaria
     }
 
     // Elabora gli effetti delle caselle speciali nella nuova posizione
-    this.specialSquareProcessor.processSquareEffects(
+    const effect = this.specialSquareProcessor.processSquareEffects(
       winner,
       this.turnManager.getPlayers(),
     );
+    if (effect instanceof Mime) {
+      return { type: "mime", data: effect };
+    }
 
-    return null;
+    return { type: "none" };
   }
 
-  /**
-   * Crea una nuova battaglia tra due giocatori.
-   * @param player1 - Primo giocatore della battaglia
-   * @param player2 - Secondo giocatore della battaglia
-   * @returns Nuova istanza di Battle
-   */
-  createBattle(player1: Player, player2: Player): Battle {
-    return new Battle(player1, player2);
-  }
+  // TODO: rimuovi se inutilizzato
+  // /**
+  //  * Crea una nuova battaglia tra due giocatori.
+  //  * @param player1 - Primo giocatore della battaglia
+  //  * @param player2 - Secondo giocatore della battaglia
+  //  * @returns Nuova istanza di Battle
+  //  */
+  // createBattle(player1: Player, player2: Player): Battle {
+  //   return new Battle(player1, player2);
+  // }
 
-  /**
-   * Verifica se un giocatore può partecipare a una battaglia.
-   * @param player - Il giocatore da verificare
-   * @returns True se il giocatore può combattere, false altrimenti
-   */
-  canPlayerBattle(_player: Player): boolean {
-    // Un giocatore può sempre combattere, ma potrebbero esserci condizioni future
-    // come stati speciali, carte, ecc.
-    return true;
-  }
+  // /**
+  //  * Verifica se un giocatore può partecipare a una battaglia.
+  //  * @param player - Il giocatore da verificare
+  //  * @returns True se il giocatore può combattere, false altrimenti
+  //  */
+  // canPlayerBattle(_player: Player): boolean {
+  //   // Un giocatore può sempre combattere, ma potrebbero esserci condizioni future
+  //   // come stati speciali, carte, ecc.
+  //   return true;
+  // }
 
-  /**
-   * Ottiene l'avversario di un giocatore in una battaglia.
-   * @param battle - La battaglia in corso
-   * @param player - Il giocatore di cui si vuole conoscere l'avversario
-   * @returns L'avversario del giocatore specificato
-   */
-  getOpponent(battle: Battle, player: Player): Player {
-    return battle.getOpponent(player);
-  }
+  // /**
+  //  * Ottiene l'avversario di un giocatore in una battaglia.
+  //  * @param battle - La battaglia in corso
+  //  * @param player - Il giocatore di cui si vuole conoscere l'avversario
+  //  * @returns L'avversario del giocatore specificato
+  //  */
+  // getOpponent(battle: Battle, player: Player): Player {
+  //   return battle.getOpponent(player);
+  // }
 
-  /**
-   * Ottiene entrambi i giocatori di una battaglia.
-   * @param battle - La battaglia in corso
-   * @returns Tupla con i due giocatori della battaglia
-   */
-  getBattlePlayers(battle: Battle): [Player, Player] {
-    return battle.getPlayers();
-  }
+  // /**
+  //  * Ottiene entrambi i giocatori di una battaglia.
+  //  * @param battle - La battaglia in corso
+  //  * @returns Tupla con i due giocatori della battaglia
+  //  */
+  // getBattlePlayers(battle: Battle): [Player, Player] {
+  //   return battle.getPlayers();
+  // }
 }
