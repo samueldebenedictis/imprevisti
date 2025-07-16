@@ -1,18 +1,19 @@
-import { Battle } from "./battle";
+import type { Battle } from "./battle";
 import { Board } from "./board";
 import type { Card } from "./card";
 import { Deck } from "./deck";
 import { Dice } from "./dice";
-import { Player } from "./player";
-import { type Mime, type Square } from "./square";
 import {
+  BattleManager,
+  type GameActionResult,
   GameStateManager,
+  MimeManager,
   MovementManager,
   SpecialSquareProcessor,
   TurnManager,
-  type GameActionResult,
-  type MovementResult,
 } from "./managers";
+import { Player } from "./player";
+import type { Mime, Square } from "./square";
 
 /**
  * Classe principale che gestisce la logica del gioco da tavolo.
@@ -28,6 +29,8 @@ export class Game {
   private movementManager: MovementManager;
   private gameStateManager: GameStateManager;
   private specialSquareProcessor: SpecialSquareProcessor;
+  private battleManager: BattleManager;
+  private mimeManager: MimeManager;
 
   /**
    * Crea una nuova partita con i parametri specificati.
@@ -51,12 +54,21 @@ export class Game {
     // Inizializzazione manager
     this.turnManager = new TurnManager(players);
     this.gameStateManager = new GameStateManager(squares.length);
-    this.movementManager = new MovementManager(this.board, this.gameStateManager);
+    this.movementManager = new MovementManager(
+      this.board,
+      this.gameStateManager,
+    );
     this.specialSquareProcessor = new SpecialSquareProcessor(
       this.board,
       this.deck,
-      this.dice
+      this.dice,
     );
+    this.battleManager = new BattleManager(
+      this.movementManager,
+      this.specialSquareProcessor,
+      this.turnManager,
+    );
+    this.mimeManager = new MimeManager(this.movementManager);
   }
 
   /**
@@ -72,7 +84,7 @@ export class Game {
 
     if (currentPlayer.mustSkipTurn()) {
       this.turnManager.advanceTurn();
-      return { type: 'none' };
+      return { type: "none" };
     }
 
     const result = this.executePlayerTurn(currentPlayer);
@@ -104,64 +116,43 @@ export class Game {
     // Gestione movimento e collisioni
     const movementResult = this.movementManager.movePlayerAndCheckCollision(
       player,
-      newPosition
+      newPosition,
     );
 
     if (movementResult.gameEnded) {
-      return { type: 'none' }; // Gioco terminato, nessuna azione aggiuntiva
+      return { type: "none" }; // Gioco terminato, nessuna azione aggiuntiva
     }
 
     if (movementResult.collision) {
-      return { type: 'battle', data: movementResult.collision };
+      return { type: "battle", data: movementResult.collision };
     }
 
     // Gestione effetti caselle speciali
     const specialAction = this.specialSquareProcessor.processSquareEffects(
       player,
-      this.turnManager.getPlayers()
+      this.turnManager.getPlayers(),
     );
 
     // Se è mimo restituisco specialAction
     if (specialAction) {
-      return { type: 'mime', data: specialAction };
+      return { type: "mime", data: specialAction };
     }
 
-    return { type: 'none' };
+    return { type: "none" };
   }
 
   /**
-   * Risolve una battaglia spostando il vincitore di una posizione in avanti.
-   * Controlla se si verifica una nuova collisione nella posizione di destinazione.
+   * Risolve una battaglia utilizzando il BattleManager.
    * @param battle - L'oggetto battaglia da risolvere
    * @param winner - Il giocatore vincitore della battaglia
    * @returns Un nuovo oggetto Battle se si verifica un'altra collisione, null altrimenti
    */
   resolveBattle(battle: Battle, winner: Player): Battle | null {
-    // Valida che il vincitore sia parte della battaglia
-    battle.resolveBattle(winner);
-
-    // Sposta il vincitore in avanti di una posizione
-    const movementResult = this.movementManager.moveWinnerForward(winner);
-
-    if (movementResult.gameEnded) {
-      return null; // Gioco terminato, nessuna collisione possibile
-    }
-
-    if (movementResult.collision) {
-      return movementResult.collision; // Nuova battaglia necessaria
-    }
-
-    // Elabora gli effetti delle caselle speciali nella nuova posizione
-    this.specialSquareProcessor.processSquareEffects(
-      winner,
-      this.turnManager.getPlayers()
-    );
-
-    return null;
+    return this.battleManager.resolveBattle(battle, winner);
   }
 
   /**
-   * Risolve un'azione di mimo, applicando gli effetti in base al successo o fallimento.
+   * Risolve un'azione di mimo utilizzando il MimeManager.
    * @param mimeAction - L'oggetto Mime da risolvere
    * @param success - True se il mimo è stato indovinato, false altrimenti
    * @param guessPlayer - Il giocatore che ha indovinato il mimo (richiesto se success è true)
@@ -170,40 +161,9 @@ export class Game {
   resolveMime(
     mimeAction: Mime,
     success: boolean,
-    guessPlayer?: Player
+    guessPlayer?: Player,
   ): [Battle | null, Battle | null] {
-    if (success && guessPlayer) {
-      return this.handleMimeSuccess(mimeAction.mimePlayer, guessPlayer);
-    } else {
-      this.handleMimeFailure(mimeAction.mimePlayer);
-      return [null, null];
-    }
-  }
-
-  /**
-   * Gestisce il successo del mimo spostando entrambi i giocatori in avanti.
-   * @param mimePlayer - Il giocatore che ha eseguito il mimo
-   * @param guessPlayer - Il giocatore che ha indovinato il mimo
-   * @returns Array con eventuali collisioni per entrambi i giocatori
-   */
-  private handleMimeSuccess(
-    mimePlayer: Player,
-    guessPlayer: Player
-  ): [Battle | null, Battle | null] {
-    const [result1, result2] = this.movementManager.moveBothPlayersForward(
-      mimePlayer,
-      guessPlayer
-    );
-
-    return [result1.collision, result2.collision];
-  }
-
-  /**
-   * Gestisce il fallimento del mimo facendo saltare il prossimo turno al giocatore.
-   * @param mimePlayer - Il giocatore che ha eseguito il mimo
-   */
-  private handleMimeFailure(mimePlayer: Player): void {
-    mimePlayer.skipNextTurn();
+    return this.mimeManager.resolveMime(mimeAction, success, guessPlayer);
   }
 
   // Getter per accesso ai dati del gioco

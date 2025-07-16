@@ -1,7 +1,7 @@
+import { Battle } from "../battle";
 import type { Board } from "../board";
 import type { Player } from "../player";
-import { Battle } from "../battle";
-import type { GameStateManager } from "./GameStateManager";
+import type { GameStateManager } from "./game-state-manager";
 import type { MovementResult } from "./types";
 
 /**
@@ -16,7 +16,7 @@ export class MovementManager {
    */
   constructor(
     private board: Board,
-    private gameStateManager: GameStateManager
+    private gameStateManager: GameStateManager,
   ) {}
 
   /**
@@ -26,14 +26,20 @@ export class MovementManager {
    * @param newPosition - La nuova posizione desiderata
    * @returns Risultato del movimento con eventuale collisione e stato del gioco
    */
-  movePlayerAndCheckCollision(player: Player, newPosition: number): MovementResult {
+  movePlayerAndCheckCollision(
+    player: Player,
+    newPosition: number,
+  ): MovementResult {
     const boardSize = this.board.getSquares().length;
     const finalPosition = Math.min(newPosition, boardSize);
-    
+
     this.board.movePlayer(player, finalPosition);
-    
+
     // Controlla condizione di vittoria
-    const gameEnded = this.gameStateManager.checkWinCondition(player, finalPosition);
+    const gameEnded = this.gameStateManager.checkWinCondition(
+      player,
+      finalPosition,
+    );
     if (gameEnded) {
       return { collision: null, gameEnded: true };
     }
@@ -54,7 +60,7 @@ export class MovementManager {
 
     if (playersOnSquare.length > 1) {
       // Trova l'altro giocatore (non quello corrente)
-      const opponent = playersOnSquare.find(p => p !== currentPlayer);
+      const opponent = playersOnSquare.find((p) => p !== currentPlayer);
       if (opponent) {
         return new Battle(currentPlayer, opponent);
       }
@@ -80,7 +86,10 @@ export class MovementManager {
    * @param player2 - Secondo giocatore da spostare
    * @returns Array con i risultati del movimento di entrambi i giocatori
    */
-  moveBothPlayersForward(player1: Player, player2: Player): [MovementResult, MovementResult] {
+  moveBothPlayersForward(
+    player1: Player,
+    player2: Player,
+  ): [MovementResult, MovementResult] {
     const result1 = this.moveWinnerForward(player1);
     const result2 = this.moveWinnerForward(player2);
     return [result1, result2];

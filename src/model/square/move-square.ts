@@ -74,7 +74,7 @@ class MovePlayerCommand implements Command {
 
     // Sposta il giocatore alla nuova posizione (non può andare sotto 0)
     context.board.movePlayer(context.player, newPosition);
-    
+
     return undefined;
   }
 }
