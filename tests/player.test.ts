@@ -2,15 +2,22 @@ import { describe, expect, test } from "vitest";
 import { Player } from "@/model/player";
 
 describe("Player", () => {
-  test("Position", () => {
-    const player = new Player(0, "Sam");
-    expect(player.getName()).toBe("Sam");
+  test("Name and id", () => {
+    const player = new Player(0, "Samuel");
+    expect(player.getName()).toBe("Samuel");
     expect(player.getId()).toBe(0);
+  });
 
-    player.setPosition(1);
+  test("Skip turn true", () => {
+    const player = new Player(0, "Samuel");
+    player.skipNextTurn();
+    const skip = player.mustSkipTurn();
+    expect(skip).toBeTruthy();
+  });
 
-    expect(player.getPosition()).toBe(1);
-
-    expect(() => player.setPosition(-1)).toThrow();
+  test("Skip turn true", () => {
+    const player = new Player(0, "Samuel");
+    const skip = player.mustSkipTurn();
+    expect(skip).toBeFalsy();
   });
 });

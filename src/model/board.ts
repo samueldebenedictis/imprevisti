@@ -1,47 +1,90 @@
+import type { Player } from "./player";
 import { Square } from "./square";
 
-export type BoardT = InstanceType<typeof Board>;
-
-class Board {
+/**
+ * Gestisce il tabellone di gioco e le posizioni dei giocatori.
+ * Mantiene traccia delle caselle del tabellone e della posizione di ogni giocatore.
+ */
+export class Board {
   private squares: Square[];
+  private playersPosition: Map<Player, number>;
 
-  constructor(board: Square[]) {
-    this.squares = board;
+  /**
+   * Crea un nuovo tabellone con le caselle specificate e inizializza le posizioni dei giocatori.
+   * Tutti i giocatori iniziano dalla posizione 0.
+   * @param squares - Array delle caselle del tabellone
+   * @param players - Array dei giocatori da posizionare sul tabellone
+   */
+  constructor(squares: Square[], players: Player[]) {
+    this.squares = squares;
+    this.playersPosition = new Map(players.map((p) => [p, 0]));
   }
 
+  /**
+   * Restituisce tutte le caselle del tabellone.
+   * @returns Array di tutte le caselle del tabellone
+   */
   getSquares = () => this.squares;
-}
 
-export class BoardBuilder {
-  private board: Square[] | undefined;
-  private boardSize: number | undefined;
+  /**
+   * Restituisce la posizione attuale del giocatore specificato.
+   * @param player - Il giocatore di cui si vuole conoscere la posizione
+   * @returns Indice della posizione del giocatore sul tabellone
+   */
+  getPlayerPosition = (player: Player) =>
+    this.playersPosition.get(player) as number;
 
-  setBoard = (squareArray: Square[]) => {
-    this.board = squareArray;
-    return this;
+  /**
+   * Sposta il giocatore specificato alla nuova posizione.
+   * @param player - Il giocatore da spostare
+   * @param position - La nuova posizione del giocatore
+   */
+  movePlayer = (player: Player, position: number) => {
+    this.playersPosition.set(player, position);
   };
 
+  /**
+   * Restituisce tutti i giocatori attualmente presenti sulla casella specificata.
+   * @param position - L'indice della casella da controllare
+   * @returns Array dei giocatori presenti sulla casella
+   */
+  getPlayersOnSquare = (position: number): Player[] => {
+    return Array.from(this.playersPosition.entries())
+      .filter(([_player, pos]) => pos === position)
+      .map(([player, _pos]) => player);
+  };
+}
+
+/**
+ * Builder per la costruzione delle caselle del tabellone.
+ * Utilizza il pattern Builder per creare un array di caselle con dimensione specificata.
+ */
+export class SquaresBuilder {
+  private squares: Square[] | undefined;
+  private boardSize: number | undefined;
+
+  /**
+   * Imposta la dimensione del tabellone.
+   * @param size - Numero di caselle del tabellone
+   * @returns L'istanza del builder per il method chaining
+   */
   setBoardSize = (size: number) => {
     this.boardSize = size;
     return this;
   };
 
-  buildWithSpecificBoard() {
-    if (this.board === undefined) {
-      throw new Error("Board not defined");
-    }
-    return new Board(this.board);
-  }
-
-  buildWithSize() {
+  /**
+   * Costruisce e restituisce l'array delle caselle del tabellone.
+   * Crea caselle numerate da 0 alla dimensione specificata - 1.
+   * @returns Array delle caselle create
+   * @throws Errore se la dimensione non è stata definita
+   */
+  build() {
     if (this.boardSize === undefined) {
       throw new Error("Size not defined");
     }
-    const squaresNumbers = Array.from(
-      { length: this.boardSize },
-      (_, i) => i + 1,
-    );
-    const b = squaresNumbers.map((n) => new Square(n));
-    return new Board(b);
+    const squaresNumbers = Array.from({ length: this.boardSize }, (_, i) => i);
+    this.squares = squaresNumbers.map((n) => new Square(n));
+    return this.squares;
   }
 }

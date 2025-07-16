@@ -1,79 +1,228 @@
-import type { BoardT } from "./board";
+import type { Battle } from "./battle";
+import { Board } from "./board";
+import type { Card } from "./card";
+import { Deck } from "./deck";
 import { Dice } from "./dice";
+import {
+  BattleManager,
+  type GameActionResult,
+  GameStateManager,
+  MimeManager,
+  MovementManager,
+  SpecialSquareProcessor,
+  TurnManager,
+} from "./managers";
 import { Player } from "./player";
-import { MoveSquare } from "./square";
+import type { Mime, Square } from "./square";
 
+/**
+ * Classe principale che gestisce la logica del gioco da tavolo.
+ * Coordina tutti i componenti del gioco attraverso manager specializzati.
+ */
 export class Game {
-  private boardSize: number;
-  private board: BoardT;
-  private players: Player[];
-  private turn: number;
-  private round: number;
+  private board: Board;
   private dice: Dice;
-  private gameEnded: boolean;
-  private winner: Player | undefined;
+  private deck: Deck;
 
-  constructor(board: BoardT, playersName: string[]) {
-    this.boardSize = board.getSquares().length;
-    this.board = board;
-    this.players = playersName.map((name, i) => new Player(i, name));
-    this.round = 1;
-    this.turn = 0;
-    this.dice = new Dice(6);
-    this.gameEnded = false;
+  // Manager per responsabilità specifiche
+  private turnManager: TurnManager;
+  private movementManager: MovementManager;
+  private gameStateManager: GameStateManager;
+  private specialSquareProcessor: SpecialSquareProcessor;
+  private battleManager: BattleManager;
+  private mimeManager: MimeManager;
+
+  /**
+   * Crea una nuova partita con i parametri specificati.
+   * @param squares - Array delle caselle che compongono il tabellone
+   * @param playersName - Array dei nomi dei giocatori
+   * @param cards - Array delle carte del gioco (opzionale, default array vuoto)
+   * @param diceFaces - Numero di facce del dado (opzionale, default 6)
+   */
+  constructor(
+    squares: Square[],
+    playersName: string[],
+    cards: Card[] = [],
+    diceFaces = 6,
+  ) {
+    // Inizializzazione componenti base
+    const players = playersName.map((name, i) => new Player(i, name));
+    this.board = new Board(squares, players);
+    this.dice = new Dice(diceFaces);
+    this.deck = new Deck(cards);
+
+    // Inizializzazione manager
+    this.turnManager = new TurnManager(players);
+    this.gameStateManager = new GameStateManager(squares.length);
+    this.movementManager = new MovementManager(
+      this.board,
+      this.gameStateManager,
+    );
+    this.specialSquareProcessor = new SpecialSquareProcessor(
+      this.board,
+      this.deck,
+      this.dice,
+      this.movementManager,
+      this.gameStateManager,
+    );
+    this.battleManager = new BattleManager(
+      this.movementManager,
+      this.specialSquareProcessor,
+      this.turnManager,
+    );
+    this.mimeManager = new MimeManager(this.movementManager);
   }
-
-  getBoard = () => this.board.getSquares();
-  getPlayers = () => this.players;
-  getTurn = () => this.turn;
-  getRound = () => this.round;
-
-  getWinner = () => this.winner;
-
-  private endGameAndSetWinner = (player: Player) => {
-    this.winner = player;
-    this.gameEnded = true;
-  };
-
-  private movePlayer = (newPosition: number, actualPlayer: Player) => {
-    const landingPosition =
-      newPosition >= this.boardSize ? this.boardSize : newPosition;
-
-    if (landingPosition === this.boardSize) {
-      this.endGameAndSetWinner(actualPlayer);
-    }
-
-    const landingSquare = this.board.getSquares()[landingPosition];
-    if (landingSquare instanceof MoveSquare) {
-      const specialMoveValue = landingSquare.getValue();
-      this.movePlayer(newPosition + specialMoveValue, actualPlayer);
-      return;
-    }
-
-    return actualPlayer.setPosition(landingPosition);
-  };
 
   /**
    * Il giocatore attuale lancia il dado e aggiorna la sua posizione.
-   * Il turno ed eventualmente il round vengono incrementati.
-   * Se un giocatore arriva all'ultima casella vince e il gioco termina.
+   * Il turno viene automaticamente incrementato alla fine dell'azione.
+   * @returns Risultato dell'azione di gioco (battaglia, mimo o nessuna azione speciale)
+   * @throws Errore se il gioco è già terminato
    */
-  playTurn = () => {
-    if (!this.gameEnded) {
-      const actualPlayer = this.players[this.turn];
-      const diceValue = this.dice.roll();
-      // TODO: refactor check sul dado e updatePlayer solo con valori > 0
-      const newPosition = actualPlayer.getPosition() + diceValue;
-      this.movePlayer(newPosition, actualPlayer);
+  playTurn(): GameActionResult {
+    this.validateGameState();
 
-      if (this.turn === this.players.length - 1) {
-        this.turn = 0;
-        this.round++;
-      } else {
-        this.turn++;
-      }
-    } else {
-      throw new Error("playTurn not avalaible, the game is already ended");
+    const currentPlayer = this.turnManager.getCurrentPlayer();
+
+    if (currentPlayer.mustSkipTurn()) {
+      this.turnManager.advanceTurn();
+      return { type: "none" };
     }
-  };
+
+    const result = this.executePlayerTurn(currentPlayer);
+    this.turnManager.advanceTurn();
+
+    return result;
+  }
+
+  /**
+   * Valida che il gioco sia in uno stato valido per continuare.
+   * @throws Errore se il gioco è già terminato
+   */
+  private validateGameState(): void {
+    if (this.gameStateManager.isGameEnded()) {
+      throw new Error("Cannot play turn: game has already ended");
+    }
+  }
+
+  /**
+   * Esegue il turno di un giocatore specifico.
+   * @param player - Il giocatore che deve giocare il turno
+   * @returns Risultato dell'azione di gioco
+   */
+  private executePlayerTurn(player: Player): GameActionResult {
+    const diceValue = this.dice.roll();
+    const currentPosition = this.board.getPlayerPosition(player);
+    const newPosition = currentPosition + diceValue;
+
+    // Gestione movimento e collisioni
+    const movementResult = this.movementManager.movePlayerAndCheckCollision(
+      player,
+      newPosition,
+    );
+
+    if (movementResult.gameEnded) {
+      return { type: "none" }; // Gioco terminato, nessuna azione aggiuntiva
+    }
+
+    if (movementResult.collision) {
+      return { type: "battle", data: movementResult.collision };
+    }
+
+    // Gestione effetti caselle speciali
+    const specialAction = this.specialSquareProcessor.processSquareEffects(
+      player,
+      this.turnManager.getPlayers(),
+    );
+
+    // Se è mimo restituisco specialAction
+    if (specialAction) {
+      return { type: "mime", data: specialAction };
+    }
+
+    return { type: "none" };
+  }
+
+  /**
+   * Risolve una battaglia utilizzando il BattleManager.
+   * @param battle - L'oggetto battaglia da risolvere
+   * @param winner - Il giocatore vincitore della battaglia
+   * @returns Un nuovo oggetto Battle se si verifica un'altra collisione, null altrimenti
+   */
+  resolveBattle(battle: Battle, winner: Player): Battle | null {
+    return this.battleManager.resolveBattle(battle, winner);
+  }
+
+  /**
+   * Risolve un'azione di mimo utilizzando il MimeManager.
+   * @param mimeAction - L'oggetto Mime da risolvere
+   * @param success - True se il mimo è stato indovinato, false altrimenti
+   * @param guessPlayer - Il giocatore che ha indovinato il mimo (richiesto se success è true)
+   * @returns Array con eventuali collisioni risultanti dal movimento dei giocatori
+   */
+  resolveMime(
+    mimeAction: Mime,
+    success: boolean,
+    guessPlayer?: Player,
+  ): [Battle | null, Battle | null] {
+    return this.mimeManager.resolveMime(mimeAction, success, guessPlayer);
+  }
+
+  // Getter per accesso ai dati del gioco
+  /**
+   * Restituisce il tabellone di gioco.
+   * @returns L'istanza del tabellone corrente
+   */
+  getBoard(): Board {
+    return this.board;
+  }
+
+  /**
+   * Restituisce tutti i giocatori della partita.
+   * @returns Array di tutti i giocatori
+   */
+  getPlayers(): Player[] {
+    return this.turnManager.getPlayers();
+  }
+
+  /**
+   * Restituisce la posizione attuale del giocatore specificato.
+   * @param player - Il giocatore di cui si vuole conoscere la posizione
+   * @returns Posizione del giocatore sul tabellone
+   */
+  getPlayerPosition(player: Player): number {
+    return this.board.getPlayerPosition(player);
+  }
+
+  /**
+   * Restituisce l'indice del turno corrente.
+   * @returns Indice del giocatore che deve giocare il turno corrente
+   */
+  getTurn(): number {
+    return this.turnManager.getCurrentTurn();
+  }
+
+  /**
+   * Restituisce il numero del round corrente.
+   * @returns Numero del round attuale (inizia da 1)
+   */
+  getRound(): number {
+    return this.turnManager.getCurrentRound();
+  }
+
+  /**
+   * Restituisce il vincitore della partita, se presente.
+   * @returns Il giocatore vincitore o undefined se la partita non è ancora terminata
+   */
+  getWinner(): Player | undefined {
+    return this.gameStateManager.getWinner();
+  }
+
+  /**
+   * Verifica se il gioco è terminato.
+   * @returns True se il gioco è terminato, false altrimenti
+   */
+  isGameEnded(): boolean {
+    return this.gameStateManager.isGameEnded();
+  }
 }
