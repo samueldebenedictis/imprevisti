@@ -3,12 +3,12 @@ name: Node.js CI
 on: [push]
 
 jobs:
-  build_and_test:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: npm install, build, and test
+      - name: npm install and test
         run: |
           npm install
           npm run coverage
@@ -17,3 +17,4 @@ jobs:
         with:
           name: coverage
           path: coverage
+          retention-days: 1
