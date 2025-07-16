@@ -1,6 +1,7 @@
 import type { Board } from "./board";
 import type { Deck } from "./deck";
 import type { Dice } from "./dice";
+import type { GameStateManager, MovementManager } from "./managers";
 import type { Player } from "./player";
 
 /**
@@ -15,6 +16,8 @@ export class GameContext {
    * @param players - Array di tutti i giocatori della partita
    * @param deck - Il mazzo di carte del gioco
    * @param dice - Il dado utilizzato nel gioco
+   * @param movementManager - Manager per gestire i movimenti dei giocatori
+   * @param gameStateManager - Manager per gestire lo stato del gioco
    */
   constructor(
     public player: Player,
@@ -22,5 +25,7 @@ export class GameContext {
     public players: Player[],
     public deck: Deck,
     public dice: Dice,
+    public movementManager: MovementManager,
+    public gameStateManager: GameStateManager,
   ) {}
 }

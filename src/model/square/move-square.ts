@@ -61,9 +61,9 @@ class MovePlayerCommand implements Command {
   constructor(private moveValue: number) {}
 
   /**
-   * Esegue il movimento del giocatore.
+   * Esegue il movimento del giocatore utilizzando il MovementManager.
    * Calcola la nuova posizione basata sulla posizione corrente e il valore di movimento.
-   * @param context - Contesto di gioco contenente il giocatore e il tabellone
+   * @param context - Contesto di gioco contenente il giocatore e i manager
    * @returns undefined (nessun mimo da gestire)
    */
   execute(context: GameContext): undefined {
@@ -72,8 +72,13 @@ class MovePlayerCommand implements Command {
     ) as number;
     const newPosition = Math.max(0, currentPosition + this.moveValue);
 
-    // Sposta il giocatore alla nuova posizione (non può andare sotto 0)
-    context.board.movePlayer(context.player, newPosition);
+    // Utilizza il MovementManager per gestire il movimento
+    // Nota: per le caselle speciali non gestiamo collisioni o fine gioco qui
+    // poiché sono già gestite dal flusso principale del gioco
+    context.movementManager.movePlayerAndCheckCollision(
+      context.player,
+      newPosition,
+    );
 
     return undefined;
   }

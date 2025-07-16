@@ -62,6 +62,8 @@ export class Game {
       this.board,
       this.deck,
       this.dice,
+      this.movementManager,
+      this.gameStateManager,
     );
     this.battleManager = new BattleManager(
       this.movementManager,

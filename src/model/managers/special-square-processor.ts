@@ -4,6 +4,8 @@ import type { Dice } from "../dice";
 import { GameContext } from "../gameContext";
 import type { Player } from "../player";
 import { type Mime, MimeSquare, SpecialSquare } from "../square";
+import type { GameStateManager } from "./game-state-manager";
+import type { MovementManager } from "./movement-manager";
 
 /**
  * Gestisce l'elaborazione degli effetti delle caselle speciali.
@@ -11,15 +13,19 @@ import { type Mime, MimeSquare, SpecialSquare } from "../square";
  */
 export class SpecialSquareProcessor {
   /**
-   * Crea un nuovo processore delle caselle speciali.
+   * Crea un nuovo processore per le caselle speciali.
    * @param board - Il tabellone di gioco
-   * @param deck - Il mazzo di carte del gioco
-   * @param dice - Il dado utilizzato nel gioco
+   * @param deck - Il mazzo di carte
+   * @param dice - Il dado del gioco
+   * @param movementManager - Manager per gestire i movimenti
+   * @param gameStateManager - Manager per gestire lo stato del gioco
    */
   constructor(
     private board: Board,
     private deck: Deck,
     private dice: Dice,
+    private movementManager: MovementManager,
+    private gameStateManager: GameStateManager,
   ) {}
 
   /**
@@ -41,6 +47,8 @@ export class SpecialSquareProcessor {
       allPlayers,
       this.deck,
       this.dice,
+      this.movementManager,
+      this.gameStateManager,
     );
 
     // Casella MimeSquare - restituisce un oggetto Mime
