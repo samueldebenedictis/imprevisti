@@ -1,12 +1,12 @@
 import type { Battle } from "../battle";
-import type { Mime } from "../square";
+import type { Mime, Quiz } from "../square";
 
 /**
- * Risultato di un'azione di gioco che può essere una battaglia, un mimo o nessuna azione speciale.
+ * Risultato di un'azione di gioco che può essere una battaglia, un mimo, un quiz o nessuna azione speciale.
  */
 export type GameActionResult = {
-  type: "battle" | "mime" | "none";
-  data?: Battle | Mime;
+  type: "battle" | "mime" | "quiz" | "none";
+  data?: Battle | Mime | Quiz;
 };
 
 /**

@@ -14,7 +14,8 @@ export class GameContext {
    * @param player - Il giocatore attualmente attivo
    * @param board - Il tabellone di gioco
    * @param players - Array di tutti i giocatori della partita
-   * @param deck - Il mazzo di carte del gioco
+   * @param mimeDeck - Il mazzo di carte per il mimo
+   * @param quizDeck - Il mazzo di carte per il quiz
    * @param dice - Il dado utilizzato nel gioco
    * @param movementManager - Manager per gestire i movimenti dei giocatori
    * @param gameStateManager - Manager per gestire lo stato del gioco
@@ -23,7 +24,8 @@ export class GameContext {
     public player: Player,
     public board: Board,
     public players: Player[],
-    public deck: Deck,
+    public mimeDeck: Deck,
+    public quizDeck: Deck,
     public dice: Dice,
     public movementManager: MovementManager,
     public gameStateManager: GameStateManager,

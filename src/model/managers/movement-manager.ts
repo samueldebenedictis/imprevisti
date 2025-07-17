@@ -80,6 +80,15 @@ export class MovementManager {
   }
 
   /**
+   * Sposta un giocatore di una posizione in avanti.
+   * @param player - Il giocatore da spostare
+   * @returns Risultato del movimento con eventuale nuova collisione
+   */
+  movePlayerForward(player: Player): MovementResult {
+    return this.moveWinnerForward(player);
+  }
+
+  /**
    * Sposta due giocatori di una posizione in avanti.
    * Utilizzato per il successo del mimo.
    * @param player1 - Primo giocatore da spostare

@@ -3,7 +3,13 @@ import type { Deck } from "../deck";
 import type { Dice } from "../dice";
 import { GameContext } from "../gameContext";
 import type { Player } from "../player";
-import { type Mime, MimeSquare, SpecialSquare } from "../square";
+import {
+  type Mime,
+  MimeSquare,
+  type Quiz,
+  QuizSquare,
+  SpecialSquare,
+} from "../square";
 import type { GameStateManager } from "./game-state-manager";
 import type { MovementManager } from "./movement-manager";
 
@@ -15,14 +21,16 @@ export class SpecialSquareProcessor {
   /**
    * Crea un nuovo processore per le caselle speciali.
    * @param board - Il tabellone di gioco
-   * @param deck - Il mazzo di carte
+   * @param mimeDeck - Il mazzo di carte per il mimo
+   * @param quizDeck - Il mazzo di carte per il quiz
    * @param dice - Il dado del gioco
    * @param movementManager - Manager per gestire i movimenti
    * @param gameStateManager - Manager per gestire lo stato del gioco
    */
   constructor(
     private board: Board,
-    private deck: Deck,
+    private mimeDeck: Deck,
+    private quizDeck: Deck,
     private dice: Dice,
     private movementManager: MovementManager,
     private gameStateManager: GameStateManager,
@@ -34,9 +42,12 @@ export class SpecialSquareProcessor {
    * ed esegue il comando associato.
    * @param player - Il giocatore per cui elaborare gli effetti della casella
    * @param allPlayers - Array di tutti i giocatori della partita
-   * @returns Un oggetto Mime se il giocatore atterra su una MimeSquare, undefined altrimenti
+   * @returns Un oggetto Mime o Quiz se il giocatore atterra su una casella speciale, undefined altrimenti
    */
-  processSquareEffects(player: Player, allPlayers: Player[]): Mime | undefined {
+  processSquareEffects(
+    player: Player,
+    allPlayers: Player[],
+  ): Mime | Quiz | undefined {
     const playerPosition = this.board.getPlayerPosition(player);
     const landingSquare = this.board.getSquares()[playerPosition];
 
@@ -45,7 +56,8 @@ export class SpecialSquareProcessor {
       player,
       this.board,
       allPlayers,
-      this.deck,
+      this.mimeDeck,
+      this.quizDeck,
       this.dice,
       this.movementManager,
       this.gameStateManager,
@@ -57,6 +69,10 @@ export class SpecialSquareProcessor {
       // Casella MimeSquare - restituisce un oggetto Mime
       case "mime": {
         const command = (landingSquare as MimeSquare).getCommand();
+        return command.execute(gameContext);
+      }
+      case "quiz": {
+        const command = (landingSquare as QuizSquare).getCommand();
         return command.execute(gameContext);
       }
       // Casella SpecialSquare - esegue il comando senza restituire valori
@@ -84,13 +100,17 @@ export class SpecialSquareProcessor {
   /**
    * Restituisce il tipo di casella speciale alla posizione specificata.
    * @param position - La posizione della casella da controllare
-   * @returns Il tipo di casella ('mime', 'special', 'normal')
+   * @returns Il tipo di casella ('mime', 'special', 'normal', 'quiz')
    */
-  getSquareType(position: number): "mime" | "special" | "normal" {
+  getSquareType(position: number): "mime" | "special" | "normal" | "quiz" {
     const square = this.board.getSquares()[position];
 
     if (square instanceof MimeSquare) {
       return "mime";
+    }
+
+    if (square instanceof QuizSquare) {
+      return "quiz";
     }
 
     if (square instanceof SpecialSquare) {

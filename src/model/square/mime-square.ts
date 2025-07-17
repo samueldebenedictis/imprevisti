@@ -42,7 +42,7 @@ class MimeCommand implements Command {
    */
   execute(context: GameContext) {
     const mimePlayer = context.player;
-    const card = context.deck.draw();
+    const card = context.mimeDeck.draw();
     const mimeAction = new Mime(mimePlayer, card);
     return mimeAction;
   }
