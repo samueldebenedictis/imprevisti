@@ -40,6 +40,7 @@ describe("Mime square", () => {
       [square, mimeSquare],
       ["Renzo"],
       [new Card("Test", "Test")],
+      [new Card("Test", "Test")],
       1,
     );
 
@@ -66,6 +67,7 @@ describe("Mime square", () => {
     const game = new Game(
       [square, mimeSquare],
       ["Renzo", "Lucia"],
+      [new Card("Test", "Test")],
       [new Card("Test", "Test")],
       1,
     );
