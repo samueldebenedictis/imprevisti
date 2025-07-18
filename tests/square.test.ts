@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { Card } from "@/model/card";
+import { Card } from "@/model/deck/card";
 import { Game } from "@/model/game";
 import {
   GoToStartSquare,

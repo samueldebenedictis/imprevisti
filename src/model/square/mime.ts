@@ -1,4 +1,4 @@
-import type { Card } from "../card";
+import type { Card } from "../deck/card";
 import type { Player } from "../player";
 
 export class Mime {

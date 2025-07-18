@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { Card } from "../src/model/card";
+import { Card } from "../src/model/deck/card";
 import { Game } from "../src/model/game";
 import { Quiz, QuizSquare, SpecialSquare, Square } from "../src/model/square";
 

@@ -1,7 +1,7 @@
 import type { Battle } from "./battle";
 import { Board } from "./board";
-import type { Card } from "./card";
-import { Deck } from "./deck";
+import type { Card } from "./deck/card";
+import { Deck } from "./deck/deck";
 import { Dice } from "./dice";
 import {
   BattleManager,

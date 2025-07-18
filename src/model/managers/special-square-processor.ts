@@ -1,5 +1,5 @@
 import type { Board } from "../board";
-import type { Deck } from "../deck";
+import type { Deck } from "../deck/deck";
 import type { Dice } from "../dice";
 import { GameContext } from "../gameContext";
 import type { Player } from "../player";

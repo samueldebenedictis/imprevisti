@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { Card } from "@/model/card";
-import { Deck } from "@/model/deck";
+import { Card } from "@/model/deck/card";
+import { Deck } from "@/model/deck/deck";
 
 describe("Deck", () => {
   const cards = [
