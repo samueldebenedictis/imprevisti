@@ -36,7 +36,7 @@ describe("Deck", () => {
     expect(draw).toHaveLength(10);
     expect(draw).not.toEqual(cards);
 
-    expect(draw.sort((a, b) => a.name.localeCompare(b.name)));
+    expect(draw.sort((a, b) => a.cardTitle.localeCompare(b.cardTitle)));
     expect(draw).toEqual(cards);
   });
 

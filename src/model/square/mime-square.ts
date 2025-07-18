@@ -1,5 +1,5 @@
+import { Mime } from "../deck/mime";
 import type { GameContext } from "../gameContext";
-import { Mime } from "./mime";
 import { type Command, SpecialSquare } from "./special-square";
 
 /**

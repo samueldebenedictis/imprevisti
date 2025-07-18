@@ -1,7 +1,8 @@
 import type { Battle } from "./battle";
 import { Board } from "./board";
-import type { Card } from "./deck/card";
-import { Deck } from "./deck/deck";
+import type { Deck } from "./deck/deck";
+import { MimeDeck } from "./deck/mime-deck";
+import { QuizDeck } from "./deck/quiz-deck";
 import { Dice } from "./dice";
 import {
   BattleManager,
@@ -39,23 +40,15 @@ export class Game {
    * Crea una nuova partita con i parametri specificati.
    * @param squares - Array delle caselle che compongono il tabellone
    * @param playersName - Array dei nomi dei giocatori
-   * @param mimeCards - Array delle carte per il gioco del mimo
-   * @param quizCards - Array delle carte per il gioco del quiz
    * @param diceFaces - Numero di facce del dado (opzionale, default 6)
    */
-  constructor(
-    squares: Square[],
-    playersName: string[],
-    mimeCards: Card[] = [],
-    quizCards: Card[] = [],
-    diceFaces = 6,
-  ) {
+  constructor(squares: Square[], playersName: string[], diceFaces = 6) {
     // Inizializzazione componenti base
     const players = playersName.map((name, i) => new Player(i, name));
     this.board = new Board(squares, players);
     this.dice = new Dice(diceFaces);
-    this.mimeDeck = new Deck(mimeCards);
-    this.quizDeck = new Deck(quizCards);
+    this.mimeDeck = new MimeDeck();
+    this.quizDeck = new QuizDeck();
 
     // Inizializzazione manager
     this.turnManager = new TurnManager(players);

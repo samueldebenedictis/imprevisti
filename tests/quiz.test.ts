@@ -1,5 +1,4 @@
 import { describe, expect, test } from "vitest";
-import { Card } from "../src/model/deck/card";
 import { Game } from "../src/model/game";
 import { Quiz, QuizSquare, SpecialSquare, Square } from "../src/model/square";
 
@@ -8,13 +7,7 @@ describe("Quiz square", () => {
     const square = new Square(0);
     const quizSquare = new QuizSquare(1);
 
-    const game = new Game(
-      [square, quizSquare],
-      ["Renzo"],
-      [new Card("Test", "Test")],
-      [new Card("Test", "Test")],
-      1,
-    );
+    const game = new Game([square, quizSquare], ["Renzo"], 1);
 
     expect(quizSquare.getNumber()).toBe(1);
     expect(quizSquare).toBeInstanceOf(SpecialSquare);
@@ -36,13 +29,7 @@ describe("Quiz square", () => {
     const square = new Square(0);
     const quizSquare = new QuizSquare(1);
 
-    const game = new Game(
-      [square, quizSquare],
-      ["Renzo"],
-      [new Card("Test", "Test")],
-      [new Card("Test", "Test")],
-      1,
-    );
+    const game = new Game([square, quizSquare], ["Renzo"], 1);
 
     const renzo = game.getPlayers()[0];
     expect(quizSquare.getNumber()).toBe(1);

@@ -1,6 +1,6 @@
+import type { Mime } from "../deck/mime";
+import type { Quiz } from "../deck/quiz";
 import type { GameContext } from "../gameContext";
-import type { Mime } from "./mime";
-import type { Quiz } from "./quiz";
 import { Square } from "./square";
 
 /**

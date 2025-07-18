@@ -1,18 +1,18 @@
 /**
  * Rappresenta una carta del gioco.
- * Ogni carta ha un nome e una descrizione che definiscono il suo effetto o contenuto.
+ * Ogni carta ha un nome e una descrizione che definiscono o contenuto.
  */
 export class Card {
-  description: string;
-  name: string;
+  cardTitle: string;
+  cardText: string;
 
   /**
    * Crea una nuova carta con nome e descrizione specificati.
-   * @param name - Nome della carta
-   * @param description - Descrizione della carta che spiega il suo effetto
+   * @param cardTitle - Nome della carta o titolo, visibile
+   * @param cardText - Descrizione della carta, nascosto o segreto
    */
-  constructor(name: string, description: string) {
-    this.description = description;
-    this.name = name;
+  constructor(cardTitle: string, cardText: string) {
+    this.cardTitle = cardTitle;
+    this.cardText = cardText;
   }
 }

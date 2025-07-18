@@ -1,5 +1,5 @@
+import { Quiz } from "../deck/quiz";
 import type { GameContext } from "../gameContext";
-import { Quiz } from "./quiz";
 import { type Command, SpecialSquare } from "./special-square";
 
 /**
