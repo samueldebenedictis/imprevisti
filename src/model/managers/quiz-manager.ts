@@ -47,12 +47,13 @@ export class QuizManager {
     quizPlayer.skipNextTurn();
   }
 
-  /**
-   * Controlla se un quiz è valido (ha tutte le proprietà necessarie).
-   * @param quizAction - L'azione quiz da convalidare.
-   * @returns True se il quiz è valido, altrimenti false.
-   */
-  isValidQuiz(quizAction: Quiz): boolean {
-    return !!(quizAction.quizPlayer && quizAction.cardTopic);
-  }
+  // TODO: remove if unused
+  // /**
+  //  * Controlla se un quiz è valido (ha tutte le proprietà necessarie).
+  //  * @param quizAction - L'azione quiz da convalidare.
+  //  * @returns True se il quiz è valido, altrimenti false.
+  //  */
+  // isValidQuiz(quizAction: Quiz): boolean {
+  //   return !!(quizAction.quizPlayer && quizAction.cardTopic);
+  // }
 }

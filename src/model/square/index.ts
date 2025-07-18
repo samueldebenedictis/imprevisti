@@ -1,4 +1,5 @@
-export { Mime, MimeSquare } from "./mime-square";
+export { Mime } from "./mime";
+export { MimeSquare } from "./mime-square";
 export { GoToStartSquare, MoveSquare } from "./move-square";
 export { Quiz } from "./quiz";
 export { QuizSquare } from "./quiz-square";

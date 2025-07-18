@@ -1,3 +1,18 @@
+import type { Card } from "../card";
+import type { Player } from "../player";
+
+export class Mime {
+  /**
+   * Crea una nuova istanza di Mime.
+   * @param mimePlayer - Il giocatore che deve eseguire il mimo.
+   * @param cardTopic - Il tema del mimo (simulato da una carta).
+   */
+  constructor(
+    public mimePlayer: Player,
+    public cardTopic: Card,
+  ) {}
+}
+
 export const mimeAnimals = [
   {
     livello: "facile",

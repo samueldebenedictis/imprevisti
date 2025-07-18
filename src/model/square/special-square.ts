@@ -1,5 +1,5 @@
 import type { GameContext } from "../gameContext";
-import type { Mime } from "./mime-square";
+import type { Mime } from "./mime";
 import type { Quiz } from "./quiz";
 import { Square } from "./square";
 
