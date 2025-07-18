@@ -1,8 +1,6 @@
 import type { Battle } from "./battle";
 import { Board } from "./board";
-import type { Deck } from "./deck/deck";
-import { MimeDeck } from "./deck/mime-deck";
-import { QuizDeck } from "./deck/quiz-deck";
+import { type Deck, MimeDeck, QuizDeck } from "./deck";
 import { Dice } from "./dice";
 import {
   BattleManager,

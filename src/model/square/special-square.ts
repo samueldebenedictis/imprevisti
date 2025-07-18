@@ -1,5 +1,4 @@
-import type { Mime } from "../deck/mime";
-import type { Quiz } from "../deck/quiz";
+import type { Mime, Quiz } from "../deck";
 import type { GameContext } from "../gameContext";
 import { Square } from "./square";
 
