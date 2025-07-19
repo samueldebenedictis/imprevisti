@@ -25,3 +25,69 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.square-background-1 {
+  opacity: 0.1;
+  --s: 64px;
+  --c1: #ffffff;
+  --c2: #000000;
+  --c3: #5e5c64;
+  --c4: #241f31;
+  --c5: #77767b;
+
+  --_g: radial-gradient(#0000 70%, var(--c1) 71%);
+  background:
+    var(--_g),
+    var(--_g) calc(var(--s) / 2) calc(var(--s) / 2),
+    conic-gradient(var(--c2) 25%, var(--c3) 0 50%, var(--c4) 0 75%, var(--c5) 0);
+  background-size: var(--s) var(--s);
+}
+
+.square-background-2 {
+  opacity: 0.1;
+  --s: 32px;
+  /* control the size*/
+  --c1: #ffffff;
+  --c2: #000000;
+  --c3: #77767b;
+
+  --_g: conic-gradient(at 50% 25%, #0000 75%, var(--c1) 0);
+  background:
+    var(--_g),
+    var(--_g) var(--s) var(--s),
+    var(--_g) calc(2 * var(--s)) calc(2 * var(--s)),
+    var(--_g) calc(3 * var(--s)) calc(3 * var(--s)),
+    repeating-linear-gradient(135deg, var(--c2) 0 12.5%, var(--c3) 0 25%);
+  background-size: calc(4 * var(--s)) calc(4 * var(--s));
+}
+
+.square-background-3 {
+  opacity: 0.1;
+  --s: 64px;
+  /* control the size*/
+  --c1: #ffffff;
+  --c2: #000000;
+
+  --_g:
+    var(--c2) 6% 14%, var(--c1) 16% 24%, var(--c2) 26% 34%, var(--c1) 36% 44%,
+    var(--c2) 46% 54%, var(--c1) 56% 64%, var(--c2) 66% 74%, var(--c1) 76% 84%, var(
+      --c2
+    ) 86% 94%;
+  background:
+    radial-gradient(
+      100% 100% at 100% 0,
+      var(--c1) 4%,
+      var(--_g),
+      #0008 96%,
+      #0000
+    ),
+    radial-gradient(
+      100% 100% at 0 100%,
+      #0000,
+      #0008 4%,
+      var(--_g),
+      var(--c1) 96%
+    )
+    var(--c1);
+  background-size: var(--s) var(--s);
+}
