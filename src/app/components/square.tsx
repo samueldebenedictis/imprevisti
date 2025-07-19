@@ -1,12 +1,22 @@
-import Image from "next/image";
 import { buildings } from "./building";
 
-type Color = "yellow" | "blue" | "green" | "red" | "black";
+type Color =
+  | "yellow"
+  | "blue"
+  | "green"
+  | "red"
+  | "black"
+  | "purple"
+  | "orange"
+  | "cyan";
+
+type SquareType = "normal" | "mime" | "quiz" | "move";
 
 type SquareProps = {
   number: number;
-  borderColor?: Color;
   buildingIndex: keyof typeof buildings;
+  squareType?: SquareType;
+  color?: Color;
 };
 
 const borderColor = (color: Color) => {
@@ -24,7 +34,7 @@ const borderColor = (color: Color) => {
   }
 };
 
-const insideColor = (color: Color) => {
+const _insideColor = (color: Color) => {
   const base = "bg-linear-to-t to-white";
   switch (color) {
     case "yellow":
@@ -35,34 +45,48 @@ const insideColor = (color: Color) => {
       return `${base} from-green-50 `;
     case "red":
       return `${base} from-red-50`;
+    case "purple":
+      return `${base} from-purple-50`;
+    case "orange":
+      return `${base} from-orange-50`;
+    case "cyan":
+      return `${base} from-cyan-50`;
     default:
       return `${base} from-gray-50`;
   }
 };
 
+const getSquareTypeColor = (type: SquareType): Color => {
+  switch (type) {
+    case "mime":
+      return "red";
+    case "quiz":
+      return "red";
+    case "move":
+      return "cyan";
+    default:
+      return "black"; // Default for "normal" or unknown types
+  }
+};
+
 export default function Square(props: SquareProps) {
-  const image = buildings[props.buildingIndex];
-  const colorClass = borderColor(props.borderColor || "black");
-  const classNameBase =
-    "size-48 p-2 m-1 grid content-center justify-items-center h-full ";
-  const className = [classNameBase, colorClass].join(" ");
+  const _image = buildings[props.buildingIndex];
+  const typeColor = props.squareType
+    ? getSquareTypeColor(props.squareType)
+    : undefined;
+  console.log(typeColor);
+  const _displayColor = typeColor;
+
+  const color = borderColor(props.color || "black");
   return (
-    <div className={className}>
-      <div className={`p-2 ${insideColor(props.borderColor || "black")}`}>
-        <div className="relative">
-          <Image
-            className="pt-12 pr-6 pl-6"
-            src={image}
-            width={500}
-            height={500}
-            alt="building"
-          />
-          <div className="w-full absolute top-0 left-2">
-            <span className="font-extrabold text-4xl font-londrina">
-              {props.number}
-            </span>
-          </div>
-        </div>
+    <div className="relative border-4 border-black">
+      <div className={`h-32 w-32 ${color}`}>
+        <div className={`h-full square-background-${props.number}`}></div>
+      </div>
+      <div className="absolute text-center top-0 w-full h-full flex">
+        <span className="text-black font-extrabold text-7xl font-londrina m-auto">
+          {props.number}
+        </span>
       </div>
     </div>
   );

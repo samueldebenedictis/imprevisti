@@ -12,7 +12,7 @@ export default function Board(props: BoardProps) {
       <div className="grid grid-cols-3 grid-rows-3 h-full">
         {props.squares.map((component, _index) => {
           return (
-            <div key={`square_${component.props.number}`} className="h-fit">
+            <div key={`square_${component.props.number}`} className="h-fit p-1">
               {component}
             </div>
           );
