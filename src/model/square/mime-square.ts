@@ -1,6 +1,5 @@
-import type { Card } from "../card";
+import { Mime } from "../deck";
 import type { GameContext } from "../gameContext";
-import type { Player } from "../player";
 import { type Command, SpecialSquare } from "./special-square";
 
 /**
@@ -17,18 +16,6 @@ export class MimeSquare extends SpecialSquare {
   }
 }
 
-export class Mime {
-  /**
-   * Crea una nuova istanza di Mime.
-   * @param mimePlayer - Il giocatore che deve eseguire il mimo.
-   * @param cardTopic - Il tema del mimo (simulato da una carta).
-   */
-  constructor(
-    public mimePlayer: Player,
-    public cardTopic: Card,
-  ) {}
-}
-
 /**
  * Comando che implementa la logica del gioco del mimo.
  */
@@ -42,7 +29,7 @@ class MimeCommand implements Command {
    */
   execute(context: GameContext) {
     const mimePlayer = context.player;
-    const card = context.deck.draw();
+    const card = context.mimeDeck.draw();
     const mimeAction = new Mime(mimePlayer, card);
     return mimeAction;
   }

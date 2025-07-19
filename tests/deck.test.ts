@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { Card } from "@/model/card";
-import { Deck } from "@/model/deck";
+import { Card } from "@/model/deck/card";
+import { Deck } from "@/model/deck/deck";
 
 describe("Deck", () => {
   const cards = [
@@ -36,7 +36,7 @@ describe("Deck", () => {
     expect(draw).toHaveLength(10);
     expect(draw).not.toEqual(cards);
 
-    expect(draw.sort((a, b) => a.name.localeCompare(b.name)));
+    expect(draw.sort((a, b) => a.cardTitle.localeCompare(b.cardTitle)));
     expect(draw).toEqual(cards);
   });
 

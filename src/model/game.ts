@@ -1,7 +1,6 @@
 import type { Battle } from "./battle";
 import { Board } from "./board";
-import type { Card } from "./card";
-import { Deck } from "./deck";
+import { type Deck, MimeDeck, QuizDeck } from "./deck";
 import { Dice } from "./dice";
 import {
   BattleManager,
@@ -9,11 +8,12 @@ import {
   GameStateManager,
   MimeManager,
   MovementManager,
+  QuizManager,
   SpecialSquareProcessor,
   TurnManager,
 } from "./managers";
 import { Player } from "./player";
-import type { Mime, Square } from "./square";
+import { Mime, Quiz, type Square } from "./square";
 
 /**
  * Classe principale che gestisce la logica del gioco da tavolo.
@@ -22,7 +22,8 @@ import type { Mime, Square } from "./square";
 export class Game {
   private board: Board;
   private dice: Dice;
-  private deck: Deck;
+  private mimeDeck: Deck;
+  private quizDeck: Deck;
 
   // Manager per responsabilità specifiche
   private turnManager: TurnManager;
@@ -31,25 +32,21 @@ export class Game {
   private specialSquareProcessor: SpecialSquareProcessor;
   private battleManager: BattleManager;
   private mimeManager: MimeManager;
+  private quizManager: QuizManager;
 
   /**
    * Crea una nuova partita con i parametri specificati.
    * @param squares - Array delle caselle che compongono il tabellone
    * @param playersName - Array dei nomi dei giocatori
-   * @param cards - Array delle carte del gioco (opzionale, default array vuoto)
    * @param diceFaces - Numero di facce del dado (opzionale, default 6)
    */
-  constructor(
-    squares: Square[],
-    playersName: string[],
-    cards: Card[] = [],
-    diceFaces = 6,
-  ) {
+  constructor(squares: Square[], playersName: string[], diceFaces = 6) {
     // Inizializzazione componenti base
     const players = playersName.map((name, i) => new Player(i, name));
     this.board = new Board(squares, players);
     this.dice = new Dice(diceFaces);
-    this.deck = new Deck(cards);
+    this.mimeDeck = new MimeDeck();
+    this.quizDeck = new QuizDeck();
 
     // Inizializzazione manager
     this.turnManager = new TurnManager(players);
@@ -60,7 +57,8 @@ export class Game {
     );
     this.specialSquareProcessor = new SpecialSquareProcessor(
       this.board,
-      this.deck,
+      this.mimeDeck,
+      this.quizDeck,
       this.dice,
       this.movementManager,
       this.gameStateManager,
@@ -71,6 +69,7 @@ export class Game {
       this.turnManager,
     );
     this.mimeManager = new MimeManager(this.movementManager);
+    this.quizManager = new QuizManager(this.movementManager);
   }
 
   /**
@@ -135,9 +134,14 @@ export class Game {
       this.getPlayers(),
     );
 
-    // Se è mimo restituisco specialAction
+    // Se è un'azione speciale, la gestisco
     if (specialAction) {
-      return { type: "mime", data: specialAction };
+      if (specialAction instanceof Mime) {
+        return { type: "mime", data: specialAction };
+      }
+      if (specialAction instanceof Quiz) {
+        return { type: "quiz", data: specialAction };
+      }
     }
 
     return { type: "none" };
@@ -166,6 +170,16 @@ export class Game {
     guessPlayer?: Player,
   ): [Battle | null, Battle | null] {
     return this.mimeManager.resolveMime(mimeAction, success, guessPlayer);
+  }
+
+  /**
+   * Risolve un'azione di quiz utilizzando il QuizManager.
+   * @param quizAction - L'oggetto Quiz da risolvere
+   * @param success - True se la risposta è corretta, false altrimenti
+   * @returns Un oggetto Battle se si verifica una collisione, null altrimenti
+   */
+  resolveQuiz(quizAction: Quiz, success: boolean): Battle | null {
+    return this.quizManager.resolveQuiz(quizAction, success);
   }
 
   // Getter per accesso ai dati del gioco
