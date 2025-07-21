@@ -20,7 +20,6 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
   args: {
     number: 1,
-    buildingIndex: 0,
-    borderColor: "blue",
+    squareType: "normal",
   },
 };

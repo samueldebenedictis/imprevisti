@@ -1,5 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Londrina_Shadow } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Londrina_Shadow,
+  Londrina_Solid,
+} from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -18,6 +23,12 @@ const londrinaShadow = Londrina_Shadow({
   subsets: ["latin"],
 });
 
+const londrinaSolid = Londrina_Solid({
+  weight: "400",
+  variable: "--font-londrina-solid",
+  subsets: ["latin"],
+});
+
 export const metadata: Metadata = {
   title: "La Città degli Imprevisti",
   description: "La Città degli Imprevisti",
@@ -31,7 +42,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${londrinaShadow.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${londrinaShadow.variable}  ${londrinaSolid.variable} antialiased`}
       >
         {children}
       </body>

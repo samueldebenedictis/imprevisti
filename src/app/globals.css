@@ -10,7 +10,8 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-londrina: var(--font-londrina-shadow);
+  --font-londrina-shadow: var(--font-londrina-shadow);
+  --font-londrina-solid: var(--font-londrina-solid);
 }
 
 @media (prefers-color-scheme: dark) {

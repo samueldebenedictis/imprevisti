@@ -22,11 +22,12 @@ export const Primary: Story = {
   args: {
     boardsize: 1,
     squares: [
-      Square({ buildingIndex: 1, number: 1, borderColor: "red" }),
-      Square({ buildingIndex: 2, number: 2, borderColor: "blue" }),
-      Square({ buildingIndex: 3, number: 3, borderColor: "green" }),
-      Square({ buildingIndex: 4, number: 4, borderColor: "blue" }),
-      Square({ buildingIndex: 5, number: 5, borderColor: "blue" }),
+      Square({ number: 0, squareType: "normal" }),
+      Square({ number: 1, squareType: "normal" }),
+      Square({ number: 2, squareType: "mime" }),
+      Square({ number: 3, squareType: "move" }),
+      Square({ number: 4, squareType: "quiz" }),
+      Square({ number: 5, squareType: "normal" }),
     ],
   },
 };
