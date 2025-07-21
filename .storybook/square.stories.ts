@@ -21,5 +21,6 @@ export const Primary: Story = {
   args: {
     number: 1,
     squareType: "normal",
+    playersOn: ["Samuel", "Lucia", "Luca"],
   },
 };

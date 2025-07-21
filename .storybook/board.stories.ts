@@ -25,9 +25,12 @@ export const Primary: Story = {
       Square({ number: 0, squareType: "normal" }),
       Square({ number: 1, squareType: "normal" }),
       Square({ number: 2, squareType: "mime" }),
-      Square({ number: 3, squareType: "move" }),
+      Square({ number: 3, squareType: "normal" }),
       Square({ number: 4, squareType: "quiz" }),
       Square({ number: 5, squareType: "normal" }),
+      Square({ number: 6, squareType: "move-forward" }),
+      Square({ number: 7, squareType: "move-back" }),
+      Square({ number: 8, squareType: "normal" }),
     ],
   },
 };

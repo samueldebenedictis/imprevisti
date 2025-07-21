@@ -27,6 +27,24 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.square-background-0 {
+  opacity: 0.1;
+  --s: 64px;
+  /* control the size*/
+  --c1: #ffffff;
+  --c2: #3d3846;
+  --c3: #000000;
+
+  --a: from -30deg at;
+  background:
+    linear-gradient(#0000 50%, #0004 0),
+    conic-gradient(var(--a) 90%, var(--c1) 240deg, #0000 0),
+    conic-gradient(var(--a) 75%, var(--c2) 240deg, #0000 0),
+    conic-gradient(var(--a) 25%, #0000 240deg, var(--c1) 0),
+    conic-gradient(var(--a) 40%, var(--c1) 240deg, var(--c3) 0);
+  background-size: calc(1.5 * var(--s)) var(--s);
+}
+
 .square-background-1 {
   opacity: 0.1;
   --s: 64px;
@@ -95,12 +113,14 @@ body {
 
 .square-background-4 {
   opacity: 0.1;
-  --s: 32px; /* control the size*/
+  --s: 32px;
+  /* control the size*/
   --c1: #ffffff;
   --c2: #000000;
   --c3: #5e5c64;
 
-  --b: calc(var(--s) / 3.67); /* control the thickness of the curved lines */
+  --b: calc(var(--s) / 3.67);
+  /* control the thickness of the curved lines */
 
   --_r: calc(1.28 * var(--s) + var(--b) / 2) at top 50%;
   --_f:
@@ -120,7 +140,8 @@ body {
 
 .square-background-5 {
   opacity: 0.1;
-  --s: 64px; /* control the size*/
+  --s: 64px;
+  /* control the size*/
   --c1: #000000;
   --c2: #ffffff;
 
@@ -136,12 +157,14 @@ body {
 
 .square-background-6 {
   opacity: 0.1;
-  --s: 32px; /* control the size*/
+  --s: 32px;
+  /* control the size*/
   --c1: #ffffff;
   --c2: #000000;
   --c3: #77767b;
 
-  --b: calc(var(--s) / 2.67); /* control the thickness of the wavy line */
+  --b: calc(var(--s) / 2.67);
+  /* control the thickness of the wavy line */
 
   --_r: calc(1.28 * var(--s) + var(--b) / 2) at left 50%;
   --_f: calc(100% - var(--b)), var(--c1) calc(101% - var(--b)) 100%, #0000 101%;
@@ -161,7 +184,8 @@ body {
 
 .square-background-7 {
   opacity: 0.1;
-  --s: 32px; /* control the size*/
+  --s: 32px;
+  /* control the size*/
   --c1: #ffffff;
   --c2: #000000;
 
@@ -186,7 +210,8 @@ body {
 
 .square-background-8 {
   opacity: 0.1;
-  --s: 64px; /* control the size*/
+  --s: 64px;
+  /* control the size*/
   --c1: #000000;
   --c2: #ffffff;
 
@@ -202,7 +227,8 @@ body {
 
 .square-background-9 {
   opacity: 0.1;
-  --s: 8px; /* control the size*/
+  --s: 8px;
+  /* control the size*/
   --c1: #000000;
   --c2: #ffffff;
   --c3: #77767b;
@@ -239,17 +265,4 @@ body {
     var(--g5) calc(3 * var(--s)) 0,
     var(--g5) 0 var(--_p) var(--c3);
   background-size: calc(6 * var(--s)) calc(2 * var(--_p));
-}
-
-.square-background-10 {
-  opacity: 0.1;
-  --s: 32px; /* control the size*/
-  --c1: #000000;
-  --c2: #ffffff;
-
-  background:
-    radial-gradient(#0000 50%, var(--c1) 52% 55%, var(--c2) 57%) 0 0 / var(--s)
-    var(--s),
-    repeating-linear-gradient(45deg, var(--c1) 0 25%, var(--c2) 0 50%) 0 0 /
-    calc(2 * var(--s)) calc(2 * var(--s));
 }
