@@ -1,15 +1,30 @@
 import type Square from "./square";
 
 type BoardProps = {
-  boardsize: number;
   squares: ReturnType<typeof Square>[];
+  cols?: 3 | 4 | 5;
+};
+
+const colsCss = (n: number | undefined) => {
+  const base = `grid h-full`;
+  switch (n) {
+    case 5:
+      return `${base} grid-cols-5`;
+    case 4:
+      return `${base} grid-cols-4`;
+    default:
+      return `${base} grid-cols-3`;
+  }
 };
 
 export default function Board(props: BoardProps) {
+  const _cols = props.cols;
   return (
     <div>
-      {props.boardsize}
-      <div className="grid grid-cols-3 grid-rows-3 h-full">
+      <span className="text-gray-800 font-extrabold font-londrina-solid m-auto text-xl">
+        Tabellone con {props.squares.length} caselle!
+      </span>
+      <div className={colsCss(props.cols)}>
         {props.squares.map((component, _index) => {
           return (
             <div key={`square_${component.props.number}`} className="h-fit p-1">

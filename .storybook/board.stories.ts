@@ -20,7 +20,6 @@ type Story = StoryObj<typeof meta>;
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
 export const Primary: Story = {
   args: {
-    boardsize: 1,
     squares: [
       Square({ number: 0, squareType: "normal" }),
       Square({ number: 1, squareType: "normal" }),
