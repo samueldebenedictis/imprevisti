@@ -21,6 +21,13 @@ export const Primary: Story = {
   args: {
     number: 1,
     squareType: "normal",
-    playersOn: ["Samuel", "Lucia", "Luca"],
+  },
+};
+
+export const WithPlayers: Story = {
+  args: {
+    number: 1,
+    squareType: "normal",
+    playersOn: ["Renzo", "Lucia"],
   },
 };
