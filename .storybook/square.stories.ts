@@ -20,7 +20,14 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
   args: {
     number: 1,
-    buildingIndex: 0,
-    borderColor: "blue",
+    squareType: "normal",
+  },
+};
+
+export const WithPlayers: Story = {
+  args: {
+    number: 1,
+    squareType: "normal",
+    playersOn: ["Renzo", "Lucia"],
   },
 };

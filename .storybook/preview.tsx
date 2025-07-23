@@ -1,5 +1,10 @@
 import type { Preview } from "@storybook/react";
-import { Geist, Geist_Mono, Londrina_Shadow } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Londrina_Shadow,
+  Londrina_Solid,
+} from "next/font/google";
 import "../src/app/globals.css";
 import "./storybook.css";
 
@@ -16,6 +21,12 @@ const geistMono = Geist_Mono({
 const londrinaShadow = Londrina_Shadow({
   weight: "400",
   variable: "--font-londrina-shadow",
+  subsets: ["latin"],
+});
+
+const londrinaSolid = Londrina_Solid({
+  weight: "400",
+  variable: "--font-londrina-solid",
   subsets: ["latin"],
 });
 
@@ -38,7 +49,7 @@ const preview: Preview = {
   decorators: [
     (Story) => (
       <div
-        className={`${geistSans.variable} ${geistMono.variable} ${londrinaShadow.variable}`}
+        className={`${geistSans.variable} ${geistMono.variable} ${londrinaShadow.variable} ${londrinaSolid.variable}`}
       >
         <Story />
       </div>

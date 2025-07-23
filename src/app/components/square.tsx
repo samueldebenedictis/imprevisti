@@ -1,68 +1,63 @@
-import Image from "next/image";
-import { buildings } from "./building";
+import { type Color, colorToCss } from "./color";
+import Pawn from "./pawn";
 
-type Color = "yellow" | "blue" | "green" | "red" | "black";
+type SquareType = "normal" | "mime" | "quiz" | "move-forward" | "move-back";
 
 type SquareProps = {
   number: number;
-  borderColor?: Color;
-  buildingIndex: keyof typeof buildings;
+  squareType: SquareType;
+  playersOn?: string[];
 };
 
-const borderColor = (color: Color) => {
-  switch (color) {
-    case "yellow":
-      return `bg-amber-500 text-amber-500`;
-    case "blue":
-      return `bg-sky-500 text-blue-500`;
-    case "green":
-      return `bg-green-500 text-green-500`;
-    case "red":
-      return `bg-red-500 text-red-500`;
+const typeToColor = (type: SquareType): Color => {
+  switch (type) {
+    case "mime":
+      return "purple";
+    case "quiz":
+      return "yellow";
+    case "move-forward":
+      return "green";
+    case "move-back":
+      return "red";
+    case "normal":
+      return "blue";
     default:
-      return "bg-gray-800 text-gray-800";
+      return "black";
   }
 };
 
-const insideColor = (color: Color) => {
-  const base = "bg-linear-to-t to-white";
-  switch (color) {
-    case "yellow":
-      return `${base} from-amber-50`;
-    case "blue":
-      return `${base} from-sky-50`;
-    case "green":
-      return `${base} from-green-50 `;
-    case "red":
-      return `${base} from-red-50`;
-    default:
-      return `${base} from-gray-50`;
+const number = (n: number) => {
+  const classBase = "text-gray-100 font-extrabold font-londrina-solid m-auto";
+  if (n === 0) {
+    return <span className={`${classBase} text-5xl`}>START</span>;
+  } else {
+    return <span className={`${classBase} text-7xl`}>{n}</span>;
   }
+};
+
+const playersOn = (names: string[] | undefined) => {
+  if (names) return names.map((el) => Pawn({ name: el, color: "yellow" }));
+};
+
+const background = (number: number) => {
+  return `square-background-${number % 13}`;
 };
 
 export default function Square(props: SquareProps) {
-  const image = buildings[props.buildingIndex];
-  const colorClass = borderColor(props.borderColor || "black");
-  const classNameBase =
-    "size-48 p-2 m-1 grid content-center justify-items-center h-full ";
-  const className = [classNameBase, colorClass].join(" ");
+  const typeColor = typeToColor(props.squareType);
+  const color = colorToCss(props.number === 0 ? "black" : typeColor);
+  const bg = background(props.number);
+
   return (
-    <div className={className}>
-      <div className={`p-2 ${insideColor(props.borderColor || "black")}`}>
-        <div className="relative">
-          <Image
-            className="pt-12 pr-6 pl-6"
-            src={image}
-            width={500}
-            height={500}
-            alt="building"
-          />
-          <div className="w-full absolute top-0 left-2">
-            <span className="font-extrabold text-4xl font-londrina">
-              {props.number}
-            </span>
-          </div>
-        </div>
+    <div className="relative border-4 border-gray-800 shadow-xl">
+      <div className={`h-32 w-32 ${color}`}>
+        <div className={`h-full ${bg}`}></div>
+      </div>
+      <div className="absolute text-center top-0 w-full h-full flex">
+        {number(props.number)}
+      </div>
+      <div className="absolute w-full pl-1 pr-1 bottom-0">
+        {playersOn(props.playersOn)}
       </div>
     </div>
   );
