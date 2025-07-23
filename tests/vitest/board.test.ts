@@ -18,7 +18,6 @@ describe("Board", () => {
   });
 
   test("Failed build from size", () => {
-    const _squares = [new Square(0), new Square(1)];
     const board = () => new SquaresBuilder().build();
     expect(board).toThrow();
   });
