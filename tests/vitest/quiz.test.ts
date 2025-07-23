@@ -1,6 +1,11 @@
 import { describe, expect, test } from "vitest";
-import { Game } from "../src/model/game";
-import { Quiz, QuizSquare, SpecialSquare, Square } from "../src/model/square";
+import { Game } from "../../src/model/game";
+import {
+  Quiz,
+  QuizSquare,
+  SpecialSquare,
+  Square,
+} from "../../src/model/square";
 
 describe("Quiz square", () => {
   test("Quiz not solved", () => {
