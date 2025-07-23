@@ -7,7 +7,7 @@ import {
   MoveSquare,
   SpecialSquare,
   Square,
-} from "../src/model/square";
+} from "../../src/model/square";
 
 describe("Square", () => {
   test("Get number, get id", () => {
