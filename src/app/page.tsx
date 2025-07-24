@@ -4,8 +4,12 @@ import Board from "./components/board";
 import SquareC from "./components/square";
 
 export default function Home() {
-  const squares = [new Square(0), new Square(1), new Square(2), new Square(3)];
+  const a = Array.from(Array(20).keys());
+  const squares = a.map((_e, i) => {
+    return new Square(i);
+  });
   const game = new Game(squares, ["Renzo", "Lucia"]);
+  game.playTurn();
   const squaresC = game
     .getBoard()
     .getSquares()
@@ -23,6 +27,7 @@ export default function Home() {
     <div className="flex">
       {Board({
         squares: squaresC,
+        cols: 5,
       })}
     </div>
   );

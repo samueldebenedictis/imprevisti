@@ -18,16 +18,18 @@ const colsCss = (n: number | undefined) => {
 };
 
 export default function Board(props: BoardProps) {
-  const _cols = props.cols;
   return (
-    <div>
+    <div key="board">
       <span className="text-gray-800 font-extrabold font-londrina-solid m-auto text-xl">
         Tabellone con {props.squares.length} caselle!
       </span>
       <div className={colsCss(props.cols)}>
-        {props.squares.map((component, _index) => {
+        {props.squares.map((component, index) => {
           return (
-            <div key={`square_${component.props.number}`} className="h-fit p-1">
+            <div
+              key={`board-square-${component.props.number || index}`}
+              className="h-fit p-1"
+            >
               {component}
             </div>
           );
