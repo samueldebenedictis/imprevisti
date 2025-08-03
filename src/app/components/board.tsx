@@ -1,3 +1,4 @@
+"use client";
 import type Square from "./square";
 
 type BoardProps = {
