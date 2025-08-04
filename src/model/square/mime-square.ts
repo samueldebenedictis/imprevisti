@@ -1,6 +1,9 @@
 import { Mime } from "../deck";
-import type { GameContext } from "../gameContext";
-import { type Command, SpecialSquare } from "./special-square";
+import {
+  type Command,
+  type CommandDependencies,
+  SpecialSquare,
+} from "./special-square";
 
 /**
  * Casella speciale per il gioco del mimo.
@@ -25,11 +28,11 @@ class MimeCommand implements Command {
    * Il giocatore che atterra sulla casella deve eseguire un mimo.
    * Se il mimo è indovinato da un altro giocatore, entrambi avanzano di una casella.
    * Altrimenti, il giocatore che ha mimato salta il prossimo turno.
-   * @param context - Contesto di gioco contenente il giocatore attuale, il mazzo di carte e l'istanza del gioco.
+   * @param dependencies - Oggetto contenente le dipendenze necessarie (player, mimeDeck).
    */
-  execute(context: GameContext) {
-    const mimePlayer = context.player;
-    const card = context.mimeDeck.draw();
+  execute(dependencies: CommandDependencies) {
+    const mimePlayer = dependencies.player;
+    const card = dependencies.mimeDeck.draw();
     const mimeAction = new Mime(mimePlayer, card);
     return mimeAction;
   }

@@ -1,6 +1,9 @@
 import { Quiz } from "../deck";
-import type { GameContext } from "../gameContext";
-import { type Command, SpecialSquare } from "./special-square";
+import {
+  type Command,
+  type CommandDependencies,
+  SpecialSquare,
+} from "./special-square";
 
 /**
  * Special square for the quiz game.
@@ -25,11 +28,11 @@ class QuizCommand implements Command {
    * The player who lands on the square must answer a quiz question.
    * If the answer is correct, the player advances one square.
    * Otherwise, the player who answered skips the next turn.
-   * @param context - Game context containing the current player, the quiz deck, and the game instance.
+   * @param dependencies - Object containing the necessary dependencies (player, quizDeck).
    */
-  execute(context: GameContext) {
-    const quizPlayer = context.player;
-    const card = context.quizDeck.draw();
+  execute(dependencies: CommandDependencies) {
+    const quizPlayer = dependencies.player;
+    const card = dependencies.quizDeck.draw();
     const quizAction = new Quiz(quizPlayer, card);
     return quizAction;
   }

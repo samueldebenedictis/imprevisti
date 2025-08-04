@@ -1,6 +1,21 @@
-import type { Mime, Quiz } from "../deck";
-import type { GameContext } from "../gameContext";
+import type { Board } from "../board";
+import type { Deck, Mime, Quiz } from "../deck";
+import type { Dice } from "../dice";
+import type { GameStateManager, MovementManager } from "../managers";
+import type { Player } from "../player";
 import { Square } from "./square";
+
+// Definire un tipo per le dipendenze che i comandi potrebbero richiedere
+export type CommandDependencies = {
+  player: Player;
+  board: Board;
+  allPlayers: Player[];
+  mimeDeck: Deck;
+  quizDeck: Deck;
+  dice: Dice;
+  movementManager: MovementManager;
+  gameStateManager: GameStateManager;
+};
 
 /**
  * Interfaccia per il pattern Command utilizzato dalle caselle speciali.
@@ -8,10 +23,10 @@ import { Square } from "./square";
  */
 export interface Command {
   /**
-   * Esegue il comando utilizzando il contesto di gioco fornito.
-   * @param context - Contesto di gioco contenente tutte le informazioni necessarie
+   * Esegue il comando utilizzando le dipendenze fornite.
+   * @param dependencies - Oggetto contenente tutte le dipendenze necessarie
    */
-  execute(context: GameContext): undefined | Mime | Quiz;
+  execute(dependencies: CommandDependencies): undefined | Mime | Quiz;
 }
 
 /**
