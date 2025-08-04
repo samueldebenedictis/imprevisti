@@ -7,6 +7,7 @@ import ClientOnly from "../components/client-only";
 import SquareC from "../components/square";
 
 export default function Home() {
+  const GAME_INSTANCE_KEY = "gameInstance";
   const a = Array.from(Array(20).keys());
   const squares = a.map((_e, i) => {
     return new Square(i);
@@ -15,19 +16,20 @@ export default function Home() {
   const [game, _setGame] = useState(new Game(squares, ["Renzo", "Lucia"]));
 
   useEffect(() => {
-    localStorage.setItem("gameInstance", JSON.stringify(game));
+    localStorage.setItem(GAME_INSTANCE_KEY, JSON.stringify(game));
 
-    const istanzaGiocoObject = JSON.parse(
-      localStorage.getItem("gameInstance") as string,
+    const _istanzaGiocoObject = JSON.parse(
+      localStorage.getItem(GAME_INSTANCE_KEY) as string,
     );
 
-    console.log(JSON.stringify(game));
-    console.log(JSON.stringify(istanzaGiocoObject));
+    // console.log(JSON.stringify(game));
+    // console.log(JSON.stringify(istanzaGiocoObject));
 
     // setGame(new Game(squares, ["Renzo", "Lucia"]));
   }, [game]);
 
   game.playTurn();
+  console.log(JSON.stringify(game));
   const squaresC = game
     .getBoard()
     .getSquares()

@@ -1,3 +1,4 @@
+"use client";
 import { Game } from "@/model/game";
 import { Square } from "@/model/square";
 import Board from "./components/board";
