@@ -13,42 +13,26 @@ export default function Home() {
     return new Square(i);
   });
 
-  const [game, setGame] = useState(new Game(squares, ["Renzo", "Lucia"]));
+  // var [game, setGame] = useState(new Game([], []));
+  var [game, setGame] = useState(new Game(squares, ["re", "lu"]));
 
   // Variabili di gioco
-  // const [nomiGiocatori, setNomiGiocatori] = useState(["", ""]);
-  // const [iconeGiocatori, setIconeGiocatori] = useState(["", ""]);
-
-  // const [caricamentoEffettuato, setCaricamentoEffettuato] = useState(false);
   const [counter, setCount] = useState(0);
 
   function onButtonGiocaTurnoClick() {
-    // if (localStorage.getItem("istanzaGioco") == undefined) {
-    //   throw new Error(
-    //     "Impossibile giocare un turno poichè l'istanza corrente non esiste!"
-    //   );
-    // }
-
     game.playTurn();
-    // setScore(lancioDiDado);
+
     setCount(counter + 1);
     setGame(game);
-    // console.log(giocoAggiornato);
     localStorage.setItem("COUNTER", `${counter}`);
-    // localStorage.setItem("istanzaGioco", JSON.stringify(giocoAggiornato));
   }
 
   useEffect(() => {
-    localStorage.setItem(GAME_INSTANCE_KEY, JSON.stringify(game));
-
-    // const _istanzaGiocoObject = JSON.parse(
-    //   localStorage.getItem(GAME_INSTANCE_KEY) as string,
-    // );
-
-    // console.log(JSON.stringify(game));
-    // console.log(JSON.stringify(istanzaGiocoObject));
-
-    // setGame(new Game(squares, ["Renzo", "Lucia"]));
+    const _gameInstance = JSON.parse(
+      localStorage.getItem(GAME_INSTANCE_KEY) as string,
+    );
+    // TODO: convert istanza gioco object to game
+    setGame(game);
   }, [game]);
 
   console.log(JSON.stringify(game));
