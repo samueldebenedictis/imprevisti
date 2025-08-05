@@ -45,7 +45,7 @@ export default function Home() {
     );
   return (
     <ClientOnly>
-      <div className="flex">
+      <div className="mx-auto items-center flex flex-col justify-center">
         {Board({
           squares: squaresC,
           cols: 5,
