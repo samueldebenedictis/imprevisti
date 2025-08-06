@@ -30,7 +30,11 @@ export class BattleManager {
    * @param winner - Il giocatore vincitore della battaglia
    * @returns Un nuovo oggetto Battle se si verifica un'altra collisione, null altrimenti
    */
-  resolveBattle(battle: Battle, winner: Player): GameActionResult {
+  resolveBattle(
+    battle: Battle,
+    winner: Player,
+    diceResult: number,
+  ): GameActionResult {
     // Valida che il vincitore sia parte della battaglia
     battle.resolveBattle(winner);
 
@@ -38,11 +42,16 @@ export class BattleManager {
     const movementResult = this.movementManager.moveWinnerForward(winner);
 
     if (movementResult.gameEnded) {
-      return { type: "none" }; // Gioco terminato, nessuna collisione possibile
+      return { type: "none", diceResult: diceResult, actionType: null }; // Gioco terminato, nessuna collisione possibile
     }
 
     if (movementResult.collision) {
-      return { type: "battle", data: movementResult.collision }; // Nuova battaglia necessaria
+      return {
+        type: "battle",
+        data: movementResult.collision,
+        diceResult: diceResult,
+        actionType: "battle",
+      }; // Nuova battaglia necessaria
     }
 
     // Elabora gli effetti delle caselle speciali nella nuova posizione
@@ -51,10 +60,15 @@ export class BattleManager {
       this.turnManager.getPlayers(),
     );
     if (effect instanceof Mime) {
-      return { type: "mime", data: effect };
+      return {
+        type: "mime",
+        data: effect,
+        diceResult: diceResult,
+        actionType: "mime",
+      };
     }
 
-    return { type: "none" };
+    return { type: "none", diceResult: diceResult, actionType: null };
   }
 
   // TODO: rimuovi se inutilizzato

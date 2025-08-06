@@ -7,6 +7,8 @@ import type { Mime, Quiz } from "../square";
 export type GameActionResult = {
   type: "battle" | "mime" | "quiz" | "none";
   data?: Battle | Mime | Quiz;
+  diceResult: number;
+  actionType: string | null;
 };
 
 /**

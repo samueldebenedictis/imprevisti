@@ -123,13 +123,46 @@ export class Game {
       players,
     );
 
-    game.gameStateManager = GameStateManager.fromJSON(
+    const reconstructedGameStateManager = GameStateManager.fromJSON(
       board.getSquares().length,
       json.gameEnded,
       json.winnerId,
       players,
     );
+    game.gameStateManager = reconstructedGameStateManager;
 
+    // Update managers with the reconstructed GameStateManager
+    game.movementManager = new MovementManager(
+      game.board,
+      reconstructedGameStateManager,
+    );
+    game.specialSquareProcessor = new SpecialSquareProcessor(
+      game.board,
+      game.mimeDeck,
+      game.quizDeck,
+      game.dice,
+      game.movementManager, // movementManager also needs to be updated first
+      reconstructedGameStateManager,
+    );
+    game.battleManager = new BattleManager(
+      game.movementManager,
+      game.specialSquareProcessor,
+      game.turnManager,
+    );
+    game.mimeManager = new MimeManager(game.movementManager);
+    game.quizManager = new QuizManager(game.movementManager);
+
+    console.log("[Game.fromJSON] Reconstructed Game instance:", game);
+    console.log(
+      "[Game.fromJSON] Reconstructed Players:",
+      game.turnManager.getPlayers().map((p) => ({
+        id: p.getId(),
+        name: p.getName(),
+        turnsToSkip: p.getTurnsToSkip(),
+      })),
+    );
+    // To access playersPosition, we need a getter in Board class
+    // console.log("[Game.fromJSON] Reconstructed Board PlayersPosition:", Array.from(game.board.getPlayersPositionMap().entries()).map(([p, pos]) => ({ name: p.getName(), id: p.getId(), position: pos })));
     return game;
   }
 
@@ -146,12 +179,13 @@ export class Game {
 
     if (currentPlayer.mustSkipTurn()) {
       this.turnManager.advanceTurn();
-      return { type: "none" };
+      return { type: "none", diceResult: 0, actionType: null }; // Return default values for skipped turn
     }
-    const result = this.executePlayerTurn(currentPlayer);
+    const diceValue = this.dice.roll();
+    const result = this.executePlayerTurn(currentPlayer, diceValue);
     this.turnManager.advanceTurn();
 
-    return result;
+    return { ...result, diceResult: diceValue };
   }
 
   /**
@@ -159,6 +193,7 @@ export class Game {
    * @throws Errore se il gioco è già terminato
    */
   private validateGameState(): void {
+    console.log("Terminato?", this.gameStateManager.isGameEnded());
     if (this.gameStateManager.isGameEnded()) {
       throw new Error("Cannot play turn: game has already ended");
     }
@@ -169,8 +204,10 @@ export class Game {
    * @param player - Il giocatore che deve giocare il turno
    * @returns Risultato dell'azione di gioco
    */
-  private executePlayerTurn(player: Player): GameActionResult {
-    const diceValue = this.dice.roll();
+  private executePlayerTurn(
+    player: Player,
+    diceValue: number,
+  ): GameActionResult {
     const currentPosition = this.board.getPlayerPosition(player);
     const newPosition = currentPosition + diceValue;
     // Gestione movimento e collisioni
@@ -180,11 +217,16 @@ export class Game {
     );
 
     if (movementResult.gameEnded) {
-      return { type: "none" }; // Gioco terminato, nessuna azione aggiuntiva
+      return { type: "none", diceResult: diceValue, actionType: null }; // Gioco terminato, nessuna azione aggiuntiva
     }
 
     if (movementResult.collision) {
-      return { type: "battle", data: movementResult.collision };
+      return {
+        type: "battle",
+        data: movementResult.collision,
+        diceResult: diceValue,
+        actionType: "battle",
+      };
     }
 
     // Gestione effetti caselle speciali
@@ -196,14 +238,24 @@ export class Game {
     // Se è un'azione speciale, la gestisco
     if (specialAction) {
       if (specialAction instanceof Mime) {
-        return { type: "mime", data: specialAction };
+        return {
+          type: "mime",
+          data: specialAction,
+          diceResult: diceValue,
+          actionType: "mime",
+        };
       }
       if (specialAction instanceof Quiz) {
-        return { type: "quiz", data: specialAction };
+        return {
+          type: "quiz",
+          data: specialAction,
+          diceResult: diceValue,
+          actionType: "quiz",
+        };
       }
     }
 
-    return { type: "none" };
+    return { type: "none", diceResult: diceValue, actionType: null };
   }
 
   /**
@@ -213,7 +265,9 @@ export class Game {
    * @returns Un nuovo oggetto Battle se si verifica un'altra collisione, null altrimenti
    */
   resolveBattle(battle: Battle, winner: Player): GameActionResult {
-    return this.battleManager.resolveBattle(battle, winner);
+    // When resolving a battle, we don't have a new dice roll, so we pass 0 or a placeholder.
+    // The actionType will be determined by the battle resolution itself.
+    return this.battleManager.resolveBattle(battle, winner, 0);
   }
 
   /**
