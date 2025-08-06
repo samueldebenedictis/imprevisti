@@ -25,11 +25,20 @@ export class Board {
    * Crea un nuovo tabellone con le caselle specificate e inizializza le posizioni dei giocatori.
    * Tutti i giocatori iniziano dalla posizione 0.
    * @param squares - Array delle caselle del tabellone
-   * @param players - Array dei giocatori da posizionare sul tabellone
+   * @param players - Array dei giocatori da posizionare sul tabellone (usato per inizializzare se playersPositionMap non è fornito)
+   * @param playersPositionMap - Mappa opzionale per inizializzare le posizioni dei giocatori (usato per la deserializzazione)
    */
-  constructor(squares: Square[], players: Player[]) {
+  constructor(
+    squares: Square[],
+    players: Player[],
+    playersPositionMap?: Map<Player, number>,
+  ) {
     this.squares = squares;
-    this.playersPosition = new Map(players.map((p) => [p, 0]));
+    if (playersPositionMap) {
+      this.playersPosition = playersPositionMap;
+    } else {
+      this.playersPosition = new Map(players.map((p) => [p, 0]));
+    }
   }
 
   /**
@@ -43,8 +52,9 @@ export class Board {
    * @param player - Il giocatore di cui si vuole conoscere la posizione
    * @returns Indice della posizione del giocatore sul tabellone
    */
-  getPlayerPosition = (player: Player) =>
-    this.playersPosition.get(player) as number;
+  getPlayerPosition = (player: Player) => {
+    return this.playersPosition.get(player) as number;
+  };
 
   /**
    * Sposta il giocatore specificato alla nuova posizione.
@@ -89,17 +99,19 @@ export class Board {
    * @returns Una nuova istanza di Board.
    */
   static fromJSON(json: BoardJSON, players: Player[]): Board {
-    const squares = json.squares.map((sJson) => squareFromJSON(sJson)); // Usa Square.fromJSON
-    const board = new Board(squares, []); // Inizializza con un array vuoto di giocatori
+    const squares = json.squares.map((sJson) => squareFromJSON(sJson));
 
-    // Ricostruisci playersPosition
+    // Ricostruisci playersPosition map direttamente
+    const playersPositionMap = new Map<Player, number>();
     json.playersPosition.forEach((entry) => {
       const player = players.find((p) => p.getId() === entry.playerId);
       if (player) {
-        board.movePlayer(player, entry.position);
+        playersPositionMap.set(player, entry.position);
       }
     });
 
+    // Passa la mappa ricostruita al costruttore
+    const board = new Board(squares, players, playersPositionMap);
     return board;
   }
 }

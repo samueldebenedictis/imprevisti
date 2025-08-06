@@ -13,7 +13,7 @@ import {
   TurnManager,
 } from "./managers";
 import { Player, type PlayerJSON } from "./player";
-import { Mime, Quiz, type Square } from "./square";
+import { Mime, Quiz } from "./square";
 
 export interface GameJSON {
   board: BoardJSON;
@@ -45,21 +45,20 @@ export class Game {
 
   /**
    * Crea una nuova partita con i parametri specificati.
-   * @param squares - Array delle caselle che compongono il tabellone
-   * @param playersName - Array dei nomi dei giocatori
+   * @param board - L'istanza del tabellone di gioco
+   * @param players - Array delle istanze dei giocatori
    * @param diceFaces - Numero di facce del dado (opzionale, default 6)
    */
-  constructor(squares: Square[], playersName: string[], diceFaces = 6) {
+  constructor(board: Board, players: Player[], diceFaces = 6) {
     // Inizializzazione componenti base
-    const players = playersName.map((name, i) => new Player(i, name));
-    this.board = new Board(squares, players);
+    this.board = board;
     this.dice = new Dice(diceFaces);
     this.mimeDeck = new MimeDeck();
     this.quizDeck = new QuizDeck();
 
     // Inizializzazione manager
     this.turnManager = new TurnManager(players);
-    this.gameStateManager = new GameStateManager(squares.length);
+    this.gameStateManager = new GameStateManager(board.getSquares().length);
     this.movementManager = new MovementManager(
       this.board,
       this.gameStateManager,
@@ -116,10 +115,7 @@ export class Game {
 
     const board = Board.fromJSON(json.board, players);
 
-    const game = new Game(
-      board.getSquares(),
-      players.map((p) => p.getName()),
-    );
+    const game = new Game(board, players);
 
     game.turnManager = TurnManager.fromJSON(
       json.currentTurn,
@@ -152,7 +148,6 @@ export class Game {
       this.turnManager.advanceTurn();
       return { type: "none" };
     }
-
     const result = this.executePlayerTurn(currentPlayer);
     this.turnManager.advanceTurn();
 
@@ -178,7 +173,6 @@ export class Game {
     const diceValue = this.dice.roll();
     const currentPosition = this.board.getPlayerPosition(player);
     const newPosition = currentPosition + diceValue;
-
     // Gestione movimento e collisioni
     const movementResult = this.movementManager.movePlayerAndCheckCollision(
       player,

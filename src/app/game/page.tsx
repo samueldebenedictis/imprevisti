@@ -1,19 +1,18 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Game } from "@/model/game";
+import { Board } from "@/model/board";
+import { Game as GameModel } from "@/model/game";
+import { Player } from "@/model/player";
 import { Square } from "@/model/square";
-import Board from "../components/board";
+import BoardComponent from "../components/board";
 import ClientOnly from "../components/client-only";
 import SquareC from "../components/square";
 
-export default function Home() {
+// Forcing re-evaluation
+export default function Page() {
   const GAME_INSTANCE_KEY = "gameInstance";
-  const a = Array.from(Array(20).keys());
-  const squares = a.map((_e, i) => {
-    return new Square(i);
-  });
 
-  const [game, setGame] = useState<Game | null>(null);
+  const [game, setGame] = useState<GameModel | null>(null);
   const [counter, setCount] = useState(0);
 
   useEffect(() => {
@@ -21,18 +20,30 @@ export default function Home() {
     if (savedGame) {
       try {
         const parsedGame = JSON.parse(savedGame);
-        const loadedGame = Game.fromJSON(parsedGame);
+        const loadedGame = GameModel.fromJSON(parsedGame);
         setGame(loadedGame);
       } catch (e) {
         console.error("Failed to load game from localStorage", e);
         // Se il caricamento fallisce, inizia una nuova partita
-        setGame(new Game(squares, ["re", "lu"]));
+        const initialPlayers = ["re", "lu"].map(
+          (name, i) => new Player(i, name),
+        );
+        const squares = Array.from(Array(20).keys()).map((_e, i) => {
+          return new Square(i);
+        });
+        const initialBoard = new Board(squares, initialPlayers);
+        setGame(new GameModel(initialBoard, initialPlayers));
       }
     } else {
       // Se non c'è un gioco salvato, inizia una nuova partita
-      setGame(new Game(squares, ["re", "lu"]));
+      const squares = Array.from(Array(20).keys()).map((_e, i) => {
+        return new Square(i);
+      });
+      const initialPlayers = ["re", "lu"].map((name, i) => new Player(i, name));
+      const initialBoard = new Board(squares, initialPlayers);
+      setGame(new GameModel(initialBoard, initialPlayers));
     }
-  }, [squares]); // Esegui solo al mount del componente
+  }, []); // Esegui solo al mount del componente
 
   useEffect(() => {
     if (game) {
@@ -45,7 +56,10 @@ export default function Home() {
     if (game) {
       game.playTurn();
       setCount(counter + 1);
-      setGame(game); // Forza un re-render e un salvataggio
+      // Serialize the current game state to JSON, then deserialize it to create a new Game instance
+      const updatedGameJSON = game.toJSON();
+      const updatedGame = GameModel.fromJSON(updatedGameJSON);
+      setGame(updatedGame); // Set the new instance to trigger re-render and saving
     }
   }
 
@@ -53,7 +67,6 @@ export default function Home() {
     return <div>Caricamento gioco...</div>; // O uno spinner di caricamento
   }
 
-  console.log(JSON.stringify(game));
   const squaresC = game
     .getBoard()
     .getSquares()
@@ -83,7 +96,7 @@ export default function Home() {
           </button>
         </div>
         <div className="mx-auto items-center flex flex-col justify-center">
-          {Board({
+          {BoardComponent({
             squares: squaresC,
             cols: 5,
           })}
