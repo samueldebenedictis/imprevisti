@@ -2,6 +2,16 @@
  * Rappresenta un giocatore del gioco.
  * Ogni giocatore ha un identificativo univoco e un nome.
  */
+export interface PlayerJSON {
+  id: number;
+  name: string;
+  turnsToSkip: number;
+}
+
+/**
+ * Rappresenta un giocatore del gioco.
+ * Ogni giocatore ha un identificativo univoco e un nome.
+ */
 export class Player {
   private name: string;
   private id: number;

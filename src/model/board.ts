@@ -1,5 +1,17 @@
 import type { Player } from "./player";
 import { Square } from "./square";
+import type { SquareJSON } from "./square/square";
+import { squareFromJSON } from "./square/square-builder";
+
+export interface PlayerPositionJSON {
+  playerId: number;
+  position: number;
+}
+
+export interface BoardJSON {
+  squares: SquareJSON[];
+  playersPosition: PlayerPositionJSON[];
+}
 
 /**
  * Gestisce il tabellone di gioco e le posizioni dei giocatori.
@@ -58,7 +70,7 @@ export class Board {
    * Converte l'istanza di Board in un oggetto JSON serializzabile.
    * @returns Un oggetto che rappresenta lo stato della Board in formato JSON.
    */
-  toJSON() {
+  toJSON(): BoardJSON {
     return {
       squares: this.squares.map((s) => s.toJSON()), // Ora serializziamo l'intera Square
       playersPosition: Array.from(this.playersPosition.entries()).map(
@@ -76,12 +88,12 @@ export class Board {
    * @param players - Un array di istanze Player già ricostruite.
    * @returns Una nuova istanza di Board.
    */
-  static fromJSON(json: any, players: Player[]): Board {
-    const squares = json.squares.map((sJson: any) => Square.fromJSON(sJson)); // Usa Square.fromJSON
+  static fromJSON(json: BoardJSON, players: Player[]): Board {
+    const squares = json.squares.map((sJson) => squareFromJSON(sJson)); // Usa Square.fromJSON
     const board = new Board(squares, []); // Inizializza con un array vuoto di giocatori
 
     // Ricostruisci playersPosition
-    json.playersPosition.forEach((entry: any) => {
+    json.playersPosition.forEach((entry) => {
       const player = players.find((p) => p.getId() === entry.playerId);
       if (player) {
         board.movePlayer(player, entry.position);

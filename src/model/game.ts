@@ -1,5 +1,5 @@
 import type { Battle } from "./battle";
-import { Board } from "./board";
+import { Board, type BoardJSON } from "./board";
 import { type Deck, MimeDeck, QuizDeck } from "./deck";
 import { Dice } from "./dice";
 import {
@@ -12,8 +12,17 @@ import {
   SpecialSquareProcessor,
   TurnManager,
 } from "./managers";
-import { Player } from "./player";
+import { Player, type PlayerJSON } from "./player";
 import { Mime, Quiz, type Square } from "./square";
+
+export interface GameJSON {
+  board: BoardJSON;
+  players: PlayerJSON[];
+  currentTurn: number;
+  currentRound: number;
+  gameEnded: boolean;
+  winnerId?: number;
+}
 
 /**
  * Classe principale che gestisce la logica del gioco da tavolo.
@@ -98,14 +107,12 @@ export class Game {
    * @param json - L'oggetto JSON da cui ricostruire il Game.
    * @returns Una nuova istanza di Game.
    */
-  static fromJSON(json: any): Game {
-    const players: Player[] = json.players.map(
-      (p: { id: number; name: string; turnsToSkip: number }) => {
-        const player = new Player(p.id, p.name);
-        player.setTurnsToSkip(p.turnsToSkip); // Usa il setter
-        return player;
-      },
-    );
+  static fromJSON(json: GameJSON): Game {
+    const players: Player[] = json.players.map((p: PlayerJSON) => {
+      const player = new Player(p.id, p.name);
+      player.setTurnsToSkip(p.turnsToSkip); // Usa il setter
+      return player;
+    });
 
     const board = Board.fromJSON(json.board, players);
 
