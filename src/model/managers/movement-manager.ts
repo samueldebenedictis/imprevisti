@@ -30,7 +30,7 @@ export class MovementManager {
     player: Player,
     newPosition: number,
   ): MovementResult {
-    const boardSize = this.board.getSquares().length;
+    const boardSize = this.board.getSquares().length - 1;
     const finalPosition = Math.min(newPosition, boardSize);
 
     this.board.movePlayer(player, finalPosition);

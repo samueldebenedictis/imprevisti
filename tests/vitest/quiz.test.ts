@@ -11,11 +11,12 @@ import {
 
 describe("Quiz square", () => {
   test("Quiz not solved", () => {
-    const square = new Square(0);
+    const square1 = new Square(0);
+    const square2 = new Square(2);
     const quizSquare = new QuizSquare(1);
 
     const players = ["Renzo"].map((el, i) => new Player(i, el));
-    const board = new Board([square, quizSquare], players);
+    const board = new Board([square1, quizSquare, square2], players);
     const game = new Game(board, players, 1);
 
     expect(quizSquare.getNumber()).toBe(1);
@@ -34,12 +35,13 @@ describe("Quiz square", () => {
     expect(skip).toBeTruthy();
   });
 
-  test("Mime solved", () => {
-    const square = new Square(0);
+  test("Quiz solved", () => {
+    const square1 = new Square(0);
+    const square2 = new Square(2);
     const quizSquare = new QuizSquare(1);
 
     const players = ["Renzo"].map((el, i) => new Player(i, el));
-    const board = new Board([square, quizSquare], players);
+    const board = new Board([square1, quizSquare, square2], players);
     const game = new Game(board, players, 1);
 
     const renzo = game.getPlayers()[0];

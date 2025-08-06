@@ -53,7 +53,7 @@ describe("Game", () => {
   });
 
   test("Max position", () => {
-    const squares = new SquaresBuilder().setBoardSize(1).build();
+    const squares = new SquaresBuilder().setBoardSize(2).build();
     const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
     const board = new Board(squares, players);
     const game = new Game(board, players);
@@ -64,7 +64,7 @@ describe("Game", () => {
   });
 
   test("If game ended players don't move", () => {
-    const squares = new SquaresBuilder().setBoardSize(1).build();
+    const squares = new SquaresBuilder().setBoardSize(2).build();
     const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
     const board = new Board(squares, players);
     const game = new Game(board, players);

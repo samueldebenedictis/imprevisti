@@ -8,6 +8,7 @@ type SquareProps = {
   number: number;
   squareType: SquareType;
   playersOn?: string[];
+  boardSize?: number;
 };
 
 const typeToColor = (type: SquareType): Color => {
@@ -27,10 +28,12 @@ const typeToColor = (type: SquareType): Color => {
   }
 };
 
-const number = (n: number) => {
+const text = (n: number, boardSize?: number) => {
   const classBase = "text-gray-100 font-extrabold font-londrina-solid m-auto";
   if (n === 0) {
     return <span className={`${classBase} text-5xl`}>START</span>;
+  } else if (n + 1 === boardSize) {
+    return <span className={`${classBase} text-5xl`}>WIN!</span>;
   } else {
     return <span className={`${classBase} text-7xl`}>{n}</span>;
   }
@@ -46,16 +49,19 @@ const background = (number: number) => {
 
 export default function Square(props: SquareProps) {
   const typeColor = typeToColor(props.squareType);
-  const color = colorToCss(props.number === 0 ? "black" : typeColor);
+  const color = colorToCss(
+    props.number === 0 || props.number + 1 === props.boardSize
+      ? "black"
+      : typeColor,
+  );
   const bg = background(props.number);
-
   return (
     <div className="relative border-4 border-gray-800 shadow-xl">
       <div className={`h-32 w-32 ${color}`}>
         <div className={`h-full ${bg}`}></div>
       </div>
       <div className="absolute text-center top-0 w-full h-full flex">
-        {number(props.number)}
+        {text(props.number, props.boardSize)}
       </div>
       <div className="absolute w-full pl-1 pr-1 bottom-0">
         {playersOn(props.playersOn)}

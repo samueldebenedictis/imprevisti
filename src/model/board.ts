@@ -62,7 +62,49 @@ export class Board {
    * @param position - La nuova posizione del giocatore
    */
   movePlayer = (player: Player, position: number) => {
-    this.playersPosition.set(player, position);
+    console.log(
+      `[Board.movePlayer] Attempting to move player: ${player.getName()} (ID: ${player.getId()}) to position: ${position}`,
+    );
+    console.log(
+      "[Board.movePlayer] PlayersPosition before:",
+      Array.from(this.playersPosition.entries()).map(([p, pos]) => ({
+        name: p.getName(),
+        id: p.getId(),
+        position: pos,
+      })),
+    );
+
+    // Check if the player instance already exists as a key in the map
+    let playerFound = false;
+    for (const [keyPlayer, _] of this.playersPosition.entries()) {
+      if (keyPlayer.getId() === player.getId()) {
+        // Found the existing player instance, use it to update the map
+        this.playersPosition.set(keyPlayer, position);
+        playerFound = true;
+        console.log(
+          `[Board.movePlayer] Updated existing player ${keyPlayer.getName()} (ID: ${keyPlayer.getId()}) position.`,
+        );
+        break;
+      }
+    }
+
+    if (!playerFound) {
+      // If the player instance was not found (e.g., a new instance with the same ID), add it.
+      // This case should ideally not happen if GameModel.fromJSON correctly re-hydrates player instances.
+      this.playersPosition.set(player, position);
+      console.warn(
+        `[Board.movePlayer] Added new player instance ${player.getName()} (ID: ${player.getId()}) to map. This might indicate an instance mismatch.`,
+      );
+    }
+
+    console.log(
+      "[Board.movePlayer] PlayersPosition after:",
+      Array.from(this.playersPosition.entries()).map(([p, pos]) => ({
+        name: p.getName(),
+        id: p.getId(),
+        position: pos,
+      })),
+    );
   };
 
   /**
