@@ -49,7 +49,11 @@ const background = (number: number) => {
 
 export default function Square(props: SquareProps) {
   const typeColor = typeToColor(props.squareType);
-  const color = colorToCss(props.number === 0 ? "black" : typeColor);
+  const color = colorToCss(
+    props.number === 0 || props.number + 1 === props.boardSize
+      ? "black"
+      : typeColor,
+  );
   const bg = background(props.number);
   return (
     <div className="relative border-4 border-gray-800 shadow-xl">
