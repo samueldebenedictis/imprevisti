@@ -34,11 +34,12 @@ describe("Square", () => {
 
 describe("Mime square", () => {
   test("Mime not solved", () => {
-    const square = new Square(0);
+    const square1 = new Square(0);
+    const square2 = new Square(2);
     const mimeSquare = new MimeSquare(1);
 
-    const players = ["Renzo"].map((el, i) => new Player(i, el));
-    const board = new Board([square, mimeSquare], players);
+    const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
+    const board = new Board([square1, mimeSquare, square2], players);
     const game = new Game(board, players, 1);
 
     expect(mimeSquare.getNumber()).toBe(1);
@@ -58,11 +59,12 @@ describe("Mime square", () => {
   });
 
   test("Mime solved", () => {
-    const square = new Square(0);
+    const square1 = new Square(0);
+    const square2 = new Square(2);
     const mimeSquare = new MimeSquare(1);
 
     const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
-    const board = new Board([square, mimeSquare], players);
+    const board = new Board([square1, mimeSquare, square2], players);
     const game = new Game(board, players, 1);
 
     const renzo = game.getPlayers()[0];
