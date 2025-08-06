@@ -10,6 +10,11 @@ import {
  * Quando un giocatore atterra su questa casella, pesca una carta dal mazzo.
  */
 export class MimeSquare extends SpecialSquare {
+  constructor(id: number) {
+    super(id);
+    this.type = "mime"; // Specifica il tipo per la serializzazione
+  }
+
   /**
    * Restituisce il comando per eseguire l'azione del mimo.
    * @returns Comando che gestisce la logica del mimo

@@ -53,6 +53,43 @@ export class Board {
       .filter(([_player, pos]) => pos === position)
       .map(([player, _pos]) => player);
   };
+
+  /**
+   * Converte l'istanza di Board in un oggetto JSON serializzabile.
+   * @returns Un oggetto che rappresenta lo stato della Board in formato JSON.
+   */
+  toJSON() {
+    return {
+      squares: this.squares.map((s) => s.toJSON()), // Ora serializziamo l'intera Square
+      playersPosition: Array.from(this.playersPosition.entries()).map(
+        ([player, position]) => ({
+          playerId: player.getId(),
+          position: position,
+        }),
+      ),
+    };
+  }
+
+  /**
+   * Ricostruisce un'istanza di Board da un oggetto JSON.
+   * @param json - L'oggetto JSON da cui ricostruire la Board.
+   * @param players - Un array di istanze Player già ricostruite.
+   * @returns Una nuova istanza di Board.
+   */
+  static fromJSON(json: any, players: Player[]): Board {
+    const squares = json.squares.map((sJson: any) => Square.fromJSON(sJson)); // Usa Square.fromJSON
+    const board = new Board(squares, []); // Inizializza con un array vuoto di giocatori
+
+    // Ricostruisci playersPosition
+    json.playersPosition.forEach((entry: any) => {
+      const player = players.find((p) => p.getId() === entry.playerId);
+      if (player) {
+        board.movePlayer(player, entry.position);
+      }
+    });
+
+    return board;
+  }
 }
 
 /**

@@ -13,27 +13,45 @@ export default function Home() {
     return new Square(i);
   });
 
-  // var [game, setGame] = useState(new Game([], []));
-  var [game, setGame] = useState(new Game(squares, ["re", "lu"]));
-
-  // Variabili di gioco
+  const [game, setGame] = useState<Game | null>(null);
   const [counter, setCount] = useState(0);
 
-  function onButtonGiocaTurnoClick() {
-    game.playTurn();
-
-    setCount(counter + 1);
-    setGame(game);
-    localStorage.setItem("COUNTER", `${counter}`);
-  }
+  useEffect(() => {
+    const savedGame = localStorage.getItem(GAME_INSTANCE_KEY);
+    if (savedGame) {
+      try {
+        const parsedGame = JSON.parse(savedGame);
+        const loadedGame = Game.fromJSON(parsedGame);
+        setGame(loadedGame);
+      } catch (e) {
+        console.error("Failed to load game from localStorage", e);
+        // Se il caricamento fallisce, inizia una nuova partita
+        setGame(new Game(squares, ["re", "lu"]));
+      }
+    } else {
+      // Se non c'è un gioco salvato, inizia una nuova partita
+      setGame(new Game(squares, ["re", "lu"]));
+    }
+  }, [squares]); // Esegui solo al mount del componente
 
   useEffect(() => {
-    const _gameInstance = JSON.parse(
-      localStorage.getItem(GAME_INSTANCE_KEY) as string,
-    );
-    // TODO: convert istanza gioco object to game
-    setGame(game);
-  }, [game]);
+    if (game) {
+      localStorage.setItem(GAME_INSTANCE_KEY, JSON.stringify(game));
+      localStorage.setItem("COUNTER", `${counter}`);
+    }
+  }, [game, counter]); // Salva il gioco e il counter ogni volta che cambiano
+
+  function onButtonGiocaTurnoClick() {
+    if (game) {
+      game.playTurn();
+      setCount(counter + 1);
+      setGame(game); // Forza un re-render e un salvataggio
+    }
+  }
+
+  if (!game) {
+    return <div>Caricamento gioco...</div>; // O uno spinner di caricamento
+  }
 
   console.log(JSON.stringify(game));
   const squaresC = game

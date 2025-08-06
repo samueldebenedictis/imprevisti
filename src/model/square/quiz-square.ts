@@ -10,6 +10,11 @@ import {
  * When a player lands on this square, they draw a card from the quiz deck.
  */
 export class QuizSquare extends SpecialSquare {
+  constructor(id: number) {
+    super(id);
+    this.type = "quiz"; // Specifica il tipo per la serializzazione
+  }
+
   /**
    * Returns the command to execute the quiz action.
    * @returns Command that handles the quiz logic.

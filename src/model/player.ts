@@ -31,10 +31,25 @@ export class Player {
   getId = () => this.id;
 
   /**
+   * Restituisce il numero di turni che il giocatore deve saltare.
+   * @returns Numero di turni da saltare
+   */
+  getTurnsToSkip = () => this.turnsToSkip;
+
+  /**
    * Imposta il numero di turni che il giocatore deve saltare.
    * @param turns - Numero di turni da saltare
    */
   skipNextTurn = (turns = 1) => {
+    this.turnsToSkip = turns;
+  };
+
+  /**
+   * Imposta direttamente il numero di turni da saltare.
+   * Usato principalmente per la deserializzazione.
+   * @param turns - Numero di turni da saltare
+   */
+  setTurnsToSkip = (turns: number) => {
     this.turnsToSkip = turns;
   };
 

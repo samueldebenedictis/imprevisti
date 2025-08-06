@@ -73,6 +73,64 @@ export class Game {
   }
 
   /**
+   * Converte l'istanza di Game in un oggetto JSON serializzabile.
+   * @returns Un oggetto che rappresenta lo stato del Game in formato JSON.
+   */
+  toJSON() {
+    return {
+      board: this.board.toJSON(),
+      players: this.turnManager.getPlayers().map((p) => ({
+        id: p.getId(),
+        name: p.getName(),
+        turnsToSkip: p.getTurnsToSkip(), // Usa il getter
+      })),
+      currentTurn: this.turnManager.getCurrentTurn(),
+      currentRound: this.turnManager.getCurrentRound(),
+      gameEnded: this.gameStateManager.isGameEnded(),
+      winnerId: this.gameStateManager.getWinner()?.getId(),
+    };
+  }
+
+  /**
+   * Ricostruisce un'istanza di Game da un oggetto JSON.
+   * Questo metodo è responsabile della deserializzazione completa dello stato del gioco,
+   * ricreando correttamente tutte le istanze di classi annidate (Board, Player, Managers).
+   * @param json - L'oggetto JSON da cui ricostruire il Game.
+   * @returns Una nuova istanza di Game.
+   */
+  static fromJSON(json: any): Game {
+    const players: Player[] = json.players.map(
+      (p: { id: number; name: string; turnsToSkip: number }) => {
+        const player = new Player(p.id, p.name);
+        player.setTurnsToSkip(p.turnsToSkip); // Usa il setter
+        return player;
+      },
+    );
+
+    const board = Board.fromJSON(json.board, players);
+
+    const game = new Game(
+      board.getSquares(),
+      players.map((p) => p.getName()),
+    );
+
+    game.turnManager = TurnManager.fromJSON(
+      json.currentTurn,
+      json.currentRound,
+      players,
+    );
+
+    game.gameStateManager = GameStateManager.fromJSON(
+      board.getSquares().length,
+      json.gameEnded,
+      json.winnerId,
+      players,
+    );
+
+    return game;
+  }
+
+  /**
    * Il giocatore attuale lancia il dado e aggiorna la sua posizione.
    * Il turno viene automaticamente incrementato alla fine dell'azione.
    * @returns Risultato dell'azione di gioco (battaglia, mimo o nessuna azione speciale)

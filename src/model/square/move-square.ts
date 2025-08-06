@@ -19,6 +19,7 @@ export class MoveSquare extends SpecialSquare {
   constructor(id: number, moveValue: number) {
     super(id);
     this.moveValue = moveValue;
+    this.type = "move"; // Specifica il tipo per la serializzazione
   }
 
   /**
@@ -49,6 +50,7 @@ export class GoToStartSquare extends MoveSquare {
    */
   constructor(id: number) {
     super(id, -id);
+    this.type = "goToStart"; // Specifica il tipo per la serializzazione
   }
 }
 
