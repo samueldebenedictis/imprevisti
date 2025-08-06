@@ -58,4 +58,22 @@ export class TurnManager {
   getPlayers(): Player[] {
     return this.players;
   }
+
+  /**
+   * Ricostruisce un'istanza di TurnManager da un oggetto JSON.
+   * @param currentTurn - L'indice del turno corrente da ripristinare.
+   * @param currentRound - Il numero del round corrente da ripristinare.
+   * @param players - L'array di istanze Player già ricostruite.
+   * @returns Una nuova istanza di TurnManager.
+   */
+  static fromJSON(
+    currentTurn: number,
+    currentRound: number,
+    players: Player[],
+  ): TurnManager {
+    const turnManager = new TurnManager(players);
+    turnManager.currentRound = currentRound;
+    turnManager.currentTurn = currentTurn;
+    return turnManager;
+  }
 }

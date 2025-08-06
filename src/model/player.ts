@@ -2,6 +2,16 @@
  * Rappresenta un giocatore del gioco.
  * Ogni giocatore ha un identificativo univoco e un nome.
  */
+export interface PlayerJSON {
+  id: number;
+  name: string;
+  turnsToSkip: number;
+}
+
+/**
+ * Rappresenta un giocatore del gioco.
+ * Ogni giocatore ha un identificativo univoco e un nome.
+ */
 export class Player {
   private name: string;
   private id: number;
@@ -31,10 +41,25 @@ export class Player {
   getId = () => this.id;
 
   /**
+   * Restituisce il numero di turni che il giocatore deve saltare.
+   * @returns Numero di turni da saltare
+   */
+  getTurnsToSkip = () => this.turnsToSkip;
+
+  /**
    * Imposta il numero di turni che il giocatore deve saltare.
    * @param turns - Numero di turni da saltare
    */
   skipNextTurn = (turns = 1) => {
+    this.turnsToSkip = turns;
+  };
+
+  /**
+   * Imposta direttamente il numero di turni da saltare.
+   * Usato principalmente per la deserializzazione.
+   * @param turns - Numero di turni da saltare
+   */
+  setTurnsToSkip = (turns: number) => {
     this.turnsToSkip = turns;
   };
 

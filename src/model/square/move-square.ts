@@ -1,5 +1,8 @@
-import type { GameContext } from "../gameContext";
-import { type Command, SpecialSquare } from "./special-square";
+import {
+  type Command,
+  type CommandDependencies,
+  SpecialSquare,
+} from "./special-square";
 
 /**
  * Casella speciale che sposta il giocatore di un numero specificato di posizioni.
@@ -16,6 +19,7 @@ export class MoveSquare extends SpecialSquare {
   constructor(id: number, moveValue: number) {
     super(id);
     this.moveValue = moveValue;
+    this.type = "move"; // Specifica il tipo per la serializzazione
   }
 
   /**
@@ -46,6 +50,7 @@ export class GoToStartSquare extends MoveSquare {
    */
   constructor(id: number) {
     super(id, -id);
+    this.type = "goToStart"; // Specifica il tipo per la serializzazione
   }
 }
 
@@ -63,20 +68,20 @@ class MovePlayerCommand implements Command {
   /**
    * Esegue il movimento del giocatore utilizzando il MovementManager.
    * Calcola la nuova posizione basata sulla posizione corrente e il valore di movimento.
-   * @param context - Contesto di gioco contenente il giocatore e i manager
+   * @param dependencies - Oggetto contenente le dipendenze necessarie (board, player, movementManager).
    * @returns undefined (nessun mimo da gestire)
    */
-  execute(context: GameContext): undefined {
-    const currentPosition = context.board.getPlayerPosition(
-      context.player,
+  execute(dependencies: CommandDependencies): undefined {
+    const currentPosition = dependencies.board.getPlayerPosition(
+      dependencies.player,
     ) as number;
     const newPosition = Math.max(0, currentPosition + this.moveValue);
 
     // Utilizza il MovementManager per gestire il movimento
     // Nota: per le caselle speciali non gestiamo collisioni o fine gioco qui
     // poiché sono già gestite dal flusso principale del gioco
-    context.movementManager.movePlayerAndCheckCollision(
-      context.player,
+    dependencies.movementManager.movePlayerAndCheckCollision(
+      dependencies.player,
       newPosition,
     );
 

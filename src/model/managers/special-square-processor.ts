@@ -1,9 +1,9 @@
 import type { Board } from "../board";
 import type { Deck } from "../deck";
 import type { Dice } from "../dice";
-import { GameContext } from "../gameContext";
 import type { Player } from "../player";
 import {
+  type CommandDependencies, // Importa CommandDependencies
   type Mime,
   MimeSquare,
   type Quiz,
@@ -51,17 +51,17 @@ export class SpecialSquareProcessor {
     const playerPosition = this.board.getPlayerPosition(player);
     const landingSquare = this.board.getSquares()[playerPosition];
 
-    // Crea il contesto di gioco per l'esecuzione dei comandi
-    const gameContext = new GameContext(
+    // Crea l'oggetto CommandDependencies con tutte le dipendenze necessarie
+    const commandDependencies: CommandDependencies = {
       player,
-      this.board,
+      board: this.board,
       allPlayers,
-      this.mimeDeck,
-      this.quizDeck,
-      this.dice,
-      this.movementManager,
-      this.gameStateManager,
-    );
+      mimeDeck: this.mimeDeck,
+      quizDeck: this.quizDeck,
+      dice: this.dice,
+      movementManager: this.movementManager,
+      gameStateManager: this.gameStateManager,
+    };
 
     const squareType = this.getSquareType(playerPosition);
 
@@ -69,16 +69,16 @@ export class SpecialSquareProcessor {
       // Casella MimeSquare - restituisce un oggetto Mime
       case "mime": {
         const command = (landingSquare as MimeSquare).getCommand();
-        return command.execute(gameContext);
+        return command.execute(commandDependencies);
       }
       case "quiz": {
         const command = (landingSquare as QuizSquare).getCommand();
-        return command.execute(gameContext);
+        return command.execute(commandDependencies);
       }
       // Casella SpecialSquare - esegue il comando senza restituire valori
       case "special": {
         const command = (landingSquare as SpecialSquare).getCommand();
-        return command.execute(gameContext);
+        return command.execute(commandDependencies);
       }
       // Casella normale - nessun effetto speciale
       case "normal": {

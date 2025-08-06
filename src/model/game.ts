@@ -1,5 +1,5 @@
 import type { Battle } from "./battle";
-import { Board } from "./board";
+import { Board, type BoardJSON } from "./board";
 import { type Deck, MimeDeck, QuizDeck } from "./deck";
 import { Dice } from "./dice";
 import {
@@ -12,8 +12,17 @@ import {
   SpecialSquareProcessor,
   TurnManager,
 } from "./managers";
-import { Player } from "./player";
-import { Mime, Quiz, type Square } from "./square";
+import { Player, type PlayerJSON } from "./player";
+import { Mime, Quiz } from "./square";
+
+export interface GameJSON {
+  board: BoardJSON;
+  players: PlayerJSON[];
+  currentTurn: number;
+  currentRound: number;
+  gameEnded: boolean;
+  winnerId?: number;
+}
 
 /**
  * Classe principale che gestisce la logica del gioco da tavolo.
@@ -36,21 +45,20 @@ export class Game {
 
   /**
    * Crea una nuova partita con i parametri specificati.
-   * @param squares - Array delle caselle che compongono il tabellone
-   * @param playersName - Array dei nomi dei giocatori
+   * @param board - L'istanza del tabellone di gioco
+   * @param players - Array delle istanze dei giocatori
    * @param diceFaces - Numero di facce del dado (opzionale, default 6)
    */
-  constructor(squares: Square[], playersName: string[], diceFaces = 6) {
+  constructor(board: Board, players: Player[], diceFaces = 6) {
     // Inizializzazione componenti base
-    const players = playersName.map((name, i) => new Player(i, name));
-    this.board = new Board(squares, players);
+    this.board = board;
     this.dice = new Dice(diceFaces);
     this.mimeDeck = new MimeDeck();
     this.quizDeck = new QuizDeck();
 
     // Inizializzazione manager
     this.turnManager = new TurnManager(players);
-    this.gameStateManager = new GameStateManager(squares.length);
+    this.gameStateManager = new GameStateManager(board.getSquares().length);
     this.movementManager = new MovementManager(
       this.board,
       this.gameStateManager,
@@ -73,6 +81,59 @@ export class Game {
   }
 
   /**
+   * Converte l'istanza di Game in un oggetto JSON serializzabile.
+   * @returns Un oggetto che rappresenta lo stato del Game in formato JSON.
+   */
+  toJSON() {
+    return {
+      board: this.board.toJSON(),
+      players: this.turnManager.getPlayers().map((p) => ({
+        id: p.getId(),
+        name: p.getName(),
+        turnsToSkip: p.getTurnsToSkip(), // Usa il getter
+      })),
+      currentTurn: this.turnManager.getCurrentTurn(),
+      currentRound: this.turnManager.getCurrentRound(),
+      gameEnded: this.gameStateManager.isGameEnded(),
+      winnerId: this.gameStateManager.getWinner()?.getId(),
+    };
+  }
+
+  /**
+   * Ricostruisce un'istanza di Game da un oggetto JSON.
+   * Questo metodo è responsabile della deserializzazione completa dello stato del gioco,
+   * ricreando correttamente tutte le istanze di classi annidate (Board, Player, Managers).
+   * @param json - L'oggetto JSON da cui ricostruire il Game.
+   * @returns Una nuova istanza di Game.
+   */
+  static fromJSON(json: GameJSON): Game {
+    const players: Player[] = json.players.map((p: PlayerJSON) => {
+      const player = new Player(p.id, p.name);
+      player.setTurnsToSkip(p.turnsToSkip); // Usa il setter
+      return player;
+    });
+
+    const board = Board.fromJSON(json.board, players);
+
+    const game = new Game(board, players);
+
+    game.turnManager = TurnManager.fromJSON(
+      json.currentTurn,
+      json.currentRound,
+      players,
+    );
+
+    game.gameStateManager = GameStateManager.fromJSON(
+      board.getSquares().length,
+      json.gameEnded,
+      json.winnerId,
+      players,
+    );
+
+    return game;
+  }
+
+  /**
    * Il giocatore attuale lancia il dado e aggiorna la sua posizione.
    * Il turno viene automaticamente incrementato alla fine dell'azione.
    * @returns Risultato dell'azione di gioco (battaglia, mimo o nessuna azione speciale)
@@ -87,7 +148,6 @@ export class Game {
       this.turnManager.advanceTurn();
       return { type: "none" };
     }
-
     const result = this.executePlayerTurn(currentPlayer);
     this.turnManager.advanceTurn();
 
@@ -113,7 +173,6 @@ export class Game {
     const diceValue = this.dice.roll();
     const currentPosition = this.board.getPlayerPosition(player);
     const newPosition = currentPosition + diceValue;
-
     // Gestione movimento e collisioni
     const movementResult = this.movementManager.movePlayerAndCheckCollision(
       player,

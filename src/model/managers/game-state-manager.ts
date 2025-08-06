@@ -62,4 +62,26 @@ export class GameStateManager {
   forceEndGame(winner: Player): void {
     this.endGame(winner);
   }
+
+  /**
+   * Ricostruisce un'istanza di GameStateManager da un oggetto JSON.
+   * @param boardSize - La dimensione del tabellone.
+   * @param gameEnded - Lo stato di fine gioco.
+   * @param winnerId - L'ID del giocatore vincitore, se presente.
+   * @param players - L'array di istanze Player già ricostruite.
+   * @returns Una nuova istanza di GameStateManager.
+   */
+  static fromJSON(
+    boardSize: number,
+    gameEnded: boolean,
+    winnerId: number | undefined,
+    players: Player[],
+  ): GameStateManager {
+    const gameStateManager = new GameStateManager(boardSize);
+    gameStateManager.gameEnded = gameEnded;
+    if (winnerId !== undefined) {
+      gameStateManager.winner = players.find((p) => p.getId() === winnerId);
+    }
+    return gameStateManager;
+  }
 }
