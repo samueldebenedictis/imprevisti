@@ -8,8 +8,6 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: "html",
   use: {
-    /* Base URL to use in actions like `await page.goto('/')`. */
-    // baseURL: 'http://localhost:3000',
     trace: "on-first-retry",
   },
   projects: [
@@ -18,9 +16,4 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"] },
     },
   ],
-  webServer: {
-    command: "npm run storybook",
-    port: 6006,
-    reuseExistingServer: true,
-  },
 });
