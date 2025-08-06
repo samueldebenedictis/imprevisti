@@ -2,14 +2,14 @@
 import { useEffect, useState } from "react";
 import { Battle } from "@/model/battle";
 import { Board } from "@/model/board";
-import type { Mime } from "@/model/deck/mime"; // Correct import for Mime
-import type { Quiz } from "@/model/deck/quiz"; // Correct import for Quiz
+import type { Mime } from "@/model/deck/mime";
+import type { Quiz } from "@/model/deck/quiz";
 import { Game as GameModel } from "@/model/game";
 import { Player } from "@/model/player";
 import { Square } from "@/model/square";
 import BoardComponent from "../components/board";
 import ClientOnly from "../components/client-only";
-import DiceResultModal from "../components/DiceResultModal";
+import DiceResultModal from "../components/dice-result-modal";
 import SquareC from "../components/square";
 
 // Forcing re-evaluation
