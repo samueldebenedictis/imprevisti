@@ -1,12 +1,15 @@
 import { describe, expect, test } from "vitest";
-import { SquaresBuilder } from "@/model/board";
+import { Board, SquaresBuilder } from "@/model/board";
 import { Game } from "@/model/game";
+import { Player } from "@/model/player";
 
 describe("Game", () => {
   test("Board", () => {
-    const b = new SquaresBuilder().setBoardSize(10).build();
-    const game = new Game(b, ["Renzo", "Lucia"]);
-    const board = game.getBoard();
+    const squares = new SquaresBuilder().setBoardSize(10).build();
+    const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
+    const board = new Board(squares, players);
+    const game = new Game(board, players);
+
     expect(board.getSquares()).toHaveLength(10);
 
     for (let i = 0; i < 10; i++) {
@@ -15,9 +18,11 @@ describe("Game", () => {
   });
 
   test("Players", () => {
-    const b = new SquaresBuilder().setBoardSize(10).build();
-    const game = new Game(b, ["Renzo", "Lucia"]);
-    const players = game.getPlayers();
+    const squares = new SquaresBuilder().setBoardSize(10).build();
+    const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
+    const board = new Board(squares, players);
+    const game = new Game(board, players);
+
     expect(players).toHaveLength(2);
 
     expect(players[0].getName()).toBe("Renzo");
@@ -27,9 +32,10 @@ describe("Game", () => {
   });
 
   test("Turns and rounds", () => {
-    const b = new SquaresBuilder().setBoardSize(10).build();
-    const game = new Game(b, ["Renzo", "Lucia"]);
-    const players = game.getPlayers();
+    const squares = new SquaresBuilder().setBoardSize(10).build();
+    const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
+    const board = new Board(squares, players);
+    const game = new Game(board, players);
 
     expect(game.getTurn()).toBe(0);
     expect(game.getRound()).toBe(1);
@@ -47,18 +53,21 @@ describe("Game", () => {
   });
 
   test("Max position", () => {
-    const b = new SquaresBuilder().setBoardSize(1).build();
-    const game = new Game(b, ["Renzo", "Lucia"]);
+    const squares = new SquaresBuilder().setBoardSize(1).build();
+    const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
+    const board = new Board(squares, players);
+    const game = new Game(board, players);
 
     game.playTurn();
-    const players = game.getPlayers();
+
     expect(game.getBoard().getPlayerPosition(players[0])).toBe(1);
   });
 
   test("If game ended players don't move", () => {
-    const b = new SquaresBuilder().setBoardSize(1).build();
-    const game = new Game(b, ["Renzo", "Lucia"]);
-    const players = game.getPlayers();
+    const squares = new SquaresBuilder().setBoardSize(1).build();
+    const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
+    const board = new Board(squares, players);
+    const game = new Game(board, players);
 
     game.playTurn();
     expect(game.getBoard().getPlayerPosition(players[0])).toBe(1);
@@ -71,9 +80,10 @@ describe("Game", () => {
   });
 
   test("Skip turn", () => {
-    const b = new SquaresBuilder().setBoardSize(10).build();
-    const game = new Game(b, ["Renzo", "Lucia"]);
-    const players = game.getPlayers();
+    const squares = new SquaresBuilder().setBoardSize(10).build();
+    const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
+    const board = new Board(squares, players);
+    const game = new Game(board, players);
 
     players[0].skipNextTurn();
     game.playTurn();

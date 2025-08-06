@@ -1,5 +1,7 @@
 import { describe, expect, test } from "vitest";
+import { Board } from "@/model/board";
 import { Game } from "@/model/game";
+import { Player } from "@/model/player";
 import {
   GoToStartSquare,
   Mime,
@@ -35,7 +37,9 @@ describe("Mime square", () => {
     const square = new Square(0);
     const mimeSquare = new MimeSquare(1);
 
-    const game = new Game([square, mimeSquare], ["Renzo"], 1);
+    const players = ["Renzo"].map((el, i) => new Player(i, el));
+    const board = new Board([square, mimeSquare], players);
+    const game = new Game(board, players, 1);
 
     expect(mimeSquare.getNumber()).toBe(1);
     expect(mimeSquare).toBeInstanceOf(SpecialSquare);
@@ -57,7 +61,10 @@ describe("Mime square", () => {
     const square = new Square(0);
     const mimeSquare = new MimeSquare(1);
 
-    const game = new Game([square, mimeSquare], ["Renzo", "Lucia"], 1);
+    const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
+    const board = new Board([square, mimeSquare], players);
+    const game = new Game(board, players, 1);
+
     const renzo = game.getPlayers()[0];
     const lucia = game.getPlayers()[1];
     expect(mimeSquare.getNumber()).toBe(1);

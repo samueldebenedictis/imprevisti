@@ -1,4 +1,6 @@
 import { describe, expect, test } from "vitest";
+import { Board } from "@/model/board";
+import { Player } from "@/model/player";
 import { Game } from "../../src/model/game";
 import {
   Quiz,
@@ -12,7 +14,9 @@ describe("Quiz square", () => {
     const square = new Square(0);
     const quizSquare = new QuizSquare(1);
 
-    const game = new Game([square, quizSquare], ["Renzo"], 1);
+    const players = ["Renzo"].map((el, i) => new Player(i, el));
+    const board = new Board([square, quizSquare], players);
+    const game = new Game(board, players, 1);
 
     expect(quizSquare.getNumber()).toBe(1);
     expect(quizSquare).toBeInstanceOf(SpecialSquare);
@@ -34,7 +38,9 @@ describe("Quiz square", () => {
     const square = new Square(0);
     const quizSquare = new QuizSquare(1);
 
-    const game = new Game([square, quizSquare], ["Renzo"], 1);
+    const players = ["Renzo"].map((el, i) => new Player(i, el));
+    const board = new Board([square, quizSquare], players);
+    const game = new Game(board, players, 1);
 
     const renzo = game.getPlayers()[0];
     expect(quizSquare.getNumber()).toBe(1);
