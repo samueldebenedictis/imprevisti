@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("Has title", async ({ page }) => {
+test("Fill form", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("spinbutton", { name: "Number of Players:" }).fill("3");
   await page.getByRole("textbox", { name: "Player 1 Name:" }).fill("Qui");
