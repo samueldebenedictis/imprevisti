@@ -12,7 +12,14 @@ test("Fill form", async ({ page }) => {
   await expect(page).toHaveURL(/game/);
 
   const storageState = await page.context().storageState();
-  expect(
-    JSON.stringify(storageState.origins[0].localStorage, undefined, 2),
-  ).toMatchSnapshot("e2e-config.json");
+  const storageGame = storageState.origins[0].localStorage.map((el) => {
+    return {
+      name: el.name,
+      value: JSON.parse(el.value),
+    };
+  });
+
+  expect(JSON.stringify(storageGame, undefined, 2)).toMatchSnapshot(
+    "e2e-config.json",
+  );
 });
