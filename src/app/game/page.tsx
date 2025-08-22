@@ -1,12 +1,11 @@
 "use client";
+import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Battle } from "@/model/battle";
-import { Board } from "@/model/board";
 import type { Mime } from "@/model/deck/mime";
 import type { Quiz } from "@/model/deck/quiz";
 import { Game as GameModel } from "@/model/game";
-import { Player } from "@/model/player";
-import { Square } from "@/model/square";
+import type { Player } from "@/model/player";
 import BoardComponent from "../components/board";
 import ClientOnly from "../components/client-only";
 import DiceResultModal from "../components/dice-result-modal";
@@ -32,26 +31,15 @@ export default function Page() {
         const parsedGame = JSON.parse(savedGame);
         const loadedGame = GameModel.fromJSON(parsedGame);
         setGame(loadedGame);
-      } catch (e) {
-        console.error("Failed to load game from localStorage", e);
+      } catch (_e) {
         // Se il caricamento fallisce, inizia una nuova partita
-        const initialPlayers = ["re", "lu"].map(
-          (name, i) => new Player(i, name),
-        );
-        const squares = Array.from(Array(20).keys()).map((_e, i) => {
-          return new Square(i);
-        });
-        const initialBoard = new Board(squares, initialPlayers);
-        setGame(new GameModel(initialBoard, initialPlayers));
+        // console.error("Failed to load game from localStorage", e);
+        redirect("/");
       }
     } else {
       // Se non c'è un gioco salvato, inizia una nuova partita
-      const squares = Array.from(Array(20).keys()).map((_e, i) => {
-        return new Square(i);
-      });
-      const initialPlayers = ["re", "lu"].map((name, i) => new Player(i, name));
-      const initialBoard = new Board(squares, initialPlayers);
-      setGame(new GameModel(initialBoard, initialPlayers));
+      // console.error("Failed to load game from localStorage");
+      redirect("/");
     }
   }, []); // Esegui solo al mount del componente
 
