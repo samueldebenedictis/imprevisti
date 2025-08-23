@@ -1,13 +1,13 @@
 [
   {
-    "name": "COUNTER",
-    "value": 0
-  },
-  {
     "name": "gameConfig",
     "value": {
       "numPlayers": 3,
-      "playerNames": ["Qui", "Quo", "Qua"],
+      "playerNames": [
+        "Qui",
+        "Quo",
+        "Qua"
+      ],
       "numSquares": 25,
       "squareTypes": {
         "mime": false,
@@ -157,5 +157,9 @@
       "currentRound": 1,
       "gameEnded": false
     }
+  },
+  {
+    "name": "debugCounter",
+    "value": 0
   }
 ]

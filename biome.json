@@ -7,7 +7,13 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**", "!node_modules", "!.next", "!coverage"]
+    "includes": [
+      "**",
+      "!node_modules",
+      "!.next",
+      "!coverage",
+      "!tests/e2e/snapshots"
+    ]
   },
   "formatter": {
     "enabled": true,

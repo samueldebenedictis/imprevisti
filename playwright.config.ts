@@ -10,6 +10,7 @@ export default defineConfig({
   use: {
     trace: "on-first-retry",
   },
+  snapshotDir: "tests/e2e/snapshots",
   projects: [
     {
       name: "chromium",
