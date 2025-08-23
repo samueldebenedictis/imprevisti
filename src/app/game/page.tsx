@@ -1,21 +1,24 @@
 "use client";
+
+import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Battle } from "@/model/battle";
-import { Board } from "@/model/board";
-import type { Mime } from "@/model/deck/mime"; // Correct import for Mime
-import type { Quiz } from "@/model/deck/quiz"; // Correct import for Quiz
+import type { Mime } from "@/model/deck/mime";
+import type { Quiz } from "@/model/deck/quiz";
 import { Game as GameModel } from "@/model/game";
-import { Player } from "@/model/player";
-import { Square } from "@/model/square";
+import type { Player } from "@/model/player";
 import BoardComponent from "../components/board";
 import ClientOnly from "../components/client-only";
-import DiceResultModal from "../components/DiceResultModal";
+import DiceResultModal from "../components/dice-result-modal";
 import SquareC from "../components/square";
+import {
+  STORAGE_STATE_KEY_DEBUG_COUNTER,
+  STORAGE_STATE_KEY_GAME_INSTANCE,
+  URL_HOME,
+} from "../vars";
 
 // Forcing re-evaluation
 export default function Page() {
-  const GAME_INSTANCE_KEY = "gameInstance";
-
   const [game, setGame] = useState<GameModel | null>(null);
   const [counter, setCount] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -26,39 +29,31 @@ export default function Page() {
   );
 
   useEffect(() => {
-    const savedGame = localStorage.getItem(GAME_INSTANCE_KEY);
+    const savedGame = localStorage.getItem(STORAGE_STATE_KEY_GAME_INSTANCE);
     if (savedGame) {
       try {
         const parsedGame = JSON.parse(savedGame);
         const loadedGame = GameModel.fromJSON(parsedGame);
         setGame(loadedGame);
-      } catch (e) {
-        console.error("Failed to load game from localStorage", e);
+      } catch (_e) {
         // Se il caricamento fallisce, inizia una nuova partita
-        const initialPlayers = ["re", "lu"].map(
-          (name, i) => new Player(i, name),
-        );
-        const squares = Array.from(Array(20).keys()).map((_e, i) => {
-          return new Square(i);
-        });
-        const initialBoard = new Board(squares, initialPlayers);
-        setGame(new GameModel(initialBoard, initialPlayers));
+        // console.error("Failed to load game from localStorage", e);
+        redirect(URL_HOME);
       }
     } else {
       // Se non c'è un gioco salvato, inizia una nuova partita
-      const squares = Array.from(Array(20).keys()).map((_e, i) => {
-        return new Square(i);
-      });
-      const initialPlayers = ["re", "lu"].map((name, i) => new Player(i, name));
-      const initialBoard = new Board(squares, initialPlayers);
-      setGame(new GameModel(initialBoard, initialPlayers));
+      // console.error("Failed to load game from localStorage");
+      redirect(URL_HOME);
     }
   }, []); // Esegui solo al mount del componente
 
   useEffect(() => {
     if (game) {
-      localStorage.setItem(GAME_INSTANCE_KEY, JSON.stringify(game));
-      localStorage.setItem("COUNTER", `${counter}`);
+      localStorage.setItem(
+        STORAGE_STATE_KEY_GAME_INSTANCE,
+        JSON.stringify(game),
+      );
+      localStorage.setItem(STORAGE_STATE_KEY_DEBUG_COUNTER, `${counter}`);
     }
   }, [game, counter]); // Salva il gioco e il counter ogni volta che cambiano
 
@@ -102,22 +97,13 @@ export default function Page() {
           // Create a new Battle object with the current Player instances
           const currentBattle = new Battle(currentPlayer1, currentPlayer2);
 
-          console.log("Before resolveBattle - Game state:", game);
-          console.log("Resolving battle with winner:", winnerPlayer.getName());
           // Resolve the battle on the current game instance with the new Battle object
           game.resolveBattle(currentBattle, winnerPlayer);
-          console.log(
-            "After resolveBattle - Game state (modified in place):",
-            game,
-          );
 
           // After resolving, create a new GameModel instance from the *modified* game state
           // This ensures React detects the state change and re-renders
           const updatedGame = GameModel.fromJSON(game.toJSON());
-          console.log(
-            "After GameModel.fromJSON - New GameModel instance:",
-            updatedGame,
-          );
+
           setGame(updatedGame);
           closeModal();
         } else {

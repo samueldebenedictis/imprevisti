@@ -22,10 +22,7 @@ export class GameStateManager {
    * @returns True se il giocatore ha vinto, false altrimenti
    */
   checkWinCondition(player: Player, position: number): boolean {
-    console.log("Boardsize", this.boardSize);
-    console.log("Position", position);
     if (position >= this.boardSize - 1) {
-      console.log("WIN");
       this.endGame(player);
       return true;
     }
@@ -46,7 +43,6 @@ export class GameStateManager {
    * @returns True se il gioco è terminato, false altrimenti
    */
   isGameEnded(): boolean {
-    console.log("Game state manager", this.gameEnded);
     return this.gameEnded;
   }
 

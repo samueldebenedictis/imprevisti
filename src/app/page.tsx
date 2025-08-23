@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { GameJSON } from "@/model/game";
+import { STORAGE_STATE_KEY_GAME_CONFIG } from "./vars";
 
 export default function Home() {
   const router = useRouter();
@@ -43,7 +44,10 @@ export default function Home() {
       numSquares,
       squareTypes,
     };
-    localStorage.setItem("gameConfig", JSON.stringify(gameConfig));
+    localStorage.setItem(
+      STORAGE_STATE_KEY_GAME_CONFIG,
+      JSON.stringify(gameConfig),
+    );
 
     const playersJSON = playerNames.map((el, id) => ({
       id,

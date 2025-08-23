@@ -1,4 +1,5 @@
 "use client";
+
 import { type Color, colorToCss } from "./color";
 
 type PawnProps = {

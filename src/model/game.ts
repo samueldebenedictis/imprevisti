@@ -152,17 +152,6 @@ export class Game {
     game.mimeManager = new MimeManager(game.movementManager);
     game.quizManager = new QuizManager(game.movementManager);
 
-    console.log("[Game.fromJSON] Reconstructed Game instance:", game);
-    console.log(
-      "[Game.fromJSON] Reconstructed Players:",
-      game.turnManager.getPlayers().map((p) => ({
-        id: p.getId(),
-        name: p.getName(),
-        turnsToSkip: p.getTurnsToSkip(),
-      })),
-    );
-    // To access playersPosition, we need a getter in Board class
-    // console.log("[Game.fromJSON] Reconstructed Board PlayersPosition:", Array.from(game.board.getPlayersPositionMap().entries()).map(([p, pos]) => ({ name: p.getName(), id: p.getId(), position: pos })));
     return game;
   }
 
@@ -193,7 +182,6 @@ export class Game {
    * @throws Errore se il gioco è già terminato
    */
   private validateGameState(): void {
-    console.log("Terminato?", this.gameStateManager.isGameEnded());
     if (this.gameStateManager.isGameEnded()) {
       throw new Error("Cannot play turn: game has already ended");
     }
