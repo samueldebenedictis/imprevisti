@@ -1,3 +1,4 @@
+import { debugLog } from "@/debug-utils";
 import type { Player } from "./player";
 import { Square } from "./square";
 import type { SquareJSON } from "./square/square";
@@ -62,10 +63,10 @@ export class Board {
    * @param position - La nuova posizione del giocatore
    */
   movePlayer = (player: Player, position: number) => {
-    console.log(
+    debugLog(
       `[Board.movePlayer] Attempting to move player: ${player.getName()} (ID: ${player.getId()}) to position: ${position}`,
     );
-    console.log(
+    debugLog(
       "[Board.movePlayer] PlayersPosition before:",
       Array.from(this.playersPosition.entries()).map(([p, pos]) => ({
         name: p.getName(),
@@ -81,7 +82,7 @@ export class Board {
         // Found the existing player instance, use it to update the map
         this.playersPosition.set(keyPlayer, position);
         playerFound = true;
-        console.log(
+        debugLog(
           `[Board.movePlayer] Updated existing player ${keyPlayer.getName()} (ID: ${keyPlayer.getId()}) position.`,
         );
         break;
@@ -97,7 +98,7 @@ export class Board {
       );
     }
 
-    console.log(
+    debugLog(
       "[Board.movePlayer] PlayersPosition after:",
       Array.from(this.playersPosition.entries()).map(([p, pos]) => ({
         name: p.getName(),
