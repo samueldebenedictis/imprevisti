@@ -1,17 +1,16 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 
-test("Fill form", async ({ page }) => {
-  await page.goto("/");
-  await page.getByRole("spinbutton", { name: "Number of Players:" }).fill("3");
-  await page.getByRole("textbox", { name: "Player 1 Name:" }).fill("Qui");
-  await page.getByRole("textbox", { name: "Player 2 Name:" }).fill("Quo");
-  await page.getByRole("textbox", { name: "Player 3 Name:" }).fill("Qua");
-  await page.getByRole("spinbutton", { name: "Number of Squares:" }).fill("25");
+test("Fill form", async ({ homePage }) => {
+  await homePage.playersNumber.fill("3");
+  await homePage.playerName("1").fill("Qui");
+  await homePage.playerName("2").fill("Quo");
+  await homePage.playerName("3").fill("Qua");
+  await homePage.squaresNumber.fill("25");
 
-  await page.getByRole("button", { name: "Start Game" }).click();
-  await expect(page).toHaveURL(/game/);
+  await homePage.submit.click();
+  await expect(homePage.page).toHaveURL(/game/);
 
-  const storageState = await page.context().storageState();
+  const storageState = await homePage.page.context().storageState();
   const storageGame = storageState.origins[0].localStorage.map((el) => {
     return {
       name: el.name,

@@ -6,6 +6,6 @@ export class GamePage {
   url = "/game";
 
   async goto() {
-    this.page.goto(this.url);
+    await this.page.goto(this.url);
   }
 }
