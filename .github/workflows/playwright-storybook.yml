@@ -17,6 +17,8 @@ jobs:
       run: npm i
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
+    - name: Run Storybook
+      run: npx storybook dev -p 6006 --ci
     - name: Run Playwright tests
       run: npx playwright test -c playwright.storybook.config.ts
     - uses: actions/upload-artifact@v4
