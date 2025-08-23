@@ -1,4 +1,3 @@
-import { debugLog } from "@/debug-utils";
 import type { Battle } from "./battle";
 import { Board, type BoardJSON } from "./board";
 import { type Deck, MimeDeck, QuizDeck } from "./deck";
@@ -153,15 +152,6 @@ export class Game {
     game.mimeManager = new MimeManager(game.movementManager);
     game.quizManager = new QuizManager(game.movementManager);
 
-    debugLog("[Game.fromJSON] Reconstructed Game instance:", game);
-    debugLog(
-      "[Game.fromJSON] Reconstructed Players:",
-      game.turnManager.getPlayers().map((p) => ({
-        id: p.getId(),
-        name: p.getName(),
-        turnsToSkip: p.getTurnsToSkip(),
-      })),
-    );
     return game;
   }
 
@@ -192,7 +182,6 @@ export class Game {
    * @throws Errore se il gioco è già terminato
    */
   private validateGameState(): void {
-    debugLog("Terminato?", this.gameStateManager.isGameEnded());
     if (this.gameStateManager.isGameEnded()) {
       throw new Error("Cannot play turn: game has already ended");
     }

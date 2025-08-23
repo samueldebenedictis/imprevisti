@@ -7,7 +7,6 @@ import type { Mime } from "@/model/deck/mime";
 import type { Quiz } from "@/model/deck/quiz";
 import { Game as GameModel } from "@/model/game";
 import type { Player } from "@/model/player";
-import { debugLog } from "../../debug-utils";
 import BoardComponent from "../components/board";
 import ClientOnly from "../components/client-only";
 import DiceResultModal from "../components/dice-result-modal";
@@ -98,22 +97,13 @@ export default function Page() {
           // Create a new Battle object with the current Player instances
           const currentBattle = new Battle(currentPlayer1, currentPlayer2);
 
-          debugLog("Before resolveBattle - Game state:", game);
-          debugLog("Resolving battle with winner:", winnerPlayer.getName());
           // Resolve the battle on the current game instance with the new Battle object
           game.resolveBattle(currentBattle, winnerPlayer);
-          debugLog(
-            "After resolveBattle - Game state (modified in place):",
-            game,
-          );
 
           // After resolving, create a new GameModel instance from the *modified* game state
           // This ensures React detects the state change and re-renders
           const updatedGame = GameModel.fromJSON(game.toJSON());
-          debugLog(
-            "After GameModel.fromJSON - New GameModel instance:",
-            updatedGame,
-          );
+
           setGame(updatedGame);
           closeModal();
         } else {

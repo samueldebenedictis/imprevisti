@@ -1,4 +1,3 @@
-import { debugLog } from "@/debug-utils";
 import type { Player } from "./player";
 import { Square } from "./square";
 import type { SquareJSON } from "./square/square";
@@ -63,18 +62,6 @@ export class Board {
    * @param position - La nuova posizione del giocatore
    */
   movePlayer = (player: Player, position: number) => {
-    debugLog(
-      `[Board.movePlayer] Attempting to move player: ${player.getName()} (ID: ${player.getId()}) to position: ${position}`,
-    );
-    debugLog(
-      "[Board.movePlayer] PlayersPosition before:",
-      Array.from(this.playersPosition.entries()).map(([p, pos]) => ({
-        name: p.getName(),
-        id: p.getId(),
-        position: pos,
-      })),
-    );
-
     // Check if the player instance already exists as a key in the map
     let playerFound = false;
     for (const [keyPlayer, _] of this.playersPosition.entries()) {
@@ -82,9 +69,6 @@ export class Board {
         // Found the existing player instance, use it to update the map
         this.playersPosition.set(keyPlayer, position);
         playerFound = true;
-        debugLog(
-          `[Board.movePlayer] Updated existing player ${keyPlayer.getName()} (ID: ${keyPlayer.getId()}) position.`,
-        );
         break;
       }
     }
@@ -97,15 +81,6 @@ export class Board {
         `[Board.movePlayer] Added new player instance ${player.getName()} (ID: ${player.getId()}) to map. This might indicate an instance mismatch.`,
       );
     }
-
-    debugLog(
-      "[Board.movePlayer] PlayersPosition after:",
-      Array.from(this.playersPosition.entries()).map(([p, pos]) => ({
-        name: p.getName(),
-        id: p.getId(),
-        position: pos,
-      })),
-    );
   };
 
   /**

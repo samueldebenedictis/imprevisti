@@ -1,4 +1,3 @@
-import { debugLog } from "@/debug-utils";
 import type { Player } from "../player";
 
 /**
@@ -23,10 +22,7 @@ export class GameStateManager {
    * @returns True se il giocatore ha vinto, false altrimenti
    */
   checkWinCondition(player: Player, position: number): boolean {
-    debugLog("Boardsize", this.boardSize);
-    debugLog("Position", position);
     if (position >= this.boardSize - 1) {
-      debugLog("WIN");
       this.endGame(player);
       return true;
     }
@@ -47,7 +43,6 @@ export class GameStateManager {
    * @returns True se il gioco è terminato, false altrimenti
    */
   isGameEnded(): boolean {
-    debugLog("Game state manager", this.gameEnded);
     return this.gameEnded;
   }
 
