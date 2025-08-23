@@ -9,7 +9,7 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   webServer: {
-    command: "npm run storybook",
+    command: "npx storybook dev -p 6006 --ci",
     port: 6006,
     reuseExistingServer: true,
   },
