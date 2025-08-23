@@ -1,4 +1,5 @@
 "use client";
+
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Battle } from "@/model/battle";
@@ -10,11 +11,14 @@ import BoardComponent from "../components/board";
 import ClientOnly from "../components/client-only";
 import DiceResultModal from "../components/dice-result-modal";
 import SquareC from "../components/square";
+import {
+  STORAGE_STATE_KEY_DEBUG_COUNTER,
+  STORAGE_STATE_KEY_GAME_INSTANCE,
+  URL_HOME,
+} from "../vars";
 
 // Forcing re-evaluation
 export default function Page() {
-  const GAME_INSTANCE_KEY = "gameInstance";
-
   const [game, setGame] = useState<GameModel | null>(null);
   const [counter, setCount] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -25,7 +29,7 @@ export default function Page() {
   );
 
   useEffect(() => {
-    const savedGame = localStorage.getItem(GAME_INSTANCE_KEY);
+    const savedGame = localStorage.getItem(STORAGE_STATE_KEY_GAME_INSTANCE);
     if (savedGame) {
       try {
         const parsedGame = JSON.parse(savedGame);
@@ -34,19 +38,22 @@ export default function Page() {
       } catch (_e) {
         // Se il caricamento fallisce, inizia una nuova partita
         // console.error("Failed to load game from localStorage", e);
-        redirect("/");
+        redirect(URL_HOME);
       }
     } else {
       // Se non c'è un gioco salvato, inizia una nuova partita
       // console.error("Failed to load game from localStorage");
-      redirect("/");
+      redirect(URL_HOME);
     }
   }, []); // Esegui solo al mount del componente
 
   useEffect(() => {
     if (game) {
-      localStorage.setItem(GAME_INSTANCE_KEY, JSON.stringify(game));
-      localStorage.setItem("COUNTER", `${counter}`);
+      localStorage.setItem(
+        STORAGE_STATE_KEY_GAME_INSTANCE,
+        JSON.stringify(game),
+      );
+      localStorage.setItem(STORAGE_STATE_KEY_DEBUG_COUNTER, `${counter}`);
     }
   }, [game, counter]); // Salva il gioco e il counter ogni volta che cambiano
 
