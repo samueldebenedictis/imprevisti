@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { borderClasses } from "./common-styles";
+import { uiBorderClasses } from "./common-styles";
 
 type SelectProps = {
   value: string | number;
@@ -15,7 +15,7 @@ export default function Select(props: SelectProps) {
     <select
       value={props.value}
       onChange={props.onChange}
-      className={`${borderClasses} ${props.className || ""}`}
+      className={`${uiBorderClasses} ${props.className || ""}`}
     >
       {props.options.map((option) => (
         <option key={option.value} value={option.value}>

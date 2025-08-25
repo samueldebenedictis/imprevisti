@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { URL_GAME, URL_HOME } from "../vars";
-import { colorToCss } from "./color";
+import { colorToCss } from "./ui/color";
 
 function HeaderLink(props: { text: string; url: string }) {
   return (

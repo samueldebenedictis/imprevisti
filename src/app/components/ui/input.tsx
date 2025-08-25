@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { borderClasses } from "./common-styles";
+import { uiBorderClasses } from "./common-styles";
 
 type InputProps = {
   value: string | number;
@@ -22,7 +22,7 @@ export default function Input(props: InputProps) {
       value={props.value}
       onChange={props.onChange}
       placeholder={props.placeholder}
-      className={`w-full px-2 py-2 text-gray-800 ${borderClasses} ${props.className || ""}`}
+      className={`w-full px-2 py-2 text-gray-800 ${uiBorderClasses} ${props.className || ""}`}
       required={props.required || false}
       min={props.min || undefined}
       id={props.id || undefined}

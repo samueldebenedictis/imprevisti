@@ -1,7 +1,7 @@
 "use client";
 
-import { type Color, colorToCss } from "./color";
 import Pawn from "./pawn";
+import { type Color, colorToCss } from "./ui/color";
 
 type SquareType = "normal" | "mime" | "quiz" | "move-forward" | "move-back";
 

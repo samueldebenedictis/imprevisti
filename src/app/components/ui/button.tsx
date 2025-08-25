@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { type Color, colorToCssButton } from "../color";
+import { type Color, colorToCssButton } from "./color";
 
 type ButtonProps = {
   onClick?: () => void;

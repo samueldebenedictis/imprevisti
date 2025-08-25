@@ -1,6 +1,6 @@
 "use client";
 
-import { type Color, colorToCss } from "./color";
+import { type Color, colorToCss } from "./ui/color";
 
 type PawnProps = {
   name: string;
