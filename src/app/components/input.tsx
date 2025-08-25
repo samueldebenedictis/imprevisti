@@ -11,6 +11,7 @@ type InputProps = {
   id?: string;
   name?: string;
   min?: string;
+  required?: boolean;
 };
 
 export default function Input(props: InputProps) {
@@ -20,7 +21,8 @@ export default function Input(props: InputProps) {
       value={props.value}
       onChange={props.onChange}
       placeholder={props.placeholder}
-      className={`border-2 border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 ${props.className || ""}`}
+      className={`border-4 border-gray-800 p-2 focus:border-4 focus:border-blue-400 focus:outline-none ${props.className || ""}`}
+      required={props.required || false}
     />
   );
 }

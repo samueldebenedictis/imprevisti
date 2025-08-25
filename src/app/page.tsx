@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { GameJSON } from "@/model/game";
+import Input from "./components/input";
 import { STORAGE_STATE_KEY_GAME_CONFIG } from "./vars";
 
 export default function Home() {
@@ -111,13 +112,13 @@ export default function Home() {
             >
               Player {index + 1} Name:
             </label>
-            <input
+            <Input
               type="text"
               id={`playerName${index}`}
               name={`playerName${index}`}
               value={playerNames[index] || ""}
               onChange={(e) => handlePlayerNameChange(index, e.target.value)}
-              className="w-full appearance-none rounded border px-3 py-2 text-gray-700 leading-tight shadow focus:shadow-outline focus:outline-none"
+              className="w-full px-3 py-2 text-gray-800"
               required
             />
           </div>
