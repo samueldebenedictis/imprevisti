@@ -87,7 +87,7 @@ export default function Home() {
         <div className="mb-4">
           <label
             htmlFor="numPlayers"
-            className="block text-gray-700 text-sm font-bold mb-2"
+            className="block text-gray-700 text-sm font-bold mb-1"
           >
             Number of Players:
           </label>
@@ -107,7 +107,7 @@ export default function Home() {
           <div key={`player-name-${item || index}`} className="mb-4">
             <label
               htmlFor={`playerName${index}`}
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-gray-700 text-sm font-bold mb-1"
             >
               Player {index + 1} Name:
             </label>
@@ -126,7 +126,7 @@ export default function Home() {
         <div className="mb-4">
           <label
             htmlFor="numSquares"
-            className="block text-gray-700 text-sm font-bold mb-2"
+            className="block text-gray-700 text-sm font-bold mb-1"
           >
             Number of Squares:
           </label>
@@ -143,10 +143,10 @@ export default function Home() {
         </div>
 
         <div className="mb-6">
-          <span className="block text-gray-700 text-sm font-bold mb-2">
+          <span className="block text-gray-700 text-sm font-bold mb-1">
             Square Types:
           </span>
-          <div className="flex items-center mb-2">
+          <div className="flex items-center mb-1">
             <input
               type="checkbox"
               id="mime"

@@ -147,9 +147,21 @@ export default function Page() {
     setActionData(null); // Reset action data when closing modal
   };
 
+  const handleDeleteGame = () => {
+    localStorage.removeItem(STORAGE_STATE_KEY_GAME_INSTANCE);
+    localStorage.removeItem(STORAGE_STATE_KEY_DEBUG_COUNTER);
+    redirect(URL_HOME);
+  };
+
   if (!game) {
     return <div>Caricamento gioco...</div>; // O uno spinner di caricamento
   }
+
+  const currentPlayer = game.getPlayers()[game.getTurn()];
+  const playersPositions = game.getPlayers().map((player) => ({
+    name: player.getName(),
+    position: game.getPlayerPosition(player),
+  }));
 
   const size = game.getBoard().getSquares().length;
   const squaresC = game
@@ -168,17 +180,35 @@ export default function Page() {
     );
   return (
     <ClientOnly>
-      <div>
-        <div>
+      <div className="flex flex-col items-center p-4">
+        <div className="mb-4 text-lg font-semibold">
+          <p>Turno di: {currentPlayer.getName()}</p>
+          <div className="mt-2">
+            Posizioni dei giocatori:
+            <ul>
+              {playersPositions.map((p) => (
+                <li key={p.name}>
+                  {p.name}: {p.position}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+        <div className="w-full max-w-xs mb-4">
           <button
             type="button"
-            onClick={() => {
-              // setPlayed(played + 1);
-              onButtonGiocaTurnoClick();
-            }}
-            className="flex h-12 w-full rounded-full bg-black justify-center items-center font-bold text-xl text-yellow-100"
+            onClick={onButtonGiocaTurnoClick}
+            disabled={game.isGameEnded()}
+            className="flex h-12 w-full rounded-full bg-black justify-center items-center font-bold text-xl text-yellow-100 mb-2"
           >
             Gioca un turno
+          </button>
+          <button
+            type="button"
+            onClick={handleDeleteGame}
+            className="flex h-12 w-full rounded-full bg-red-600 justify-center items-center font-bold text-xl text-white"
+          >
+            Elimina Partita
           </button>
         </div>
         <div className="mx-auto items-center flex flex-col justify-center">
