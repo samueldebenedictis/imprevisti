@@ -3,6 +3,7 @@ import { useState } from "react";
 import type { Battle } from "@/model/battle";
 import type { Mime, Quiz } from "@/model/deck";
 import type { Player } from "@/model/player";
+import Button from "./button"; // Import the new Button component
 
 interface DiceResultModalProps {
   isOpen: boolean;
@@ -96,14 +97,14 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
               </h3>
               <div className="flex justify-center space-x-4">
                 {(actionData as Battle).getPlayers().map((player: Player) => (
-                  <button
-                    type="button"
+                  <Button
                     key={player.getId()}
                     onClick={() => handleWinnerSelection(player.getId())}
-                    className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-200"
+                    color="red"
+                    className="px-4 py-2"
                   >
                     {player.getName()}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -120,13 +121,13 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                 Domanda: {(actionData as Quiz).cardTopic.cardTitle}
               </p>
               {!showQuizAnswer && (
-                <button
-                  type="button"
+                <Button
                   onClick={handleShowQuizAnswer}
-                  className="mt-2 px-4 py-2 bg-purple-500 text-white rounded-full hover:bg-purple-600 transition-all duration-200"
+                  color="purple"
+                  className="mt-2 px-4 py-2"
                 >
                   Mostra Risposta
-                </button>
+                </Button>
               )}
               {showQuizAnswer && (
                 <>
@@ -137,20 +138,20 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                     </span>
                   </p>
                   <div className="flex justify-center space-x-4 mt-2">
-                    <button
-                      type="button"
+                    <Button
                       onClick={() => handleQuizResolution(true)}
-                      className="px-4 py-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition-all duration-200"
+                      color="green"
+                      className="px-4 py-2"
                     >
                       Corretto
-                    </button>
-                    <button
-                      type="button"
+                    </Button>
+                    <Button
                       onClick={() => handleQuizResolution(false)}
-                      className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-200"
+                      color="red"
+                      className="px-4 py-2"
                     >
                       Sbagliato
-                    </button>
+                    </Button>
                   </div>
                 </>
               )}
@@ -168,22 +169,22 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                 Mima: {(actionData as Mime).cardTopic.cardTitle}
               </p>
               <div className="flex justify-center space-x-4 mt-2">
-                <button
-                  type="button"
+                <Button
                   onClick={() =>
                     handleMimeResolution(true, mimeGuesserId || undefined)
                   }
-                  className="px-4 py-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition-all duration-200"
+                  color="green"
+                  className="px-4 py-2"
                 >
                   Indovinato
-                </button>
-                <button
-                  type="button"
+                </Button>
+                <Button
                   onClick={() => handleMimeResolution(false)}
-                  className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-200"
+                  color="red"
+                  className="px-4 py-2"
                 >
                   Non Indovinato
-                </button>
+                </Button>
               </div>
               {mimeGuessed !== null && mimeGuessed && (
                 <div className="mt-2">
@@ -198,16 +199,16 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                           (actionData as Mime).mimePlayer.getId(),
                       )
                       .map((player: Player) => (
-                        <button
-                          type="button"
+                        <Button
                           key={player.getId()}
                           onClick={() =>
                             handleMimeResolution(true, player.getId())
                           }
-                          className="px-3 py-1 bg-blue-400 text-white rounded-full hover:bg-blue-500 transition-all duration-200"
+                          color="blue"
+                          className="px-3 py-1"
                         >
                           {player.getName()}
-                        </button>
+                        </Button>
                       ))}
                   </div>
                 </div>
@@ -215,13 +216,9 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
             </div>
           )}
 
-        <button
-          type="button"
-          onClick={onClose}
-          className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all duration-200"
-        >
+        <Button onClick={onClose} color="blue" className="mt-4 px-6 py-2">
           Chiudi
-        </button>
+        </Button>
       </div>
     </div>
   );
