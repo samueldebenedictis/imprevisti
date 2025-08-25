@@ -13,7 +13,7 @@ interface DiceResultModalProps {
   onResolveBattle?: (winnerId: number) => void;
   onResolveMime?: (success: boolean, guessPlayerId?: number) => void;
   onResolveQuiz?: (success: boolean) => void;
-  allPlayers: Player[]; // Added allPlayers prop
+  allPlayers: Player[];
 }
 
 const DiceResultModal: React.FC<DiceResultModalProps> = ({
@@ -25,7 +25,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
   onResolveBattle,
   onResolveMime,
   onResolveQuiz,
-  allPlayers, // Destructure allPlayers
+  allPlayers,
 }) => {
   const [showQuizAnswer, setShowQuizAnswer] = useState(false);
   const [mimeGuessed, setMimeGuessed] = useState<boolean | null>(null);
@@ -50,7 +50,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
     if (onResolveQuiz) {
       onResolveQuiz(success);
     }
-    setShowQuizAnswer(false); // Reset for next time
+    setShowQuizAnswer(false);
     onClose();
   };
 
@@ -65,30 +65,34 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-        <h2 className="text-2xl font-bold mb-4">Turn Result</h2>
+      <div className="bg-white p-6 shadow-lg text-center">
+        <h2 className="font-londrina-solid text-3xl text-gray-800 mb-4">
+          Risultato del Turno
+        </h2>
         {diceResult !== null && (
           <p className="text-xl mb-2">
-            You rolled a:{" "}
+            Hai tirato un:{" "}
             <span className="font-extrabold text-blue-600">{diceResult}</span>
           </p>
         )}
         {actionType && (
           <p className="text-lg mb-4">
-            Action:{" "}
+            Azione:{" "}
             <span className="font-semibold text-red-600">{actionType}</span>
           </p>
         )}
         {!actionType && diceResult !== null && (
-          <p className="text-lg mb-4">No special action this turn.</p>
+          <p className="text-lg mb-4">
+            Nessuna azione speciale in questo turno.
+          </p>
         )}
 
         {actionType === "battle" &&
           actionData &&
           (actionData as Battle).getPlayers && (
             <div className="mt-4">
-              <h3 className="text-xl font-semibold mb-2">
-                Battle! Choose a winner:
+              <h3 className="font-londrina-solid text-2xl text-gray-700 mb-2">
+                Battaglia! Scegli un vincitore:
               </h3>
               <div className="flex justify-center space-x-4">
                 {(actionData as Battle).getPlayers().map((player: Player) => (
@@ -96,7 +100,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                     type="button"
                     key={player.getId()}
                     onClick={() => handleWinnerSelection(player.getId())}
-                    className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600"
+                    className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-200"
                   >
                     {player.getName()}
                   </button>
@@ -109,23 +113,25 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
           actionData &&
           (actionData as Quiz).cardTopic && (
             <div className="mt-4">
-              <h3 className="text-xl font-semibold mb-2">Quiz Time!</h3>
+              <h3 className="font-londrina-solid text-2xl text-gray-700 mb-2">
+                Tempo di Quiz!
+              </h3>
               <p className="text-lg mb-2">
-                Question: {(actionData as Quiz).cardTopic.cardTitle}
+                Domanda: {(actionData as Quiz).cardTopic.cardTitle}
               </p>
               {!showQuizAnswer && (
                 <button
                   type="button"
                   onClick={handleShowQuizAnswer}
-                  className="mt-2 px-4 py-2 bg-purple-500 text-white rounded-full hover:bg-purple-600"
+                  className="mt-2 px-4 py-2 bg-purple-500 text-white rounded-full hover:bg-purple-600 transition-all duration-200"
                 >
-                  Show Answer
+                  Mostra Risposta
                 </button>
               )}
               {showQuizAnswer && (
                 <>
                   <p className="text-lg mb-2">
-                    Answer:{" "}
+                    Risposta:{" "}
                     <span className="font-bold">
                       {(actionData as Quiz).cardTopic.cardText}
                     </span>
@@ -134,16 +140,16 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                     <button
                       type="button"
                       onClick={() => handleQuizResolution(true)}
-                      className="px-4 py-2 bg-green-500 text-white rounded-full hover:bg-green-600"
+                      className="px-4 py-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition-all duration-200"
                     >
-                      Correct
+                      Corretto
                     </button>
                     <button
                       type="button"
                       onClick={() => handleQuizResolution(false)}
-                      className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600"
+                      className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-200"
                     >
-                      Incorrect
+                      Sbagliato
                     </button>
                   </div>
                 </>
@@ -155,9 +161,11 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
           actionData &&
           (actionData as Mime).cardTopic && (
             <div className="mt-4">
-              <h3 className="text-xl font-semibold mb-2">Mime Time!</h3>
+              <h3 className="font-londrina-solid text-2xl text-gray-700 mb-2">
+                Tempo di Mima!
+              </h3>
               <p className="text-lg mb-2">
-                Mime: {(actionData as Mime).cardTopic.cardTitle}
+                Mima: {(actionData as Mime).cardTopic.cardTitle}
               </p>
               <div className="flex justify-center space-x-4 mt-2">
                 <button
@@ -165,22 +173,22 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                   onClick={() =>
                     handleMimeResolution(true, mimeGuesserId || undefined)
                   }
-                  className="px-4 py-2 bg-green-500 text-white rounded-full hover:bg-green-600"
+                  className="px-4 py-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition-all duration-200"
                 >
-                  Guessed
+                  Indovinato
                 </button>
                 <button
                   type="button"
                   onClick={() => handleMimeResolution(false)}
-                  className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600"
+                  className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-all duration-200"
                 >
-                  Not Guessed
+                  Non Indovinato
                 </button>
               </div>
               {mimeGuessed !== null && mimeGuessed && (
                 <div className="mt-2">
-                  <h4 className="text-md font-semibold mb-1">
-                    Who guessed it?
+                  <h4 className="font-londrina-solid text-xl text-gray-600 mb-1">
+                    Chi ha indovinato?
                   </h4>
                   <div className="flex justify-center space-x-2 mt-2">
                     {allPlayers
@@ -196,7 +204,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                           onClick={() =>
                             handleMimeResolution(true, player.getId())
                           }
-                          className="px-3 py-1 bg-blue-400 text-white rounded-full hover:bg-blue-500"
+                          className="px-3 py-1 bg-blue-400 text-white rounded-full hover:bg-blue-500 transition-all duration-200"
                         >
                           {player.getName()}
                         </button>
@@ -210,9 +218,9 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
         <button
           type="button"
           onClick={onClose}
-          className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600"
+          className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition-all duration-200"
         >
-          Close
+          Chiudi
         </button>
       </div>
     </div>
