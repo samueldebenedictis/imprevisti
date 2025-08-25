@@ -8,6 +8,7 @@ import type { Quiz } from "@/model/deck/quiz";
 import { Game as GameModel } from "@/model/game";
 import type { Player } from "@/model/player";
 import BoardComponent from "../components/board";
+import Button from "../components/button"; // Import the new Button component
 import ClientOnly from "../components/client-only";
 import DiceResultModal from "../components/dice-result-modal";
 import SquareC from "../components/square";
@@ -36,14 +37,14 @@ export default function Page() {
         const loadedGame = GameModel.fromJSON(parsedGame);
         setGame(loadedGame);
       } catch (_e) {
-        // Se il caricamento fallisce, inizia una nuova partita
-        // console.error("Failed to load game from localStorage", e);
-        redirect(URL_HOME);
+        // Se il caricamento fallisce, il gioco è settato a null
+        // e viene mostrato il button per tornare alla home
+        setGame(null);
       }
     } else {
-      // Se non c'è un gioco salvato, inizia una nuova partita
-      // console.error("Failed to load game from localStorage");
-      redirect(URL_HOME);
+      // Se non c'è un gioco salvato, il gioco è settato a null
+      // e viene mostrato il button per tornare alla home
+      setGame(null);
     }
   }, []); // Esegui solo al mount del componente
 
@@ -154,7 +155,18 @@ export default function Page() {
   };
 
   if (!game) {
-    return <div>Caricamento gioco...</div>; // O uno spinner di caricamento
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <p className="text-xl font-semibold mb-4">Nessuna partita trovata.</p>
+        <Button
+          onClick={() => redirect(URL_HOME)}
+          color="black"
+          className="max-w-xs"
+        >
+          Torna alla Home
+        </Button>
+      </div>
+    );
   }
 
   const currentPlayer = game.getPlayers()[game.getTurn()];
@@ -195,21 +207,16 @@ export default function Page() {
           </div>
         </div>
         <div className="w-full max-w-xs mb-4">
-          <button
-            type="button"
+          <Button
             onClick={onButtonGiocaTurnoClick}
             disabled={game.isGameEnded()}
-            className="flex h-12 w-full rounded-full bg-black justify-center items-center font-bold text-xl text-yellow-100 mb-2"
+            color="black"
           >
             Gioca un turno
-          </button>
-          <button
-            type="button"
-            onClick={handleDeleteGame}
-            className="flex h-12 w-full rounded-full bg-red-600 justify-center items-center font-bold text-xl text-white"
-          >
+          </Button>
+          <Button onClick={handleDeleteGame} color="red">
             Elimina Partita
-          </button>
+          </Button>
         </div>
         <div className="mx-auto items-center flex flex-col justify-center">
           {BoardComponent({

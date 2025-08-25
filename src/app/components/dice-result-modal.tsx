@@ -65,7 +65,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50">
-      <div className="bg-white p-6 shadow-lg text-center">
+      <div className="bg-white p-6 shadow-lg text-center border-4 border-gray-800">
         <h2 className="font-londrina-solid text-4xl text-gray-800 mb-4">
           Risultato del Turno
         </h2>
