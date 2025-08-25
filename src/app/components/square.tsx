@@ -61,10 +61,10 @@ export default function Square(props: SquareProps) {
       <div className={`h-32 w-32 ${color}`}>
         <div className={`h-full ${bg}`}></div>
       </div>
-      <div className="absolute text-center top-0 w-full h-full flex">
+      <div className="absolute top-0 flex h-full w-full text-center">
         {text(props.number, props.boardSize)}
       </div>
-      <div className="absolute w-full pl-1 pr-1 bottom-0">
+      <div className="absolute bottom-0 w-full pr-1 pl-1">
         {playersOn(props.playersOn)}
       </div>
     </div>

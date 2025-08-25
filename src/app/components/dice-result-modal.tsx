@@ -65,25 +65,25 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50">
-      <div className="bg-white p-6 shadow-lg text-center border-4 border-gray-800">
-        <h2 className="font-londrina-solid text-4xl text-gray-800 mb-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="border-4 border-gray-800 bg-white p-6 text-center shadow-lg">
+        <h2 className="mb-4 font-londrina-solid text-4xl text-gray-800">
           Risultato del Turno
         </h2>
         {diceResult !== null && (
-          <p className="text-xl mb-1">
+          <p className="mb-1 text-xl">
             Hai tirato un:{" "}
             <span className="font-extrabold text-blue-600">{diceResult}</span>
           </p>
         )}
         {actionType && (
-          <p className="text-xl mb-4">
+          <p className="mb-4 text-xl">
             Azione:{" "}
             <span className="font-extrabold text-red-600">{actionType}</span>
           </p>
         )}
         {!actionType && diceResult !== null && (
-          <p className="text-xl mb-4">
+          <p className="mb-4 text-xl">
             Nessuna azione speciale in questo turno.
           </p>
         )}
@@ -92,7 +92,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
           actionData &&
           (actionData as Battle).getPlayers && (
             <div className="mt-4">
-              <h3 className="font-londrina-solid text-2xl text-gray-700 mb-1">
+              <h3 className="mb-1 font-londrina-solid text-2xl text-gray-700">
                 Battaglia! Scegli un vincitore:
               </h3>
               <div className="flex justify-center space-x-4">
@@ -114,10 +114,10 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
           actionData &&
           (actionData as Quiz).cardTopic && (
             <div className="mt-4">
-              <h3 className="font-londrina-solid text-2xl text-gray-700 mb-1">
+              <h3 className="mb-1 font-londrina-solid text-2xl text-gray-700">
                 Tempo di Quiz!
               </h3>
-              <p className="text-xl mb-1">
+              <p className="mb-1 text-xl">
                 Domanda: {(actionData as Quiz).cardTopic.cardTitle}
               </p>
               {!showQuizAnswer && (
@@ -131,13 +131,13 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
               )}
               {showQuizAnswer && (
                 <>
-                  <p className="text-xl mb-1">
+                  <p className="mb-1 text-xl">
                     Risposta:{" "}
                     <span className="font-bold">
                       {(actionData as Quiz).cardTopic.cardText}
                     </span>
                   </p>
-                  <div className="flex justify-center space-x-4 mt-2">
+                  <div className="mt-2 flex justify-center space-x-4">
                     <Button
                       onClick={() => handleQuizResolution(true)}
                       color="green"
@@ -162,13 +162,13 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
           actionData &&
           (actionData as Mime).cardTopic && (
             <div className="mt-4">
-              <h3 className="font-londrina-solid text-2xl text-gray-700 mb-1">
+              <h3 className="mb-1 font-londrina-solid text-2xl text-gray-700">
                 Tempo di Mima!
               </h3>
-              <p className="text-xl mb-1">
+              <p className="mb-1 text-xl">
                 Mima: {(actionData as Mime).cardTopic.cardTitle}
               </p>
-              <div className="flex justify-center space-x-4 mt-2">
+              <div className="mt-2 flex justify-center space-x-4">
                 <Button
                   onClick={() =>
                     handleMimeResolution(true, mimeGuesserId || undefined)
@@ -188,10 +188,10 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
               </div>
               {mimeGuessed !== null && mimeGuessed && (
                 <div className="mt-2">
-                  <h4 className="font-londrina-solid text-xl text-gray-600 mb-1">
+                  <h4 className="mb-1 font-londrina-solid text-gray-600 text-xl">
                     Chi ha indovinato?
                   </h4>
-                  <div className="flex justify-center space-x-2 mt-2">
+                  <div className="mt-2 flex justify-center space-x-2">
                     {allPlayers
                       .filter(
                         (player) =>

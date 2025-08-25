@@ -156,8 +156,8 @@ export default function Page() {
 
   if (!game) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen">
-        <p className="text-xl font-semibold mb-4">Nessuna partita trovata.</p>
+      <div className="flex h-screen flex-col items-center justify-center">
+        <p className="mb-4 font-semibold text-xl">Nessuna partita trovata.</p>
         <Button
           onClick={() => redirect(URL_HOME)}
           color="black"
@@ -193,7 +193,7 @@ export default function Page() {
   return (
     <ClientOnly>
       <div className="flex flex-col items-center p-4">
-        <div className="mb-4 text-lg font-semibold">
+        <div className="mb-4 font-semibold text-lg">
           <p>Turno di: {currentPlayer.getName()}</p>
           <div className="mt-2">
             Posizioni dei giocatori:
@@ -206,9 +206,9 @@ export default function Page() {
             </ul>
           </div>
         </div>
-        <div className="w-full max-w-xs mb-4">
+        <div className="mb-4 w-full max-w-xs">
           {game.isGameEnded() ? (
-            <div className="text-center text-2xl font-bold text-green-600 mb-4">
+            <div className="mb-4 text-center font-bold text-2xl text-green-600">
               Vincitore: {game.getWinner()?.getName()}!
             </div>
           ) : (
@@ -224,7 +224,7 @@ export default function Page() {
             Elimina Partita
           </Button>
         </div>
-        <div className="mx-auto items-center flex flex-col justify-center">
+        <div className="mx-auto flex flex-col items-center justify-center">
           {BoardComponent({
             squares: squaresC,
             cols: 5,

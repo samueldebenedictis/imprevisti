@@ -24,6 +24,9 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "nursery": {
+        "useSortedClasses": "error"
+      },
       "correctness": {
         "noUndeclaredVariables": "error"
       }

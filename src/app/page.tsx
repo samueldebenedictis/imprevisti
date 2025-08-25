@@ -78,16 +78,16 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
-      <h1 className="text-4xl font-bold mb-8">Game Configuration</h1>
+    <div className="flex min-h-screen flex-col items-center justify-center py-2">
+      <h1 className="mb-8 font-bold text-4xl">Game Configuration</h1>
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md bg-white p-8 rounded-lg shadow-md"
+        className="w-full max-w-md rounded-lg bg-white p-8 shadow-md"
       >
         <div className="mb-4">
           <label
             htmlFor="numPlayers"
-            className="block text-gray-700 text-sm font-bold mb-1"
+            className="mb-1 block font-bold text-gray-700 text-sm"
           >
             Number of Players:
           </label>
@@ -98,7 +98,7 @@ export default function Home() {
             min="2"
             value={numPlayers}
             onChange={handleNumPlayersChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="w-full appearance-none rounded border px-3 py-2 text-gray-700 leading-tight shadow focus:shadow-outline focus:outline-none"
             required
           />
         </div>
@@ -107,7 +107,7 @@ export default function Home() {
           <div key={`player-name-${item || index}`} className="mb-4">
             <label
               htmlFor={`playerName${index}`}
-              className="block text-gray-700 text-sm font-bold mb-1"
+              className="mb-1 block font-bold text-gray-700 text-sm"
             >
               Player {index + 1} Name:
             </label>
@@ -117,7 +117,7 @@ export default function Home() {
               name={`playerName${index}`}
               value={playerNames[index] || ""}
               onChange={(e) => handlePlayerNameChange(index, e.target.value)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="w-full appearance-none rounded border px-3 py-2 text-gray-700 leading-tight shadow focus:shadow-outline focus:outline-none"
               required
             />
           </div>
@@ -126,7 +126,7 @@ export default function Home() {
         <div className="mb-4">
           <label
             htmlFor="numSquares"
-            className="block text-gray-700 text-sm font-bold mb-1"
+            className="mb-1 block font-bold text-gray-700 text-sm"
           >
             Number of Squares:
           </label>
@@ -137,16 +137,16 @@ export default function Home() {
             min="10"
             value={numSquares}
             onChange={(e) => setNumSquares(parseInt(e.target.value))}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="w-full appearance-none rounded border px-3 py-2 text-gray-700 leading-tight shadow focus:shadow-outline focus:outline-none"
             required
           />
         </div>
 
         <div className="mb-6">
-          <span className="block text-gray-700 text-sm font-bold mb-1">
+          <span className="mb-1 block font-bold text-gray-700 text-sm">
             Square Types:
           </span>
-          <div className="flex items-center mb-1">
+          <div className="mb-1 flex items-center">
             <input
               type="checkbox"
               id="mime"
@@ -155,7 +155,7 @@ export default function Home() {
               onChange={handleSquareTypeChange}
               className="mr-2 leading-tight"
             />
-            <label htmlFor="mime" className="text-sm text-gray-700">
+            <label htmlFor="mime" className="text-gray-700 text-sm">
               Mime
             </label>
           </div>
@@ -168,7 +168,7 @@ export default function Home() {
               onChange={handleSquareTypeChange}
               className="mr-2 leading-tight"
             />
-            <label htmlFor="quiz" className="text-sm text-gray-700">
+            <label htmlFor="quiz" className="text-gray-700 text-sm">
               Quiz
             </label>
           </div>
@@ -176,7 +176,7 @@ export default function Home() {
 
         <button
           type="submit"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:shadow-outline focus:outline-none"
         >
           Start Game
         </button>
