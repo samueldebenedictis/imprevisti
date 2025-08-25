@@ -3,7 +3,8 @@ import { useState } from "react";
 import type { Battle } from "@/model/battle";
 import type { Mime, Quiz } from "@/model/deck";
 import type { Player } from "@/model/player";
-import Button from "./button"; // Import the new Button component
+import Button from "./button";
+import Select from "./select";
 
 interface DiceResultModalProps {
   isOpen: boolean;
@@ -191,26 +192,31 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                   <h4 className="mb-1 font-londrina-solid text-gray-600 text-xl">
                     Chi ha indovinato?
                   </h4>
-                  <div className="mt-2 flex justify-center space-x-2">
-                    {allPlayers
+                  <Select
+                    value={mimeGuesserId || ""}
+                    onChange={(e) => setMimeGuesserId(Number(e.target.value))}
+                    options={allPlayers
                       .filter(
                         (player) =>
                           player.getId() !==
                           (actionData as Mime).mimePlayer.getId(),
                       )
-                      .map((player: Player) => (
-                        <Button
-                          key={player.getId()}
-                          onClick={() =>
-                            handleMimeResolution(true, player.getId())
-                          }
-                          color="blue"
-                          className="px-3 py-1"
-                        >
-                          {player.getName()}
-                        </Button>
-                      ))}
-                  </div>
+                      .map((player) => ({
+                        value: player.getId(),
+                        label: player.getName(),
+                      }))}
+                    className="mt-2"
+                  />
+                  <Button
+                    onClick={() =>
+                      handleMimeResolution(true, mimeGuesserId || undefined)
+                    }
+                    color="blue"
+                    className="mt-2 px-3 py-1"
+                    disabled={mimeGuesserId === null}
+                  >
+                    Conferma
+                  </Button>
                 </div>
               )}
             </div>

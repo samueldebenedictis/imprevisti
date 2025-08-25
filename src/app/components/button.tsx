@@ -9,6 +9,7 @@ type ButtonProps = {
   color?: Color;
   disabled?: boolean;
   className?: string;
+  type?: "button" | "submit" | "reset";
 };
 
 export default function Button(props: ButtonProps) {
