@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { type Color, colorToCss } from "./color";
+import { type Color, colorToCssButton } from "./color";
 
 type ButtonProps = {
   onClick: () => void;
@@ -13,15 +13,15 @@ type ButtonProps = {
 
 export default function Button(props: ButtonProps) {
   const buttonColorClass = props.color
-    ? colorToCss(props.color)
-    : colorToCss("black");
+    ? colorToCssButton(props.color)
+    : colorToCssButton("black");
 
   return (
     <button
       type="button"
       onClick={props.onClick}
       disabled={props.disabled}
-      className={`flex h-12 w-full border-4 border-gray-800 shadow-xl justify-center items-center font-londrina-solid font-extrabold text-xl text-gray-100 mb-2 ${buttonColorClass} ${props.className || ""}`}
+      className={`cursor-pointer flex h-12 w-full transition-all duration-200 hover:scale-105 border-4 border-gray-800 shadow-xl justify-center items-center font-londrina-solid font-extrabold text-xl text-gray-100 mb-2 ${buttonColorClass} ${props.className || ""}`}
     >
       {props.children}
     </button>

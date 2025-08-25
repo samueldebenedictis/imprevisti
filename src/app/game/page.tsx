@@ -207,13 +207,19 @@ export default function Page() {
           </div>
         </div>
         <div className="w-full max-w-xs mb-4">
-          <Button
-            onClick={onButtonGiocaTurnoClick}
-            disabled={game.isGameEnded()}
-            color="black"
-          >
-            Gioca un turno
-          </Button>
+          {game.isGameEnded() ? (
+            <div className="text-center text-2xl font-bold text-green-600 mb-4">
+              Vincitore: {game.getWinner()?.getName()}!
+            </div>
+          ) : (
+            <Button
+              onClick={onButtonGiocaTurnoClick}
+              disabled={game.isGameEnded()}
+              color="blue"
+            >
+              Gioca un turno
+            </Button>
+          )}
           <Button onClick={handleDeleteGame} color="red">
             Elimina Partita
           </Button>
