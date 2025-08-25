@@ -3,7 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { GameJSON } from "@/model/game";
-import Input from "./components/input";
+import Button from "./components/ui/button";
+import Input from "./components/ui/input";
+import { PLAYER_NAME, PLAYERS_NUMBER } from "./texts";
 import { STORAGE_STATE_KEY_GAME_CONFIG } from "./vars";
 
 export default function Home() {
@@ -83,23 +85,22 @@ export default function Home() {
       <h1 className="mb-8 font-bold text-4xl">Game Configuration</h1>
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md rounded-lg bg-white p-8 shadow-md"
+        className="w-full max-w-md bg-white p-8 shadow-md"
       >
         <div className="mb-4">
           <label
             htmlFor="numPlayers"
             className="mb-1 block font-bold text-gray-700 text-sm"
           >
-            Number of Players:
+            {PLAYERS_NUMBER}
           </label>
-          <input
+          <Input
             type="number"
             id="numPlayers"
             name="numPlayers"
             min="2"
             value={numPlayers}
             onChange={handleNumPlayersChange}
-            className="w-full appearance-none rounded border px-3 py-2 text-gray-700 leading-tight shadow focus:shadow-outline focus:outline-none"
             required
           />
         </div>
@@ -110,7 +111,7 @@ export default function Home() {
               htmlFor={`playerName${index}`}
               className="mb-1 block font-bold text-gray-700 text-sm"
             >
-              Player {index + 1} Name:
+              {PLAYER_NAME(index + 1)}
             </label>
             <Input
               type="text"
@@ -118,7 +119,6 @@ export default function Home() {
               name={`playerName${index}`}
               value={playerNames[index] || ""}
               onChange={(e) => handlePlayerNameChange(index, e.target.value)}
-              className="w-full px-3 py-2 text-gray-800"
               required
             />
           </div>
@@ -131,14 +131,13 @@ export default function Home() {
           >
             Number of Squares:
           </label>
-          <input
+          <Input
             type="number"
             id="numSquares"
             name="numSquares"
             min="10"
             value={numSquares}
             onChange={(e) => setNumSquares(parseInt(e.target.value))}
-            className="w-full appearance-none rounded border px-3 py-2 text-gray-700 leading-tight shadow focus:shadow-outline focus:outline-none"
             required
           />
         </div>
@@ -175,12 +174,12 @@ export default function Home() {
           </div>
         </div>
 
-        <button
+        <Button
           type="submit"
           className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:shadow-outline focus:outline-none"
         >
           Start Game
-        </button>
+        </Button>
       </form>
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import type React from "react";
+import { borderClasses } from "./common-styles";
 
 type SelectProps = {
   value: string | number;
@@ -14,7 +15,7 @@ export default function Select(props: SelectProps) {
     <select
       value={props.value}
       onChange={props.onChange}
-      className={`border-2 border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 ${props.className || ""}`}
+      className={`${borderClasses} ${props.className || ""}`}
     >
       {props.options.map((option) => (
         <option key={option.value} value={option.value}>

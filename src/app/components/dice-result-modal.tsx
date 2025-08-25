@@ -3,8 +3,8 @@ import { useState } from "react";
 import type { Battle } from "@/model/battle";
 import type { Mime, Quiz } from "@/model/deck";
 import type { Player } from "@/model/player";
-import Button from "./button";
-import Select from "./select";
+import Button from "./ui/button";
+import Select from "./ui/select";
 
 interface DiceResultModalProps {
   isOpen: boolean;

@@ -8,10 +8,10 @@ import type { Quiz } from "@/model/deck/quiz";
 import { Game as GameModel } from "@/model/game";
 import type { Player } from "@/model/player";
 import BoardComponent from "../components/board";
-import Button from "../components/button"; // Import the new Button component
 import ClientOnly from "../components/client-only";
 import DiceResultModal from "../components/dice-result-modal";
 import SquareC from "../components/square";
+import Button from "../components/ui/button";
 import {
   STORAGE_STATE_KEY_DEBUG_COUNTER,
   STORAGE_STATE_KEY_GAME_INSTANCE,
