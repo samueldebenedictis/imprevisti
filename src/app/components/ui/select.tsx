@@ -1,7 +1,6 @@
 "use client";
 
 import type React from "react";
-import { uiBorderClasses } from "./common-styles";
 
 type SelectProps = {
   value: string | number;
@@ -15,7 +14,7 @@ export default function Select(props: SelectProps) {
     <select
       value={props.value}
       onChange={props.onChange}
-      className={`${uiBorderClasses} ${props.className || ""}`}
+      className={`border-with-focus ${props.className || ""}`}
     >
       {props.options.map((option) => (
         <option key={option.value} value={option.value}>

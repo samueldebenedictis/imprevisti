@@ -19,18 +19,19 @@ export const colorToCss = (color: Color) => {
 };
 
 export const colorToCssButton = (color: Color) => {
+  const base = "bg-linear-to-br";
   switch (color) {
     case "yellow":
-      return `${colorToCss(color)} hover:from-amber-600 hover:to-amber-500`;
+      return `${base} from-amber-600 to-amber-500 hover:from-amber-600 hover:to-amber-400`;
     case "blue":
-      return `${colorToCss(color)} hover:from-sky-600 hover:to-sky-500`;
+      return `${base} from-sky-600 to-sky-500 hover:from-sky-600 hover:to-sky-400`;
     case "green":
-      return `${colorToCss(color)} hover:from-green-600 hover:to-green-500`;
+      return `${base} from-green-600 to-green-500 hover:from-green-600 hover:to-green-400`;
     case "red":
-      return `${colorToCss(color)} hover:from-red-600 hover:to-red-500`;
+      return `${base} from-red-600 to-red-500 hover:from-red-600 hover:to-red-400`;
     case "purple":
-      return `${colorToCss(color)} hover:from-purple-600 hover:to-purple-500`;
+      return `${base} from-purple-600 to-purple-500 hover:from-purple-600 hover:to-purple-400`;
     default:
-      return `${colorToCss(color)} hover:from-gray-600 hover:to-gray-500`;
+      return `${base} from-gray-600 to-gray-500 hover:from-gray-600 hover:to-gray-400`;
   }
 };

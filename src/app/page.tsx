@@ -81,16 +81,13 @@ export default function Home() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
-      <h1 className="mb-8 font-bold text-4xl">Game Configuration</h1>
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-md bg-white p-8 shadow-md"
-      >
+    <div className="flex min-h-screen flex-col items-center justify-center p-2">
+      <h1 className="title">Game Configuration</h1>
+      <form onSubmit={handleSubmit} className="m-2 w-full max-w-md bg-white">
         <div className="mb-4">
           <label
             htmlFor="numPlayers"
-            className="mb-1 block font-bold text-gray-700 text-sm"
+            className="mb-1 block font-bold text-nero text-sm"
           >
             {PLAYERS_NUMBER}
           </label>
@@ -109,7 +106,7 @@ export default function Home() {
           <div key={`player-name-${item || index}`} className="mb-4">
             <label
               htmlFor={`playerName${index}`}
-              className="mb-1 block font-bold text-gray-700 text-sm"
+              className="mb-1 block font-bold text-nero text-sm"
             >
               {PLAYER_NAME(index + 1)}
             </label>
@@ -127,7 +124,7 @@ export default function Home() {
         <div className="mb-4">
           <label
             htmlFor="numSquares"
-            className="mb-1 block font-bold text-gray-700 text-sm"
+            className="mb-1 block font-bold text-nero text-sm"
           >
             Number of Squares:
           </label>
@@ -143,7 +140,7 @@ export default function Home() {
         </div>
 
         <div className="mb-6">
-          <span className="mb-1 block font-bold text-gray-700 text-sm">
+          <span className="mb-1 block font-bold text-nero text-sm">
             Square Types:
           </span>
           <div className="mb-1 flex items-center">
@@ -155,7 +152,7 @@ export default function Home() {
               onChange={handleSquareTypeChange}
               className="mr-2 leading-tight"
             />
-            <label htmlFor="mime" className="text-gray-700 text-sm">
+            <label htmlFor="mime" className="text-nero text-sm">
               Mime
             </label>
           </div>
@@ -168,18 +165,13 @@ export default function Home() {
               onChange={handleSquareTypeChange}
               className="mr-2 leading-tight"
             />
-            <label htmlFor="quiz" className="text-gray-700 text-sm">
+            <label htmlFor="quiz" className="text-nero text-sm">
               Quiz
             </label>
           </div>
         </div>
 
-        <Button
-          type="submit"
-          className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:shadow-outline focus:outline-none"
-        >
-          Start Game
-        </Button>
+        <Button type="submit">Start Game</Button>
       </form>
     </div>
   );

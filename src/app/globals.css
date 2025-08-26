@@ -15,15 +15,33 @@
   --font-londrina-solid: var(--font-londrina-solid);
 }
 
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer components {
+  .text-nero {
+    @apply text-gray-800;
   }
-} */
+  .text-bianco {
+    @apply text-gray-100;
+  }
+  .title {
+    @apply font-bold font-londrina-solid text-4xl;
+  }
+  .subtitle {
+    @apply font-bold font-londrina-solid text-2xl;
+  }
+  .text {
+    @apply font-bold font-londrina-solid text-xl;
+  }
+  .animation-scale {
+    @apply transition-all duration-200 hover:scale-105;
+  }
+  .border-nero {
+    @apply border-4 border-gray-800;
+  }
+  .border-with-focus {
+    @apply border-4 border-gray-800 focus:border-4 focus:border-blue-400 focus:outline-none;
+  }
+}
 
 body {
-  background: var(--background);
-  color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }

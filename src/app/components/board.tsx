@@ -22,7 +22,7 @@ const colsCss = (n: number | undefined) => {
 export default function Board(props: BoardProps) {
   return (
     <div key="board">
-      <span className="m-auto font-extrabold font-londrina-solid text-gray-800 text-xl">
+      <span className="m-auto text-nero">
         Tabellone con {props.squares.length} caselle!
       </span>
       <div className={colsCss(props.cols)}>

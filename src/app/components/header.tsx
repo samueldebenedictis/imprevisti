@@ -9,7 +9,7 @@ function HeaderLink(props: { text: string; url: string }) {
     <Link
       href={props.url}
       prefetch={false}
-      className="font-londrina-solid text-gray-200 text-xl transition-all duration-200 hover:scale-110 hover:underline"
+      className="title animation-scale text-bianco hover:underline"
     >
       {props.text}
     </Link>
@@ -19,7 +19,7 @@ function HeaderLink(props: { text: string; url: string }) {
 export default function Header() {
   return (
     <header className={`sticky top-0 z-10 ${colorToCss("yellow")}`}>
-      <nav className="mx-auto flex max-h-20 max-w-7xl items-center justify-between p-6 px-8">
+      <nav className="mx-auto flex max-h-20 max-w-6xl items-center justify-between p-8">
         <HeaderLink text="HOME" url={URL_HOME} />
         <HeaderLink text="VAI AL GIOCO" url={URL_GAME} />
       </nav>
