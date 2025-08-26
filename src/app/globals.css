@@ -38,7 +38,21 @@
     @apply border-4 border-gray-800;
   }
   .border-with-focus {
-    @apply border-4 border-gray-800 focus:border-4 focus:border-blue-400 focus:outline-none;
+    @apply border-4 border-gray-800 focus:border-4 focus:border-blue-500 focus:outline-none;
+  }
+
+  .custom-checkbox {
+    @apply relative h-6 w-6 cursor-pointer appearance-none border-4 border-gray-800 bg-white transition-all duration-200;
+  }
+  .custom-checkbox:checked {
+    @apply bg-blue-500 border-blue-500;
+  }
+  .custom-checkbox::after {
+    content: "";
+    @apply absolute left-1/2 top-1/2 h-2 w-1 -translate-x-1/2 -translate-y-1/2 rotate-45 border-b-2 border-r-2 border-white opacity-0 transition-all duration-200;
+  }
+  .custom-checkbox:checked::after {
+    @apply opacity-100;
   }
 }
 

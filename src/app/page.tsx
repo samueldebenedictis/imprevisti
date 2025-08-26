@@ -5,8 +5,33 @@ import { useState } from "react";
 import type { GameJSON } from "@/model/game";
 import Button from "./components/ui/button";
 import Input from "./components/ui/input";
-import { PLAYER_NAME, PLAYERS_NUMBER } from "./texts";
+import {
+  LABEL_GAME_CONFIGURATION,
+  LABEL_MIME,
+  LABEL_PLAYER_NAME,
+  LABEL_PLAYERS_NUMBER,
+  LABEL_QUIZ,
+  LABEL_SPECIAL_SQUARES,
+  LABEL_SQUARES_NUMBER,
+  LABEL_SUBMIT,
+} from "./texts";
 import { STORAGE_STATE_KEY_GAME_CONFIG } from "./vars";
+
+function Label(props: { children: string; htmlFor: string }) {
+  return (
+    <label htmlFor={props.htmlFor} className="testo-nero testo-sottotitolo">
+      {props.children}
+    </label>
+  );
+}
+
+function LabelCheckbox(props: { children: string; htmlFor: string }) {
+  return (
+    <label htmlFor={props.htmlFor} className="testo-nero testo-normale">
+      {props.children}
+    </label>
+  );
+}
 
 export default function Home() {
   const router = useRouter();
@@ -81,16 +106,11 @@ export default function Home() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-2">
-      <h1 className="testo-titolo">Game Configuration</h1>
+    <div className="my-8 flex flex-col items-center justify-center p-2">
+      <h1 className="testo-titolo m-2">{LABEL_GAME_CONFIGURATION}</h1>
       <form onSubmit={handleSubmit} className="m-2 w-full max-w-md bg-white">
         <div className="mb-4">
-          <label
-            htmlFor="numPlayers"
-            className="testo-nero mb-1 block font-bold text-sm"
-          >
-            {PLAYERS_NUMBER}
-          </label>
+          <Label htmlFor="numPlayers">{LABEL_PLAYERS_NUMBER}</Label>
           <Input
             type="number"
             id="numPlayers"
@@ -104,12 +124,9 @@ export default function Home() {
 
         {Array.from({ length: numPlayers }).map((item, index) => (
           <div key={`player-name-${item || index}`} className="mb-4">
-            <label
-              htmlFor={`playerName${index}`}
-              className="testo-nero mb-1 block font-bold text-sm"
-            >
-              {PLAYER_NAME(index + 1)}
-            </label>
+            <Label htmlFor={`playerName${index}`}>
+              {LABEL_PLAYER_NAME(index + 1)}
+            </Label>
             <Input
               type="text"
               id={`playerName${index}`}
@@ -122,12 +139,7 @@ export default function Home() {
         ))}
 
         <div className="mb-4">
-          <label
-            htmlFor="numSquares"
-            className="testo-nero mb-1 block font-bold text-sm"
-          >
-            Number of Squares:
-          </label>
+          <Label htmlFor="numSquares">{LABEL_SQUARES_NUMBER}</Label>
           <Input
             type="number"
             id="numSquares"
@@ -140,9 +152,7 @@ export default function Home() {
         </div>
 
         <div className="mb-6">
-          <span className="testo-nero mb-1 block font-bold text-sm">
-            Square Types:
-          </span>
+          <Label htmlFor="squareTypes">{LABEL_SPECIAL_SQUARES}</Label>
           <div className="mb-1 flex items-center">
             <input
               type="checkbox"
@@ -150,11 +160,9 @@ export default function Home() {
               name="mime"
               checked={squareTypes.mime}
               onChange={handleSquareTypeChange}
-              className="mr-2 leading-tight"
+              className="custom-checkbox mr-2"
             />
-            <label htmlFor="mime" className="testo-nero text-sm">
-              Mime
-            </label>
+            <LabelCheckbox htmlFor="mime">{LABEL_MIME}</LabelCheckbox>
           </div>
           <div className="flex items-center">
             <input
@@ -163,15 +171,15 @@ export default function Home() {
               name="quiz"
               checked={squareTypes.quiz}
               onChange={handleSquareTypeChange}
-              className="mr-2 leading-tight"
+              className="custom-checkbox mr-2"
             />
-            <label htmlFor="quiz" className="testo-nero text-sm">
-              Quiz
-            </label>
+            <LabelCheckbox htmlFor="quiz">{LABEL_QUIZ}</LabelCheckbox>
           </div>
         </div>
 
-        <Button type="submit">Start Game</Button>
+        <Button color="blue" type="submit" className="mx-auto">
+          {LABEL_SUBMIT}
+        </Button>
       </form>
     </div>
   );
