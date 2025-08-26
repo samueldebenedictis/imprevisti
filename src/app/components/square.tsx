@@ -30,13 +30,13 @@ const typeToColor = (type: SquareType): Color => {
 };
 
 const text = (n: number, boardSize?: number) => {
-  const classBase = "text-bianco m-auto";
+  const classBase = "testo-bianco m-auto";
   if (n === 0) {
-    return <span className={`${classBase} title`}>START</span>;
+    return <span className={`${classBase} testo-titolo`}>START</span>;
   } else if (n + 1 === boardSize) {
-    return <span className={`${classBase} title`}>WIN!</span>;
+    return <span className={`${classBase} testo-titolo`}>WIN!</span>;
   } else {
-    return <span className={`${classBase} title text-7xl`}>{n}</span>;
+    return <span className={`${classBase} testo-titolo text-7xl`}>{n}</span>;
   }
 };
 

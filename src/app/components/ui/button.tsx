@@ -22,7 +22,7 @@ export default function Button(props: ButtonProps) {
       type={props.type ?? "button"}
       onClick={props.onClick ?? undefined}
       disabled={props.disabled}
-      className={`subtitle animation-scale m-2 flex h-12 w-full cursor-pointer items-center justify-center border-nero text-bianco shadow-xl ${buttonColorClass} ${props.className || ""}`}
+      className={`testo-sottotitolo animation-scale testo-bianco m-2 flex h-12 w-full cursor-pointer items-center justify-center border-nero shadow-xl ${buttonColorClass} ${props.className || ""}`}
     >
       {props.children}
     </button>

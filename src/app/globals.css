@@ -16,19 +16,19 @@
 }
 
 @layer components {
-  .text-nero {
+  .testo-nero {
     @apply text-gray-800;
   }
-  .text-bianco {
+  .testo-bianco {
     @apply text-gray-100;
   }
   .title {
     @apply font-bold font-londrina-solid text-4xl;
   }
-  .subtitle {
+  .testo-sottotitolo {
     @apply font-bold font-londrina-solid text-2xl;
   }
-  .text {
+  .testo-normale {
     @apply font-bold font-londrina-solid text-xl;
   }
   .animation-scale {

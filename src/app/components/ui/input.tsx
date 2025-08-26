@@ -21,7 +21,7 @@ export default function Input(props: InputProps) {
       value={props.value}
       onChange={props.onChange}
       placeholder={props.placeholder}
-      className={`w-full border-with-focus p-2 text-nero ${props.className || ""}`}
+      className={`testo-nero w-full border-with-focus p-2 ${props.className || ""}`}
       required={props.required || false}
       min={props.min || undefined}
       id={props.id || undefined}

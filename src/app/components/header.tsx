@@ -9,7 +9,7 @@ function HeaderLink(props: { text: string; url: string }) {
     <Link
       href={props.url}
       prefetch={false}
-      className="title animation-scale text-bianco hover:underline"
+      className="testo-titolo animation-scale testo-bianco hover:underline"
     >
       {props.text}
     </Link>

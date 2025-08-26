@@ -68,7 +68,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="border-4 border-gray-800 bg-white p-6 text-center shadow-lg">
-        <h2 className="mb-4 font-londrina-solid text-4xl text-gray-800">
+        <h2 className="testo-nero mb-4 font-londrina-solid text-4xl">
           Risultato del Turno
         </h2>
         {diceResult !== null && (
@@ -93,7 +93,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
           actionData &&
           (actionData as Battle).getPlayers && (
             <div className="mt-4">
-              <h3 className="mb-1 font-londrina-solid text-2xl text-nero">
+              <h3 className="testo-nero mb-1 font-londrina-solid text-2xl">
                 Battaglia! Scegli un vincitore:
               </h3>
               <div className="flex justify-center space-x-4">
@@ -115,7 +115,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
           actionData &&
           (actionData as Quiz).cardTopic && (
             <div className="mt-4">
-              <h3 className="mb-1 font-londrina-solid text-2xl text-nero">
+              <h3 className="testo-nero mb-1 font-londrina-solid text-2xl">
                 Tempo di Quiz!
               </h3>
               <p className="mb-1 text-xl">
@@ -163,7 +163,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
           actionData &&
           (actionData as Mime).cardTopic && (
             <div className="mt-4">
-              <h3 className="mb-1 font-londrina-solid text-2xl text-nero">
+              <h3 className="testo-nero mb-1 font-londrina-solid text-2xl">
                 Tempo di Mima!
               </h3>
               <p className="mb-1 text-xl">
@@ -189,7 +189,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
               </div>
               {mimeGuessed !== null && mimeGuessed && (
                 <div className="mt-2">
-                  <h4 className="mb-1 font-londrina-solid text-gray-600 text-xl">
+                  <h4 className="testo-nero mb-1 font-londrina-solid text-xl">
                     Chi ha indovinato?
                   </h4>
                   <Select
