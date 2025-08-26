@@ -13,16 +13,19 @@ type ButtonProps = {
 };
 
 export default function Button(props: ButtonProps) {
-  const buttonColorClass = props.color
+  const color = props.color
     ? colorToCssButton(props.color)
     : colorToCssButton("black");
+
+  const buttonColorClass = props.disabled ? colorToCssButton("black") : color;
+  const animated = props.disabled ? "" : "animation-scale cursor-pointer";
 
   return (
     <button
       type={props.type ?? "button"}
       onClick={props.onClick ?? undefined}
       disabled={props.disabled}
-      className={`testo-sottotitolo animation-scale testo-bianco m-2 flex h-12 w-full cursor-pointer items-center justify-center border-nero shadow-xl ${buttonColorClass} ${props.className || ""}`}
+      className={`testo-sottotitolo ${animated} testo-bianco m-2 flex h-12 items-center justify-center border-nero p-2 shadow-xl ${buttonColorClass} ${props.className || ""}`}
     >
       {props.children}
     </button>

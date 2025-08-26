@@ -30,6 +30,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
   allPlayers,
 }) => {
   const [showQuizAnswer, setShowQuizAnswer] = useState(false);
+  const [showMimeTopic, setShowMimeTopic] = useState(false); // New state for mime topic visibility
   const [mimeGuessed, setMimeGuessed] = useState<boolean | null>(null);
   const [mimeGuesserId, setMimeGuesserId] = useState<number | null>(null);
 
@@ -77,7 +78,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
             <span className="font-extrabold text-blue-600">{diceResult}</span>
           </p>
         )}
-        {actionType && (
+        {/* {actionType && (
           <p className="mb-4 text-xl">
             Azione:{" "}
             <span className="font-extrabold text-red-600">{actionType}</span>
@@ -87,7 +88,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
           <p className="mb-4 text-xl">
             Nessuna azione speciale in questo turno.
           </p>
-        )}
+        )} */}
 
         {actionType === "battle" &&
           actionData &&
@@ -102,7 +103,6 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                     key={player.getId()}
                     onClick={() => handleWinnerSelection(player.getId())}
                     color="red"
-                    className="px-4 py-2"
                   >
                     {player.getName()}
                   </Button>
@@ -116,7 +116,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
           (actionData as Quiz).cardTopic && (
             <div className="mt-4">
               <h3 className="testo-nero mb-1 font-londrina-solid text-2xl">
-                Tempo di Quiz!
+                Quiz!
               </h3>
               <p className="mb-1 text-xl">
                 Domanda: {(actionData as Quiz).cardTopic.cardTitle}
@@ -125,7 +125,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                 <Button
                   onClick={handleShowQuizAnswer}
                   color="purple"
-                  className="mt-2 px-4 py-2"
+                  className="m-2 mx-auto"
                 >
                   Mostra Risposta
                 </Button>
@@ -166,27 +166,40 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
               <h3 className="testo-nero mb-1 font-londrina-solid text-2xl">
                 Tempo di Mima!
               </h3>
-              <p className="mb-1 text-xl">
-                Mima: {(actionData as Mime).cardTopic.cardTitle}
-              </p>
-              <div className="mt-2 flex justify-center space-x-4">
+              {!showMimeTopic && (
                 <Button
-                  onClick={() =>
-                    handleMimeResolution(true, mimeGuesserId || undefined)
-                  }
-                  color="green"
-                  className="px-4 py-2"
+                  onClick={() => setShowMimeTopic(true)}
+                  color="purple"
+                  className="mx-auto mt-2 px-4 py-2"
                 >
-                  Indovinato
+                  Mostra Mimo
                 </Button>
-                <Button
-                  onClick={() => handleMimeResolution(false)}
-                  color="red"
-                  className="px-4 py-2"
-                >
-                  Non Indovinato
-                </Button>
-              </div>
+              )}
+              {showMimeTopic && (
+                <>
+                  <p className="mb-1 text-xl">
+                    Mima: {(actionData as Mime).cardTopic.cardTitle}
+                  </p>
+                  <div className="mt-2 flex justify-center space-x-4">
+                    <Button
+                      onClick={() =>
+                        handleMimeResolution(true, mimeGuesserId || undefined)
+                      }
+                      color="green"
+                      className="px-4 py-2"
+                    >
+                      Indovinato
+                    </Button>
+                    <Button
+                      onClick={() => handleMimeResolution(false)}
+                      color="red"
+                      className="px-4 py-2"
+                    >
+                      Non Indovinato
+                    </Button>
+                  </div>
+                </>
+              )}
               {mimeGuessed !== null && mimeGuessed && (
                 <div className="mt-2">
                   <h4 className="testo-nero mb-1 font-londrina-solid text-xl">
@@ -212,7 +225,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                       handleMimeResolution(true, mimeGuesserId || undefined)
                     }
                     color="blue"
-                    className="mt-2 px-3 py-1"
+                    className="mx-auto mt-2 px-3 py-1"
                     disabled={mimeGuesserId === null}
                   >
                     Conferma
@@ -222,7 +235,11 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
             </div>
           )}
 
-        <Button onClick={onClose} color="blue" className="mt-4 px-6 py-2">
+        <Button
+          onClick={onClose}
+          color="blue"
+          className="mx-auto mt-4 px-6 py-2"
+        >
           Chiudi
         </Button>
       </div>

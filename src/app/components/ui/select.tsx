@@ -14,7 +14,7 @@ export default function Select(props: SelectProps) {
     <select
       value={props.value}
       onChange={props.onChange}
-      className={`border-with-focus ${props.className || ""}`}
+      className={`testo-nero w-full border-with-focus p-2 ${props.className || ""}`}
     >
       {props.options.map((option) => (
         <option key={option.value} value={option.value}>

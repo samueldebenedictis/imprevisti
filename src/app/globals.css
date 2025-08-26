@@ -22,7 +22,7 @@
   .testo-bianco {
     @apply text-gray-100;
   }
-  .title {
+  .testo-titolo {
     @apply font-bold font-londrina-solid text-4xl;
   }
   .testo-sottotitolo {
