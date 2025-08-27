@@ -68,16 +68,18 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="border-4 border-gray-800 bg-white p-6 text-center shadow-lg">
+      <div className="min-w-[600px] border-4 border-gray-800 bg-white p-6 text-center shadow-lg">
         <h2 className="testo-nero mb-4 font-londrina-solid text-4xl">
           Risultato del Turno
         </h2>
         {diceResult !== null && (
-          <p className="mb-1 text-xl">
+          <p className="mb-4 text-xl">
             Hai tirato un:{" "}
             <span className="font-extrabold text-blue-600">{diceResult}</span>
           </p>
         )}
+        {actionType && <div className="mb-4 border-gray-300 border-b-2"></div>}{" "}
+        {/* Divider after title, only if actionType exists */}
         {/* {actionType && (
           <p className="mb-4 text-xl">
             Azione:{" "}
@@ -89,7 +91,6 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
             Nessuna azione speciale in questo turno.
           </p>
         )} */}
-
         {actionType === "battle" &&
           actionData &&
           (actionData as Battle).getPlayers && (
@@ -110,7 +111,6 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
               </div>
             </div>
           )}
-
         {actionType === "quiz" &&
           actionData &&
           (actionData as Quiz).cardTopic && (
@@ -158,7 +158,6 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
               )}
             </div>
           )}
-
         {actionType === "mime" &&
           actionData &&
           (actionData as Mime).cardTopic && (
@@ -234,7 +233,8 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
               )}
             </div>
           )}
-
+        {actionType && <div className="mt-4 border-gray-300 border-b-2"></div>}{" "}
+        {/* Divider before close button, only if actionType exists */}
         <Button
           onClick={onClose}
           color="blue"
