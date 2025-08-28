@@ -15,7 +15,11 @@ import {
   LABEL_SQUARES_NUMBER,
   LABEL_SUBMIT,
 } from "./texts";
-import { STORAGE_STATE_KEY_GAME_CONFIG } from "./vars";
+import {
+  MAX_PLAYERS,
+  MIN_PLAYERS,
+  STORAGE_STATE_KEY_GAME_CONFIG,
+} from "./vars";
 
 function Label(props: { children: string; htmlFor: string }) {
   return (
@@ -115,7 +119,8 @@ export default function Home() {
             type="number"
             id="numPlayers"
             name="numPlayers"
-            min="2"
+            min={`${MIN_PLAYERS}`}
+            max={`${MAX_PLAYERS}`}
             value={numPlayers}
             onChange={handleNumPlayersChange}
             required
