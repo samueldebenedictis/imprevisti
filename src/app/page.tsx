@@ -15,7 +15,11 @@ import {
   LABEL_SQUARES_NUMBER,
   LABEL_SUBMIT,
 } from "./texts";
-import { STORAGE_STATE_KEY_GAME_CONFIG } from "./vars";
+import {
+  MAX_PLAYERS,
+  MIN_PLAYERS,
+  STORAGE_STATE_KEY_GAME_CONFIG,
+} from "./vars";
 
 function Label(props: { children: string; htmlFor: string }) {
   return (
@@ -107,7 +111,9 @@ export default function Home() {
 
   return (
     <div className="my-8 flex flex-col items-center justify-center p-2">
-      <h1 className="ui-text-title m-2">{LABEL_GAME_CONFIGURATION}</h1>
+      <h1 className="ui-text-dark ui-text-title m-2">
+        {LABEL_GAME_CONFIGURATION}
+      </h1>
       <form onSubmit={handleSubmit} className="m-2 w-full max-w-md bg-white">
         <div className="mb-4">
           <Label htmlFor="numPlayers">{LABEL_PLAYERS_NUMBER}</Label>
@@ -115,7 +121,8 @@ export default function Home() {
             type="number"
             id="numPlayers"
             name="numPlayers"
-            min="2"
+            min={`${MIN_PLAYERS}`}
+            max={`${MAX_PLAYERS}`}
             value={numPlayers}
             onChange={handleNumPlayersChange}
             required

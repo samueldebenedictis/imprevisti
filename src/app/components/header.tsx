@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { URL_GAME, URL_HOME } from "../vars";
+import { URL_GAME, URL_HOME, URL_INSTRUCTION } from "../vars";
 import { colorToCss } from "./ui/color";
 
 function HeaderLink(props: { text: string; url: string }) {
@@ -22,6 +22,7 @@ export default function Header() {
       <nav className="mx-auto flex max-h-20 max-w-6xl items-center justify-between p-8">
         <HeaderLink text="HOME" url={URL_HOME} />
         <HeaderLink text="VAI AL GIOCO" url={URL_GAME} />
+        <HeaderLink text="ISTRUZIONI" url={URL_INSTRUCTION} />
       </nav>
     </header>
   );

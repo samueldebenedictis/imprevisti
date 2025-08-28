@@ -8,7 +8,7 @@ type SquareType = "normal" | "mime" | "quiz" | "move-forward" | "move-back";
 type SquareProps = {
   number: number;
   squareType: SquareType;
-  playersOn?: string[];
+  playersOn?: { name: string; isCurrentPlayerTurn: boolean }[];
   boardSize?: number;
 };
 
@@ -40,8 +40,17 @@ const text = (n: number, boardSize?: number) => {
   }
 };
 
-const playersOn = (names: string[] | undefined) => {
-  if (names) return names.map((el) => Pawn({ name: el, color: "yellow" }));
+const playersOn = (
+  players: { name: string; isCurrentPlayerTurn: boolean }[] | undefined,
+) => {
+  if (players)
+    return players.map((el) =>
+      Pawn({
+        name: el.name,
+        color: "yellow",
+        isCurrentPlayerTurn: el.isCurrentPlayerTurn,
+      }),
+    );
 };
 
 const background = (number: number) => {

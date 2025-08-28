@@ -1,10 +1,19 @@
-export type Color = "yellow" | "blue" | "green" | "red" | "purple" | "black";
+export type Color =
+  | "yellow"
+  | "yellow-light"
+  | "blue"
+  | "green"
+  | "red"
+  | "purple"
+  | "black";
 
 export const colorToCss = (color: Color) => {
   const base = "bg-linear-to-br";
   switch (color) {
     case "yellow":
       return `${base} from-amber-600 to-amber-400`;
+    case "yellow-light":
+      return `${base} from-amber-300 to-amber-200`;
     case "blue":
       return `${base} from-sky-600 to-sky-400`;
     case "green":

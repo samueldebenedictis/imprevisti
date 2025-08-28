@@ -10,6 +10,7 @@ import type { Player } from "@/model/player";
 import BoardComponent from "../components/board";
 import ClientOnly from "../components/client-only";
 import DiceResultModal from "../components/dice-result-modal";
+import LeftBar from "../components/left-bar"; // Import the new LeftBar component
 import SquareC from "../components/square";
 import Button from "../components/ui/button";
 import {
@@ -161,13 +162,9 @@ export default function Page() {
 
   if (!game) {
     return (
-      <div className="flex h-screen flex-col items-center justify-center">
-        <p className="mb-4 font-semibold text-xl">Nessuna partita trovata.</p>
-        <Button
-          onClick={() => redirect(URL_HOME)}
-          color="black"
-          className="max-w-xs"
-        >
+      <div className="flex h-96 flex-col items-center justify-center">
+        <p className="ui-text-title m-4">Nessuna partita trovata.</p>
+        <Button onClick={() => redirect(URL_HOME)} color="blue">
           Torna alla Home
         </Button>
       </div>
@@ -191,62 +188,44 @@ export default function Page() {
         playersOn: game
           .getBoard()
           .getPlayersOnSquare(index)
-          .map((el) => el.getName()),
+          .map((player) => ({
+            name: player.getName(),
+            isCurrentPlayerTurn: player.getName() === currentPlayer.getName(),
+          })),
         boardSize: size,
       }),
     );
   return (
     <ClientOnly>
-      <div className="flex flex-col items-center p-4">
-        <div className="mb-4 font-semibold text-lg">
-          <p>Turno di: {currentPlayer.getName()}</p>
-          <div className="mt-2">
-            Posizioni dei giocatori:
-            <ul>
-              {playersPositions.map((p) => (
-                <li key={p.name}>
-                  {p.name}: {p.position}
-                </li>
-              ))}
-            </ul>
+      <div className="mt-6 flex items-center justify-center p-4">
+        <div className="mx-auto flex max-w-7xl flex-row justify-center">
+          <LeftBar
+            currentPlayer={currentPlayer}
+            playersPositions={playersPositions}
+            gameEnded={game.isGameEnded()}
+            winnerName={game.getWinner()?.getName()}
+            onPlayTurnClick={onButtonGiocaTurnoClick}
+            onDeleteGame={handleDeleteGame}
+          />
+          <div className="mx-auto flex flex-col items-center justify-center">
+            {BoardComponent({
+              squares: squaresC,
+              cols: 5,
+            })}
           </div>
+          <DiceResultModal
+            isOpen={isModalOpen}
+            onClose={closeModal}
+            diceResult={diceResult}
+            actionType={actionType}
+            actionData={actionData}
+            onResolveBattle={handleResolveBattle}
+            onResolveMime={handleResolveMime}
+            onResolveQuiz={handleResolveQuiz}
+            allPlayers={game.getPlayers()}
+            currentPlayerName={playerWhoRolledName || ""}
+          />
         </div>
-        <div className="mb-4 w-full max-w-xs">
-          {game.isGameEnded() ? (
-            <div className="ui-text-dark ui-text-subtitle mb-4 text-center text-green-600">
-              Vincitore: {game.getWinner()?.getName()}!
-            </div>
-          ) : (
-            <Button
-              onClick={onButtonGiocaTurnoClick}
-              disabled={game.isGameEnded()}
-              color="blue"
-            >
-              Gioca un turno
-            </Button>
-          )}
-          <Button onClick={handleDeleteGame} color="red">
-            Elimina Partita
-          </Button>
-        </div>
-        <div className="mx-auto flex flex-col items-center justify-center">
-          {BoardComponent({
-            squares: squaresC,
-            cols: 5,
-          })}
-        </div>
-        <DiceResultModal
-          isOpen={isModalOpen}
-          onClose={closeModal}
-          diceResult={diceResult}
-          actionType={actionType}
-          actionData={actionData}
-          onResolveBattle={handleResolveBattle}
-          onResolveMime={handleResolveMime}
-          onResolveQuiz={handleResolveQuiz}
-          allPlayers={game.getPlayers()}
-          currentPlayerName={playerWhoRolledName || ""}
-        />
       </div>
     </ClientOnly>
   );
