@@ -24,10 +24,10 @@ export default function LeftBar({
     <div
       className={`ui-border-dark mr-8 flex h-full max-w-xl flex-col items-center justify-between p-8`}
     >
-      <div className="ui-text-subtitle mb-4">
+      <div className="ui-text-dark ui-text-title mb-4">
         <p>Stato del gioco</p>
       </div>
-      <div className="mb-4 w-full">
+      <div className="mr-4 mb-4 w-full">
         {!gameEnded && (
           <Button
             onClick={onPlayTurnClick}
@@ -39,25 +39,28 @@ export default function LeftBar({
           </Button>
         )}
         {gameEnded && (
-          <div className="ui-text-dark ui-text-subtitle mb-4 text-center text-green-600">
+          <div className="ui-text-dark ui-text-subtitle mb-4 text-green-600">
             Vincitore: {winnerName}!
           </div>
         )}
       </div>
-      <div className="ui-text-normal mb-4">
-        <p>Turno di: {currentPlayer.getName()}</p>
-        <div className="mt-2">
-          Posizioni dei giocatori:
-          <ul>
+      <div className="ui-text-dark ui-text-normal mb-4 w-full px-2">
+        <p>
+          Turno di:{" "}
+          <span className="text-blue-500">{currentPlayer.getName()}</span>
+        </p>
+        <div className="ui-text-subtitle mt-2">
+          Posizione dei giocatori
+          <ul className="ui-text-normal">
             {playersPositions.map((p) => (
               <li key={p.name}>
-                {p.name}: {p.position}
+                <span className="text-blue-500">{p.name}</span>: {p.position}
               </li>
             ))}
           </ul>
         </div>
       </div>
-      <div className="mb-4 w-full">
+      <div className="mr-4 mb-4 w-full">
         <Button onClick={onDeleteGame} color="red" className="w-full">
           Elimina Partita
         </Button>

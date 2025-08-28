@@ -162,13 +162,9 @@ export default function Page() {
 
   if (!game) {
     return (
-      <div className="flex h-screen flex-col items-center justify-center">
-        <p className="mb-4 font-semibold text-xl">Nessuna partita trovata.</p>
-        <Button
-          onClick={() => redirect(URL_HOME)}
-          color="black"
-          className="max-w-xs"
-        >
+      <div className="flex h-96 flex-col items-center justify-center">
+        <p className="ui-text-title m-4">Nessuna partita trovata.</p>
+        <Button onClick={() => redirect(URL_HOME)} color="blue">
           Torna alla Home
         </Button>
       </div>
@@ -199,7 +195,7 @@ export default function Page() {
   return (
     <ClientOnly>
       <div className="mt-6 flex items-center justify-center p-4">
-        <div className="mx-auto flex h-full max-w-7xl flex-row justify-center">
+        <div className="mx-auto flex max-w-7xl flex-row justify-center">
           <LeftBar
             currentPlayer={currentPlayer}
             playersPositions={playersPositions}
