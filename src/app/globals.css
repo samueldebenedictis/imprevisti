@@ -26,10 +26,10 @@
     @apply font-bold font-londrina-solid text-4xl;
   }
   .ui-text-subtitle {
-    @apply font-bold font-londrina-solid text-2xl;
+    @apply font-londrina-solid text-2xl;
   }
   .ui-text-normal {
-    @apply font-bold font-londrina-solid text-xl;
+    @apply font-londrina-solid text-xl;
   }
   .ui-animation-scale {
     @apply transition-all duration-200 hover:scale-105;

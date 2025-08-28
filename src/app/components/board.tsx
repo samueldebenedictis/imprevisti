@@ -21,22 +21,17 @@ const colsCss = (n: number | undefined) => {
 
 export default function Board(props: BoardProps) {
   return (
-    <div key="board">
-      <span className="ui-text-dark m-auto">
-        Tabellone con {props.squares.length} caselle!
-      </span>
-      <div className={colsCss(props.cols)}>
-        {props.squares.map((component, index) => {
-          return (
-            <div
-              key={`board-square-${component.props.number || index}`}
-              className="h-fit p-1"
-            >
-              {component}
-            </div>
-          );
-        })}
-      </div>
+    <div key="board" className={colsCss(props.cols)}>
+      {props.squares.map((component, index) => {
+        return (
+          <div
+            key={`board-square-${component.props.number || index}`}
+            className="h-fit p-1"
+          >
+            {component}
+          </div>
+        );
+      })}
     </div>
   );
 }
