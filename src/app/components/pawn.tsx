@@ -12,9 +12,9 @@ export default function Pawn(props: PawnProps) {
   return (
     <div
       key={`pawn-${props.name}`}
-      className={`mb-1 border-4 border-gray-800 text-center shadow-xl ${color}`}
+      className={`ui-border-dark mb-1 text-center shadow-xl ${color}`}
     >
-      <span className="testo-normale testo-bianco m-1">{props.name}</span>
+      <span className="ui-text-normal ui-text-light m-1">{props.name}</span>
     </div>
   );
 }

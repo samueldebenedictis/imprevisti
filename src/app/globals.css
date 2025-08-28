@@ -16,42 +16,42 @@
 }
 
 @layer components {
-  .testo-nero {
+  .ui-text-dark {
     @apply text-gray-800;
   }
-  .testo-bianco {
+  .ui-text-light {
     @apply text-gray-100;
   }
-  .testo-titolo {
+  .ui-text-title {
     @apply font-bold font-londrina-solid text-4xl;
   }
-  .testo-sottotitolo {
+  .ui-text-subtitle {
     @apply font-bold font-londrina-solid text-2xl;
   }
-  .testo-normale {
+  .ui-text-normal {
     @apply font-bold font-londrina-solid text-xl;
   }
-  .animation-scale {
+  .ui-animation-scale {
     @apply transition-all duration-200 hover:scale-105;
   }
-  .border-nero {
+  .ui-border-dark {
     @apply border-4 border-gray-800;
   }
-  .border-with-focus {
+  .ui-border-focus {
     @apply border-4 border-gray-800 focus:border-4 focus:border-blue-500 focus:outline-none;
   }
 
-  .custom-checkbox {
+  .ui-custom-checkbox {
     @apply relative h-6 w-6 cursor-pointer appearance-none border-4 border-gray-800 bg-white transition-all duration-200;
   }
-  .custom-checkbox:checked {
+  .ui-custom-checkbox:checked {
     @apply bg-blue-500 border-blue-500;
   }
-  .custom-checkbox::after {
+  .ui-custom-checkbox::after {
     content: "";
     @apply absolute left-1/2 top-1/2 h-2 w-1 -translate-x-1/2 -translate-y-1/2 rotate-45 border-b-2 border-r-2 border-white opacity-0 transition-all duration-200;
   }
-  .custom-checkbox:checked::after {
+  .ui-custom-checkbox:checked::after {
     @apply opacity-100;
   }
 }

@@ -30,13 +30,13 @@ const typeToColor = (type: SquareType): Color => {
 };
 
 const text = (n: number, boardSize?: number) => {
-  const classBase = "testo-bianco m-auto";
+  const classBase = "ui-text-light m-auto";
   if (n === 0) {
-    return <span className={`${classBase} testo-titolo`}>START</span>;
+    return <span className={`${classBase} ui-text-title`}>START</span>;
   } else if (n + 1 === boardSize) {
-    return <span className={`${classBase} testo-titolo`}>WIN!</span>;
+    return <span className={`${classBase} ui-text-title`}>WIN!</span>;
   } else {
-    return <span className={`${classBase} testo-titolo text-7xl`}>{n}</span>;
+    return <span className={`${classBase} ui-text-title text-7xl`}>{n}</span>;
   }
 };
 
@@ -57,7 +57,7 @@ export default function Square(props: SquareProps) {
   );
   const bg = background(props.number);
   return (
-    <div className="relative border-4 border-gray-800 shadow-xl">
+    <div className="ui-border-dark relative shadow-xl">
       <div className={`h-32 w-32 ${color}`}>
         <div className={`h-full ${bg}`}></div>
       </div>

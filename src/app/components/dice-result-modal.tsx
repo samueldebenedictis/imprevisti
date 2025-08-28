@@ -40,9 +40,7 @@ interface DiceResultModalProps {
 }
 
 const H3 = (props: { children: string }) => (
-  <h3 className="testo-nero mb-1 font-londrina-solid text-2xl">
-    {props.children}
-  </h3>
+  <h3 className="ui-text-dark ui-text-subtitle">{props.children}</h3>
 );
 
 const Divider = () => <div className="m-4 border-gray-300 border-b-2"></div>;
@@ -98,14 +96,18 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="min-w-[600px] border-4 border-gray-800 bg-white p-6 text-center shadow-lg">
-        <h2 className="testo-nero mb-4 font-londrina-solid text-4xl">
+      <div className="ui-border-dark min-w-[600px] bg-white p-6 text-center shadow-lg">
+        <h2 className="ui-text-dark ui-text-title mb-4">
           {MODAL_TITLE_TURN_RESULT}
         </h2>
         {diceResult !== null && (
           <p className="mb-1 text-xl">
             <span className="font-extrabold text-blue-600">
-              {MODAL_DICE_ROLL_MESSAGE(currentPlayerName, diceResult)}
+              {currentPlayerName}
+            </span>{" "}
+            {MODAL_DICE_ROLL_MESSAGE}
+            <span className="font-extrabold text-blue-600">
+              {diceResult}
             </span>{" "}
           </p>
         )}

@@ -19,7 +19,7 @@ import { STORAGE_STATE_KEY_GAME_CONFIG } from "./vars";
 
 function Label(props: { children: string; htmlFor: string }) {
   return (
-    <label htmlFor={props.htmlFor} className="testo-nero testo-sottotitolo">
+    <label htmlFor={props.htmlFor} className="ui-text-dark ui-text-subtitle">
       {props.children}
     </label>
   );
@@ -27,7 +27,7 @@ function Label(props: { children: string; htmlFor: string }) {
 
 function LabelCheckbox(props: { children: string; htmlFor: string }) {
   return (
-    <label htmlFor={props.htmlFor} className="testo-nero testo-normale">
+    <label htmlFor={props.htmlFor} className="ui-text-dark ui-text-normal">
       {props.children}
     </label>
   );
@@ -107,7 +107,7 @@ export default function Home() {
 
   return (
     <div className="my-8 flex flex-col items-center justify-center p-2">
-      <h1 className="testo-titolo m-2">{LABEL_GAME_CONFIGURATION}</h1>
+      <h1 className="ui-text-title m-2">{LABEL_GAME_CONFIGURATION}</h1>
       <form onSubmit={handleSubmit} className="m-2 w-full max-w-md bg-white">
         <div className="mb-4">
           <Label htmlFor="numPlayers">{LABEL_PLAYERS_NUMBER}</Label>
@@ -160,7 +160,7 @@ export default function Home() {
               name="mime"
               checked={squareTypes.mime}
               onChange={handleSquareTypeChange}
-              className="custom-checkbox mr-2"
+              className="ui-custom-checkbox mr-2"
             />
             <LabelCheckbox htmlFor="mime">{LABEL_MIME}</LabelCheckbox>
           </div>
@@ -171,7 +171,7 @@ export default function Home() {
               name="quiz"
               checked={squareTypes.quiz}
               onChange={handleSquareTypeChange}
-              className="custom-checkbox mr-2"
+              className="ui-custom-checkbox mr-2"
             />
             <LabelCheckbox htmlFor="quiz">{LABEL_QUIZ}</LabelCheckbox>
           </div>

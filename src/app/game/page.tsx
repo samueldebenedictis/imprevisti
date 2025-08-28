@@ -213,7 +213,7 @@ export default function Page() {
         </div>
         <div className="mb-4 w-full max-w-xs">
           {game.isGameEnded() ? (
-            <div className="mb-4 text-center font-bold text-2xl text-green-600">
+            <div className="ui-text-dark ui-text-subtitle mb-4 text-center text-green-600">
               Vincitore: {game.getWinner()?.getName()}!
             </div>
           ) : (

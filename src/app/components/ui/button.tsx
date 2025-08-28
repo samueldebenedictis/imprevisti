@@ -18,14 +18,14 @@ export default function Button(props: ButtonProps) {
     : colorToCssButton("black");
 
   const buttonColorClass = props.disabled ? colorToCssButton("black") : color;
-  const animated = props.disabled ? "" : "animation-scale cursor-pointer";
+  const animated = props.disabled ? "" : "ui-animation-scale cursor-pointer";
 
   return (
     <button
       type={props.type ?? "button"}
       onClick={props.onClick ?? undefined}
       disabled={props.disabled}
-      className={`testo-sottotitolo testo-bianco m-2 flex h-12 items-center justify-center border-nero p-2 shadow-xl ${animated} ${buttonColorClass} ${props.className || ""}`}
+      className={`ui-text-subtitle ui-text-light ui-border-dark m-2 flex h-12 items-center justify-center p-2 shadow-xl ${animated} ${buttonColorClass} ${props.className || ""}`}
     >
       {props.children}
     </button>
