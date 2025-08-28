@@ -10,6 +10,7 @@ import {
   MODAL_DICE_ROLL_MESSAGE,
   MODAL_MIME_CONFIRM,
   MODAL_MIME_GUESSED,
+  MODAL_MIME_HIDE_TOPIC,
   MODAL_MIME_NOT_GUESSED,
   MODAL_MIME_SHOW_TOPIC,
   MODAL_MIME_TITLE,
@@ -195,8 +196,17 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                 <>
                   <p className="mb-1 text-xl">
                     {MODAL_MIME_TOPIC}{" "}
-                    {(actionData as Mime).cardTopic.cardTitle}
+                    <span className="font-bold">
+                      {(actionData as Mime).cardTopic.cardTitle}
+                    </span>
                   </p>
+                  <Button
+                    onClick={() => setShowMimeTopic(false)}
+                    color="purple"
+                    className="mx-auto"
+                  >
+                    {MODAL_MIME_HIDE_TOPIC}
+                  </Button>
                   <div className="mt-2 flex justify-center space-x-4">
                     <Button
                       onClick={() =>

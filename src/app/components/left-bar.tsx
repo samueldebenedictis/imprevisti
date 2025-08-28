@@ -22,7 +22,7 @@ export default function LeftBar({
 }: LeftBarProps) {
   return (
     <div
-      className={`ui-border-dark mr-8 flex h-full max-w-xl flex-col items-center justify-between p-8`}
+      className={`ui-border-dark mr-8 flex h-full max-w-xl flex-col items-center justify-between bg-gray-100 p-8`}
     >
       <div className="ui-text-dark ui-text-title mb-4">
         <p>Stato del gioco</p>
@@ -39,7 +39,7 @@ export default function LeftBar({
           </Button>
         )}
         {gameEnded && (
-          <div className="ui-text-dark ui-text-subtitle mb-4 text-green-600">
+          <div className="ui-text-dark ui-text-subtitle mb-4 ml-4 text-green-600">
             Vincitore: {winnerName}!
           </div>
         )}

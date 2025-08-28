@@ -20,7 +20,7 @@ export class Quiz {
 export const quizCards = [
   { domanda: "Cosa indossi quando fa freddo?", risposta: "La giacca" },
   { domanda: "Cosa si usa per tagliare la carta?", risposta: "Le forbici" },
-  { domanda: "Cosa metti nei piedi per uscire?", risposta: "Le scarpe" },
+  { domanda: "Cosa metti ai piedi per uscire?", risposta: "Le scarpe" },
   { domanda: "Quanti giorni ci sono in una settimana?", risposta: "Sette" },
   { domanda: "Che mese viene dopo marzo?", risposta: "Aprile" },
   { domanda: "Cosa fai con le orecchie?", risposta: "Ascolto" },
