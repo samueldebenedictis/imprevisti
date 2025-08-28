@@ -188,7 +188,10 @@ export default function Page() {
         playersOn: game
           .getBoard()
           .getPlayersOnSquare(index)
-          .map((el) => el.getName()),
+          .map((player) => ({
+            name: player.getName(),
+            isCurrentPlayerTurn: player.getName() === currentPlayer.getName(),
+          })),
         boardSize: size,
       }),
     );
