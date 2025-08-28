@@ -3,6 +3,26 @@ import { useState } from "react";
 import type { Battle } from "@/model/battle";
 import type { Mime, Quiz } from "@/model/deck";
 import type { Player } from "@/model/player";
+import {
+  MODAL_BATTLE_TITLE,
+  MODAL_BATTLE_WINNER_SELECTION,
+  MODAL_CLOSE_BUTTON,
+  MODAL_DICE_ROLL_MESSAGE,
+  MODAL_MIME_CONFIRM,
+  MODAL_MIME_GUESSED,
+  MODAL_MIME_NOT_GUESSED,
+  MODAL_MIME_SHOW_TOPIC,
+  MODAL_MIME_TITLE,
+  MODAL_MIME_TOPIC,
+  MODAL_MIME_WHO_GUESSED,
+  MODAL_QUIZ_ANSWER,
+  MODAL_QUIZ_CORRECT,
+  MODAL_QUIZ_QUESTION,
+  MODAL_QUIZ_SHOW_ANSWER,
+  MODAL_QUIZ_TITLE,
+  MODAL_QUIZ_WRONG,
+  MODAL_TITLE_TURN_RESULT,
+} from "../texts";
 import Button from "./ui/button";
 import Select from "./ui/select";
 
@@ -80,15 +100,13 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="min-w-[600px] border-4 border-gray-800 bg-white p-6 text-center shadow-lg">
         <h2 className="testo-nero mb-4 font-londrina-solid text-4xl">
-          Risultato del Turno
+          {MODAL_TITLE_TURN_RESULT}
         </h2>
         {diceResult !== null && (
           <p className="mb-1 text-xl">
             <span className="font-extrabold text-blue-600">
-              {currentPlayerName}
+              {MODAL_DICE_ROLL_MESSAGE(currentPlayerName, diceResult)}
             </span>{" "}
-            ha tirato un:{" "}
-            <span className="font-extrabold text-blue-600">{diceResult}</span>
           </p>
         )}
 
@@ -98,8 +116,8 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
           actionData &&
           (actionData as Battle).getPlayers && (
             <div className="mt-4">
-              <H3>Battaglia!</H3>
-              <p className="m-1 text-xl">Seleziona il vincitore</p>
+              <H3>{MODAL_BATTLE_TITLE}</H3>
+              <p className="m-1 text-xl">{MODAL_BATTLE_WINNER_SELECTION}</p>
               <div className="flex justify-center space-x-4">
                 {(actionData as Battle).getPlayers().map((player: Player) => (
                   <Button
@@ -118,9 +136,9 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
           actionData &&
           (actionData as Quiz).cardTopic && (
             <div className="mt-4">
-              <H3>Quiz!</H3>
+              <H3>{MODAL_QUIZ_TITLE}</H3>
               <p className="m-1 text-xl">
-                <span className="font-bold">Domanda: </span>
+                <span className="font-bold">{MODAL_QUIZ_QUESTION} </span>
                 {(actionData as Quiz).cardTopic.cardTitle}
               </p>
               {!showQuizAnswer && (
@@ -129,13 +147,13 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                   color="purple"
                   className="mx-auto"
                 >
-                  Mostra Risposta
+                  {MODAL_QUIZ_SHOW_ANSWER}
                 </Button>
               )}
               {showQuizAnswer && (
                 <>
                   <p className="mb-1 text-xl">
-                    <span className="font-bold">Risposta: </span>
+                    <span className="font-bold">{MODAL_QUIZ_ANSWER} </span>
                     {(actionData as Quiz).cardTopic.cardText}
                   </p>
                   <div className="flex justify-center space-x-4">
@@ -143,13 +161,13 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                       onClick={() => handleQuizResolution(true)}
                       color="green"
                     >
-                      Corretto
+                      {MODAL_QUIZ_CORRECT}
                     </Button>
                     <Button
                       onClick={() => handleQuizResolution(false)}
                       color="red"
                     >
-                      Sbagliato
+                      {MODAL_QUIZ_WRONG}
                     </Button>
                   </div>
                 </>
@@ -161,20 +179,21 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
           actionData &&
           (actionData as Mime).cardTopic && (
             <div className="mt-4">
-              <H3>Mimo!</H3>
+              <H3>{MODAL_MIME_TITLE}</H3>
               {!showMimeTopic && (
                 <Button
                   onClick={() => setShowMimeTopic(true)}
                   color="purple"
                   className="mx-auto"
                 >
-                  Mostra Mimo
+                  {MODAL_MIME_SHOW_TOPIC}
                 </Button>
               )}
               {showMimeTopic && (
                 <>
                   <p className="mb-1 text-xl">
-                    Mima: {(actionData as Mime).cardTopic.cardTitle}
+                    {MODAL_MIME_TOPIC}{" "}
+                    {(actionData as Mime).cardTopic.cardTitle}
                   </p>
                   <div className="mt-2 flex justify-center space-x-4">
                     <Button
@@ -183,20 +202,20 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                       }
                       color="green"
                     >
-                      Indovinato
+                      {MODAL_MIME_GUESSED}
                     </Button>
                     <Button
                       onClick={() => handleMimeResolution(false)}
                       color="red"
                     >
-                      Non Indovinato
+                      {MODAL_MIME_NOT_GUESSED}
                     </Button>
                   </div>
                 </>
               )}
               {mimeGuessed !== null && mimeGuessed && (
                 <div className="mt-2">
-                  <H3>Chi ha indovinato?</H3>
+                  <H3>{MODAL_MIME_WHO_GUESSED}</H3>
                   <Select
                     value={mimeGuesserId || ""}
                     onChange={(e) => setMimeGuesserId(Number(e.target.value))}
@@ -220,7 +239,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                     className="mx-auto"
                     disabled={mimeGuesserId === null}
                   >
-                    Conferma
+                    {MODAL_MIME_CONFIRM}
                   </Button>
                 </div>
               )}
@@ -229,7 +248,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
 
         {actionType && <Divider />}
         <Button onClick={onClose} color="blue" className="mx-auto">
-          Chiudi
+          {MODAL_CLOSE_BUTTON}
         </Button>
       </div>
     </div>
