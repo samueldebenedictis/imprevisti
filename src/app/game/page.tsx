@@ -10,6 +10,7 @@ import type { Player } from "@/model/player";
 import BoardComponent from "../components/board";
 import ClientOnly from "../components/client-only";
 import DiceResultModal from "../components/dice-result-modal";
+import LeftBar from "../components/left-bar"; // Import the new LeftBar component
 import SquareC from "../components/square";
 import Button from "../components/ui/button";
 import {
@@ -197,45 +198,16 @@ export default function Page() {
     );
   return (
     <ClientOnly>
-      <div className="flex items-center justify-center p-4">
+      <div className="mt-6 flex items-center justify-center p-4">
         <div className="mx-auto flex h-full max-w-7xl flex-row justify-center">
-          <div className="mr-8 flex h-full max-w-2xl flex-col items-center">
-            <div className="mb-4 w-full">
-              {!game.isGameEnded() && (
-                <Button
-                  onClick={onButtonGiocaTurnoClick}
-                  disabled={game.isGameEnded()}
-                  color="blue"
-                  className="w-full"
-                >
-                  Gioca un turno
-                </Button>
-              )}
-              {game.isGameEnded() && (
-                <div className="ui-text-dark ui-text-subtitle mb-4 text-center text-green-600">
-                  Vincitore: {game.getWinner()?.getName()}!
-                </div>
-              )}
-            </div>
-            <div className="mb-4 font-semibold text-lg">
-              <p>Turno di: {currentPlayer.getName()}</p>
-              <div className="mt-2">
-                Posizioni dei giocatori:
-                <ul>
-                  {playersPositions.map((p) => (
-                    <li key={p.name}>
-                      {p.name}: {p.position}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-            <div className="mb-4 w-full">
-              <Button onClick={handleDeleteGame} color="red" className="w-full">
-                Elimina Partita
-              </Button>
-            </div>
-          </div>
+          <LeftBar
+            currentPlayer={currentPlayer}
+            playersPositions={playersPositions}
+            gameEnded={game.isGameEnded()}
+            winnerName={game.getWinner()?.getName()}
+            onPlayTurnClick={onButtonGiocaTurnoClick}
+            onDeleteGame={handleDeleteGame}
+          />
           <div className="mx-auto flex flex-col items-center justify-center">
             {BoardComponent({
               squares: squaresC,
