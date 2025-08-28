@@ -197,56 +197,64 @@ export default function Page() {
     );
   return (
     <ClientOnly>
-      <div className="flex flex-col items-center p-4">
-        <div className="mb-4 font-semibold text-lg">
-          <p>Turno di: {currentPlayer.getName()}</p>
-          <div className="mt-2">
-            Posizioni dei giocatori:
-            <ul>
-              {playersPositions.map((p) => (
-                <li key={p.name}>
-                  {p.name}: {p.position}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-        <div className="mb-4 w-full max-w-xs">
-          {game.isGameEnded() ? (
-            <div className="ui-text-dark ui-text-subtitle mb-4 text-center text-green-600">
-              Vincitore: {game.getWinner()?.getName()}!
+      <div className="flex items-center justify-center p-4">
+        <div className="mx-auto flex h-full max-w-7xl flex-row justify-center">
+          <div className="mr-8 flex h-full max-w-2xl flex-col items-center">
+            <div className="mb-4 w-full">
+              {!game.isGameEnded() && (
+                <Button
+                  onClick={onButtonGiocaTurnoClick}
+                  disabled={game.isGameEnded()}
+                  color="blue"
+                  className="w-full"
+                >
+                  Gioca un turno
+                </Button>
+              )}
+              {game.isGameEnded() && (
+                <div className="ui-text-dark ui-text-subtitle mb-4 text-center text-green-600">
+                  Vincitore: {game.getWinner()?.getName()}!
+                </div>
+              )}
             </div>
-          ) : (
-            <Button
-              onClick={onButtonGiocaTurnoClick}
-              disabled={game.isGameEnded()}
-              color="blue"
-            >
-              Gioca un turno
-            </Button>
-          )}
-          <Button onClick={handleDeleteGame} color="red">
-            Elimina Partita
-          </Button>
+            <div className="mb-4 font-semibold text-lg">
+              <p>Turno di: {currentPlayer.getName()}</p>
+              <div className="mt-2">
+                Posizioni dei giocatori:
+                <ul>
+                  {playersPositions.map((p) => (
+                    <li key={p.name}>
+                      {p.name}: {p.position}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <div className="mb-4 w-full">
+              <Button onClick={handleDeleteGame} color="red" className="w-full">
+                Elimina Partita
+              </Button>
+            </div>
+          </div>
+          <div className="mx-auto flex flex-col items-center justify-center">
+            {BoardComponent({
+              squares: squaresC,
+              cols: 5,
+            })}
+          </div>
+          <DiceResultModal
+            isOpen={isModalOpen}
+            onClose={closeModal}
+            diceResult={diceResult}
+            actionType={actionType}
+            actionData={actionData}
+            onResolveBattle={handleResolveBattle}
+            onResolveMime={handleResolveMime}
+            onResolveQuiz={handleResolveQuiz}
+            allPlayers={game.getPlayers()}
+            currentPlayerName={playerWhoRolledName || ""}
+          />
         </div>
-        <div className="mx-auto flex flex-col items-center justify-center">
-          {BoardComponent({
-            squares: squaresC,
-            cols: 5,
-          })}
-        </div>
-        <DiceResultModal
-          isOpen={isModalOpen}
-          onClose={closeModal}
-          diceResult={diceResult}
-          actionType={actionType}
-          actionData={actionData}
-          onResolveBattle={handleResolveBattle}
-          onResolveMime={handleResolveMime}
-          onResolveQuiz={handleResolveQuiz}
-          allPlayers={game.getPlayers()}
-          currentPlayerName={playerWhoRolledName || ""}
-        />
       </div>
     </ClientOnly>
   );
