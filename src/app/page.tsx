@@ -3,7 +3,35 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { GameJSON } from "@/model/game";
+import Button from "./components/ui/button";
+import Input from "./components/ui/input";
+import {
+  LABEL_GAME_CONFIGURATION,
+  LABEL_MIME,
+  LABEL_PLAYER_NAME,
+  LABEL_PLAYERS_NUMBER,
+  LABEL_QUIZ,
+  LABEL_SPECIAL_SQUARES,
+  LABEL_SQUARES_NUMBER,
+  LABEL_SUBMIT,
+} from "./texts";
 import { STORAGE_STATE_KEY_GAME_CONFIG } from "./vars";
+
+function Label(props: { children: string; htmlFor: string }) {
+  return (
+    <label htmlFor={props.htmlFor} className="ui-text-dark ui-text-subtitle">
+      {props.children}
+    </label>
+  );
+}
+
+function LabelCheckbox(props: { children: string; htmlFor: string }) {
+  return (
+    <label htmlFor={props.htmlFor} className="ui-text-dark ui-text-normal">
+      {props.children}
+    </label>
+  );
+}
 
 export default function Home() {
   const router = useRouter();
@@ -78,86 +106,63 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
-      <h1 className="text-4xl font-bold mb-8">Game Configuration</h1>
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-md bg-white p-8 rounded-lg shadow-md"
-      >
+    <div className="my-8 flex flex-col items-center justify-center p-2">
+      <h1 className="ui-text-title m-2">{LABEL_GAME_CONFIGURATION}</h1>
+      <form onSubmit={handleSubmit} className="m-2 w-full max-w-md bg-white">
         <div className="mb-4">
-          <label
-            htmlFor="numPlayers"
-            className="block text-gray-700 text-sm font-bold mb-2"
-          >
-            Number of Players:
-          </label>
-          <input
+          <Label htmlFor="numPlayers">{LABEL_PLAYERS_NUMBER}</Label>
+          <Input
             type="number"
             id="numPlayers"
             name="numPlayers"
             min="2"
             value={numPlayers}
             onChange={handleNumPlayersChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             required
           />
         </div>
 
         {Array.from({ length: numPlayers }).map((item, index) => (
           <div key={`player-name-${item || index}`} className="mb-4">
-            <label
-              htmlFor={`playerName${index}`}
-              className="block text-gray-700 text-sm font-bold mb-2"
-            >
-              Player {index + 1} Name:
-            </label>
-            <input
+            <Label htmlFor={`playerName${index}`}>
+              {LABEL_PLAYER_NAME(index + 1)}
+            </Label>
+            <Input
               type="text"
               id={`playerName${index}`}
               name={`playerName${index}`}
               value={playerNames[index] || ""}
               onChange={(e) => handlePlayerNameChange(index, e.target.value)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               required
             />
           </div>
         ))}
 
         <div className="mb-4">
-          <label
-            htmlFor="numSquares"
-            className="block text-gray-700 text-sm font-bold mb-2"
-          >
-            Number of Squares:
-          </label>
-          <input
+          <Label htmlFor="numSquares">{LABEL_SQUARES_NUMBER}</Label>
+          <Input
             type="number"
             id="numSquares"
             name="numSquares"
             min="10"
             value={numSquares}
             onChange={(e) => setNumSquares(parseInt(e.target.value))}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             required
           />
         </div>
 
         <div className="mb-6">
-          <span className="block text-gray-700 text-sm font-bold mb-2">
-            Square Types:
-          </span>
-          <div className="flex items-center mb-2">
+          <Label htmlFor="squareTypes">{LABEL_SPECIAL_SQUARES}</Label>
+          <div className="mb-1 flex items-center">
             <input
               type="checkbox"
               id="mime"
               name="mime"
               checked={squareTypes.mime}
               onChange={handleSquareTypeChange}
-              className="mr-2 leading-tight"
+              className="ui-custom-checkbox mr-2"
             />
-            <label htmlFor="mime" className="text-sm text-gray-700">
-              Mime
-            </label>
+            <LabelCheckbox htmlFor="mime">{LABEL_MIME}</LabelCheckbox>
           </div>
           <div className="flex items-center">
             <input
@@ -166,20 +171,15 @@ export default function Home() {
               name="quiz"
               checked={squareTypes.quiz}
               onChange={handleSquareTypeChange}
-              className="mr-2 leading-tight"
+              className="ui-custom-checkbox mr-2"
             />
-            <label htmlFor="quiz" className="text-sm text-gray-700">
-              Quiz
-            </label>
+            <LabelCheckbox htmlFor="quiz">{LABEL_QUIZ}</LabelCheckbox>
           </div>
         </div>
 
-        <button
-          type="submit"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-        >
-          Start Game
-        </button>
+        <Button color="blue" type="submit" className="mx-auto">
+          {LABEL_SUBMIT}
+        </Button>
       </form>
     </div>
   );

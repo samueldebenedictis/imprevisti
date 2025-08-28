@@ -11,6 +11,7 @@ import BoardComponent from "../components/board";
 import ClientOnly from "../components/client-only";
 import DiceResultModal from "../components/dice-result-modal";
 import SquareC from "../components/square";
+import Button from "../components/ui/button";
 import {
   STORAGE_STATE_KEY_DEBUG_COUNTER,
   STORAGE_STATE_KEY_GAME_INSTANCE,
@@ -27,6 +28,9 @@ export default function Page() {
   const [actionData, setActionData] = useState<Battle | Mime | Quiz | null>(
     null,
   );
+  const [playerWhoRolledName, setPlayerWhoRolledName] = useState<string | null>(
+    null,
+  );
 
   useEffect(() => {
     const savedGame = localStorage.getItem(STORAGE_STATE_KEY_GAME_INSTANCE);
@@ -36,14 +40,14 @@ export default function Page() {
         const loadedGame = GameModel.fromJSON(parsedGame);
         setGame(loadedGame);
       } catch (_e) {
-        // Se il caricamento fallisce, inizia una nuova partita
-        // console.error("Failed to load game from localStorage", e);
-        redirect(URL_HOME);
+        // Se il caricamento fallisce, il gioco è settato a null
+        // e viene mostrato il button per tornare alla home
+        setGame(null);
       }
     } else {
-      // Se non c'è un gioco salvato, inizia una nuova partita
-      // console.error("Failed to load game from localStorage");
-      redirect(URL_HOME);
+      // Se non c'è un gioco salvato, il gioco è settato a null
+      // e viene mostrato il button per tornare alla home
+      setGame(null);
     }
   }, []); // Esegui solo al mount del componente
 
@@ -59,6 +63,8 @@ export default function Page() {
 
   function onButtonGiocaTurnoClick() {
     if (game) {
+      const playerWhoRolled = game.getPlayers()[game.getTurn()]; // Get current player before playing turn
+      setPlayerWhoRolledName(playerWhoRolled.getName()); // Set the player's name to state
       const { diceResult, actionType, data } = game.playTurn();
       setCount(counter + 1);
 
@@ -147,9 +153,32 @@ export default function Page() {
     setActionData(null); // Reset action data when closing modal
   };
 
+  const handleDeleteGame = () => {
+    localStorage.removeItem(STORAGE_STATE_KEY_GAME_INSTANCE);
+    localStorage.removeItem(STORAGE_STATE_KEY_DEBUG_COUNTER);
+    redirect(URL_HOME);
+  };
+
   if (!game) {
-    return <div>Caricamento gioco...</div>; // O uno spinner di caricamento
+    return (
+      <div className="flex h-screen flex-col items-center justify-center">
+        <p className="mb-4 font-semibold text-xl">Nessuna partita trovata.</p>
+        <Button
+          onClick={() => redirect(URL_HOME)}
+          color="black"
+          className="max-w-xs"
+        >
+          Torna alla Home
+        </Button>
+      </div>
+    );
   }
+
+  const currentPlayer = game.getPlayers()[game.getTurn()];
+  const playersPositions = game.getPlayers().map((player) => ({
+    name: player.getName(),
+    position: game.getPlayerPosition(player),
+  }));
 
   const size = game.getBoard().getSquares().length;
   const squaresC = game
@@ -168,20 +197,39 @@ export default function Page() {
     );
   return (
     <ClientOnly>
-      <div>
-        <div>
-          <button
-            type="button"
-            onClick={() => {
-              // setPlayed(played + 1);
-              onButtonGiocaTurnoClick();
-            }}
-            className="flex h-12 w-full rounded-full bg-black justify-center items-center font-bold text-xl text-yellow-100"
-          >
-            Gioca un turno
-          </button>
+      <div className="flex flex-col items-center p-4">
+        <div className="mb-4 font-semibold text-lg">
+          <p>Turno di: {currentPlayer.getName()}</p>
+          <div className="mt-2">
+            Posizioni dei giocatori:
+            <ul>
+              {playersPositions.map((p) => (
+                <li key={p.name}>
+                  {p.name}: {p.position}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-        <div className="mx-auto items-center flex flex-col justify-center">
+        <div className="mb-4 w-full max-w-xs">
+          {game.isGameEnded() ? (
+            <div className="ui-text-dark ui-text-subtitle mb-4 text-center text-green-600">
+              Vincitore: {game.getWinner()?.getName()}!
+            </div>
+          ) : (
+            <Button
+              onClick={onButtonGiocaTurnoClick}
+              disabled={game.isGameEnded()}
+              color="blue"
+            >
+              Gioca un turno
+            </Button>
+          )}
+          <Button onClick={handleDeleteGame} color="red">
+            Elimina Partita
+          </Button>
+        </div>
+        <div className="mx-auto flex flex-col items-center justify-center">
           {BoardComponent({
             squares: squaresC,
             cols: 5,
@@ -197,6 +245,7 @@ export default function Page() {
           onResolveMime={handleResolveMime}
           onResolveQuiz={handleResolveQuiz}
           allPlayers={game.getPlayers()}
+          currentPlayerName={playerWhoRolledName || ""}
         />
       </div>
     </ClientOnly>

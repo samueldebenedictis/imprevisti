@@ -3,6 +3,28 @@ import { useState } from "react";
 import type { Battle } from "@/model/battle";
 import type { Mime, Quiz } from "@/model/deck";
 import type { Player } from "@/model/player";
+import {
+  MODAL_BATTLE_TITLE,
+  MODAL_BATTLE_WINNER_SELECTION,
+  MODAL_CLOSE_BUTTON,
+  MODAL_DICE_ROLL_MESSAGE,
+  MODAL_MIME_CONFIRM,
+  MODAL_MIME_GUESSED,
+  MODAL_MIME_NOT_GUESSED,
+  MODAL_MIME_SHOW_TOPIC,
+  MODAL_MIME_TITLE,
+  MODAL_MIME_TOPIC,
+  MODAL_MIME_WHO_GUESSED,
+  MODAL_QUIZ_ANSWER,
+  MODAL_QUIZ_CORRECT,
+  MODAL_QUIZ_QUESTION,
+  MODAL_QUIZ_SHOW_ANSWER,
+  MODAL_QUIZ_TITLE,
+  MODAL_QUIZ_WRONG,
+  MODAL_TITLE_TURN_RESULT,
+} from "../texts";
+import Button from "./ui/button";
+import Select from "./ui/select";
 
 interface DiceResultModalProps {
   isOpen: boolean;
@@ -13,8 +35,15 @@ interface DiceResultModalProps {
   onResolveBattle?: (winnerId: number) => void;
   onResolveMime?: (success: boolean, guessPlayerId?: number) => void;
   onResolveQuiz?: (success: boolean) => void;
-  allPlayers: Player[]; // Added allPlayers prop
+  allPlayers: Player[];
+  currentPlayerName: string;
 }
+
+const H3 = (props: { children: string }) => (
+  <h3 className="ui-text-dark ui-text-subtitle">{props.children}</h3>
+);
+
+const Divider = () => <div className="m-4 border-gray-300 border-b-2"></div>;
 
 const DiceResultModal: React.FC<DiceResultModalProps> = ({
   isOpen,
@@ -25,9 +54,11 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
   onResolveBattle,
   onResolveMime,
   onResolveQuiz,
-  allPlayers, // Destructure allPlayers
+  allPlayers,
+  currentPlayerName,
 }) => {
   const [showQuizAnswer, setShowQuizAnswer] = useState(false);
+  const [showMimeTopic, setShowMimeTopic] = useState(false);
   const [mimeGuessed, setMimeGuessed] = useState<boolean | null>(null);
   const [mimeGuesserId, setMimeGuesserId] = useState<number | null>(null);
 
@@ -50,7 +81,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
     if (onResolveQuiz) {
       onResolveQuiz(success);
     }
-    setShowQuizAnswer(false); // Reset for next time
+    setShowQuizAnswer(false);
     onClose();
   };
 
@@ -64,42 +95,40 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-        <h2 className="text-2xl font-bold mb-4">Turn Result</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="ui-border-dark min-w-[600px] bg-white p-6 text-center shadow-lg">
+        <h2 className="ui-text-dark ui-text-title mb-4">
+          {MODAL_TITLE_TURN_RESULT}
+        </h2>
         {diceResult !== null && (
-          <p className="text-xl mb-2">
-            You rolled a:{" "}
-            <span className="font-extrabold text-blue-600">{diceResult}</span>
+          <p className="mb-1 text-xl">
+            <span className="font-extrabold text-blue-600">
+              {currentPlayerName}
+            </span>{" "}
+            {MODAL_DICE_ROLL_MESSAGE}
+            <span className="font-extrabold text-blue-600">
+              {diceResult}
+            </span>{" "}
           </p>
         )}
-        {actionType && (
-          <p className="text-lg mb-4">
-            Action:{" "}
-            <span className="font-semibold text-red-600">{actionType}</span>
-          </p>
-        )}
-        {!actionType && diceResult !== null && (
-          <p className="text-lg mb-4">No special action this turn.</p>
-        )}
+
+        {actionType && <Divider />}
 
         {actionType === "battle" &&
           actionData &&
           (actionData as Battle).getPlayers && (
             <div className="mt-4">
-              <h3 className="text-xl font-semibold mb-2">
-                Battle! Choose a winner:
-              </h3>
+              <H3>{MODAL_BATTLE_TITLE}</H3>
+              <p className="m-1 text-xl">{MODAL_BATTLE_WINNER_SELECTION}</p>
               <div className="flex justify-center space-x-4">
                 {(actionData as Battle).getPlayers().map((player: Player) => (
-                  <button
-                    type="button"
+                  <Button
                     key={player.getId()}
                     onClick={() => handleWinnerSelection(player.getId())}
-                    className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600"
+                    color="red"
                   >
                     {player.getName()}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -109,42 +138,39 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
           actionData &&
           (actionData as Quiz).cardTopic && (
             <div className="mt-4">
-              <h3 className="text-xl font-semibold mb-2">Quiz Time!</h3>
-              <p className="text-lg mb-2">
-                Question: {(actionData as Quiz).cardTopic.cardTitle}
+              <H3>{MODAL_QUIZ_TITLE}</H3>
+              <p className="m-1 text-xl">
+                <span className="font-bold">{MODAL_QUIZ_QUESTION} </span>
+                {(actionData as Quiz).cardTopic.cardTitle}
               </p>
               {!showQuizAnswer && (
-                <button
-                  type="button"
+                <Button
                   onClick={handleShowQuizAnswer}
-                  className="mt-2 px-4 py-2 bg-purple-500 text-white rounded-full hover:bg-purple-600"
+                  color="purple"
+                  className="mx-auto"
                 >
-                  Show Answer
-                </button>
+                  {MODAL_QUIZ_SHOW_ANSWER}
+                </Button>
               )}
               {showQuizAnswer && (
                 <>
-                  <p className="text-lg mb-2">
-                    Answer:{" "}
-                    <span className="font-bold">
-                      {(actionData as Quiz).cardTopic.cardText}
-                    </span>
+                  <p className="mb-1 text-xl">
+                    <span className="font-bold">{MODAL_QUIZ_ANSWER} </span>
+                    {(actionData as Quiz).cardTopic.cardText}
                   </p>
-                  <div className="flex justify-center space-x-4 mt-2">
-                    <button
-                      type="button"
+                  <div className="flex justify-center space-x-4">
+                    <Button
                       onClick={() => handleQuizResolution(true)}
-                      className="px-4 py-2 bg-green-500 text-white rounded-full hover:bg-green-600"
+                      color="green"
                     >
-                      Correct
-                    </button>
-                    <button
-                      type="button"
+                      {MODAL_QUIZ_CORRECT}
+                    </Button>
+                    <Button
                       onClick={() => handleQuizResolution(false)}
-                      className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600"
+                      color="red"
                     >
-                      Incorrect
-                    </button>
+                      {MODAL_QUIZ_WRONG}
+                    </Button>
                   </div>
                 </>
               )}
@@ -155,65 +181,77 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
           actionData &&
           (actionData as Mime).cardTopic && (
             <div className="mt-4">
-              <h3 className="text-xl font-semibold mb-2">Mime Time!</h3>
-              <p className="text-lg mb-2">
-                Mime: {(actionData as Mime).cardTopic.cardTitle}
-              </p>
-              <div className="flex justify-center space-x-4 mt-2">
-                <button
-                  type="button"
-                  onClick={() =>
-                    handleMimeResolution(true, mimeGuesserId || undefined)
-                  }
-                  className="px-4 py-2 bg-green-500 text-white rounded-full hover:bg-green-600"
+              <H3>{MODAL_MIME_TITLE}</H3>
+              {!showMimeTopic && (
+                <Button
+                  onClick={() => setShowMimeTopic(true)}
+                  color="purple"
+                  className="mx-auto"
                 >
-                  Guessed
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleMimeResolution(false)}
-                  className="px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600"
-                >
-                  Not Guessed
-                </button>
-              </div>
+                  {MODAL_MIME_SHOW_TOPIC}
+                </Button>
+              )}
+              {showMimeTopic && (
+                <>
+                  <p className="mb-1 text-xl">
+                    {MODAL_MIME_TOPIC}{" "}
+                    {(actionData as Mime).cardTopic.cardTitle}
+                  </p>
+                  <div className="mt-2 flex justify-center space-x-4">
+                    <Button
+                      onClick={() =>
+                        handleMimeResolution(true, mimeGuesserId || undefined)
+                      }
+                      color="green"
+                    >
+                      {MODAL_MIME_GUESSED}
+                    </Button>
+                    <Button
+                      onClick={() => handleMimeResolution(false)}
+                      color="red"
+                    >
+                      {MODAL_MIME_NOT_GUESSED}
+                    </Button>
+                  </div>
+                </>
+              )}
               {mimeGuessed !== null && mimeGuessed && (
                 <div className="mt-2">
-                  <h4 className="text-md font-semibold mb-1">
-                    Who guessed it?
-                  </h4>
-                  <div className="flex justify-center space-x-2 mt-2">
-                    {allPlayers
+                  <H3>{MODAL_MIME_WHO_GUESSED}</H3>
+                  <Select
+                    value={mimeGuesserId || ""}
+                    onChange={(e) => setMimeGuesserId(Number(e.target.value))}
+                    options={allPlayers
                       .filter(
                         (player) =>
                           player.getId() !==
                           (actionData as Mime).mimePlayer.getId(),
                       )
-                      .map((player: Player) => (
-                        <button
-                          type="button"
-                          key={player.getId()}
-                          onClick={() =>
-                            handleMimeResolution(true, player.getId())
-                          }
-                          className="px-3 py-1 bg-blue-400 text-white rounded-full hover:bg-blue-500"
-                        >
-                          {player.getName()}
-                        </button>
-                      ))}
-                  </div>
+                      .map((player) => ({
+                        value: player.getId(),
+                        label: player.getName(),
+                      }))}
+                    className="m-2"
+                  />
+                  <Button
+                    onClick={() =>
+                      handleMimeResolution(true, mimeGuesserId || undefined)
+                    }
+                    color="blue"
+                    className="mx-auto"
+                    disabled={mimeGuesserId === null}
+                  >
+                    {MODAL_MIME_CONFIRM}
+                  </Button>
                 </div>
               )}
             </div>
           )}
 
-        <button
-          type="button"
-          onClick={onClose}
-          className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600"
-        >
-          Close
-        </button>
+        {actionType && <Divider />}
+        <Button onClick={onClose} color="blue" className="mx-auto">
+          {MODAL_CLOSE_BUTTON}
+        </Button>
       </div>
     </div>
   );

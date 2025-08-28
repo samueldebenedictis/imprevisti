@@ -1,20 +1,27 @@
 "use client";
 
 import Link from "next/link";
-import { colorToCss } from "./color";
+import { URL_GAME, URL_HOME } from "../vars";
+import { colorToCss } from "./ui/color";
+
+function HeaderLink(props: { text: string; url: string }) {
+  return (
+    <Link
+      href={props.url}
+      prefetch={false}
+      className="ui-text-title ui-animation-scale ui-text-light hover:underline"
+    >
+      {props.text}
+    </Link>
+  );
+}
 
 export default function Header() {
   return (
     <header className={`sticky top-0 z-10 ${colorToCss("yellow")}`}>
-      <nav className="mx-auto flex max-h-20 max-w-7xl items-center justify-between p-6 lg:px-8">
-        <Link
-          href="/"
-          prefetch={false}
-          className="transition-all duration-200 hover:scale-110 hover:underline font-londrina-solid text-xl text-gray-200"
-        >
-          {" "}
-          HOME
-        </Link>
+      <nav className="mx-auto flex max-h-20 max-w-6xl items-center justify-between p-8">
+        <HeaderLink text="HOME" url={URL_HOME} />
+        <HeaderLink text="VAI AL GIOCO" url={URL_GAME} />
       </nav>
     </header>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { type Color, colorToCss } from "./color";
+import { type Color, colorToCss } from "./ui/color";
 
 type PawnProps = {
   name: string;
@@ -12,11 +12,9 @@ export default function Pawn(props: PawnProps) {
   return (
     <div
       key={`pawn-${props.name}`}
-      className={`text-center border-4 border-gray-800 shadow-xl mb-1 ${color}`}
+      className={`ui-border-dark mb-1 text-center shadow-xl ${color}`}
     >
-      <span className="m-1 text-xl text-gray-100 font-londrina-solid font-extrabold">
-        {props.name}
-      </span>
+      <span className="ui-text-normal ui-text-light m-1">{props.name}</span>
     </div>
   );
 }

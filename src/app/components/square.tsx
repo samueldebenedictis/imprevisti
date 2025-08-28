@@ -1,7 +1,7 @@
 "use client";
 
-import { type Color, colorToCss } from "./color";
 import Pawn from "./pawn";
+import { type Color, colorToCss } from "./ui/color";
 
 type SquareType = "normal" | "mime" | "quiz" | "move-forward" | "move-back";
 
@@ -30,13 +30,13 @@ const typeToColor = (type: SquareType): Color => {
 };
 
 const text = (n: number, boardSize?: number) => {
-  const classBase = "text-gray-100 font-extrabold font-londrina-solid m-auto";
+  const classBase = "ui-text-light m-auto";
   if (n === 0) {
-    return <span className={`${classBase} text-5xl`}>START</span>;
+    return <span className={`${classBase} ui-text-title`}>START</span>;
   } else if (n + 1 === boardSize) {
-    return <span className={`${classBase} text-5xl`}>WIN!</span>;
+    return <span className={`${classBase} ui-text-title`}>WIN!</span>;
   } else {
-    return <span className={`${classBase} text-7xl`}>{n}</span>;
+    return <span className={`${classBase} ui-text-title text-7xl`}>{n}</span>;
   }
 };
 
@@ -57,14 +57,14 @@ export default function Square(props: SquareProps) {
   );
   const bg = background(props.number);
   return (
-    <div className="relative border-4 border-gray-800 shadow-xl">
+    <div className="ui-border-dark relative shadow-xl">
       <div className={`h-32 w-32 ${color}`}>
         <div className={`h-full ${bg}`}></div>
       </div>
-      <div className="absolute text-center top-0 w-full h-full flex">
+      <div className="absolute top-0 flex h-full w-full text-center">
         {text(props.number, props.boardSize)}
       </div>
-      <div className="absolute w-full pl-1 pr-1 bottom-0">
+      <div className="absolute bottom-0 w-full pr-1 pl-1">
         {playersOn(props.playersOn)}
       </div>
     </div>
