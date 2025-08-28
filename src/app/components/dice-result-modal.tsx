@@ -16,6 +16,7 @@ interface DiceResultModalProps {
   onResolveMime?: (success: boolean, guessPlayerId?: number) => void;
   onResolveQuiz?: (success: boolean) => void;
   allPlayers: Player[];
+  currentPlayerName: string;
 }
 
 const H3 = (props: { children: string }) => (
@@ -36,6 +37,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
   onResolveMime,
   onResolveQuiz,
   allPlayers,
+  currentPlayerName,
 }) => {
   const [showQuizAnswer, setShowQuizAnswer] = useState(false);
   const [showMimeTopic, setShowMimeTopic] = useState(false);
@@ -81,9 +83,12 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
           Risultato del Turno
         </h2>
         {diceResult !== null && (
-          <p className="mb-4 text-xl">
-            Hai tirato un:{" "}
-            <span className="font-bold text-blue-600">{diceResult}</span>
+          <p className="mb-1 text-xl">
+            <span className="font-extrabold text-blue-600">
+              {currentPlayerName}
+            </span>{" "}
+            ha tirato un:{" "}
+            <span className="font-extrabold text-blue-600">{diceResult}</span>
           </p>
         )}
 

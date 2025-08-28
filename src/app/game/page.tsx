@@ -28,6 +28,9 @@ export default function Page() {
   const [actionData, setActionData] = useState<Battle | Mime | Quiz | null>(
     null,
   );
+  const [playerWhoRolledName, setPlayerWhoRolledName] = useState<string | null>(
+    null,
+  );
 
   useEffect(() => {
     const savedGame = localStorage.getItem(STORAGE_STATE_KEY_GAME_INSTANCE);
@@ -60,6 +63,8 @@ export default function Page() {
 
   function onButtonGiocaTurnoClick() {
     if (game) {
+      const playerWhoRolled = game.getPlayers()[game.getTurn()]; // Get current player before playing turn
+      setPlayerWhoRolledName(playerWhoRolled.getName()); // Set the player's name to state
       const { diceResult, actionType, data } = game.playTurn();
       setCount(counter + 1);
 
@@ -240,6 +245,7 @@ export default function Page() {
           onResolveMime={handleResolveMime}
           onResolveQuiz={handleResolveQuiz}
           allPlayers={game.getPlayers()}
+          currentPlayerName={playerWhoRolledName || ""}
         />
       </div>
     </ClientOnly>

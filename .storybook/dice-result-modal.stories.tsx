@@ -48,6 +48,7 @@ export const Default: Story = {
     actionType: null,
     actionData: null,
     allPlayers: allPlayers,
+    currentPlayerName: allPlayers[0].getName(),
   },
 };
 
@@ -60,6 +61,7 @@ export const BattleScenario: Story = {
     actionData: new MockBattle(allPlayers[0], allPlayers[1]),
     onResolveBattle: (winnerId) => console.log(`Battle winner: ${winnerId}`),
     allPlayers: allPlayers,
+    currentPlayerName: allPlayers[0].getName(),
   },
 };
 
@@ -75,6 +77,7 @@ export const QuizScenario: Story = {
     ),
     onResolveQuiz: (success) => console.log(`Quiz success: ${success}`),
     allPlayers: allPlayers,
+    currentPlayerName: allPlayers[0].getName(),
   },
 };
 
@@ -91,5 +94,6 @@ export const MimeScenario: Story = {
     onResolveMime: (success, guesserId) =>
       console.log(`Mime success: ${success}, Guesser: ${guesserId}`),
     allPlayers: allPlayers,
+    currentPlayerName: allPlayers[0].getName(),
   },
 };
