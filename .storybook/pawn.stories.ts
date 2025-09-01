@@ -38,6 +38,5 @@ export const StackedPlayers: Story = {
     color: "yellow",
     name: "2 giocatori",
     isCurrentPlayerTurn: false,
-    isStacked: true,
   },
 };

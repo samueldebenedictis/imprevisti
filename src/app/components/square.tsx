@@ -82,10 +82,9 @@ const playersOn = (
       // Viene mostrati il count
       pawns.push(
         Pawn({
-          name: `e ${otherPlayers.length.toString()} giocatori`,
+          name: `${otherPlayers.length.toString()} giocatori`,
           color: "yellow",
           isCurrentPlayerTurn: false,
-          isStacked: true,
         }),
       );
     }

@@ -6,7 +6,6 @@ type PawnProps = {
   name: string;
   color: Color;
   isCurrentPlayerTurn: boolean;
-  isStacked?: boolean;
 };
 
 export default function Pawn(props: PawnProps) {
@@ -17,11 +16,7 @@ export default function Pawn(props: PawnProps) {
       key={`pawn-${props.name}`}
       className={`ui-border-dark mb-1 text-center shadow-xl ${color} ${bounceClass}`}
     >
-      {props.isStacked ? (
-        <span className="ui-text-normal ui-text-light m-1">{props.name}</span>
-      ) : (
-        <span className="ui-text-normal ui-text-light m-1">{props.name}</span>
-      )}
+      <span className="ui-text-normal ui-text-light m-1">{props.name}</span>
     </div>
   );
 }
