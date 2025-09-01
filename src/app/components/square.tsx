@@ -43,14 +43,54 @@ const text = (n: number, boardSize?: number) => {
 const playersOn = (
   players: { name: string; isCurrentPlayerTurn: boolean }[] | undefined,
 ) => {
-  if (players)
-    return players.map((el) =>
+  if (!players || players.length === 0) {
+    return null;
+  }
+
+  const currentPlayer = players.find((p) => p.isCurrentPlayerTurn);
+  const otherPlayers = players.filter((p) => !p.isCurrentPlayerTurn);
+
+  const pawns = [];
+
+  // Pedina del giocatore corrente
+  // Viene sempre mostrata con animazione
+  if (currentPlayer) {
+    pawns.push(
       Pawn({
-        name: el.name,
+        name: currentPlayer.name,
         color: "yellow",
-        isCurrentPlayerTurn: el.isCurrentPlayerTurn,
+        isCurrentPlayerTurn: true,
       }),
     );
+  }
+
+  // Se ci sono altri giocatori
+  if (otherPlayers.length > 0) {
+    if (otherPlayers.length === 1) {
+      // Solo un altro giocatore
+      // Viene mostrato il nome
+      const el = otherPlayers[0];
+      pawns.push(
+        Pawn({
+          name: el.name,
+          color: "yellow",
+          isCurrentPlayerTurn: false,
+        }),
+      );
+    } else {
+      // Due o più giocatori
+      // Viene mostrati il count
+      pawns.push(
+        Pawn({
+          name: `${otherPlayers.length.toString()} giocatori`,
+          color: "yellow",
+          isCurrentPlayerTurn: false,
+        }),
+      );
+    }
+  }
+
+  return pawns;
 };
 
 const background = (number: number) => {

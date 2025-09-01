@@ -17,9 +17,26 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 // More on writing stories with args: https://storybook.js.org/docs/writing-stories/args
-export const Primary: Story = {
+export const SinglePlayer: Story = {
   args: {
     color: "yellow",
     name: "Samuel",
+    isCurrentPlayerTurn: false,
+  },
+};
+
+export const CurrentPlayer: Story = {
+  args: {
+    color: "yellow",
+    name: "Samuel",
+    isCurrentPlayerTurn: true,
+  },
+};
+
+export const StackedPlayers: Story = {
+  args: {
+    color: "yellow",
+    name: "2 giocatori",
+    isCurrentPlayerTurn: false,
   },
 };
