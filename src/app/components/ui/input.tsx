@@ -3,7 +3,7 @@
 import type React from "react";
 
 type InputProps = {
-  value: string | number;
+  value?: string | number;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
   className?: string;
@@ -13,13 +13,14 @@ type InputProps = {
   min?: string;
   max?: string;
   required?: boolean;
+  accept?: string;
 };
 
 export default function Input(props: InputProps) {
   return (
     <input
       type={props.type || "text"}
-      value={props.value}
+      value={props.value ?? undefined}
       onChange={props.onChange}
       placeholder={props.placeholder}
       className={`ui-text-dark ui-border-focus w-full p-2 ${props.className || ""}`}
@@ -27,6 +28,7 @@ export default function Input(props: InputProps) {
       min={props.min || undefined}
       max={props.max || undefined}
       id={props.id || undefined}
+      accept={props.accept || undefined}
     />
   );
 }

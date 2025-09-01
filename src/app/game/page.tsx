@@ -10,9 +10,10 @@ import type { Player } from "@/model/player";
 import BoardComponent from "../components/board";
 import ClientOnly from "../components/client-only";
 import DiceResultModal from "../components/dice-result-modal";
-import LeftBar from "../components/left-bar"; // Import the new LeftBar component
+import LeftBar from "../components/left-bar";
 import SquareC from "../components/square";
 import Button from "../components/ui/button";
+import { loadGameFromLocalStorage } from "../utils/game-storage";
 import {
   STORAGE_STATE_KEY_DEBUG_COUNTER,
   STORAGE_STATE_KEY_GAME_INSTANCE,
@@ -34,11 +35,10 @@ export default function Page() {
   );
 
   useEffect(() => {
-    const savedGame = localStorage.getItem(STORAGE_STATE_KEY_GAME_INSTANCE);
+    const savedGame = loadGameFromLocalStorage();
     if (savedGame) {
       try {
-        const parsedGame = JSON.parse(savedGame);
-        const loadedGame = GameModel.fromJSON(parsedGame);
+        const loadedGame = GameModel.fromJSON(savedGame);
         setGame(loadedGame);
       } catch (_e) {
         // Se il caricamento fallisce, il gioco è settato a null
@@ -206,6 +206,7 @@ export default function Page() {
             winnerName={game.getWinner()?.getName()}
             onPlayTurnClick={onButtonGiocaTurnoClick}
             onDeleteGame={handleDeleteGame}
+            gameInstance={game.toJSON()}
           />
           <div className="mx-auto flex flex-col items-center justify-center">
             {BoardComponent({
