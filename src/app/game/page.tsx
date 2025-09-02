@@ -7,6 +7,7 @@ import type { Mime } from "@/model/deck/mime";
 import type { Quiz } from "@/model/deck/quiz";
 import { Game as GameModel } from "@/model/game";
 import type { Player } from "@/model/player";
+import { MoveSquare } from "@/model/square";
 import BoardComponent from "../components/board";
 import ClientOnly from "../components/client-only";
 import DiceResultModal from "../components/dice-result-modal";
@@ -184,7 +185,8 @@ export default function Page() {
     .map((el, index) =>
       SquareC({
         number: el.getNumber(),
-        squareType: "normal",
+        squareType: el.getType(),
+        moveValue: el instanceof MoveSquare ? el.moveValue : undefined, // Se è un MoveSquare gli passo il valore
         playersOn: game
           .getBoard()
           .getPlayersOnSquare(index)

@@ -8,6 +8,7 @@ export const LABEL_GAME_CONFIGURATION = "Configurazione gioco";
 export const LABEL_SPECIAL_SQUARES = "Caselle speciali";
 export const LABEL_MIME = "Caselle mimo";
 export const LABEL_QUIZ = "Caselle quiz";
+export const LABEL_MOVE = "Caselle movimento";
 export const LABEL_SUBMIT = "Inizia gioco";
 
 // Dice Result Modal

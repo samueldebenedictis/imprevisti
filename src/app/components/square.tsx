@@ -1,26 +1,27 @@
 "use client";
 
+import type { SquareType } from "@/model/square/square";
 import Pawn from "./pawn";
 import { type Color, colorToCss } from "./ui/color";
-
-type SquareType = "normal" | "mime" | "quiz" | "move-forward" | "move-back";
 
 type SquareProps = {
   number: number;
   squareType: SquareType;
+  moveValue?: number;
   playersOn?: { name: string; isCurrentPlayerTurn: boolean }[];
   boardSize?: number;
 };
 
-const typeToColor = (type: SquareType): Color => {
+const typeToColor = (type: SquareType, moveValue?: number): Color => {
   switch (type) {
     case "mime":
       return "purple";
     case "quiz":
       return "yellow";
-    case "move-forward":
-      return "green";
-    case "move-back":
+    case "move":
+      if (moveValue && moveValue > 0) {
+        return "green";
+      }
       return "red";
     case "normal":
       return "blue";
@@ -38,6 +39,19 @@ const text = (n: number, boardSize?: number) => {
   } else {
     return <span className={`${classBase} ui-text-title text-7xl`}>{n}</span>;
   }
+};
+
+const moveValueText = (type: SquareType, moveValue: number | undefined) => {
+  if (type === "move" && moveValue !== undefined) {
+    const sign = moveValue > 0 ? "+" : "";
+    return (
+      <span className="ui-text-light ui-text-subtitle absolute bottom-1 left-1">
+        {sign}
+        {moveValue}
+      </span>
+    );
+  }
+  return null;
 };
 
 const playersOn = (
@@ -98,7 +112,7 @@ const background = (number: number) => {
 };
 
 export default function Square(props: SquareProps) {
-  const typeColor = typeToColor(props.squareType);
+  const typeColor = typeToColor(props.squareType, props.moveValue);
   const color = colorToCss(
     props.number === 0 || props.number + 1 === props.boardSize
       ? "black"
@@ -113,6 +127,7 @@ export default function Square(props: SquareProps) {
       <div className="absolute top-0 flex h-full w-full text-center">
         {text(props.number, props.boardSize)}
       </div>
+      {moveValueText(props.squareType, props.moveValue)}
       <div className="absolute bottom-0 w-full pr-1 pl-1">
         {playersOn(props.playersOn)}
       </div>
