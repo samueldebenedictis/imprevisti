@@ -1,6 +1,6 @@
 name: CI - Delete old actions
 
-on: [push]
+on: ['push']
 
 jobs:
   delete-old-actions:
@@ -11,4 +11,4 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           days-ago: 30
-          dry-run: true 
+          dry-run: false 
