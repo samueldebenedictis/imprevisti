@@ -1,5 +1,5 @@
 import type React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Battle } from "@/model/battle";
 import type { Mime, Quiz } from "@/model/deck";
 import type { Player } from "@/model/player";
@@ -69,6 +69,15 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
   const [mimeGuessed, setMimeGuessed] = useState<boolean | null>(null);
   const [mimeGuesserId, setMimeGuesserId] = useState<number | null>(null);
 
+  // Reset della parte relativa al mimo
+  useEffect(() => {
+    if (isOpen && actionType === "mime") {
+      setShowMimeTopic(false);
+      setMimeGuessed(null);
+      setMimeGuesserId(null);
+    }
+  }, [isOpen, actionType]);
+
   if (!isOpen) {
     return null;
   }
@@ -95,6 +104,14 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
   const handleMimeResolution = (success: boolean, guesserId?: number) => {
     setMimeGuessed(success);
     setMimeGuesserId(guesserId || null);
+
+    // Mimo indovinato ma giocatore che ha indovinato non ancora selezionato
+    if (success && guesserId === undefined) {
+      return;
+    }
+
+    // Mimo non indovinato o
+    // Mimo indovinato e giocatore selezionato
     if (onResolveMime) {
       onResolveMime(success, guesserId);
     }
