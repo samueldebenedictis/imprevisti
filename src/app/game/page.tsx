@@ -34,6 +34,11 @@ export default function Page() {
   const [playerWhoRolledName, setPlayerWhoRolledName] = useState<string | null>(
     null,
   );
+  const [startPosition, setStartPosition] = useState<number | undefined>();
+  const [newPosition, setNewPosition] = useState<number | undefined>();
+  const [_specialEffectMessage, setSpecialEffectMessage] = useState<
+    string | undefined
+  >();
 
   useEffect(() => {
     const savedGame = loadGameFromLocalStorage();
@@ -65,10 +70,16 @@ export default function Page() {
 
   function onButtonGiocaTurnoClick() {
     if (game) {
-      const playerWhoRolled = game.getPlayers()[game.getTurn()]; // Get current player before playing turn
-      setPlayerWhoRolledName(playerWhoRolled.getName()); // Set the player's name to state
+      const playerWhoRolled = game.getPlayers()[game.getTurn()];
+      setPlayerWhoRolledName(playerWhoRolled.getName());
+      const initialPosition = game.getPlayerPosition(playerWhoRolled);
+      setStartPosition(initialPosition);
+
       const { diceResult, actionType, data } = game.playTurn();
       setCount(counter + 1);
+
+      const finalPosition = game.getPlayerPosition(playerWhoRolled);
+      setNewPosition(finalPosition);
 
       setDiceResult(diceResult);
       setActionType(actionType);
@@ -152,7 +163,10 @@ export default function Page() {
     setIsModalOpen(false);
     setDiceResult(null);
     setActionType(null);
-    setActionData(null); // Reset action data when closing modal
+    setActionData(null);
+    setStartPosition(undefined);
+    setNewPosition(undefined);
+    setSpecialEffectMessage(undefined);
   };
 
   const handleDeleteGame = () => {
@@ -219,7 +233,7 @@ export default function Page() {
           <DiceResultModal
             isOpen={isModalOpen}
             onClose={closeModal}
-            diceResult={diceResult}
+            diceResult={diceResult as number}
             actionType={actionType}
             actionData={actionData}
             onResolveBattle={handleResolveBattle}
@@ -227,6 +241,9 @@ export default function Page() {
             onResolveQuiz={handleResolveQuiz}
             allPlayers={game.getPlayers()}
             currentPlayerName={playerWhoRolledName || ""}
+            startPosition={startPosition}
+            newPosition={newPosition}
+            boardSize={game.getBoard().getSquares().length}
           />
         </div>
       </div>

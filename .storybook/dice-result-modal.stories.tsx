@@ -97,3 +97,32 @@ export const MimeScenario: Story = {
     currentPlayerName: allPlayers[0].getName(),
   },
 };
+
+export const PositionChange: Story = {
+  args: {
+    ...Default.args,
+    startPosition: 5,
+    newPosition: 10,
+    diceResult: 5,
+  },
+};
+
+export const SpecialEffect: Story = {
+  args: {
+    ...Default.args,
+    startPosition: 5,
+    newPosition: 2,
+    diceResult: 2,
+    boardSize: 20,
+  },
+};
+
+export const PositionChangeWithSpecialEffect: Story = {
+  args: {
+    ...Default.args,
+    startPosition: 5,
+    newPosition: 12,
+    diceResult: 4,
+    boardSize: 20,
+  },
+};
