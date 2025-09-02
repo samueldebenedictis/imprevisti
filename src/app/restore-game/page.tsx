@@ -78,7 +78,7 @@ export default function RestoreGamePage() {
   const divClasses = "flex w-full flex-col items-center text-center my-4";
   return (
     <div className="m-8 mx-auto flex max-w-md flex-col items-center justify-center gap-4">
-      <h1 className="ui-text-dark ui-text-title m-2 text-center">
+      <h1 className="ui-text-dark ui-text-title m-2">
         {LABEL_RESTORE_GAME_TITLE}
       </h1>
 
@@ -94,7 +94,7 @@ export default function RestoreGamePage() {
         <button
           type="button"
           onClick={handleCustomButtonClick}
-          className="ui-text-dark ui-border-focus ui-text-normal w-full p-2"
+          className="ui-text-dark ui-border-focus ui-text-normal mt-2 w-full p-2"
         >
           {selectedFile ? selectedFile.name : "Seleziona un file..."}
         </button>
