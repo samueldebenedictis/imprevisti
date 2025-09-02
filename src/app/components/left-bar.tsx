@@ -1,6 +1,15 @@
 "use client";
 
+import Link from "next/link";
+import type { GameJSON } from "@/model/game";
 import type { Player } from "@/model/player";
+import {
+  LABEL_DELETE_GAME_BUTTON,
+  LABEL_RESTORE_GAME_BUTTON,
+  LABEL_SAVE_GAME_BUTTON,
+} from "../texts";
+import { saveGame } from "../utils/game-storage";
+import { URL_RESTORE_GAME } from "../vars";
 import Button from "./ui/button";
 
 type LeftBarProps = {
@@ -10,6 +19,7 @@ type LeftBarProps = {
   winnerName: string | undefined;
   onPlayTurnClick: () => void;
   onDeleteGame: () => void;
+  gameInstance: GameJSON;
 };
 
 export default function LeftBar({
@@ -19,7 +29,12 @@ export default function LeftBar({
   winnerName,
   onPlayTurnClick,
   onDeleteGame,
+  gameInstance,
 }: LeftBarProps) {
+  const handleSaveGame = () => {
+    saveGame(gameInstance);
+    alert("Gioco salvato!");
+  };
   return (
     <div
       className={`ui-border-dark mr-8 flex h-full max-w-xl flex-col items-center justify-between bg-gray-100 p-8`}
@@ -62,7 +77,17 @@ export default function LeftBar({
       </div>
       <div className="mr-4 mb-4 w-full">
         <Button onClick={onDeleteGame} color="red" className="w-full">
-          Elimina Partita
+          {LABEL_DELETE_GAME_BUTTON}
+        </Button>
+      </div>
+      <div className="mr-4 mb-4 w-full">
+        <Button onClick={handleSaveGame} color="green" className="w-full">
+          {LABEL_SAVE_GAME_BUTTON}
+        </Button>
+      </div>
+      <div className="mr-4 mb-4 w-full">
+        <Button color="black" className="w-full">
+          <Link href={URL_RESTORE_GAME}>{LABEL_RESTORE_GAME_BUTTON}</Link>
         </Button>
       </div>
     </div>

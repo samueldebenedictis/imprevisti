@@ -30,3 +30,16 @@ export const MODAL_MIME_NOT_GUESSED = "Non Indovinato";
 export const MODAL_MIME_WHO_GUESSED = "Chi ha indovinato?";
 export const MODAL_MIME_CONFIRM = "Conferma";
 export const MODAL_CLOSE_BUTTON = "Chiudi";
+
+// Game Save and Restore
+export const LABEL_SAVE_GAME_BUTTON = "Salva partita";
+export const LABEL_RESTORE_GAME_BUTTON = "Carica partita";
+export const LABEL_DELETE_GAME_BUTTON = "Elimina partita";
+
+export const LABEL_RESTORE_GAME_TITLE = "Carica partita";
+export const LABEL_CONTINUE_GAME_BUTTON = "Continua partita attuale";
+export const LABEL_UPLOAD_FILE = "Carica un file di salvataggio:";
+export const LABEL_CONTINUE_GAME_TITLE =
+  "Oppure riprendi dall'ultima partita salvata localmente:";
+export const LABEL_NO_SAVE_NO_STORAGE =
+  "Nessuna partita salvata localmente e nessun file selezionato.";
