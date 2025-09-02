@@ -8,6 +8,7 @@ import Input from "./components/ui/input";
 import {
   LABEL_GAME_CONFIGURATION,
   LABEL_MIME,
+  LABEL_MOVE,
   LABEL_PLAYER_NAME,
   LABEL_PLAYERS_NUMBER,
   LABEL_QUIZ,
@@ -15,6 +16,7 @@ import {
   LABEL_SQUARES_NUMBER,
   LABEL_SUBMIT,
 } from "./texts";
+import { generateSquares } from "./utils/generate-squares";
 import {
   MAX_PLAYERS,
   MIN_PLAYERS,
@@ -45,6 +47,7 @@ export default function Home() {
   const [squareTypes, setSquareTypes] = useState({
     mime: false,
     quiz: false,
+    move: false,
   });
 
   const handleNumPlayersChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,10 +89,9 @@ export default function Home() {
       name: el,
       turnsToSkip: 0,
     }));
-    const squareJSON = Array.from(Array(numSquares).keys()).map((_e, i) => ({
-      number: i,
-      type: "normal",
-    }));
+
+    const squareJSON = generateSquares(numSquares, squareTypes);
+
     const gameInstance: GameJSON = {
       currentRound: 1,
       currentTurn: 0,
@@ -160,7 +162,7 @@ export default function Home() {
 
         <div className="mb-6">
           <Label htmlFor="squareTypes">{LABEL_SPECIAL_SQUARES}</Label>
-          <div className="mb-1 flex items-center">
+          <div className="flex items-center">
             <input
               type="checkbox"
               id="mime"
@@ -181,6 +183,17 @@ export default function Home() {
               className="ui-custom-checkbox mr-2"
             />
             <LabelCheckbox htmlFor="quiz">{LABEL_QUIZ}</LabelCheckbox>
+          </div>
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="move"
+              name="move"
+              checked={squareTypes.move}
+              onChange={handleSquareTypeChange}
+              className="ui-custom-checkbox mr-2"
+            />
+            <LabelCheckbox htmlFor="move">{LABEL_MOVE}</LabelCheckbox>
           </div>
         </div>
 

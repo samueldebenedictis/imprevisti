@@ -22,7 +22,7 @@
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "husky": "^9.1.7",
-    "next": "15.3.4",
+    "next": "^15.5.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

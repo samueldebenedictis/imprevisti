@@ -11,7 +11,8 @@
       "numSquares": 25,
       "squareTypes": {
         "mime": false,
-        "quiz": false
+        "quiz": false,
+        "move": false
       }
     }
   },

@@ -1,9 +1,13 @@
+export type SquareType = "normal" | "mime" | "quiz" | "move";
+
 export interface SquareJSON {
   number: number;
-  type: string;
+  type: SquareType;
+  moveValue?: number;
 }
 
 export interface MoveSquareJSON extends SquareJSON {
+  type: "move";
   moveValue: number;
 }
 
@@ -13,15 +17,19 @@ export interface MoveSquareJSON extends SquareJSON {
  */
 export class Square {
   private number: number;
-  protected type: string; // Aggiungi una proprietà per il tipo di casella
+  protected type: SquareType;
+  protected moveValue?: number;
 
   /**
    * Crea una nuova casella con l'ID specificato.
    * @param id - Numero identificativo della casella
+   * @param type - Tipo della casella (opzionale, default "normal")
+   * @param moveValue - Valore di movimento per le caselle "move" (opzionale)
    */
-  constructor(id: number) {
+  constructor(id: number, type: SquareType = "normal", moveValue?: number) {
     this.number = id;
-    this.type = "normal"; // Tipo di default
+    this.type = type;
+    this.moveValue = moveValue;
   }
 
   /**
@@ -34,16 +42,20 @@ export class Square {
    * Restituisce il tipo di casella.
    * @returns Tipo della casella
    */
-  getType = () => this.type;
+  getType = (): SquareType => this.type;
 
   /**
    * Converte l'istanza di Square in un oggetto JSON serializzabile.
    * @returns Un oggetto che rappresenta lo stato della Square in formato JSON.
    */
   toJSON(): SquareJSON {
-    return {
+    const json: SquareJSON = {
       number: this.number,
       type: this.type,
     };
+    if (this.type === "move" && this.moveValue !== undefined) {
+      json.moveValue = this.moveValue;
+    }
+    return json;
   }
 }

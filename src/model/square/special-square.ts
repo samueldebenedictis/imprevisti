@@ -35,11 +35,6 @@ export interface Command {
  * Utilizza il pattern Command per incapsulare le azioni specifiche.
  */
 export abstract class SpecialSquare extends Square {
-  constructor(id: number) {
-    super(id);
-    this.type = "special"; // Tipo di default per le caselle speciali
-  }
-
   /**
    * Restituisce il comando associato a questa casella speciale.
    * Ogni sottoclasse deve implementare questo metodo per definire il proprio comportamento.

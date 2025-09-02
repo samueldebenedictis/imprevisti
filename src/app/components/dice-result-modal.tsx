@@ -30,7 +30,7 @@ import Select from "./ui/select";
 interface DiceResultModalProps {
   isOpen: boolean;
   onClose: () => void;
-  diceResult: number | null;
+  diceResult: number;
   actionType: string | null;
   actionData: Battle | Mime | Quiz | null;
   onResolveBattle?: (winnerId: number) => void;
@@ -38,6 +38,9 @@ interface DiceResultModalProps {
   onResolveQuiz?: (success: boolean) => void;
   allPlayers: Player[];
   currentPlayerName: string;
+  startPosition?: number;
+  newPosition?: number;
+  boardSize?: number;
 }
 
 const H3 = (props: { children: string }) => (
@@ -57,6 +60,9 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
   onResolveQuiz,
   allPlayers,
   currentPlayerName,
+  startPosition,
+  newPosition,
+  boardSize,
 }) => {
   const [showQuizAnswer, setShowQuizAnswer] = useState(false);
   const [showMimeTopic, setShowMimeTopic] = useState(false);
@@ -95,6 +101,51 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
     onClose();
   };
 
+  // Crea il div per informare del movimento se si è atterrati su una casella speciale
+  const renderSpecialEffect = () => {
+    if (
+      newPosition !== undefined &&
+      startPosition !== undefined &&
+      diceResult !== null &&
+      boardSize !== undefined
+    ) {
+      const intermediatePosition = Math.min(
+        startPosition + diceResult,
+        boardSize - 1,
+      );
+      if (newPosition !== intermediatePosition) {
+        const moveValue = newPosition - intermediatePosition;
+        const effect = moveValue > 0 ? `avanti di ` : `indietro di `;
+        const specialEffectMessage = `Sei atterrato su una casella speciale! Ti muovi ${effect}`;
+        const specialColor = (move: number) =>
+          move > 0 ? `text-blue-600` : `text-red-600`;
+        return (
+          <div className="text-xl">
+            <Divider />
+            <p className={`font-extrabold ${specialColor(moveValue)}`}>
+              Effetto Speciale!
+            </p>
+            <p className="ui-text-dark">
+              {specialEffectMessage}
+              <span className={`font-bold text-xl ${specialColor(moveValue)}`}>
+                {Math.abs(moveValue)}
+              </span>
+            </p>
+            <p className="ui-text-dark">
+              Movimento totale:{" "}
+              <span
+                className={`font-bold text-xl ${specialColor(newPosition - startPosition)}`}
+              >
+                {newPosition - startPosition}
+              </span>
+            </p>
+          </div>
+        );
+      }
+    }
+    return null;
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="ui-border-dark min-w-[600px] bg-white p-6 text-center shadow-lg">
@@ -112,6 +163,15 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
             </span>{" "}
           </p>
         )}
+
+        {newPosition !== undefined && startPosition !== undefined && (
+          <p className="mb-1 text-xl">
+            Nuova posizione:{" "}
+            <span className="font-extrabold text-blue-600">{newPosition}</span>
+          </p>
+        )}
+
+        {renderSpecialEffect()}
 
         {actionType && <Divider />}
 
@@ -258,7 +318,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
             </div>
           )}
 
-        {actionType && <Divider />}
+        <Divider />
         <Button onClick={onClose} color="blue" className="mx-auto">
           {MODAL_CLOSE_BUTTON}
         </Button>
