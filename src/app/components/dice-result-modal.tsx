@@ -315,6 +315,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                         label: player.getName(),
                       }))}
                     className="m-2"
+                    placeholder="Seleziona un giocatore"
                   />
                   <Button
                     onClick={() =>

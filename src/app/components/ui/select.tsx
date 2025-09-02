@@ -7,6 +7,7 @@ type SelectProps = {
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   options: { value: string | number; label: string }[];
   className?: string;
+  placeholder?: string;
 };
 
 export default function Select(props: SelectProps) {
@@ -21,6 +22,11 @@ export default function Select(props: SelectProps) {
           {option.label}
         </option>
       ))}
+      {props.placeholder && (
+        <option value="" selected disabled hidden>
+          {props.placeholder}
+        </option>
+      )}
     </select>
   );
 }
