@@ -93,4 +93,25 @@ describe("Game", () => {
     expect(game.getBoard().getPlayerPosition(players[0])).toBe(0);
     expect(game.getBoard().getPlayerPosition(players[1])).toBeGreaterThan(0);
   });
+
+  test("Game fromJSON", () => {
+    const squares = new SquaresBuilder().setBoardSize(5).build();
+    const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
+    const board = new Board(squares, players);
+    const originalGame = new Game(board, players);
+
+    // Move a player
+    originalGame.playTurn();
+    const json = originalGame.toJSON();
+
+    // Reconstruct from JSON
+    const reconstructedGame = Game.fromJSON(json);
+
+    expect(reconstructedGame.getTurn()).toBe(originalGame.getTurn());
+    expect(reconstructedGame.getRound()).toBe(originalGame.getRound());
+    expect(reconstructedGame.getPlayers().length).toBe(2);
+    expect(
+      reconstructedGame.getPlayerPosition(reconstructedGame.getPlayers()[0]),
+    ).toBe(originalGame.getPlayerPosition(originalGame.getPlayers()[0]));
+  });
 });

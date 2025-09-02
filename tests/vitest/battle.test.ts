@@ -3,6 +3,14 @@ import { Battle } from "@/model/battle";
 import { Player } from "@/model/player";
 
 describe("Battle", () => {
+  test("Resolve battle successfully", () => {
+    const player1 = new Player(0, "Lucia");
+    const player2 = new Player(1, "Renzo");
+    const battle = new Battle(player1, player2);
+    const winner = battle.resolveBattle(player1);
+    expect(winner).toBe(player1);
+  });
+
   test("Resolve battle error", () => {
     const player1 = new Player(0, "Lucia");
     const player2 = new Player(1, "Renzo");

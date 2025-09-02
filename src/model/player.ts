@@ -51,7 +51,7 @@ export class Player {
    * @param turns - Numero di turni da saltare
    */
   skipNextTurn = (turns = 1) => {
-    this.turnsToSkip = turns;
+    this.setTurnsToSkip(turns);
   };
 
   /**
