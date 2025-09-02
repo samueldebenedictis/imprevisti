@@ -41,17 +41,23 @@ const text = (n: number, boardSize?: number) => {
   }
 };
 
-const moveValueText = (type: SquareType, moveValue: number | undefined) => {
+const typeText = (type: SquareType, moveValue: number | undefined) => {
+  let displayText = "";
   if (type === "move" && moveValue !== undefined) {
-    const sign = moveValue > 0 ? "+" : "";
-    return (
-      <span className="ui-text-light ui-text-subtitle absolute bottom-1 left-1">
-        {sign}
-        {moveValue}
-      </span>
-    );
+    const sign = moveValue > 0 ? " AVANTI +" : "INDIETRO ";
+    displayText = `${sign}${moveValue}`;
+  } else if (type === "quiz") {
+    displayText = "QUIZ";
+  } else if (type === "mime") {
+    displayText = "MIMO";
+  } else {
+    return null;
   }
-  return null;
+  return (
+    <span className="ui-text-light ui-text-subtitle -translate-x-1/2 absolute top-1 left-1/2 transform whitespace-nowrap">
+      {displayText}
+    </span>
+  );
 };
 
 const playersOn = (
@@ -115,7 +121,7 @@ export default function Square(props: SquareProps) {
   const typeColor = typeToColor(props.squareType, props.moveValue);
   const color = colorToCss(
     props.number === 0 || props.number + 1 === props.boardSize
-      ? "black"
+      ? "teal"
       : typeColor,
   );
   const bg = background(props.number);
@@ -127,7 +133,7 @@ export default function Square(props: SquareProps) {
       <div className="absolute top-0 flex h-full w-full text-center">
         {text(props.number, props.boardSize)}
       </div>
-      {moveValueText(props.squareType, props.moveValue)}
+      {typeText(props.squareType, props.moveValue)}
       <div className="absolute bottom-0 w-full pr-1 pl-1">
         {playersOn(props.playersOn)}
       </div>
