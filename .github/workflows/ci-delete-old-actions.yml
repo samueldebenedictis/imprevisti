@@ -1,6 +1,7 @@
 name: CI - Delete old actions
 
-on: ['push']
+on:
+  workflow_dispatch:
 
 jobs:
   delete-old-actions:
@@ -10,5 +11,5 @@ jobs:
       - uses: yanovation/delete-old-actions@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          days-ago: 0
+          days-ago: 1
           dry-run: false 
