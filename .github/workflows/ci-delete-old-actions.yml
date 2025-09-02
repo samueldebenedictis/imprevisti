@@ -1,8 +1,6 @@
 name: CI - Delete old actions
 
-on:
-  schedule:
-    - cron: '0 0 * * *'
+on: [push]
 
 jobs:
   delete-old-actions:
