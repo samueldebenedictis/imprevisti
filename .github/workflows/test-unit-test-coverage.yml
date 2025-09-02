@@ -1,4 +1,4 @@
-name: Coverage on pull request
+name: Test - Unit test coverage on pull request
 
 on: [pull_request]
 

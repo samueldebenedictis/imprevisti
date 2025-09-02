@@ -1,9 +1,11 @@
-name: Playwright Tests App
+name: Test - E2E test
+
 on:
   push:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+
 jobs:
   test:
     timeout-minutes: 60
