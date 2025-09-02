@@ -16,11 +16,11 @@ export class Deck {
   constructor(cards: Card[]) {
     this.cards = cards;
     this.usedCards = [];
+    this.shuffle();
   }
 
   /**
    * Mescola le carte del mazzo in ordine casuale.
-   * Utilizza l'algoritmo Fisher-Yates per garantire una distribuzione uniforme.
    */
   shuffle = () => {
     const unshuffled = this.cards.map((el) => ({
