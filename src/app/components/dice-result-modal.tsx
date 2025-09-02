@@ -152,7 +152,16 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
         <h2 className="ui-text-dark ui-text-title mb-4">
           {MODAL_TITLE_TURN_RESULT}
         </h2>
-        {diceResult !== null && (
+        {diceResult !== null && diceResult === 0 && actionType === null && (
+          <p className="mb-1 text-xl">
+            <span className="font-extrabold text-red-600">
+              {currentPlayerName}
+            </span>{" "}
+            deve saltare il turno!
+          </p>
+        )}
+
+        {diceResult !== null && !(diceResult === 0 && actionType === null) && (
           <p className="mb-1 text-xl">
             <span className="font-extrabold text-blue-600">
               {currentPlayerName}
@@ -164,12 +173,16 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
           </p>
         )}
 
-        {newPosition !== undefined && startPosition !== undefined && (
-          <p className="mb-1 text-xl">
-            Nuova posizione:{" "}
-            <span className="font-extrabold text-blue-600">{newPosition}</span>
-          </p>
-        )}
+        {newPosition !== undefined &&
+          startPosition !== undefined &&
+          !(diceResult === 0 && actionType === null) && (
+            <p className="mb-1 text-xl">
+              Nuova posizione:{" "}
+              <span className="font-extrabold text-blue-600">
+                {newPosition}
+              </span>
+            </p>
+          )}
 
         {renderSpecialEffect()}
 

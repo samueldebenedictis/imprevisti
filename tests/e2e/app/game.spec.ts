@@ -1,3 +1,7 @@
+import { STORAGE_STATE_KEY_GAME_INSTANCE } from "@/app/vars";
+import { Board, SquaresBuilder } from "@/model/board";
+import { Game } from "@/model/game";
+import { Player } from "@/model/player";
 import { expect, test } from "./fixtures";
 
 test("Fill form", async ({ homePage }) => {
@@ -21,4 +25,33 @@ test("Fill form", async ({ homePage }) => {
   expect(JSON.stringify(storageGame, undefined, 2)).toMatchSnapshot(
     "e2e-config.json",
   );
+});
+
+test("Player skip turn modal", async ({ page }) => {
+  const squares = new SquaresBuilder().setBoardSize(10).build();
+  const players = ["Alice", "Bob"].map((name, i) => new Player(i, name));
+  const board = new Board(squares, players);
+  const game = new Game(board, players);
+
+  players[0].skipNextTurn();
+  const gameJSON = JSON.stringify(game.toJSON());
+  await page.addInitScript(
+    ([gameData, storageKey]) => {
+      localStorage.setItem(storageKey, gameData);
+    },
+    [gameJSON, STORAGE_STATE_KEY_GAME_INSTANCE],
+  );
+
+  await page.goto("/game");
+
+  await page.getByRole("button", { name: "Gioca un turno" }).click();
+
+  await page.getByRole("heading", { name: "Risultato del Turno" }).waitFor();
+  await expect(page.getByText("Alice deve saltare il turno!")).toBeVisible();
+
+  await page.getByRole("button", { name: "Chiudi" }).click();
+
+  await expect(
+    page.getByText("Alice deve saltare il turno!"),
+  ).not.toBeVisible();
 });
