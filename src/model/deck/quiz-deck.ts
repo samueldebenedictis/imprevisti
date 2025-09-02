@@ -4,9 +4,7 @@ import { quizCards } from "./quiz";
 
 export class QuizDeck extends Deck {
   constructor(
-    cards: Card[] = quizCards.map(
-      (el) => new Card(`QUIZ: ${el.domanda}`, el.risposta),
-    ),
+    cards: Card[] = quizCards.map((el) => new Card(el.domanda, el.risposta)),
   ) {
     super(cards);
   }

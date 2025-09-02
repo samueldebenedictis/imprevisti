@@ -53,7 +53,16 @@ export class Board {
    * @returns Indice della posizione del giocatore sul tabellone
    */
   getPlayerPosition = (player: Player) => {
-    return this.playersPosition.get(player) as number;
+    // Dopo aver deserializzato l'oggetto player è differente
+    // Devo ritornare la posizione del giocatore facendo find tramite id nelle entries
+    for (const [keyPlayer, position] of this.playersPosition.entries()) {
+      if (keyPlayer.getId() === player.getId()) {
+        return position;
+      }
+    }
+
+    // TODO: se ritorna 0 c'è un bug, fallback
+    return 0;
   };
 
   /**
