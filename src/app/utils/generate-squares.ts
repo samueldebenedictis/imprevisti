@@ -7,11 +7,10 @@ import type {
 // Funzione per generare le caselle all'avvio della partita
 // Percentuale di caselle speciali (deve essere comprese tra 0 e 1)
 
-const SPECIAL_PERCENTAGE = 0.4;
-
 export const generateSquares = (
   numSquares: number,
   squareTypes: { mime: boolean; quiz: boolean; move: boolean },
+  specialPercentage: number = 0.4,
 ): SquareJSON[] => {
   // Genera un array di caselle normali
   const squares: SquareJSON[] = Array.from(Array(numSquares).keys()).map(
@@ -49,7 +48,7 @@ export const generateSquares = (
 
   // Calcolo le caselle speciali da generare
   const specialSquaresToPlace = Math.min(
-    Math.floor(numSquares * SPECIAL_PERCENTAGE),
+    Math.floor(numSquares * specialPercentage),
     specialSquareIndices.length,
   );
 
