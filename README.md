@@ -3,105 +3,105 @@
 Questo progetto è un'applicazione web che implementa una versione digitale del gioco da tavolo "La Città degli Imprevisti".
 Il gioco è stato creato e sviluppato dagli alunni dell'istituto CFPIL di Varese in collaborazione coi docenti.
 
-La controparte digitale è sviluppata con Next.js e TypeScript.
-La versione digitale del gioco permette ai giocatori di configurare una partita personalizzata con diversi tipi di caselle speciali e meccaniche di gioco interattive.
+La versione digitale è stata sviluppata in React con Next.js e TypeScript.
+Questa versione permette ai giocatori di configurare la partita in maniera personalizzata, con diversi tipi di caselle speciali (quiz, mimo, caselle di movimento) e meccaniche di gioco automatiche.
 
 Il gioco è disponibile all'indirizzo
 https://samueldebenedictis.github.io/tesi/
 
 ## Caratteristiche Principali
 
-- **Configurazione partita**: Pagina iniziale per impostare i parametri del gioco
-- **Gioco interattivo**: Pagina principale del gioco con plancia, pedine e meccaniche
-- **Istruzioni**: Pagina dedicata con le regole del gioco
-- **Salvataggio partite**: Sistema per salvare e caricare partite in corso
+- **Configurazione partita**: Home per impostare i parametri del gioco; numero di giocatori, nomi, caselle ammesse, eccetera.
+
+- **Gioco interattivo**: Pagina del gioco con tabellone, pedine e stato del gioco
+- **Istruzioni**: Regole del gioco
+- **Salvataggio partite**: Sistema di salvataggio e caricamento della partita (la partita viene salvata in formato JSON). Lo stato della partita è conservato nello StorageState del browser.
 
 ## Tecnologie Utilizzate
 
-- **Next.js 15**: Framework React per applicazioni web
-- **TypeScript**: Tipizzazione statica per JavaScript
-- **Tailwind CSS**: Framework CSS per lo styling
-- **Biome**: Linter e formatter per il codice
-- **Vitest**: Framework di testing unitario
-- **Playwright**: Testing end-to-end
-- **Storybook**: Sviluppo e documentazione dei componenti UI
-- **Husky**: Git hooks per qualità del codice
+- **Next.js 15**: Framework React
+- **TypeScript**: Tipizzazione per JavaScript
+- **Tailwind CSS**: Framework CSS
+- **Biome**: Linter e formatter
+- **Vitest**: Framework per unit test
+- **Playwright**: Framework per test end-to-end
+- **Storybook**: Sviluppo dei componenti UI
+- **Husky**: Git hooks
 
-## Comandi Disponibili
+## Comandi
+
+### Installazione
+```bash
+npm install
+```
+Installa node modules, dipendenze e configura Husky.
 
 ### Sviluppo
 ```bash
 npm run dev
 ```
-Avvia il server di sviluppo Next.js sulla porta 3000.
+Avvia la dev mode sulla porta 3000.
 
 ### Build e Produzione
 ```bash
 npm run build
 ```
-Compila l'applicazione per la produzione.
 
 ```bash
 npm run start
 ```
-Avvia il server di produzione dopo aver eseguito il build sulla porta 3000.
 
 ### Testing
 ```bash
 npm run test
 ```
-Esegue tutti i test unitari utilizzando Vitest.
+Esegue gli unit test
 
 ```bash
 npm run coverage
 ```
-Esegue i test unitari con report di copertura del codice.
+Esegue gli unit test con coverage report
 
 ### Testing End-to-End
 ```bash
 npm run e2e:app
 ```
-Esegue i test end-to-end dell'applicazione principale utilizzando Playwright.
+Esegue i test end to end con Playwright dell'applicazione.
 
 ```bash
 npm run e2e:storybook
 ```
-Esegue i test end-to-end dei componenti Storybook.
+Esegue i test end to end con Playwright dei componenti in Storybook.
 
 ### Qualità del Codice
 ```bash
 npm run lint
 ```
-Esegue il linter Biome per identificare problemi di stile e qualità del codice, applicando automaticamente le correzioni.
+Esegue il linter per identificare i problemi sulla qualità del codice.
 
 ```bash
 npm run format
 ```
-Formatta il codice utilizzando Biome per mantenere uno stile consistente.
+Formatta il codice.
 
 ```bash
 npm run biome
 ```
-Esegue un controllo completo del codice con Biome, applicando linting, formatting e altre regole di qualità.
+Lint e format.
 
 ### Storybook
 ```bash
 npm run storybook
 ```
-Avvia il server di sviluppo Storybook sulla porta 6006 per visualizzare e sviluppare i componenti UI in isolamento.
+Avvia Storybook sulla porta 6006.
 
 ```bash
 npm run build-storybook
 ```
-Compila Storybook per la produzione, generando una versione statica della documentazione dei componenti.
+Compila Storybook per la produzione.
 
-### Installazione Dipendenze
-```bash
-npm install
-```
-Installa tutte le dipendenze del progetto e configura Husky per i git hooks.
 
-## Struttura del Progetto
+## Struttura
 
 ```
 src/
@@ -137,17 +137,4 @@ src/
    npm run dev
    ```
 
-4. **Apri il browser** e vai su `http://localhost:3000`
-
-## Testing
-
-Per eseguire tutti i test:
-```bash
-npm run test
-npm run coverage
-```
-
-Per i test end-to-end:
-```bash
-npm run e2e:app
-```
+4. **Naviga** `http://localhost:3000`
