@@ -20,6 +20,9 @@ export default function InstructionsPage() {
             Benvenuti nella versione digitale del gioco da tavolo "La Città
             degli Imprevisti"!
             <br />
+            Il gioco è stato realizzato dagli alunni dell'istituto CFPIL di
+            Varese in collaborazione coi docenti.
+            <br />
             Preparatevi a un'avventura emozionante dove strategia, fortuna e
             abilità si mescolano.
             <br />
@@ -118,7 +121,20 @@ export default function InstructionsPage() {
             del tabellone. Quel giocatore sarà dichiarato il vincitore!
           </p>
         </section>
+        <section className="mb-6">
+          <h2 className="mb-2 font-semibold text-xl">6. Altro</h2>
+          <p className="mb-2">
+            Tutto il codice sorgente del sito è disponile su{" "}
+            <a
+              className="font-semibold"
+              href="https://github.com/samueldebenedictis/tesi"
+            >
+              GitHub
+            </a>
+          </p>
+        </section>
       </div>
+
       <Button
         onClick={() => router.push(URL_HOME)}
         color="blue"
