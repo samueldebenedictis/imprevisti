@@ -105,8 +105,8 @@ Installa tutte le dipendenze del progetto e configura Husky per i git hooks.
 
 ```
 src/
-├── app/                    # Pagine e componenti Next.js
-│   ├── components/         # Componenti React
+├── app/                   # Pagine e componenti Next.js
+│   ├── components/        # Componenti React
 │   ├── game/              # Pagina principale del gioco
 │   ├── instructions/      # Pagina delle istruzioni
 │   └── restore-game/      # Pagina per caricare partite salvate
