@@ -12,6 +12,7 @@ import {
   LABEL_PLAYER_NAME,
   LABEL_PLAYERS_NUMBER,
   LABEL_QUIZ,
+  LABEL_SPECIAL_PERCENTAGE,
   LABEL_SPECIAL_SQUARES,
   LABEL_SQUARES_NUMBER,
   LABEL_SUBMIT,
@@ -49,6 +50,7 @@ export default function Home() {
     quiz: false,
     move: false,
   });
+  const [specialPercentage, setSpecialPercentage] = useState(40);
 
   const handleNumPlayersChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);
@@ -90,7 +92,11 @@ export default function Home() {
       turnsToSkip: 0,
     }));
 
-    const squareJSON = generateSquares(numSquares, squareTypes);
+    const squareJSON = generateSquares(
+      numSquares,
+      squareTypes,
+      specialPercentage / 100,
+    );
 
     const gameInstance: GameJSON = {
       currentRound: 1,
@@ -160,7 +166,7 @@ export default function Home() {
           />
         </div>
 
-        <div className="mb-6">
+        <div className="mb-4">
           <Label htmlFor="squareTypes">{LABEL_SPECIAL_SQUARES}</Label>
           <div className="flex items-center">
             <input
@@ -195,6 +201,22 @@ export default function Home() {
             />
             <LabelCheckbox htmlFor="move">{LABEL_MOVE}</LabelCheckbox>
           </div>
+        </div>
+
+        <div className="mb-6">
+          <Label htmlFor="specialPercentage">
+            {LABEL_SPECIAL_PERCENTAGE(specialPercentage)}
+          </Label>
+          <input
+            type="range"
+            id="specialPercentage"
+            name="specialPercentage"
+            min="0"
+            max="100"
+            value={specialPercentage}
+            onChange={(e) => setSpecialPercentage(parseInt(e.target.value))}
+            className="w-full"
+          />
         </div>
 
         <Button color="blue" type="submit" className="mx-auto">
