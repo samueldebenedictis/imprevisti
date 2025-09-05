@@ -87,16 +87,6 @@ export class SpecialSquareProcessor {
     }
   }
 
-  // TODO: rimuovere se non utilizzato
-  // /**
-  //  * Verifica se una casella è una casella speciale (MimeSquare o SpecialSquare).
-  //  * @param position - La posizione della casella da controllare
-  //  * @returns True se la casella è speciale, false altrimenti
-  //  */
-  // isSpecialSquare(position: number): boolean {
-  //   return this.getSquareType(position) !== "normal";
-  // }
-
   /**
    * Restituisce il tipo di casella speciale alla posizione specificata.
    * @param position - La posizione della casella da controllare
