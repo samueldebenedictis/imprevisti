@@ -98,8 +98,8 @@ body {
   gap: 6px;
 }
 .dot {
-  width: 16px;
-  height: 16px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   background: transparent;
   transition: background-color 0.2s ease;
