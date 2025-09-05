@@ -1,3 +1,4 @@
+import Dice from "./dice";
 import Button from "./ui/button";
 
 interface DiceRollModalProps {
@@ -7,10 +8,6 @@ interface DiceRollModalProps {
   diceResult?: number | null;
   onContinue?: () => void;
 }
-
-const _H3 = (props: { children: string }) => (
-  <h3 className="ui-text-dark ui-text-subtitle">{props.children}</h3>
-);
 
 export default function DiceRollModal({
   isOpen,
@@ -31,16 +28,7 @@ export default function DiceRollModal({
           {showResult ? "Risultato del dado" : "Lancia il dado"}
         </h2>
         <div className="mb-4 flex items-center justify-center">
-          {showResult ? (
-            <div className="ui-text-title text-7xl">{diceResult}</div>
-          ) : (
-            <div
-              className={`text-6xl ${isRolling ? "animate-spin" : ""}`}
-              style={{ animationDuration: "0.5s" }}
-            >
-              🎲
-            </div>
-          )}
+          <Dice isRolling={isRolling} result={diceResult} />
         </div>
         <div className="flex justify-center">
           {showResult ? (
