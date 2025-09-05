@@ -27,10 +27,38 @@ export const Default: Story = {
   },
 };
 
+export const YellowButton: Story = {
+  args: {
+    children: "Yellow Button",
+    color: "yellow",
+  },
+};
+
+export const GreenButton: Story = {
+  args: {
+    children: "Green Button",
+    color: "green",
+  },
+};
+
 export const RedButton: Story = {
   args: {
     children: "Red Button",
     color: "red",
+  },
+};
+
+export const PurpleButton: Story = {
+  args: {
+    children: "Purple Button",
+    color: "purple",
+  },
+};
+
+export const BlackButton: Story = {
+  args: {
+    children: "Black Button",
+    color: "black",
   },
 };
 
@@ -39,5 +67,13 @@ export const Disabled: Story = {
     children: "Disabled Button",
     color: "green",
     disabled: true,
+  },
+};
+
+export const WithCustomClass: Story = {
+  args: {
+    children: "Custom Styled Button",
+    color: "blue",
+    className: "w-64 h-12 text-lg",
   },
 };

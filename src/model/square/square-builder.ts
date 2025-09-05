@@ -3,7 +3,6 @@ import { MoveSquare } from "./move-square";
 import { QuizSquare } from "./quiz-square";
 import { type MoveSquareJSON, Square, type SquareJSON } from "./square";
 
-// TODO: renderlo una classe?
 /**
  * Ricostruisce un'istanza di Square (o una sua sottoclasse) da un oggetto JSON.
  * Questo metodo fungerà da factory per creare l'istanza corretta della casella

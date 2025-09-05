@@ -11,6 +11,7 @@ import { MoveSquare } from "@/model/square";
 import BoardComponent from "../components/board";
 import ClientOnly from "../components/client-only";
 import DiceResultModal from "../components/dice-result-modal";
+import DiceRollModal from "../components/dice-roll-modal";
 import LeftBar from "../components/left-bar";
 import SquareC from "../components/square";
 import Button from "../components/ui/button";
@@ -26,7 +27,10 @@ export default function Page() {
   const [game, setGame] = useState<GameModel | null>(null);
   const [counter, setCount] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDiceModalOpen, setIsDiceModalOpen] = useState(false);
+  const [isRolling, setIsRolling] = useState(false);
   const [diceResult, setDiceResult] = useState<number | null>(null);
+  const [modalDiceResult, setModalDiceResult] = useState<number | null>(null);
   const [actionType, setActionType] = useState<string | null>(null);
   const [actionData, setActionData] = useState<Battle | Mime | Quiz | null>(
     null,
@@ -69,29 +73,46 @@ export default function Page() {
   }, [game, counter]); // Salva il gioco e il counter ogni volta che cambiano
 
   function onButtonGiocaTurnoClick() {
-    if (game) {
-      const playerWhoRolled = game.getPlayers()[game.getTurn()];
-      setPlayerWhoRolledName(playerWhoRolled.getName());
-      const initialPosition = game.getPlayerPosition(playerWhoRolled);
-      setStartPosition(initialPosition);
-
-      const { diceResult, actionType, data } = game.playTurn();
-      setCount(counter + 1);
-
-      const finalPosition = game.getPlayerPosition(playerWhoRolled);
-      setNewPosition(finalPosition);
-
-      setDiceResult(diceResult);
-      setActionType(actionType);
-      setActionData(data || null); // Set the action data
-      setIsModalOpen(true);
-
-      // Serialize the current game state to JSON, then deserialize it to create a new Game instance
-      const updatedGameJSON = game.toJSON();
-      const updatedGame = GameModel.fromJSON(updatedGameJSON);
-      setGame(updatedGame); // Set the new instance to trigger re-render and saving
-    }
+    setIsDiceModalOpen(true);
   }
+
+  const handleRollDice = () => {
+    if (game) {
+      setIsRolling(true);
+
+      // Simulate dice rolling animation for 1 second
+      setTimeout(() => {
+        const playerWhoRolled = game.getPlayers()[game.getTurn()];
+        setPlayerWhoRolledName(playerWhoRolled.getName());
+        const initialPosition = game.getPlayerPosition(playerWhoRolled);
+        setStartPosition(initialPosition);
+
+        const { diceResult, actionType, data } = game.playTurn();
+        setCount(counter + 1);
+
+        const finalPosition = game.getPlayerPosition(playerWhoRolled);
+        setNewPosition(finalPosition);
+
+        setDiceResult(diceResult);
+        setActionType(actionType);
+        setActionData(data || null); // Set the action data
+
+        // Serialize the current game state to JSON, then deserialize it to create a new Game instance
+        const updatedGameJSON = game.toJSON();
+        const updatedGame = GameModel.fromJSON(updatedGameJSON);
+        setGame(updatedGame); // Set the new instance to trigger re-render and saving
+
+        setModalDiceResult(diceResult);
+        setIsRolling(false);
+      }, 1000);
+    }
+  };
+
+  const handleContinueAfterDice = () => {
+    setIsDiceModalOpen(false);
+    setIsModalOpen(true);
+    setModalDiceResult(null);
+  };
 
   const handleResolveBattle = (winnerId: number) => {
     if (game && actionData && actionType === "battle") {
@@ -275,6 +296,13 @@ export default function Page() {
             startPosition={startPosition}
             newPosition={newPosition}
             boardSize={game.getBoard().getSquares().length}
+          />
+          <DiceRollModal
+            isOpen={isDiceModalOpen}
+            onRollDice={handleRollDice}
+            isRolling={isRolling}
+            diceResult={modalDiceResult}
+            onContinue={handleContinueAfterDice}
           />
         </div>
       </div>

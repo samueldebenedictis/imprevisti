@@ -70,45 +70,4 @@ export class BattleManager {
 
     return { type: "none", diceResult: diceResult, actionType: null };
   }
-
-  // TODO: rimuovi se inutilizzato
-  // /**
-  //  * Crea una nuova battaglia tra due giocatori.
-  //  * @param player1 - Primo giocatore della battaglia
-  //  * @param player2 - Secondo giocatore della battaglia
-  //  * @returns Nuova istanza di Battle
-  //  */
-  // createBattle(player1: Player, player2: Player): Battle {
-  //   return new Battle(player1, player2);
-  // }
-
-  // /**
-  //  * Verifica se un giocatore può partecipare a una battaglia.
-  //  * @param player - Il giocatore da verificare
-  //  * @returns True se il giocatore può combattere, false altrimenti
-  //  */
-  // canPlayerBattle(_player: Player): boolean {
-  //   // Un giocatore può sempre combattere, ma potrebbero esserci condizioni future
-  //   // come stati speciali, carte, ecc.
-  //   return true;
-  // }
-
-  // /**
-  //  * Ottiene l'avversario di un giocatore in una battaglia.
-  //  * @param battle - La battaglia in corso
-  //  * @param player - Il giocatore di cui si vuole conoscere l'avversario
-  //  * @returns L'avversario del giocatore specificato
-  //  */
-  // getOpponent(battle: Battle, player: Player): Player {
-  //   return battle.getOpponent(player);
-  // }
-
-  // /**
-  //  * Ottiene entrambi i giocatori di una battaglia.
-  //  * @param battle - La battaglia in corso
-  //  * @returns Tupla con i due giocatori della battaglia
-  //  */
-  // getBattlePlayers(battle: Battle): [Player, Player] {
-  //   return battle.getPlayers();
-  // }
 }
