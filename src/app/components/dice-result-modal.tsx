@@ -212,15 +212,24 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
               <H3>{MODAL_BATTLE_TITLE}</H3>
               <p className="m-1 text-xl">{MODAL_BATTLE_WINNER_SELECTION}</p>
               <div className="flex justify-center space-x-4">
-                {(actionData as Battle).getPlayers().map((player: Player) => (
-                  <Button
-                    key={player.getId()}
-                    onClick={() => handleWinnerSelection(player.getId())}
-                    color="red"
-                  >
-                    {player.getName()}
-                  </Button>
-                ))}
+                {(actionData as Battle)
+                  .getPlayers()
+                  .map((oldPlayer: Player) => {
+                    const currentPlayer = allPlayers.find(
+                      (p) => p.getId() === oldPlayer.getId(),
+                    );
+                    return currentPlayer ? (
+                      <Button
+                        key={currentPlayer.getId()}
+                        onClick={() =>
+                          handleWinnerSelection(currentPlayer.getId())
+                        }
+                        color="red"
+                      >
+                        {currentPlayer.getName()}
+                      </Button>
+                    ) : null;
+                  })}
               </div>
             </div>
           )}
@@ -300,7 +309,10 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                   <div className="mt-2 flex justify-center space-x-4">
                     <Button
                       onClick={() =>
-                        handleMimeResolution(true, mimeGuesserId || undefined)
+                        handleMimeResolution(
+                          true,
+                          mimeGuesserId !== null ? mimeGuesserId : undefined,
+                        )
                       }
                       color="green"
                     >
@@ -319,14 +331,22 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                 <div className="mt-2">
                   <H3>{MODAL_MIME_WHO_GUESSED}</H3>
                   <Select
-                    value={mimeGuesserId || ""}
+                    value={
+                      mimeGuesserId !== null ? mimeGuesserId.toString() : ""
+                    }
                     onChange={(e) => setMimeGuesserId(Number(e.target.value))}
                     options={allPlayers
-                      .filter(
-                        (player) =>
-                          player.getId() !==
-                          (actionData as Mime).mimePlayer.getId(),
-                      )
+                      .filter((player) => {
+                        // Find the current mimePlayer in allPlayers to avoid reference issues
+                        const currentMimePlayer = allPlayers.find(
+                          (p) =>
+                            p.getId() ===
+                            (actionData as Mime).mimePlayer.getId(),
+                        );
+                        return currentMimePlayer
+                          ? player.getId() !== currentMimePlayer.getId()
+                          : true;
+                      })
                       .map((player) => ({
                         value: player.getId(),
                         label: player.getName(),
@@ -336,7 +356,10 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                   />
                   <Button
                     onClick={() =>
-                      handleMimeResolution(true, mimeGuesserId || undefined)
+                      handleMimeResolution(
+                        true,
+                        mimeGuesserId !== null ? mimeGuesserId : undefined,
+                      )
                     }
                     color="blue"
                     className="mx-auto"

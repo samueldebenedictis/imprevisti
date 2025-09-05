@@ -3,8 +3,8 @@
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Battle } from "@/model/battle";
-import type { Mime } from "@/model/deck/mime";
-import type { Quiz } from "@/model/deck/quiz";
+import { Mime } from "@/model/deck/mime";
+import { Quiz } from "@/model/deck/quiz";
 import { Game as GameModel } from "@/model/game";
 import type { Player } from "@/model/player";
 import { MoveSquare } from "@/model/square";
@@ -116,11 +116,10 @@ export default function Page() {
           // Create a new Battle object with the current Player instances
           const currentBattle = new Battle(currentPlayer1, currentPlayer2);
 
-          // Resolve the battle on the current game instance with the new Battle object
+          // Resolve the battle
           game.resolveBattle(currentBattle, winnerPlayer);
 
-          // After resolving, create a new GameModel instance from the *modified* game state
-          // This ensures React detects the state change and re-renders
+          // Create a new GameModel instance
           const updatedGame = GameModel.fromJSON(game.toJSON());
 
           setGame(updatedGame);
@@ -129,7 +128,7 @@ export default function Page() {
           console.error(
             "Could not find current player instances for battle resolution.",
           );
-          closeModal(); // Close modal even if players not found to avoid stuck state
+          closeModal();
         }
       }
     }
@@ -142,7 +141,23 @@ export default function Page() {
       if (guesserId !== undefined) {
         guesserPlayer = game.getPlayers().find((p) => p.getId() === guesserId);
       }
-      game.resolveMime(mimeAction, success, guesserPlayer);
+
+      const currentMimePlayer = game
+        .getPlayers()
+        .find((p) => p.getId() === mimeAction.mimePlayer.getId());
+
+      if (!currentMimePlayer) {
+        console.error("Could not find current mime player instance");
+        closeModal();
+        return;
+      }
+
+      const currentMimeAction = new Mime(
+        currentMimePlayer,
+        mimeAction.cardTopic,
+      );
+
+      game.resolveMime(currentMimeAction, success, guesserPlayer);
       const updatedGame = GameModel.fromJSON(game.toJSON());
       setGame(updatedGame);
       closeModal();
@@ -152,7 +167,23 @@ export default function Page() {
   const handleResolveQuiz = (success: boolean) => {
     if (game && actionData && actionType === "quiz") {
       const quizAction = actionData as Quiz;
-      game.resolveQuiz(quizAction, success);
+
+      const currentQuizPlayer = game
+        .getPlayers()
+        .find((p) => p.getId() === quizAction.quizPlayer.getId());
+
+      if (!currentQuizPlayer) {
+        console.error("Could not find current quiz player instance");
+        closeModal();
+        return;
+      }
+
+      const currentQuizAction = new Quiz(
+        currentQuizPlayer,
+        quizAction.cardTopic,
+      );
+
+      game.resolveQuiz(currentQuizAction, success);
       const updatedGame = GameModel.fromJSON(game.toJSON());
       setGame(updatedGame);
       closeModal();
