@@ -46,6 +46,9 @@ test("Player skip turn modal", async ({ page }) => {
 
   await page.getByRole("button", { name: "Gioca un turno" }).click();
 
+  await page.getByRole("button", { name: "Lancia il dado" }).click();
+  await page.getByRole("button", { name: "Continua" }).click();
+
   await page.getByRole("heading", { name: "Risultato del Turno" }).waitFor();
   await expect(page.getByText("Alice deve saltare il turno!")).toBeVisible();
 
