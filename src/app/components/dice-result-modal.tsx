@@ -170,14 +170,6 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
         <h2 className="ui-text-dark ui-text-title mb-4">
           {MODAL_TITLE_TURN_RESULT}
         </h2>
-        {diceResult !== null && diceResult === 0 && actionType === null && (
-          <p className="mb-1 text-xl">
-            <span className="font-extrabold text-red-600">
-              {currentPlayerName}
-            </span>{" "}
-            deve saltare il turno!
-          </p>
-        )}
 
         {diceResult !== null && !(diceResult === 0 && actionType === null) && (
           <p className="mb-1 text-xl">
