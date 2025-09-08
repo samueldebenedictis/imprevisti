@@ -7,6 +7,12 @@ import {
   LABEL_DELETE_GAME_BUTTON,
   LABEL_RESTORE_GAME_BUTTON,
   LABEL_SAVE_GAME_BUTTON,
+  LEFT_BAR_CURRENT_TURN,
+  LEFT_BAR_GAME_SAVED,
+  LEFT_BAR_GAME_STATUS,
+  LEFT_BAR_PLAY_TURN,
+  LEFT_BAR_PLAYERS_POSITION,
+  LEFT_BAR_WINNER,
 } from "../texts";
 import { saveGame } from "../utils/game-storage";
 import { URL_RESTORE_GAME } from "../vars";
@@ -46,14 +52,14 @@ export default function LeftBar({
 }: LeftBarProps) {
   const handleSaveGame = () => {
     saveGame(gameInstance);
-    alert("Gioco salvato!");
+    alert(LEFT_BAR_GAME_SAVED);
   };
   return (
     <div
       className={`ui-border-dark mr-8 flex h-full max-w-xl flex-col items-center justify-between bg-gray-100 p-8`}
     >
       <div className="ui-text-dark ui-text-title mb-4">
-        <p>Stato del gioco</p>
+        <p>{LEFT_BAR_GAME_STATUS}</p>
       </div>
 
       {/* Dice Roll Display */}
@@ -71,22 +77,22 @@ export default function LeftBar({
             color="blue"
             className="w-full"
           >
-            Gioca un turno
+            {LEFT_BAR_PLAY_TURN}
           </Button>
         )}
-        {gameEnded && (
+        {gameEnded && winnerName && (
           <div className="ui-text-dark ui-text-subtitle mb-4 ml-4 text-green-600">
-            Vincitore: {winnerName}!
+            {LEFT_BAR_WINNER(winnerName)}
           </div>
         )}
       </div>
       <div className="ui-text-dark ui-text-normal mb-4 w-full px-2">
         <p>
-          Turno di:{" "}
+          {LEFT_BAR_CURRENT_TURN}{" "}
           <span className="text-blue-500">{currentPlayer.getName()}</span>
         </p>
         <div className="ui-text-subtitle mt-2">
-          Posizione dei giocatori
+          {LEFT_BAR_PLAYERS_POSITION}
           <ul className="ui-text-normal">
             {playersPositions.map((p) => (
               <li key={p.name}>

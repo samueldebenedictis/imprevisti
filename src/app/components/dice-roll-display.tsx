@@ -1,3 +1,9 @@
+import {
+  DICE_BUTTON_CONTINUE,
+  DICE_BUTTON_ROLL,
+  DICE_BUTTON_ROLLING,
+  DICE_SKIP_TURN_MESSAGE,
+} from "../texts";
 import Dice from "./dice";
 import Button from "./ui/button";
 
@@ -29,11 +35,11 @@ export default function DiceRollComponent({
         <div className="mb-2">
           <div className="mb-4">
             <Button onClick={onContinue} color="blue" className="w-full">
-              Continua
+              {DICE_BUTTON_CONTINUE}
             </Button>
           </div>
           <p className="ui-text-normal font-bold text-red-600">
-            {currentPlayerName} deve saltare il turno!
+            {DICE_SKIP_TURN_MESSAGE(currentPlayerName)}
           </p>
         </div>
       )}
@@ -44,7 +50,7 @@ export default function DiceRollComponent({
           <div className="mb-2">
             {displayResult ? (
               <Button onClick={onContinue} color="blue" className="w-full">
-                Continua
+                {DICE_BUTTON_CONTINUE}
               </Button>
             ) : (
               <Button
@@ -53,7 +59,7 @@ export default function DiceRollComponent({
                 color="green"
                 className="w-full"
               >
-                {isRolling ? "Lanciando..." : "Lancia il dado"}
+                {isRolling ? DICE_BUTTON_ROLLING : DICE_BUTTON_ROLL}
               </Button>
             )}
           </div>
