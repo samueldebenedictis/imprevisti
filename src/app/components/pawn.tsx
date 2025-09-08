@@ -13,7 +13,7 @@ export default function Pawn(props: PawnProps) {
   const color = colorToCss(props.color);
   const bounceClass = props.isCurrentPlayerTurn ? "animate-bounce" : "";
   const movingClass =
-    props.isMoving && props.isCurrentPlayerTurn ? "pawn-moving" : "";
+    props.isMoving && props.isCurrentPlayerTurn ? "opacity-0" : "";
 
   return (
     <div
