@@ -126,7 +126,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
       diceResult !== null &&
       boardSize !== undefined
     ) {
-      // Calculate the position after normal dice roll, respecting board boundaries
+      // Calcola la posizione dopo il lancio normale del dado, rispettando i confini del tabellone
       const normalPosition = Math.min(
         Math.max(0, startPosition + diceResult),
         boardSize - 1,
@@ -338,7 +338,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                     onChange={(e) => setMimeGuesserId(Number(e.target.value))}
                     options={allPlayers
                       .filter((player) => {
-                        // Find the current mimePlayer in allPlayers to avoid reference issues
+                        // Trova il mimePlayer corrente in allPlayers per evitare problemi di riferimento
                         const currentMimePlayer = allPlayers.find(
                           (p) =>
                             p.getId() ===
