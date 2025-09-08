@@ -126,12 +126,13 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
       diceResult !== null &&
       boardSize !== undefined
     ) {
-      const intermediatePosition = Math.min(
-        startPosition + diceResult,
+      // Calculate the position after normal dice roll, respecting board boundaries
+      const normalPosition = Math.min(
+        Math.max(0, startPosition + diceResult),
         boardSize - 1,
       );
-      if (newPosition !== intermediatePosition) {
-        const moveValue = newPosition - intermediatePosition;
+      if (newPosition !== normalPosition) {
+        const moveValue = newPosition - normalPosition;
         const effect = moveValue > 0 ? `avanti di ` : `indietro di `;
         const specialEffectMessage = `Sei atterrato su una casella speciale! Ti muovi ${effect}`;
         const specialColor = (move: number) =>

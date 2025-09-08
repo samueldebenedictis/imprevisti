@@ -7,7 +7,7 @@ import { Mime } from "@/model/deck/mime";
 import { Quiz } from "@/model/deck/quiz";
 import { Game as GameModel } from "@/model/game";
 import type { Player } from "@/model/player";
-import { MoveSquare, SpecialSquare } from "@/model/square";
+import { MoveSquare } from "@/model/square";
 import BoardComponent from "../components/board";
 import ClientOnly from "../components/client-only";
 import DiceResultModal from "../components/dice-result-modal";
@@ -80,6 +80,9 @@ export default function Page() {
     if (game) {
       // Salva il giocatore corrente PRIMA di chiamare playTurn()
       const currentPlayerBeforeRoll = game.getPlayers()[game.getTurn()];
+      const positionBeforeRoll = game.getPlayerPosition(
+        currentPlayerBeforeRoll,
+      );
       setPlayerWhoRolled(currentPlayerBeforeRoll);
       setPlayerWhoRolledName(currentPlayerBeforeRoll.getName());
 
@@ -111,8 +114,7 @@ export default function Page() {
 
       // Simula animazione di lancio dado per 1 secondo
       setTimeout(() => {
-        const initialPosition = game.getPlayerPosition(currentPlayerBeforeRoll);
-        setStartPosition(initialPosition);
+        setStartPosition(positionBeforeRoll);
 
         const finalPosition = game.getPlayerPosition(currentPlayerBeforeRoll);
         setNewPosition(finalPosition);
@@ -133,26 +135,21 @@ export default function Page() {
         const hasSpecialEffectNow = () => {
           if (
             finalPosition !== undefined &&
-            initialPosition !== undefined &&
+            positionBeforeRoll !== undefined &&
             diceResult !== null &&
             diceResult > 0 &&
             game
           ) {
-            const intermediatePosition = Math.min(
-              initialPosition + diceResult,
+            const normalPosition = Math.min(
+              Math.max(0, positionBeforeRoll + diceResult),
               game.getBoard().getSquares().length - 1,
             );
-            return finalPosition !== intermediatePosition;
+            return finalPosition !== normalPosition;
           }
           return false;
         };
 
-        const landedSquare = game.getBoard().getSquares()[finalPosition];
-        if (
-          hasSpecialEffectNow() ||
-          actionType ||
-          landedSquare instanceof SpecialSquare
-        ) {
+        if (hasSpecialEffectNow() || actionType) {
           setIsModalOpen(true);
         }
       }, 1000);
@@ -272,15 +269,15 @@ export default function Page() {
       diceResult > 0 && // Only check for special effects on actual moves
       game
     ) {
-      const intermediatePosition = Math.min(
-        startPosition + diceResult,
+      const normalPosition = Math.min(
+        Math.max(0, startPosition + diceResult),
         game.getBoard().getSquares().length - 1,
       );
-      const isSpecial = newPosition !== intermediatePosition;
+      const isSpecial = newPosition !== normalPosition;
       console.log("Special effect check:", {
         startPosition,
         diceResult,
-        intermediatePosition,
+        normalPosition,
         newPosition,
         isSpecial,
       });
@@ -353,7 +350,7 @@ export default function Page() {
   return (
     <ClientOnly>
       <div className="mt-6 flex items-start justify-center gap-8 p-4">
-        <div className="sticky top-20 flex-shrink-0 self-start">
+        <div className="sticky top-30 flex-shrink-0 self-start">
           <LeftBar
             currentPlayer={currentPlayer}
             playersPositions={playersPositions}
