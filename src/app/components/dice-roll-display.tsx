@@ -32,7 +32,7 @@ export default function DiceRollComponent({
               Continua
             </Button>
           </div>
-          <p className="font-bold text-base text-red-600">
+          <p className="ui-text-normal font-bold text-red-600">
             {currentPlayerName} deve saltare il turno!
           </p>
         </div>
