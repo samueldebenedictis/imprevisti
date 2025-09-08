@@ -10,6 +10,7 @@ import {
 } from "../texts";
 import { saveGame } from "../utils/game-storage";
 import { URL_RESTORE_GAME } from "../vars";
+import DiceRollDisplay from "./dice-roll-display";
 import Button from "./ui/button";
 
 type LeftBarProps = {
@@ -20,6 +21,16 @@ type LeftBarProps = {
   onPlayTurnClick: () => void;
   onDeleteGame: () => void;
   gameInstance: GameJSON;
+  // Dice roll component props
+  showDiceRoll?: boolean;
+  diceRollProps?: {
+    onRollDice: () => void;
+    isRolling: boolean;
+    diceResult?: number | null;
+    onContinue?: () => void;
+    showResult?: boolean;
+    currentPlayerName?: string;
+  };
 };
 
 export default function LeftBar({
@@ -30,6 +41,8 @@ export default function LeftBar({
   onPlayTurnClick,
   onDeleteGame,
   gameInstance,
+  showDiceRoll = false,
+  diceRollProps,
 }: LeftBarProps) {
   const handleSaveGame = () => {
     saveGame(gameInstance);
@@ -42,8 +55,16 @@ export default function LeftBar({
       <div className="ui-text-dark ui-text-title mb-4">
         <p>Stato del gioco</p>
       </div>
+
+      {/* Dice Roll Display */}
+      {showDiceRoll && diceRollProps && (
+        <div className="mb-4 w-full">
+          <DiceRollDisplay {...diceRollProps} />
+        </div>
+      )}
+
       <div className="mr-4 mb-4 w-full">
-        {!gameEnded && (
+        {!gameEnded && !showDiceRoll && (
           <Button
             onClick={onPlayTurnClick}
             disabled={gameEnded}

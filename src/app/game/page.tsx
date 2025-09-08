@@ -7,11 +7,10 @@ import { Mime } from "@/model/deck/mime";
 import { Quiz } from "@/model/deck/quiz";
 import { Game as GameModel } from "@/model/game";
 import type { Player } from "@/model/player";
-import { MoveSquare } from "@/model/square";
+import { MoveSquare, SpecialSquare } from "@/model/square";
 import BoardComponent from "../components/board";
 import ClientOnly from "../components/client-only";
 import DiceResultModal from "../components/dice-result-modal";
-import DiceRollModal from "../components/dice-roll-modal";
 import LeftBar from "../components/left-bar";
 import SquareC from "../components/square";
 import Button from "../components/ui/button";
@@ -22,10 +21,10 @@ import {
   URL_HOME,
 } from "../vars";
 
-// Forcing re-evaluation
+// Forza la rivalutazione
 export default function Page() {
   const [game, setGame] = useState<GameModel | null>(null);
-  const [counter, setCount] = useState(0);
+  const [counter, _setCount] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDiceModalOpen, setIsDiceModalOpen] = useState(false);
   const [isRolling, setIsRolling] = useState(false);
@@ -38,6 +37,7 @@ export default function Page() {
   const [playerWhoRolledName, setPlayerWhoRolledName] = useState<string | null>(
     null,
   );
+  const [playerWhoRolled, setPlayerWhoRolled] = useState<Player | null>(null);
   const [startPosition, setStartPosition] = useState<number | undefined>();
   const [newPosition, setNewPosition] = useState<number | undefined>();
   const [_specialEffectMessage, setSpecialEffectMessage] = useState<
@@ -78,40 +78,93 @@ export default function Page() {
 
   const handleRollDice = () => {
     if (game) {
+      // Salva il giocatore corrente PRIMA di chiamare playTurn()
+      const currentPlayerBeforeRoll = game.getPlayers()[game.getTurn()];
+      setPlayerWhoRolled(currentPlayerBeforeRoll);
+      setPlayerWhoRolledName(currentPlayerBeforeRoll.getName());
+
+      // Ottieni il risultato del dado prima per controllare il salto turno
+      const { diceResult, actionType, data } = game.playTurn();
+
+      // Se il risultato del dado è 0 (salto turno), gestisci immediatamente senza animazione
+      if (diceResult === 0) {
+        const initialPosition = game.getPlayerPosition(currentPlayerBeforeRoll);
+        setStartPosition(initialPosition);
+        setNewPosition(initialPosition); // Nessun movimento per salto turno
+
+        setDiceResult(diceResult);
+        setActionType(actionType);
+        setActionData(data || null);
+
+        // Serializza lo stato di gioco corrente in JSON, poi deserializza per creare una nuova istanza Game
+        const updatedGameJSON = game.toJSON();
+        const updatedGame = GameModel.fromJSON(updatedGameJSON);
+        setGame(updatedGame);
+
+        setModalDiceResult(diceResult);
+        setIsRolling(false);
+        return; // Salta la logica di animazione e modale
+      }
+
+      // Per lanci normali, mostra animazione
       setIsRolling(true);
 
-      // Simulate dice rolling animation for 1 second
+      // Simula animazione di lancio dado per 1 secondo
       setTimeout(() => {
-        const playerWhoRolled = game.getPlayers()[game.getTurn()];
-        setPlayerWhoRolledName(playerWhoRolled.getName());
-        const initialPosition = game.getPlayerPosition(playerWhoRolled);
+        const initialPosition = game.getPlayerPosition(currentPlayerBeforeRoll);
         setStartPosition(initialPosition);
 
-        const { diceResult, actionType, data } = game.playTurn();
-        setCount(counter + 1);
-
-        const finalPosition = game.getPlayerPosition(playerWhoRolled);
+        const finalPosition = game.getPlayerPosition(currentPlayerBeforeRoll);
         setNewPosition(finalPosition);
 
         setDiceResult(diceResult);
         setActionType(actionType);
-        setActionData(data || null); // Set the action data
+        setActionData(data || null); // Imposta i dati dell'azione
 
-        // Serialize the current game state to JSON, then deserialize it to create a new Game instance
+        // Serializza lo stato di gioco corrente in JSON, poi deserializza per creare una nuova istanza Game
         const updatedGameJSON = game.toJSON();
         const updatedGame = GameModel.fromJSON(updatedGameJSON);
-        setGame(updatedGame); // Set the new instance to trigger re-render and saving
+        setGame(updatedGame); // Imposta la nuova istanza per attivare il re-render e il salvataggio
 
         setModalDiceResult(diceResult);
         setIsRolling(false);
+
+        // Controlla se dobbiamo mostrare il modale immediatamente (per effetti speciali, azioni o caselle speciali)
+        const hasSpecialEffectNow = () => {
+          if (
+            finalPosition !== undefined &&
+            initialPosition !== undefined &&
+            diceResult !== null &&
+            diceResult > 0 &&
+            game
+          ) {
+            const intermediatePosition = Math.min(
+              initialPosition + diceResult,
+              game.getBoard().getSquares().length - 1,
+            );
+            return finalPosition !== intermediatePosition;
+          }
+          return false;
+        };
+
+        const landedSquare = game.getBoard().getSquares()[finalPosition];
+        if (
+          hasSpecialEffectNow() ||
+          actionType ||
+          landedSquare instanceof SpecialSquare
+        ) {
+          setIsModalOpen(true);
+        }
       }, 1000);
     }
   };
 
   const handleContinueAfterDice = () => {
     setIsDiceModalOpen(false);
-    setIsModalOpen(true);
     setModalDiceResult(null);
+    setPlayerWhoRolled(null); // Cancella il giocatore memorizzato
+    setPlayerWhoRolledName(null);
+    // Per caselle normali, non mostriamo modale, solo chiudiamo l'interfaccia dado
   };
 
   const handleResolveBattle = (winnerId: number) => {
@@ -211,14 +264,44 @@ export default function Page() {
     }
   };
 
+  const _hasSpecialEffect = () => {
+    if (
+      newPosition !== undefined &&
+      startPosition !== undefined &&
+      diceResult !== null &&
+      diceResult > 0 && // Only check for special effects on actual moves
+      game
+    ) {
+      const intermediatePosition = Math.min(
+        startPosition + diceResult,
+        game.getBoard().getSquares().length - 1,
+      );
+      const isSpecial = newPosition !== intermediatePosition;
+      console.log("Special effect check:", {
+        startPosition,
+        diceResult,
+        intermediatePosition,
+        newPosition,
+        isSpecial,
+      });
+      return isSpecial;
+    }
+    return false;
+  };
+
   const closeModal = () => {
     setIsModalOpen(false);
+    setIsDiceModalOpen(false); // Close dice interface to show main button
+    setIsRolling(false); // Reset rolling state
     setDiceResult(null);
+    setModalDiceResult(null); // Reset modal dice result
     setActionType(null);
     setActionData(null);
-    setStartPosition(undefined);
-    setNewPosition(undefined);
+    setStartPosition(undefined); // Reset position states
+    setNewPosition(undefined); // Reset position states
     setSpecialEffectMessage(undefined);
+    setPlayerWhoRolled(null); // Clear the stored player
+    setPlayerWhoRolledName(null);
   };
 
   const handleDeleteGame = () => {
@@ -238,7 +321,11 @@ export default function Page() {
     );
   }
 
-  const currentPlayer = game.getPlayers()[game.getTurn()];
+  // Use the player who rolled the dice during dice result display, otherwise use game's current turn
+  const currentPlayer =
+    playerWhoRolled && (isModalOpen || isDiceModalOpen)
+      ? playerWhoRolled
+      : game.getPlayers()[game.getTurn()];
   const playersPositions = game.getPlayers().map((player) => ({
     name: player.getName(),
     position: game.getPlayerPosition(player),
@@ -265,8 +352,8 @@ export default function Page() {
     );
   return (
     <ClientOnly>
-      <div className="mt-6 flex items-center justify-center p-4">
-        <div className="mx-auto flex max-w-7xl flex-row justify-center">
+      <div className="mt-6 flex items-start justify-center gap-8 p-4">
+        <div className="sticky top-20 flex-shrink-0 self-start">
           <LeftBar
             currentPlayer={currentPlayer}
             playersPositions={playersPositions}
@@ -275,36 +362,37 @@ export default function Page() {
             onPlayTurnClick={onButtonGiocaTurnoClick}
             onDeleteGame={handleDeleteGame}
             gameInstance={game.toJSON()}
-          />
-          <div className="mx-auto flex flex-col items-center justify-center">
-            {BoardComponent({
-              squares: squaresC,
-              cols: 5,
-            })}
-          </div>
-          <DiceResultModal
-            isOpen={isModalOpen}
-            onClose={closeModal}
-            diceResult={diceResult as number}
-            actionType={actionType}
-            actionData={actionData}
-            onResolveBattle={handleResolveBattle}
-            onResolveMime={handleResolveMime}
-            onResolveQuiz={handleResolveQuiz}
-            allPlayers={game.getPlayers()}
-            currentPlayerName={playerWhoRolledName || ""}
-            startPosition={startPosition}
-            newPosition={newPosition}
-            boardSize={game.getBoard().getSquares().length}
-          />
-          <DiceRollModal
-            isOpen={isDiceModalOpen}
-            onRollDice={handleRollDice}
-            isRolling={isRolling}
-            diceResult={modalDiceResult}
-            onContinue={handleContinueAfterDice}
+            showDiceRoll={isDiceModalOpen}
+            diceRollProps={{
+              onRollDice: handleRollDice,
+              isRolling,
+              diceResult: modalDiceResult,
+              onContinue: handleContinueAfterDice,
+              currentPlayerName: playerWhoRolledName || "",
+            }}
           />
         </div>
+        <div className="flex flex-shrink-0 flex-col items-center justify-center">
+          {BoardComponent({
+            squares: squaresC,
+            cols: 5,
+          })}
+        </div>
+        <DiceResultModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          diceResult={diceResult as number}
+          actionType={actionType}
+          actionData={actionData}
+          onResolveBattle={handleResolveBattle}
+          onResolveMime={handleResolveMime}
+          onResolveQuiz={handleResolveQuiz}
+          allPlayers={game.getPlayers()}
+          currentPlayerName={playerWhoRolledName || ""}
+          startPosition={startPosition}
+          newPosition={newPosition}
+          boardSize={game.getBoard().getSquares().length}
+        />
       </div>
     </ClientOnly>
   );
