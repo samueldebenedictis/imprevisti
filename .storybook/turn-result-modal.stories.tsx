@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import DiceResultModal from "../src/app/components/dice-result-modal";
+import TurnResultModal from "../src/app/components/turn-result-modal";
 import { Battle } from "../src/model/battle";
 import { Mime, Quiz } from "../src/model/deck";
 import { Player } from "../src/model/player";
@@ -17,8 +17,8 @@ class MockQuiz extends Quiz {}
 class MockMime extends Mime {}
 
 const meta = {
-  title: "Example/DiceResultModal",
-  component: DiceResultModal,
+  title: "Example/TurnResultModal",
+  component: TurnResultModal,
   parameters: {
     layout: "fullscreen",
   },
@@ -29,7 +29,7 @@ const meta = {
       options: ["battle", "quiz", "mime", null],
     },
   },
-} satisfies Meta<typeof DiceResultModal>;
+} satisfies Meta<typeof TurnResultModal>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

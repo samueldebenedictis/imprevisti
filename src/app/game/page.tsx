@@ -10,9 +10,9 @@ import type { Player } from "@/model/player";
 import { MoveSquare } from "@/model/square";
 import BoardComponent from "../components/board";
 import ClientOnly from "../components/client-only";
-import DiceResultModal from "../components/dice-result-modal";
 import LeftBar from "../components/left-bar";
 import SquareC from "../components/square";
+import DiceResultModal from "../components/turn-result-modal";
 import Button from "../components/ui/button";
 import { loadGameFromLocalStorage } from "../utils/game-storage";
 import {
