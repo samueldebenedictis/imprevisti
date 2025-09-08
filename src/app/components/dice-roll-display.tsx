@@ -38,7 +38,7 @@ export default function DiceRollComponent({
               {DICE_BUTTON_CONTINUE}
             </Button>
           </div>
-          <p className="ui-text-normal font-bold text-red-600">
+          <p className="ui-text-normal text-red-600">
             {DICE_SKIP_TURN_MESSAGE(currentPlayerName)}
           </p>
         </div>
