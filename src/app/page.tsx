@@ -46,9 +46,9 @@ export default function Home() {
   const [playerNames, setPlayerNames] = useState<string[]>([""]);
   const [numSquares, setNumSquares] = useState(20);
   const [squareTypes, setSquareTypes] = useState({
-    mime: false,
-    quiz: false,
-    move: false,
+    mime: true,
+    quiz: true,
+    move: true,
   });
   const [specialPercentage, setSpecialPercentage] = useState(40);
 
