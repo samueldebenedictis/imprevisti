@@ -345,6 +345,7 @@ export default function Page() {
             isCurrentPlayerTurn: player.getName() === currentPlayer.getName(),
           })),
         boardSize: size,
+        isMoving: isRolling, // I pawn si muovono durante il rolling del dado
       }),
     );
   return (

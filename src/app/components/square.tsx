@@ -10,6 +10,7 @@ type SquareProps = {
   moveValue?: number;
   playersOn?: { name: string; isCurrentPlayerTurn: boolean }[];
   boardSize?: number;
+  isMoving?: boolean;
 };
 
 const typeToColor = (type: SquareType, moveValue?: number): Color => {
@@ -62,6 +63,7 @@ const typeText = (type: SquareType, moveValue: number | undefined) => {
 
 const playersOn = (
   players: { name: string; isCurrentPlayerTurn: boolean }[] | undefined,
+  isMoving?: boolean,
 ) => {
   if (!players || players.length === 0) {
     return null;
@@ -80,6 +82,7 @@ const playersOn = (
         name: currentPlayer.name,
         color: "yellow",
         isCurrentPlayerTurn: true,
+        isMoving, // Solo il giocatore corrente si anima
       }),
     );
   }
@@ -95,6 +98,7 @@ const playersOn = (
           name: el.name,
           color: "yellow",
           isCurrentPlayerTurn: false,
+          isMoving: false, // Gli altri giocatori non si animano
         }),
       );
     } else {
@@ -105,6 +109,7 @@ const playersOn = (
           name: `${otherPlayers.length.toString()} giocatori`,
           color: "yellow",
           isCurrentPlayerTurn: false,
+          isMoving: false, // Gli altri giocatori non si animano
         }),
       );
     }
@@ -135,7 +140,7 @@ export default function Square(props: SquareProps) {
       </div>
       {typeText(props.squareType, props.moveValue)}
       <div className="absolute bottom-0 w-full pr-1 pl-1">
-        {playersOn(props.playersOn)}
+        {playersOn(props.playersOn, props.isMoving)}
       </div>
     </div>
   );

@@ -150,3 +150,20 @@ body {
     transform: rotateX(0deg) rotateY(0deg);
   }
 }
+
+/* Pawn movement animation */
+.pawn-moving {
+  animation: pawnMove 3s ease-in-out;
+}
+
+@keyframes pawnMove {
+  0% {
+    opacity: 0;
+  }
+  80% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
