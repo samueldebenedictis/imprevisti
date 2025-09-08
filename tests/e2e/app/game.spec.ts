@@ -11,6 +11,12 @@ test("Fill form", async ({ homePage }) => {
   await homePage.playerName(3).fill("Qua");
   await homePage.squaresNumber.fill("25");
 
+  await homePage.page.getByRole("checkbox", { name: "Caselle mimo" }).uncheck();
+  await homePage.page.getByRole("checkbox", { name: "Caselle quiz" }).uncheck();
+  await homePage.page
+    .getByRole("checkbox", { name: "Caselle movimento" })
+    .uncheck();
+
   await homePage.submit.click();
   await expect(homePage.page).toHaveURL(/game/);
 
@@ -47,12 +53,10 @@ test("Player skip turn modal", async ({ page }) => {
   await page.getByRole("button", { name: "Gioca un turno" }).click();
 
   await page.getByRole("button", { name: "Lancia il dado" }).click();
-  await page.getByRole("button", { name: "Continua" }).click();
 
-  await page.getByRole("heading", { name: "Risultato del Turno" }).waitFor();
   await expect(page.getByText("Alice deve saltare il turno!")).toBeVisible();
 
-  await page.getByRole("button", { name: "Chiudi" }).click();
+  await page.getByRole("button", { name: "Continua" }).click();
 
   await expect(
     page.getByText("Alice deve saltare il turno!"),
