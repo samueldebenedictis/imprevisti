@@ -1,7 +1,10 @@
 import type { Page } from "@playwright/test";
 import {
+  LABEL_MIME,
+  LABEL_MOVE,
   LABEL_PLAYER_NAME,
   LABEL_PLAYERS_NUMBER,
+  LABEL_QUIZ,
   LABEL_SQUARES_NUMBER,
   LABEL_SUBMIT,
 } from "@/app/texts";
@@ -23,4 +26,9 @@ export class HomePage {
     name: LABEL_SQUARES_NUMBER,
   });
   submit = this.page.getByRole("button", { name: LABEL_SUBMIT });
+
+  // Checkbox locators
+  mimeCheckbox = this.page.getByRole("checkbox", { name: LABEL_MIME });
+  quizCheckbox = this.page.getByRole("checkbox", { name: LABEL_QUIZ });
+  moveCheckbox = this.page.getByRole("checkbox", { name: LABEL_MOVE });
 }

@@ -16,13 +16,19 @@ import {
   MODAL_MIME_TITLE,
   MODAL_MIME_TOPIC,
   MODAL_MIME_WHO_GUESSED,
+  MODAL_MOVE_BACKWARD,
+  MODAL_MOVE_FORWARD,
+  MODAL_NEW_POSITION,
   MODAL_QUIZ_ANSWER,
   MODAL_QUIZ_CORRECT,
   MODAL_QUIZ_QUESTION,
   MODAL_QUIZ_SHOW_ANSWER,
   MODAL_QUIZ_TITLE,
   MODAL_QUIZ_WRONG,
+  MODAL_SPECIAL_EFFECT,
+  MODAL_SPECIAL_SQUARE_MESSAGE,
   MODAL_TITLE_TURN_RESULT,
+  MODAL_TOTAL_MOVEMENT,
 } from "../texts";
 import Button from "./ui/button";
 import Select from "./ui/select";
@@ -126,21 +132,22 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
       diceResult !== null &&
       boardSize !== undefined
     ) {
-      const intermediatePosition = Math.min(
-        startPosition + diceResult,
+      // Calcola la posizione dopo il lancio normale del dado, rispettando i confini del tabellone
+      const normalPosition = Math.min(
+        Math.max(0, startPosition + diceResult),
         boardSize - 1,
       );
-      if (newPosition !== intermediatePosition) {
-        const moveValue = newPosition - intermediatePosition;
-        const effect = moveValue > 0 ? `avanti di ` : `indietro di `;
-        const specialEffectMessage = `Sei atterrato su una casella speciale! Ti muovi ${effect}`;
+      if (newPosition !== normalPosition) {
+        const moveValue = newPosition - normalPosition;
+        const effect = moveValue > 0 ? MODAL_MOVE_FORWARD : MODAL_MOVE_BACKWARD;
+        const specialEffectMessage = `${MODAL_SPECIAL_SQUARE_MESSAGE}${effect}`;
         const specialColor = (move: number) =>
           move > 0 ? `text-blue-600` : `text-red-600`;
         return (
           <div className="text-xl">
             <Divider />
             <p className={`font-extrabold ${specialColor(moveValue)}`}>
-              Effetto Speciale!
+              {MODAL_SPECIAL_EFFECT}
             </p>
             <p className="ui-text-dark">
               {specialEffectMessage}
@@ -149,7 +156,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
               </span>
             </p>
             <p className="ui-text-dark">
-              Movimento totale:{" "}
+              {MODAL_TOTAL_MOVEMENT}{" "}
               <span
                 className={`font-bold text-xl ${specialColor(newPosition - startPosition)}`}
               >
@@ -169,14 +176,6 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
         <h2 className="ui-text-dark ui-text-title mb-4">
           {MODAL_TITLE_TURN_RESULT}
         </h2>
-        {diceResult !== null && diceResult === 0 && actionType === null && (
-          <p className="mb-1 text-xl">
-            <span className="font-extrabold text-red-600">
-              {currentPlayerName}
-            </span>{" "}
-            deve saltare il turno!
-          </p>
-        )}
 
         {diceResult !== null && !(diceResult === 0 && actionType === null) && (
           <p className="mb-1 text-xl">
@@ -194,7 +193,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
           startPosition !== undefined &&
           !(diceResult === 0 && actionType === null) && (
             <p className="mb-1 text-xl">
-              Nuova posizione:{" "}
+              {MODAL_NEW_POSITION}{" "}
               <span className="font-extrabold text-blue-600">
                 {newPosition}
               </span>
@@ -337,7 +336,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                     onChange={(e) => setMimeGuesserId(Number(e.target.value))}
                     options={allPlayers
                       .filter((player) => {
-                        // Find the current mimePlayer in allPlayers to avoid reference issues
+                        // Trova il mimePlayer corrente in allPlayers per evitare problemi di riferimento
                         const currentMimePlayer = allPlayers.find(
                           (p) =>
                             p.getId() ===

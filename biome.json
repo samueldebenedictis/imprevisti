@@ -12,7 +12,9 @@
       "!node_modules",
       "!.next",
       "!coverage",
-      "!tests/e2e/snapshots"
+      "!tests/e2e/snapshots",
+      "!test-results",
+      "!playwright-report"
     ]
   },
   "formatter": {

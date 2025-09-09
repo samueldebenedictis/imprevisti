@@ -3,6 +3,7 @@ import { Board, SquaresBuilder } from "@/model/board";
 import { Game } from "@/model/game";
 import { Player } from "@/model/player";
 import { expect, test } from "./fixtures";
+import { GamePage } from "./pages/game-page";
 
 test("Fill form", async ({ homePage }) => {
   await homePage.playersNumber.fill("3");
@@ -10,6 +11,10 @@ test("Fill form", async ({ homePage }) => {
   await homePage.playerName(2).fill("Quo");
   await homePage.playerName(3).fill("Qua");
   await homePage.squaresNumber.fill("25");
+
+  await homePage.mimeCheckbox.uncheck();
+  await homePage.quizCheckbox.uncheck();
+  await homePage.moveCheckbox.uncheck();
 
   await homePage.submit.click();
   await expect(homePage.page).toHaveURL(/game/);
@@ -28,6 +33,7 @@ test("Fill form", async ({ homePage }) => {
 });
 
 test("Player skip turn modal", async ({ page }) => {
+  const gamePage = new GamePage(page);
   const squares = new SquaresBuilder().setBoardSize(10).build();
   const players = ["Alice", "Bob"].map((name, i) => new Player(i, name));
   const board = new Board(squares, players);
@@ -42,19 +48,12 @@ test("Player skip turn modal", async ({ page }) => {
     [gameJSON, STORAGE_STATE_KEY_GAME_INSTANCE],
   );
 
-  await page.goto("/game");
+  await gamePage.goto();
 
-  await page.getByRole("button", { name: "Gioca un turno" }).click();
+  await gamePage.playTurnButton.click();
+  await gamePage.skipTurnButton.click();
 
-  await page.getByRole("button", { name: "Lancia il dado" }).click();
-  await page.getByRole("button", { name: "Continua" }).click();
-
-  await page.getByRole("heading", { name: "Risultato del Turno" }).waitFor();
-  await expect(page.getByText("Alice deve saltare il turno!")).toBeVisible();
-
-  await page.getByRole("button", { name: "Chiudi" }).click();
-
-  await expect(
-    page.getByText("Alice deve saltare il turno!"),
-  ).not.toBeVisible();
+  await expect(gamePage.skipTurnMessage("Alice")).toBeVisible();
+  await gamePage.continueButton.click();
+  await expect(gamePage.skipTurnMessage("Alice")).not.toBeVisible();
 });

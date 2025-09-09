@@ -2,12 +2,9 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import {
-  URL_GAME,
-  URL_HOME,
-  URL_INSTRUCTION,
-  URL_RESTORE_GAME,
-} from "../../vars";
+import { MODAL_CLOSE_BUTTON } from "../../texts";
+import { URL_GAME, URL_HOME, URL_RESTORE_GAME } from "../../vars";
+import Button from "./button";
 
 interface DropdownMenuItem {
   text: string;
@@ -15,21 +12,30 @@ interface DropdownMenuItem {
 }
 
 const menuItems: DropdownMenuItem[] = [
-  { text: "VAI ALLA HOME", url: URL_HOME },
-  { text: "VAI AL GIOCO", url: URL_GAME },
-  { text: "CARICA PARTITA", url: URL_RESTORE_GAME },
-  { text: "ISTRUZIONI", url: URL_INSTRUCTION },
+  { text: "Continua partita", url: URL_GAME },
+  { text: "Nuova partita", url: URL_HOME },
+  { text: "Carica partita", url: URL_RESTORE_GAME },
 ];
 
 export default function DropdownMenu() {
+  const closeFunction = (e: { key: string }) => {
+    if (e.key === "Escape" || e.key === " ") {
+      closeMenu();
+    }
+  };
+
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
 
+  const closeMenu = () => {
+    setIsOpen(false);
+  };
+
   return (
-    <div className="relative">
+    <>
       <button
         type="button"
         onClick={toggleMenu}
@@ -39,23 +45,42 @@ export default function DropdownMenu() {
       </button>
       {isOpen && (
         <div
-          className={`ui-border-dark absolute left-0 mt-2 w-84 bg-amber-500 shadow-lg`}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+          onClick={closeMenu}
+          onKeyDown={closeFunction}
+          role="dialog"
+          aria-label="Close menu"
         >
-          <div className="">
-            {menuItems.map((item, index) => (
-              <Link
-                key={item.url}
-                href={item.url}
-                prefetch={false}
-                className={`ui-text-subtitle ui-text-light block ${index % 2 ? "bg-amber-500" : "bg-amber-400"} p-2 hover:underline`}
-                onClick={() => setIsOpen(false)}
-              >
-                {item.text}
-              </Link>
-            ))}
+          <div
+            className="ui-border-dark min-w-[600px] bg-white p-6 text-center shadow-lg"
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={closeFunction}
+            role="dialog"
+            aria-modal="true"
+          >
+            <h2 className="ui-text-dark ui-text-title mb-4">MENU</h2>
+            <div className="mt-6">
+              {menuItems.map((item) => (
+                <Link
+                  key={item.url}
+                  href={item.url}
+                  prefetch={false}
+                  onClick={closeMenu}
+                >
+                  <Button color="blue" className="w-full">
+                    {item.text}
+                  </Button>
+                </Link>
+              ))}
+            </div>
+            <div className="mt-6">
+              <Button onClick={closeMenu} color="red" className="w-full">
+                {MODAL_CLOSE_BUTTON}
+              </Button>
+            </div>
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

@@ -46,3 +46,37 @@ export const LABEL_CONTINUE_GAME_TITLE =
   "Oppure riprendi dall'ultima partita salvata localmente:";
 export const LABEL_NO_SAVE_NO_STORAGE =
   "Nessuna partita salvata localmente e nessun file selezionato.";
+
+// Dice Roll Display
+export const DICE_BUTTON_CONTINUE = "Continua";
+export const DICE_BUTTON_ROLLING = "Lanciando...";
+export const DICE_BUTTON_ROLL = "Lancia il dado";
+export const DICE_BUTTON_SKIP_TURN = "Salta il turno";
+export const DICE_SKIP_TURN_MESSAGE = (playerName: string) =>
+  `${playerName} ha saltato il turno!`;
+
+// Left Bar
+export const LEFT_BAR_GAME_SAVED = "Gioco salvato!";
+export const LEFT_BAR_GAME_STATUS = "Stato del gioco";
+export const LEFT_BAR_PLAY_TURN = "Gioca un turno";
+export const LEFT_BAR_WINNER = (winnerName: string) =>
+  `Vincitore: ${winnerName}!`;
+export const LEFT_BAR_CURRENT_TURN = "Turno di:";
+export const LEFT_BAR_PLAYERS_POSITION = "Posizione dei giocatori";
+
+// Square
+export const SQUARE_START = "START";
+export const SQUARE_WIN = "WIN!";
+export const SQUARE_MOVE_FORWARD = " AVANTI +";
+export const SQUARE_MOVE_BACKWARD = "INDIETRO ";
+export const SQUARE_QUIZ = "QUIZ";
+export const SQUARE_MIME = "MIMO";
+
+// Turn Result Modal
+export const MODAL_SPECIAL_EFFECT = "Effetto Speciale!";
+export const MODAL_SPECIAL_SQUARE_MESSAGE =
+  "Sei atterrato su una casella speciale! Ti muovi ";
+export const MODAL_MOVE_FORWARD = "avanti di ";
+export const MODAL_MOVE_BACKWARD = "indietro di ";
+export const MODAL_TOTAL_MOVEMENT = "Movimento totale:";
+export const MODAL_NEW_POSITION = "Nuova posizione:";
