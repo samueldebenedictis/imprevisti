@@ -9,8 +9,8 @@ export default defineConfig({
   reporter: [["html", { open: "never" }]],
   use: {
     trace: "on-first-retry",
+    actionTimeout: 5000,
   },
-  timeout: 5000,
   snapshotDir: "tests/e2e/snapshots",
   projects: [
     {
