@@ -65,7 +65,10 @@ export default function LeftBar({
       {/* Dice Roll Display */}
       {showDiceRoll && diceRollProps && (
         <div className="mb-4 w-full">
-          <DiceRollDisplay {...diceRollProps} />
+          <DiceRollDisplay
+            {...diceRollProps}
+            mustSkipTurn={currentPlayer.getTurnsToSkip() > 0}
+          />
         </div>
       )}
 

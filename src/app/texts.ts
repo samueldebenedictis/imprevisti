@@ -51,8 +51,9 @@ export const LABEL_NO_SAVE_NO_STORAGE =
 export const DICE_BUTTON_CONTINUE = "Continua";
 export const DICE_BUTTON_ROLLING = "Lanciando...";
 export const DICE_BUTTON_ROLL = "Lancia il dado";
+export const DICE_BUTTON_SKIP_TURN = "Salta il turno";
 export const DICE_SKIP_TURN_MESSAGE = (playerName: string) =>
-  `${playerName} deve saltare il turno!`;
+  `${playerName} ha saltato il turno!`;
 
 // Left Bar
 export const LEFT_BAR_GAME_SAVED = "Gioco salvato!";

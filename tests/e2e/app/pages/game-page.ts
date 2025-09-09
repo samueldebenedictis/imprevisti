@@ -2,6 +2,7 @@ import type { Page } from "@playwright/test";
 import {
   DICE_BUTTON_CONTINUE,
   DICE_BUTTON_ROLL,
+  DICE_BUTTON_SKIP_TURN,
   DICE_SKIP_TURN_MESSAGE,
   LEFT_BAR_PLAY_TURN,
 } from "@/app/texts";
@@ -20,6 +21,9 @@ export class GamePage {
 
   // Dice roll elements
   rollDiceButton = this.page.getByRole("button", { name: DICE_BUTTON_ROLL });
+  skipTurnButton = this.page.getByRole("button", {
+    name: DICE_BUTTON_SKIP_TURN,
+  });
   continueButton = this.page.getByRole("button", {
     name: DICE_BUTTON_CONTINUE,
   });

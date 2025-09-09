@@ -51,7 +51,7 @@ test("Player skip turn modal", async ({ page }) => {
   await gamePage.goto();
 
   await gamePage.playTurnButton.click();
-  await gamePage.rollDiceButton.click();
+  await gamePage.skipTurnButton.click();
 
   await expect(gamePage.skipTurnMessage("Alice")).toBeVisible();
 
