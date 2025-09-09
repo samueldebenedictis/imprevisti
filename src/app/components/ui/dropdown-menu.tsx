@@ -15,7 +15,6 @@ const menuItems: DropdownMenuItem[] = [
   { text: "Continua partita", url: URL_GAME },
   { text: "Nuova partita", url: URL_HOME },
   { text: "Carica partita", url: URL_RESTORE_GAME },
-  // { text: "ISTRUZIONI", url: URL_INSTRUCTION },
 ];
 
 export default function DropdownMenu() {
