@@ -5,6 +5,7 @@ import {
   DICE_BUTTON_SKIP_TURN,
   DICE_SKIP_TURN_MESSAGE,
   LEFT_BAR_PLAY_TURN,
+  MODAL_TITLE_TURN_RESULT,
 } from "@/app/texts";
 
 export class GamePage {
@@ -14,6 +15,7 @@ export class GamePage {
 
   async goto() {
     await this.page.goto(this.url);
+    await this.playTurnButton.waitFor();
   }
 
   // Left bar elements
@@ -31,4 +33,9 @@ export class GamePage {
   // Messages
   skipTurnMessage = (playerName: string) =>
     this.page.getByText(DICE_SKIP_TURN_MESSAGE(playerName));
+
+  // Modal elements
+  turnResultModal = this.page.getByRole("heading", {
+    name: MODAL_TITLE_TURN_RESULT,
+  });
 }

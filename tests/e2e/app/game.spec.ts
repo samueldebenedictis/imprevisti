@@ -54,8 +54,6 @@ test("Player skip turn modal", async ({ page }) => {
   await gamePage.skipTurnButton.click();
 
   await expect(gamePage.skipTurnMessage("Alice")).toBeVisible();
-
   await gamePage.continueButton.click();
-
   await expect(gamePage.skipTurnMessage("Alice")).not.toBeVisible();
 });
