@@ -3,6 +3,7 @@ import { Board, SquaresBuilder } from "@/model/board";
 import { Game } from "@/model/game";
 import { Player } from "@/model/player";
 import { expect, test } from "./fixtures";
+import { GamePage } from "./pages/game-page";
 
 test("Fill form", async ({ homePage }) => {
   await homePage.playersNumber.fill("3");
@@ -11,11 +12,9 @@ test("Fill form", async ({ homePage }) => {
   await homePage.playerName(3).fill("Qua");
   await homePage.squaresNumber.fill("25");
 
-  await homePage.page.getByRole("checkbox", { name: "Caselle mimo" }).uncheck();
-  await homePage.page.getByRole("checkbox", { name: "Caselle quiz" }).uncheck();
-  await homePage.page
-    .getByRole("checkbox", { name: "Caselle movimento" })
-    .uncheck();
+  await homePage.mimeCheckbox.uncheck();
+  await homePage.quizCheckbox.uncheck();
+  await homePage.moveCheckbox.uncheck();
 
   await homePage.submit.click();
   await expect(homePage.page).toHaveURL(/game/);
@@ -34,6 +33,7 @@ test("Fill form", async ({ homePage }) => {
 });
 
 test("Player skip turn modal", async ({ page }) => {
+  const gamePage = new GamePage(page);
   const squares = new SquaresBuilder().setBoardSize(10).build();
   const players = ["Alice", "Bob"].map((name, i) => new Player(i, name));
   const board = new Board(squares, players);
@@ -48,17 +48,14 @@ test("Player skip turn modal", async ({ page }) => {
     [gameJSON, STORAGE_STATE_KEY_GAME_INSTANCE],
   );
 
-  await page.goto("/game");
+  await gamePage.goto();
 
-  await page.getByRole("button", { name: "Gioca un turno" }).click();
+  await gamePage.playTurnButton.click();
+  await gamePage.rollDiceButton.click();
 
-  await page.getByRole("button", { name: "Lancia il dado" }).click();
+  await expect(gamePage.skipTurnMessage("Alice")).toBeVisible();
 
-  await expect(page.getByText("Alice deve saltare il turno!")).toBeVisible();
+  await gamePage.continueButton.click();
 
-  await page.getByRole("button", { name: "Continua" }).click();
-
-  await expect(
-    page.getByText("Alice deve saltare il turno!"),
-  ).not.toBeVisible();
+  await expect(gamePage.skipTurnMessage("Alice")).not.toBeVisible();
 });

@@ -1,4 +1,10 @@
 import type { Page } from "@playwright/test";
+import {
+  DICE_BUTTON_CONTINUE,
+  DICE_BUTTON_ROLL,
+  DICE_SKIP_TURN_MESSAGE,
+  LEFT_BAR_PLAY_TURN,
+} from "@/app/texts";
 
 export class GamePage {
   constructor(readonly page: Page) {}
@@ -8,4 +14,17 @@ export class GamePage {
   async goto() {
     await this.page.goto(this.url);
   }
+
+  // Left bar elements
+  playTurnButton = this.page.getByRole("button", { name: LEFT_BAR_PLAY_TURN });
+
+  // Dice roll elements
+  rollDiceButton = this.page.getByRole("button", { name: DICE_BUTTON_ROLL });
+  continueButton = this.page.getByRole("button", {
+    name: DICE_BUTTON_CONTINUE,
+  });
+
+  // Messages
+  skipTurnMessage = (playerName: string) =>
+    this.page.getByText(DICE_SKIP_TURN_MESSAGE(playerName));
 }
