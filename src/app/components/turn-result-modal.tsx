@@ -31,6 +31,7 @@ import {
   MODAL_TOTAL_MOVEMENT,
 } from "../texts";
 import Button from "./ui/button";
+import { Divider } from "./ui/divider";
 import Select from "./ui/select";
 
 interface DiceResultModalProps {
@@ -52,8 +53,6 @@ interface DiceResultModalProps {
 const H3 = (props: { children: string }) => (
   <h3 className="ui-text-dark ui-text-subtitle">{props.children}</h3>
 );
-
-const Divider = () => <div className="m-4 border-gray-300 border-b-2"></div>;
 
 const DiceResultModal: React.FC<DiceResultModalProps> = ({
   isOpen,

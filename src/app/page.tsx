@@ -5,6 +5,7 @@ import { useConfigStore } from "../store/config-store";
 import { MAX_PLAYERS, MAX_SQUARES, MIN_PLAYERS, MIN_SQUARES } from "../vars";
 import Button from "./components/ui/button";
 import Input from "./components/ui/input";
+import { Label, LabelCheckbox } from "./components/ui/label";
 import {
   LABEL_GAME_CONFIGURATION,
   LABEL_MIME,
@@ -17,22 +18,6 @@ import {
   LABEL_SQUARES_NUMBER,
   LABEL_SUBMIT,
 } from "./texts";
-
-function Label(props: { children: string; htmlFor: string }) {
-  return (
-    <label htmlFor={props.htmlFor} className="ui-text-dark ui-text-subtitle">
-      {props.children}
-    </label>
-  );
-}
-
-function LabelCheckbox(props: { children: string; htmlFor: string }) {
-  return (
-    <label htmlFor={props.htmlFor} className="ui-text-dark ui-text-normal">
-      {props.children}
-    </label>
-  );
-}
 
 export default function Home() {
   const router = useRouter();
