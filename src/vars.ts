@@ -1,5 +1,3 @@
-export const STORAGE_STATE_KEY_GAME_INSTANCE = "game-state-json";
-
 export const URL_HOME = "/";
 export const URL_GAME = "/game";
 export const URL_INSTRUCTION = "/instructions";
@@ -12,3 +10,5 @@ export const MIN_SQUARES: number = 10;
 export const MAX_SQUARES: number = 100;
 export const DEFAULT_SQUARES: number = 30;
 export const DEFAULT_SPECIAL_PERCENTAGE_SQUARES: number = 20;
+
+export const SAVEFILE = "save.json";

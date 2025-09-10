@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { MoveSquare } from "@/model/square";
 import { useCurrentPlayer, useGameStore } from "../../store/game-store";
-import { STORAGE_STATE_KEY_GAME_INSTANCE, URL_HOME } from "../../vars";
+import { URL_HOME } from "../../vars";
 import BoardComponent from "../components/board";
 import ClientOnly from "../components/client-only";
 import LeftBar from "../components/left-bar";
@@ -38,15 +38,6 @@ export default function Page() {
   useEffect(() => {
     actions.loadGame();
   }, [actions]);
-
-  useEffect(() => {
-    if (game) {
-      localStorage.setItem(
-        STORAGE_STATE_KEY_GAME_INSTANCE,
-        JSON.stringify(game.toJSON()),
-      );
-    }
-  }, [game]);
 
   const handleDeleteGame = () => {
     actions.deleteGame();

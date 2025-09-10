@@ -1,6 +1,9 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { generateSquares } from "@/app/utils/generate-squares";
+import { Board } from "@/model/board";
+import { Game as GameModel } from "@/model/game";
+import { Player } from "@/model/player";
 import {
   DEFAULT_PLAYERS,
   DEFAULT_SPECIAL_PERCENTAGE_SQUARES,
@@ -9,7 +12,6 @@ import {
   MAX_SQUARES,
   MIN_PLAYERS,
   MIN_SQUARES,
-  STORAGE_STATE_KEY_GAME_INSTANCE,
 } from "../vars";
 import { useGameStore } from "./game-store";
 
@@ -152,14 +154,10 @@ export const useConfigStore = create<ConfigStore>()(
             throw new Error("Invalid game configuration");
           }
 
-          // Creo il playerJSON
-          const playersJSON = config.playerNames
+          // Creo i giocatori
+          const players = config.playerNames
             .slice(0, config.numPlayers)
-            .map((name, id) => ({
-              id,
-              name: name.trim(),
-              turnsToSkip: 0,
-            }));
+            .map((name, id) => new Player(id, name.trim()));
 
           // Generate le caselle
           const squareJSON = generateSquares(
@@ -168,29 +166,23 @@ export const useConfigStore = create<ConfigStore>()(
             config.specialPercentage / 100,
           );
 
-          // Creo la game instance
-          const gameInstance = {
-            currentRound: 1,
-            currentTurn: 0,
-            players: playersJSON,
-            winnerId: undefined,
-            gameEnded: false,
-            board: {
-              playersPosition: playersJSON.map((player) => ({
-                playerId: player.id,
+          // Creo il tabellone
+          const board = Board.fromJSON(
+            {
+              playersPosition: players.map((player) => ({
+                playerId: player.getId(),
                 position: 0,
               })),
               squares: squareJSON,
             },
-          };
-
-          localStorage.setItem(
-            STORAGE_STATE_KEY_GAME_INSTANCE,
-            JSON.stringify(gameInstance),
+            players,
           );
 
+          // Creo il Game
+          const game = new GameModel(board, players);
+
           const gameStore = useGameStore.getState();
-          gameStore.actions.loadGame();
+          gameStore.actions.setGame(game);
         },
       },
     }),
