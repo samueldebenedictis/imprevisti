@@ -1,6 +1,6 @@
 {
   "name": "tesi",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "install": "husky",
@@ -24,7 +24,8 @@
     "husky": "^9.1.7",
     "next": "^15.5.2",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@biomejs/biome": "2.0.6",
