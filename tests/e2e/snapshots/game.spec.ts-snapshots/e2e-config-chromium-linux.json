@@ -1,23 +1,15 @@
 [
   {
-    "name": "gameConfig",
+    "name": "game-store",
     "value": {
-      "numPlayers": 3,
-      "playerNames": [
-        "Qui",
-        "Quo",
-        "Qua"
-      ],
-      "numSquares": 25,
-      "squareTypes": {
-        "mime": false,
-        "quiz": false,
-        "move": false
-      }
+      "state": {
+        "counter": 0
+      },
+      "version": 0
     }
   },
   {
-    "name": "gameInstance",
+    "name": "game-state-json",
     "value": {
       "board": {
         "squares": [
@@ -160,7 +152,24 @@
     }
   },
   {
-    "name": "debugCounter",
-    "value": 0
+    "name": "game-config",
+    "value": {
+      "state": {
+        "numPlayers": 3,
+        "playerNames": [
+          "Qui",
+          "Quo",
+          "Qua"
+        ],
+        "numSquares": 25,
+        "squareTypes": {
+          "mime": false,
+          "quiz": false,
+          "move": false
+        },
+        "specialPercentage": 20
+      },
+      "version": 0
+    }
   }
 ]
