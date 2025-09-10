@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { URL_INSTRUCTION } from "../vars";
+import { URL_INSTRUCTION } from "../../vars";
 import { colorToCss } from "./ui/color";
 import DropdownMenu from "./ui/dropdown-menu";
 
