@@ -122,7 +122,7 @@ export const useConfigStore = create<ConfigStore>()(
         resetConfig: () => set(defaultConfig),
 
         validateConfig: () => {
-          const { numPlayers, playerNames, numSquares, squareTypes } = get();
+          const { numPlayers, playerNames, numSquares } = get();
 
           // Controllo che tutti i giocatori abbiano nomi
           const hasValidNames = playerNames

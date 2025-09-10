@@ -3,14 +3,14 @@ import { persist } from "zustand/middleware";
 import { Battle } from "@/model/battle";
 import { Mime } from "@/model/deck/mime";
 import { Quiz } from "@/model/deck/quiz";
-import { Game as GameModel } from "@/model/game";
+import { type GameJSON, Game as GameModel } from "@/model/game";
 import type { Player } from "@/model/player";
 import { soundManager } from "../app/utils/sound-manager";
 
 export interface GameState {
   // Core game state
   game: GameModel | null;
-  gameData: any; // JSON stato del gioco
+  gameData: GameJSON | null; // JSON stato del gioco
 
   // UI state
   isModalOpen: boolean;

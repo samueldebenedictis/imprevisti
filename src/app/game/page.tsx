@@ -103,23 +103,25 @@ export default function Page() {
     <ClientOnly>
       <div className="mt-6 flex items-start justify-center gap-8 p-4">
         <div className="sticky top-30 flex-shrink-0 self-start">
-          <LeftBar
-            currentPlayer={currentPlayer!}
-            playersPositions={playersPositions}
-            gameEnded={game.isGameEnded()}
-            winnerName={game.getWinner()?.getName()}
-            onPlayTurnClick={actions.openDiceModal}
-            onDeleteGame={handleDeleteGame}
-            gameInstance={game.toJSON()}
-            showDiceRoll={isDiceModalOpen}
-            diceRollProps={{
-              onRollDice: actions.playTurn,
-              isRolling,
-              diceResult: modalDiceResult,
-              onContinue: actions.continueAfterDice,
-              currentPlayerName: playerWhoRolledName || "",
-            }}
-          />
+          {currentPlayer && (
+            <LeftBar
+              currentPlayer={currentPlayer}
+              playersPositions={playersPositions}
+              gameEnded={game.isGameEnded()}
+              winnerName={game.getWinner()?.getName()}
+              onPlayTurnClick={actions.openDiceModal}
+              onDeleteGame={handleDeleteGame}
+              gameInstance={game.toJSON()}
+              showDiceRoll={isDiceModalOpen}
+              diceRollProps={{
+                onRollDice: actions.playTurn,
+                isRolling,
+                diceResult: modalDiceResult,
+                onContinue: actions.continueAfterDice,
+                currentPlayerName: playerWhoRolledName || "",
+              }}
+            />
+          )}
         </div>
         <div className="flex flex-shrink-0 flex-col items-center justify-center">
           {BoardComponent({

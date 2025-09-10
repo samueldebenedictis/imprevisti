@@ -86,10 +86,14 @@ export const generateSquares = (
 
   let currentSpecialTypeIndex = 0;
   // Fino a quando ci sono caselle speciali inseribili ciclo e creo una casella speciale
-  for (let i = 0; i < specialSquaresToPlace; i++) {
-    if (specialSquareIndices.length === 0) break;
+  for (
+    let i = 0;
+    i < specialSquaresToPlace && specialSquareIndices.length > 0;
+    i++
+  ) {
+    const randomIndex = specialSquareIndices.pop();
+    if (randomIndex === undefined) break;
 
-    const randomIndex = specialSquareIndices.pop()!;
     const typeToAssign =
       enabledSpecialTypes[currentSpecialTypeIndex % enabledSpecialTypes.length];
 

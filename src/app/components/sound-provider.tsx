@@ -16,7 +16,7 @@ export default function SoundProvider() {
     const soundManager = getSoundManager();
 
     // Aggiorna il callback per ottenere lo stato del suono dal store
-    (soundManager as any).getSoundEnabled = () => isSoundEnabled;
+    soundManager.setSoundEnabledCallback(() => isSoundEnabled);
   }, [isSoundEnabled]);
 
   // Questo componente non renderizza nulla

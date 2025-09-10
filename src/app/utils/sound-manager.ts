@@ -28,9 +28,15 @@ export class SoundManager {
   private initAudioContext(): void {
     if (typeof window === "undefined") return;
     try {
-      this.audioContext = new (
-        window.AudioContext || (window as any).webkitAudioContext
-      )();
+      // Type assertion for legacy webkitAudioContext support
+      const AudioContextClass =
+        (window as typeof window & { webkitAudioContext?: typeof AudioContext })
+          .AudioContext ||
+        (window as typeof window & { webkitAudioContext?: typeof AudioContext })
+          .webkitAudioContext;
+      if (AudioContextClass) {
+        this.audioContext = new AudioContextClass();
+      }
     } catch (error) {
       console.warn("Web Audio API not supportato:", error);
     }
@@ -158,6 +164,14 @@ export class SoundManager {
    */
   isSoundEnabled(): boolean {
     return this.getSoundEnabled();
+  }
+
+  /**
+   * Aggiorna il callback per ottenere lo stato del suono.
+   * @param callback - Nuovo callback per ottenere lo stato del suono
+   */
+  setSoundEnabledCallback(callback: () => boolean): void {
+    this.getSoundEnabled = callback;
   }
 }
 
