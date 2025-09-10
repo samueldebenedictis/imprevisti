@@ -11,7 +11,6 @@ import { STORAGE_STATE_KEY_GAME_INSTANCE } from "../vars";
 export interface GameState {
   // Core game state
   game: GameModel | null;
-  counter: number;
 
   // UI state
   isModalOpen: boolean;
@@ -56,9 +55,6 @@ export interface GameActions {
   openDiceModal: () => void;
   closeModal: () => void;
   resetDiceState: () => void;
-
-  // Utility
-  incrementCounter: () => void;
 
   // Restore game management
   checkSavedGame: () => void;
@@ -113,7 +109,6 @@ export const useGameStore = create<GameStore>()(
             localStorage.removeItem(STORAGE_STATE_KEY_GAME_INSTANCE);
             set({
               game: null,
-              counter: 0,
               isModalOpen: false,
               isDiceModalOpen: false,
               isRolling: false,
@@ -344,9 +339,6 @@ export const useGameStore = create<GameStore>()(
               modalDiceResult: null,
             }),
 
-          incrementCounter: () =>
-            set((state) => ({ counter: state.counter + 1 })),
-
           checkSavedGame: () => {
             const savedGame = localStorage.getItem(
               STORAGE_STATE_KEY_GAME_INSTANCE,
@@ -392,10 +384,7 @@ export const useGameStore = create<GameStore>()(
       }),
       {
         name: "game-store",
-        partialize: (state) => ({
-          counter: state.counter,
-          // Don't persist UI state, only game data
-        }),
+        partialize: (_state) => ({}),
       },
     ),
     { name: "game-store" },
