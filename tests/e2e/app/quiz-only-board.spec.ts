@@ -1,8 +1,8 @@
-import { STORAGE_STATE_KEY_GAME_INSTANCE } from "@/app/vars";
 import { Board } from "@/model/board";
 import { Game } from "@/model/game";
 import { Player } from "@/model/player";
 import { QuizSquare } from "@/model/square/quiz-square";
+import { STORAGE_STATE_KEY_GAME_INSTANCE } from "@/vars";
 import { expect, test } from "./fixtures";
 
 test.beforeEach(async ({ page }) => {

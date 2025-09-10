@@ -1,7 +1,7 @@
-import { STORAGE_STATE_KEY_GAME_INSTANCE } from "@/app/vars";
 import { Board, SquaresBuilder } from "@/model/board";
 import { Game } from "@/model/game";
 import { Player } from "@/model/player";
+import { STORAGE_STATE_KEY_GAME_INSTANCE } from "@/vars";
 import { expect, test } from "./fixtures";
 import { GamePage } from "./pages/game-page";
 
