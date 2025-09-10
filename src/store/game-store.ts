@@ -211,17 +211,14 @@ export const useGameStore = create<GameStore>()(
                 return false;
               })();
 
-              // Play special square sound if applicable
-              if (hasSpecialEffect) {
-                soundManager.playSpecialSquare();
-              }
-
               // Play battle sound if battle occurs
               if (actionType === "battle") {
                 soundManager.playBattle();
               }
 
+              // Play special square sound if applicable
               if (hasSpecialEffect || actionType) {
+                soundManager.playSpecialSquare();
                 set({ isModalOpen: true });
               }
             }, 1000);

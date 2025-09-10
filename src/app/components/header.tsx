@@ -3,15 +3,21 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { URL_INSTRUCTION } from "../../vars";
+import { soundManager } from "../utils/sound-manager";
+import DropdownMenu from "./menu";
 import { colorToCss } from "./ui/color";
-import DropdownMenu from "./ui/dropdown-menu";
 
 const headerTextClasses =
   "ui-text-title ui-animation-scale ui-text-light hover:underline";
 
 function HeaderLink(props: { text: string; url: string }) {
   return (
-    <Link href={props.url} prefetch={false} className={headerTextClasses}>
+    <Link
+      href={props.url}
+      onClick={() => soundManager.playButtonClick()}
+      prefetch={false}
+      className={headerTextClasses}
+    >
       {props.text}
     </Link>
   );
@@ -21,6 +27,9 @@ export default function Header() {
   const pathname = usePathname();
 
   const handleBack = () => {
+    // Genera il suono
+    soundManager.playButtonClick();
+    // Esegue l'azione
     window.history.back();
   };
 

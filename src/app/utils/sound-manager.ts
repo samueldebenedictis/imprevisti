@@ -92,7 +92,7 @@ export class SoundManager {
    */
   async playButtonClick(): Promise<void> {
     await this.ensureAudioContext();
-    this.playTone(800, 0.1, "sine");
+    this.playTone(600, 0.1, "sine");
   }
 
   /**
