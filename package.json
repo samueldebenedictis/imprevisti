@@ -16,7 +16,10 @@
     "e2e:app": "playwright test -c playwright.app.config.ts",
     "e2e:storybook": "playwright test -c playwright.storybook.config.ts",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "patch": "npm version patch",
+    "minor": "npm version minor",
+    "major": "npm version major"
   },
   "dependencies": {
     "@commitlint/cli": "^19.8.1",
