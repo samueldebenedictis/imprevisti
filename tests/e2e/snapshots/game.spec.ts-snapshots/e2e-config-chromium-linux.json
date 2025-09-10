@@ -3,152 +3,149 @@
     "name": "game-store",
     "value": {
       "state": {
-        "counter": 0
+        "gameData": {
+          "board": {
+            "squares": [
+              {
+                "number": 0,
+                "type": "normal"
+              },
+              {
+                "number": 1,
+                "type": "normal"
+              },
+              {
+                "number": 2,
+                "type": "normal"
+              },
+              {
+                "number": 3,
+                "type": "normal"
+              },
+              {
+                "number": 4,
+                "type": "normal"
+              },
+              {
+                "number": 5,
+                "type": "normal"
+              },
+              {
+                "number": 6,
+                "type": "normal"
+              },
+              {
+                "number": 7,
+                "type": "normal"
+              },
+              {
+                "number": 8,
+                "type": "normal"
+              },
+              {
+                "number": 9,
+                "type": "normal"
+              },
+              {
+                "number": 10,
+                "type": "normal"
+              },
+              {
+                "number": 11,
+                "type": "normal"
+              },
+              {
+                "number": 12,
+                "type": "normal"
+              },
+              {
+                "number": 13,
+                "type": "normal"
+              },
+              {
+                "number": 14,
+                "type": "normal"
+              },
+              {
+                "number": 15,
+                "type": "normal"
+              },
+              {
+                "number": 16,
+                "type": "normal"
+              },
+              {
+                "number": 17,
+                "type": "normal"
+              },
+              {
+                "number": 18,
+                "type": "normal"
+              },
+              {
+                "number": 19,
+                "type": "normal"
+              },
+              {
+                "number": 20,
+                "type": "normal"
+              },
+              {
+                "number": 21,
+                "type": "normal"
+              },
+              {
+                "number": 22,
+                "type": "normal"
+              },
+              {
+                "number": 23,
+                "type": "normal"
+              },
+              {
+                "number": 24,
+                "type": "normal"
+              }
+            ],
+            "playersPosition": [
+              {
+                "playerId": 0,
+                "position": 0
+              },
+              {
+                "playerId": 1,
+                "position": 0
+              },
+              {
+                "playerId": 2,
+                "position": 0
+              }
+            ]
+          },
+          "players": [
+            {
+              "id": 0,
+              "name": "Qui",
+              "turnsToSkip": 0
+            },
+            {
+              "id": 1,
+              "name": "Quo",
+              "turnsToSkip": 0
+            },
+            {
+              "id": 2,
+              "name": "Qua",
+              "turnsToSkip": 0
+            }
+          ],
+          "currentTurn": 0,
+          "currentRound": 1,
+          "gameEnded": false
+        },
+        "hasSavedGame": true
       },
       "version": 0
-    }
-  },
-  {
-    "name": "game-state-json",
-    "value": {
-      "board": {
-        "squares": [
-          {
-            "number": 0,
-            "type": "normal"
-          },
-          {
-            "number": 1,
-            "type": "normal"
-          },
-          {
-            "number": 2,
-            "type": "normal"
-          },
-          {
-            "number": 3,
-            "type": "normal"
-          },
-          {
-            "number": 4,
-            "type": "normal"
-          },
-          {
-            "number": 5,
-            "type": "normal"
-          },
-          {
-            "number": 6,
-            "type": "normal"
-          },
-          {
-            "number": 7,
-            "type": "normal"
-          },
-          {
-            "number": 8,
-            "type": "normal"
-          },
-          {
-            "number": 9,
-            "type": "normal"
-          },
-          {
-            "number": 10,
-            "type": "normal"
-          },
-          {
-            "number": 11,
-            "type": "normal"
-          },
-          {
-            "number": 12,
-            "type": "normal"
-          },
-          {
-            "number": 13,
-            "type": "normal"
-          },
-          {
-            "number": 14,
-            "type": "normal"
-          },
-          {
-            "number": 15,
-            "type": "normal"
-          },
-          {
-            "number": 16,
-            "type": "normal"
-          },
-          {
-            "number": 17,
-            "type": "normal"
-          },
-          {
-            "number": 18,
-            "type": "normal"
-          },
-          {
-            "number": 19,
-            "type": "normal"
-          },
-          {
-            "number": 20,
-            "type": "normal"
-          },
-          {
-            "number": 21,
-            "type": "normal"
-          },
-          {
-            "number": 22,
-            "type": "normal"
-          },
-          {
-            "number": 23,
-            "type": "normal"
-          },
-          {
-            "number": 24,
-            "type": "normal"
-          }
-        ],
-        "playersPosition": [
-          {
-            "playerId": 0,
-            "position": 0
-          },
-          {
-            "playerId": 1,
-            "position": 0
-          },
-          {
-            "playerId": 2,
-            "position": 0
-          }
-        ]
-      },
-      "players": [
-        {
-          "id": 0,
-          "name": "Qui",
-          "turnsToSkip": 0
-        },
-        {
-          "id": 1,
-          "name": "Quo",
-          "turnsToSkip": 0
-        },
-        {
-          "id": 2,
-          "name": "Qua",
-          "turnsToSkip": 0
-        }
-      ],
-      "currentTurn": 0,
-      "currentRound": 1,
-      "gameEnded": false
     }
   },
   {

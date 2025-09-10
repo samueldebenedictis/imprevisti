@@ -2,7 +2,6 @@ import { Board } from "@/model/board";
 import { Game } from "@/model/game";
 import { Player } from "@/model/player";
 import { MimeSquare } from "@/model/square/mime-square";
-import { STORAGE_STATE_KEY_GAME_INSTANCE } from "@/vars";
 import { expect, test } from "./fixtures";
 
 test.beforeEach(async ({ page }) => {
@@ -12,11 +11,34 @@ test.beforeEach(async ({ page }) => {
   const game = new Game(board, players);
 
   const gameJSON = JSON.stringify(game.toJSON());
+  const gameData = game.toJSON();
+
   await page.addInitScript(
-    ([gameData, storageKey]) => {
-      localStorage.setItem(storageKey, gameData);
+    ([gameData, _gameJSON]) => {
+      const zustandData = {
+        state: {
+          game: null,
+          gameData: gameData,
+          counter: 0,
+          isModalOpen: false,
+          isDiceModalOpen: false,
+          isRolling: false,
+          diceResult: null,
+          modalDiceResult: null,
+          actionType: null,
+          actionData: null,
+          playerWhoRolledName: null,
+          playerWhoRolled: null,
+          startPosition: undefined,
+          newPosition: undefined,
+          hasSavedGame: true,
+          selectedFile: null,
+        },
+        version: 0,
+      };
+      localStorage.setItem("game-store", JSON.stringify(zustandData));
     },
-    [gameJSON, STORAGE_STATE_KEY_GAME_INSTANCE],
+    [gameData, gameJSON],
   );
 });
 

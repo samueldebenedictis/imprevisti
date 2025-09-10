@@ -1,7 +1,6 @@
 import { Board, SquaresBuilder } from "@/model/board";
 import { Game } from "@/model/game";
 import { Player } from "@/model/player";
-import { STORAGE_STATE_KEY_GAME_INSTANCE } from "@/vars";
 import { expect, test } from "./fixtures";
 import { GamePage } from "./pages/game-page";
 
@@ -40,12 +39,34 @@ test("Player skip turn modal", async ({ page }) => {
   const game = new Game(board, players);
 
   players[0].skipNextTurn();
-  const gameJSON = JSON.stringify(game.toJSON());
+  const gameData = game.toJSON();
+
   await page.addInitScript(
-    ([gameData, storageKey]) => {
-      localStorage.setItem(storageKey, gameData);
+    ([gameData]) => {
+      const zustandData = {
+        state: {
+          game: null,
+          gameData: gameData,
+          counter: 0,
+          isModalOpen: false,
+          isDiceModalOpen: false,
+          isRolling: false,
+          diceResult: null,
+          modalDiceResult: null,
+          actionType: null,
+          actionData: null,
+          playerWhoRolledName: null,
+          playerWhoRolled: null,
+          startPosition: undefined,
+          newPosition: undefined,
+          hasSavedGame: true,
+          selectedFile: null,
+        },
+        version: 0,
+      };
+      localStorage.setItem("game-store", JSON.stringify(zustandData));
     },
-    [gameJSON, STORAGE_STATE_KEY_GAME_INSTANCE],
+    [gameData],
   );
 
   await gamePage.goto();
