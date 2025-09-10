@@ -6,10 +6,7 @@ import { Quiz } from "@/model/deck/quiz";
 import { Game as GameModel } from "@/model/game";
 import type { Player } from "@/model/player";
 import { soundManager } from "../app/utils/sound-manager";
-import {
-  STORAGE_STATE_KEY_DEBUG_COUNTER,
-  STORAGE_STATE_KEY_GAME_INSTANCE,
-} from "../vars";
+import { STORAGE_STATE_KEY_GAME_INSTANCE } from "../vars";
 
 export interface GameState {
   // Core game state
@@ -114,7 +111,6 @@ export const useGameStore = create<GameStore>()(
 
           deleteGame: () => {
             localStorage.removeItem(STORAGE_STATE_KEY_GAME_INSTANCE);
-            localStorage.removeItem(STORAGE_STATE_KEY_DEBUG_COUNTER);
             set({
               game: null,
               counter: 0,

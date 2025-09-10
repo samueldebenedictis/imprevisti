@@ -9,7 +9,7 @@ import {
   MAX_SQUARES,
   MIN_PLAYERS,
   MIN_SQUARES,
-  STORAGE_STATE_KEY_GAME_CONFIG,
+  STORAGE_STATE_KEY_GAME_INSTANCE,
 } from "../vars";
 
 export interface GameConfig {
@@ -155,17 +155,12 @@ export const useConfigStore = create<ConfigStore>()(
           // const { generateSquares } = require("../app/utils/generate-squares");
 
           // Creo game configuration
-          const gameConfig = {
-            numPlayers: config.numPlayers,
-            playerNames: config.playerNames.slice(0, config.numPlayers),
-            numSquares: config.numSquares,
-            squareTypes: config.squareTypes,
-          };
-
-          localStorage.setItem(
-            STORAGE_STATE_KEY_GAME_CONFIG,
-            JSON.stringify(gameConfig),
-          );
+          // const gameConfig = {
+          //   numPlayers: config.numPlayers,
+          //   playerNames: config.playerNames.slice(0, config.numPlayers),
+          //   numSquares: config.numSquares,
+          //   squareTypes: config.squareTypes,
+          // };
 
           // Creo il playerJSON
           const playersJSON = config.playerNames
@@ -199,7 +194,10 @@ export const useConfigStore = create<ConfigStore>()(
             },
           };
 
-          localStorage.setItem("gameInstance", JSON.stringify(gameInstance));
+          localStorage.setItem(
+            STORAGE_STATE_KEY_GAME_INSTANCE,
+            JSON.stringify(gameInstance),
+          );
         },
       },
     }),
