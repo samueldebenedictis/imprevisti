@@ -11,6 +11,7 @@ import {
   MIN_SQUARES,
   STORAGE_STATE_KEY_GAME_INSTANCE,
 } from "../vars";
+import { useGameStore } from "./game-store";
 
 export interface GameConfig {
   numPlayers: number;
@@ -151,17 +152,6 @@ export const useConfigStore = create<ConfigStore>()(
             throw new Error("Invalid game configuration");
           }
 
-          // Import here to avoid circular dependencies
-          // const { generateSquares } = require("../app/utils/generate-squares");
-
-          // Creo game configuration
-          // const gameConfig = {
-          //   numPlayers: config.numPlayers,
-          //   playerNames: config.playerNames.slice(0, config.numPlayers),
-          //   numSquares: config.numSquares,
-          //   squareTypes: config.squareTypes,
-          // };
-
           // Creo il playerJSON
           const playersJSON = config.playerNames
             .slice(0, config.numPlayers)
@@ -198,6 +188,9 @@ export const useConfigStore = create<ConfigStore>()(
             STORAGE_STATE_KEY_GAME_INSTANCE,
             JSON.stringify(gameInstance),
           );
+
+          const gameStore = useGameStore.getState();
+          gameStore.actions.loadGame();
         },
       },
     }),
