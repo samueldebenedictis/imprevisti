@@ -3,6 +3,7 @@ import { Game } from "@/model/game";
 import { Player } from "@/model/player";
 import { MimeSquare } from "@/model/square/mime-square";
 import { expect, test } from "./fixtures";
+import { addZustandInitScript } from "./zustand";
 
 test.beforeEach(async ({ page }) => {
   const squares = Array.from({ length: 10 }, (_, i) => new MimeSquare(i));
@@ -10,36 +11,8 @@ test.beforeEach(async ({ page }) => {
   const board = new Board(squares, players);
   const game = new Game(board, players);
 
-  const gameJSON = JSON.stringify(game.toJSON());
   const gameData = game.toJSON();
-
-  await page.addInitScript(
-    ([gameData, _gameJSON]) => {
-      const zustandData = {
-        state: {
-          game: null,
-          gameData: gameData,
-          counter: 0,
-          isModalOpen: false,
-          isDiceModalOpen: false,
-          isRolling: false,
-          diceResult: null,
-          modalDiceResult: null,
-          actionType: null,
-          actionData: null,
-          playerWhoRolledName: null,
-          playerWhoRolled: null,
-          startPosition: undefined,
-          newPosition: undefined,
-          hasSavedGame: true,
-          selectedFile: null,
-        },
-        version: 0,
-      };
-      localStorage.setItem("game-store", JSON.stringify(zustandData));
-    },
-    [gameData, gameJSON],
-  );
+  await addZustandInitScript(page, gameData);
 });
 
 test("Mime only board", async ({ gamePage }) => {

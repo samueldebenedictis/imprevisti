@@ -84,7 +84,7 @@ export class Game {
    * Converte l'istanza di Game in un oggetto JSON serializzabile.
    * @returns Un oggetto che rappresenta lo stato del Game in formato JSON.
    */
-  toJSON() {
+  toJSON(): GameJSON {
     return {
       board: this.board.toJSON(),
       players: this.turnManager.getPlayers().map((p) => ({

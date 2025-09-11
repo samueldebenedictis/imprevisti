@@ -3,6 +3,7 @@ import { Game } from "@/model/game";
 import { Player } from "@/model/player";
 import { MoveSquare } from "@/model/square/move-square";
 import { expect, test } from "./fixtures";
+import { addZustandInitScript } from "./zustand";
 
 test.beforeEach(async ({ page }) => {
   const squares = Array.from({ length: 10 }, (_, i) => {
@@ -14,34 +15,7 @@ test.beforeEach(async ({ page }) => {
   const game = new Game(board, players);
 
   const gameData = game.toJSON();
-
-  await page.addInitScript(
-    ([gameData]) => {
-      const zustandData = {
-        state: {
-          game: null,
-          gameData: gameData,
-          counter: 0,
-          isModalOpen: false,
-          isDiceModalOpen: false,
-          isRolling: false,
-          diceResult: null,
-          modalDiceResult: null,
-          actionType: null,
-          actionData: null,
-          playerWhoRolledName: null,
-          playerWhoRolled: null,
-          startPosition: undefined,
-          newPosition: undefined,
-          hasSavedGame: true,
-          selectedFile: null,
-        },
-        version: 0,
-      };
-      localStorage.setItem("game-store", JSON.stringify(zustandData));
-    },
-    [gameData],
-  );
+  await addZustandInitScript(page, gameData);
 });
 
 test("Movement only board", async ({ gamePage }) => {
