@@ -179,7 +179,7 @@ export const useConfigStore = create<ConfigStore>()(
           );
 
           // Creo il Game
-          const game = new GameModel(board, players);
+          const game = new GameModel(board);
 
           const gameStore = useGameStore.getState();
           gameStore.actions.setGame(game);
