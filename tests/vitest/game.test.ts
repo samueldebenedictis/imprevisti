@@ -1,11 +1,15 @@
 import { describe, expect, test } from "vitest";
-import { Board, SquaresBuilder } from "@/model/board";
+import { Board } from "@/model/board";
 import { Game } from "@/model/game";
 import { Player } from "@/model/player";
+import { Square } from "@/model/square";
+
+const getSquares = (n: number) =>
+  Array.from(Array(n).keys()).map((_, i) => new Square(i));
 
 describe("Game", () => {
   test("Board", () => {
-    const squares = new SquaresBuilder().setBoardSize(10).build();
+    const squares = getSquares(10);
     const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
     const board = new Board(squares, players);
     const game = new Game(board, players);
@@ -18,7 +22,7 @@ describe("Game", () => {
   });
 
   test("Players", () => {
-    const squares = new SquaresBuilder().setBoardSize(10).build();
+    const squares = getSquares(10);
     const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
     const board = new Board(squares, players);
     const game = new Game(board, players);
@@ -32,7 +36,7 @@ describe("Game", () => {
   });
 
   test("Turns and rounds", () => {
-    const squares = new SquaresBuilder().setBoardSize(10).build();
+    const squares = getSquares(10);
     const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
     const board = new Board(squares, players);
     const game = new Game(board, players);
@@ -53,7 +57,7 @@ describe("Game", () => {
   });
 
   test("Max position", () => {
-    const squares = new SquaresBuilder().setBoardSize(2).build();
+    const squares = getSquares(2);
     const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
     const board = new Board(squares, players);
     const game = new Game(board, players);
@@ -64,7 +68,7 @@ describe("Game", () => {
   });
 
   test("If game ended players don't move", () => {
-    const squares = new SquaresBuilder().setBoardSize(2).build();
+    const squares = getSquares(2);
     const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
     const board = new Board(squares, players);
     const game = new Game(board, players);
@@ -80,7 +84,7 @@ describe("Game", () => {
   });
 
   test("Skip turn", () => {
-    const squares = new SquaresBuilder().setBoardSize(10).build();
+    const squares = getSquares(10);
     const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
     const board = new Board(squares, players);
     const game = new Game(board, players);
@@ -95,7 +99,7 @@ describe("Game", () => {
   });
 
   test("Game fromJSON", () => {
-    const squares = new SquaresBuilder().setBoardSize(5).build();
+    const squares = getSquares(5);
     const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
     const board = new Board(squares, players);
     const originalGame = new Game(board, players);

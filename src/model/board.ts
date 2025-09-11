@@ -1,5 +1,5 @@
 import type { Player } from "./player";
-import { Square } from "./square";
+import type { Square } from "./square";
 import type { SquareJSON } from "./square/square";
 import { squareFromJSON } from "./square/square-builder";
 
@@ -140,39 +140,5 @@ export class Board {
     // Passa la mappa ricostruita al costruttore
     const board = new Board(squares, players, playersPositionMap);
     return board;
-  }
-}
-
-/**
- * Builder per la costruzione delle caselle del tabellone.
- * Utilizza il pattern Builder per creare un array di caselle con dimensione specificata.
- */
-export class SquaresBuilder {
-  private squares: Square[] | undefined;
-  private boardSize: number | undefined;
-
-  /**
-   * Imposta la dimensione del tabellone.
-   * @param size - Numero di caselle del tabellone
-   * @returns L'istanza del builder per il method chaining
-   */
-  setBoardSize = (size: number) => {
-    this.boardSize = size;
-    return this;
-  };
-
-  /**
-   * Costruisce e restituisce l'array delle caselle del tabellone.
-   * Crea caselle numerate da 0 alla dimensione specificata - 1.
-   * @returns Array delle caselle create
-   * @throws Errore se la dimensione non è stata definita
-   */
-  build() {
-    if (this.boardSize === undefined) {
-      throw new Error("Size not defined");
-    }
-    const squaresNumbers = Array.from({ length: this.boardSize }, (_, i) => i);
-    this.squares = squaresNumbers.map((n) => new Square(n));
-    return this.squares;
   }
 }
