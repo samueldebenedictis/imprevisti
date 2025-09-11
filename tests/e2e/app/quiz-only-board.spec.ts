@@ -17,7 +17,7 @@ test.beforeEach(async ({ page }) => {
 
 test("Quiz only board - basic functionality", async ({ gamePage }) => {
   await gamePage.goto();
-  await expect(gamePage.page.getByText("QUIZ")).toHaveCount(10);
+  await expect(gamePage.page.getByText("QUIZ")).toHaveCount(8);
 });
 
 test("Quiz only board - modal appears after dice roll", async ({

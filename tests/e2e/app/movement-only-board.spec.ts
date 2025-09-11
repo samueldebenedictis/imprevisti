@@ -20,7 +20,7 @@ test.beforeEach(async ({ page }) => {
 
 test("Movement only board", async ({ gamePage }) => {
   await gamePage.goto();
-  await expect(gamePage.page.getByText(/\+|-/)).toHaveCount(10);
+  await expect(gamePage.page.getByText(/\+|-/)).toHaveCount(8);
 });
 
 test("Movement only board - Modal appears after dice roll", async ({

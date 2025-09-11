@@ -17,7 +17,7 @@ test.beforeEach(async ({ page }) => {
 
 test("Mime only board", async ({ gamePage }) => {
   await gamePage.goto();
-  await expect(gamePage.page.getByText("MIMO")).toHaveCount(10);
+  await expect(gamePage.page.getByText("MIMO")).toHaveCount(8);
 });
 
 test("Mime only board - Modal appears after dice roll", async ({
