@@ -12,7 +12,7 @@ describe("Game", () => {
     const squares = getSquares(10);
     const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
     const board = new Board(squares, players);
-    const game = new Game(board, players);
+    const game = new Game(board);
 
     expect(board.getSquares()).toHaveLength(10);
 
@@ -25,7 +25,7 @@ describe("Game", () => {
     const squares = getSquares(10);
     const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
     const board = new Board(squares, players);
-    const game = new Game(board, players);
+    const game = new Game(board);
 
     expect(players).toHaveLength(2);
 
@@ -39,7 +39,7 @@ describe("Game", () => {
     const squares = getSquares(10);
     const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
     const board = new Board(squares, players);
-    const game = new Game(board, players);
+    const game = new Game(board);
 
     expect(game.getTurn()).toBe(0);
     expect(game.getRound()).toBe(1);
@@ -60,7 +60,7 @@ describe("Game", () => {
     const squares = getSquares(2);
     const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
     const board = new Board(squares, players);
-    const game = new Game(board, players);
+    const game = new Game(board);
 
     game.playTurn();
 
@@ -71,7 +71,7 @@ describe("Game", () => {
     const squares = getSquares(2);
     const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
     const board = new Board(squares, players);
-    const game = new Game(board, players);
+    const game = new Game(board);
 
     game.playTurn();
     expect(game.getBoard().getPlayerPosition(players[0])).toBe(1);
@@ -87,7 +87,7 @@ describe("Game", () => {
     const squares = getSquares(10);
     const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
     const board = new Board(squares, players);
-    const game = new Game(board, players);
+    const game = new Game(board);
 
     players[0].skipNextTurn();
     game.playTurn();
@@ -102,7 +102,7 @@ describe("Game", () => {
     const squares = getSquares(5);
     const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
     const board = new Board(squares, players);
-    const originalGame = new Game(board, players);
+    const originalGame = new Game(board);
 
     // Move a player
     originalGame.playTurn();

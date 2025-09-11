@@ -37,7 +37,7 @@ test("Player skip turn modal", async ({ page }) => {
   const squares = Array.from(Array(10).keys()).map((_, i) => new Square(i));
   const players = ["Alice", "Bob"].map((name, i) => new Player(i, name));
   const board = new Board(squares, players);
-  const game = new Game(board, players);
+  const game = new Game(board);
 
   players[0].skipNextTurn();
   const gameData = game.toJSON();

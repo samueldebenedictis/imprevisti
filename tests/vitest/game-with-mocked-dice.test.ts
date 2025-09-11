@@ -36,7 +36,7 @@ describe("Game with mocked dice", () => {
     const squares = getSquares(10);
     const players = ["Lucia", "Renzo"].map((el, i) => new Player(i, el));
     const board = new Board(squares, players);
-    const game = new Game(board, players);
+    const game = new Game(board);
 
     expect(Dice).toHaveBeenCalledWith(6);
 
@@ -78,7 +78,7 @@ describe("Game with mocked dice", () => {
     ];
     const players = ["Lucia", "Renzo"].map((el, i) => new Player(i, el));
     const board = new Board(s, players);
-    const game = new Game(board, players);
+    const game = new Game(board);
     expect(Dice).toHaveBeenCalledWith(6);
 
     expect(game.getBoard().getPlayerPosition(players[0])).toBe(0);
@@ -112,7 +112,7 @@ describe("Game with mocked dice", () => {
 
     const players = ["Lucia", "Renzo"].map((el, i) => new Player(i, el));
     const board = new Board(s, players);
-    const game = new Game(board, players);
+    const game = new Game(board);
     expect(Dice).toHaveBeenCalledWith(6);
 
     expect(game.getBoard().getPlayerPosition(players[0])).toBe(0);
@@ -140,7 +140,7 @@ describe("Game with mocked dice", () => {
 
     const players = ["Lucia", "Renzo"].map((el, i) => new Player(i, el));
     const board = new Board(s, players);
-    const game = new Game(board, players);
+    const game = new Game(board);
 
     expect(game.getBoard().getPlayerPosition(players[0])).toBe(0);
 
@@ -159,7 +159,7 @@ describe("Game with mocked dice", () => {
       (el, i) => new Player(i, el),
     );
     const board = new Board(squares, players);
-    const game = new Game(board, players);
+    const game = new Game(board);
 
     expect(game.getBoard().getPlayerPosition(players[0])).toBe(0);
     expect(game.getBoard().getPlayerPosition(players[1])).toBe(0);

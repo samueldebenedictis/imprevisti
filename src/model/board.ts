@@ -20,6 +20,7 @@ export interface BoardJSON {
 export class Board {
   private squares: Square[];
   private playersPosition: Map<Player, number>;
+  private players: Player[];
 
   /**
    * Crea un nuovo tabellone con le caselle specificate e inizializza le posizioni dei giocatori.
@@ -34,12 +35,19 @@ export class Board {
     playersPositionMap?: Map<Player, number>,
   ) {
     this.squares = squares;
+    this.players = players;
     if (playersPositionMap) {
       this.playersPosition = playersPositionMap;
     } else {
       this.playersPosition = new Map(players.map((p) => [p, 0]));
     }
   }
+
+  /**
+   * Restituisce i giocatori come array.
+   * @returns Array dei giocatori
+   */
+  getPlayers = () => this.players;
 
   /**
    * Restituisce tutte le caselle del tabellone.

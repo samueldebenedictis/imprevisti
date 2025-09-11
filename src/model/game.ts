@@ -49,7 +49,7 @@ export class Game {
    * @param players - Array delle istanze dei giocatori
    * @param diceFaces - Numero di facce del dado (opzionale, default 6)
    */
-  constructor(board: Board, players: Player[], diceFaces = 6) {
+  constructor(board: Board, diceFaces = 6) {
     // Inizializzazione componenti base
     this.board = board;
     this.dice = new Dice(diceFaces);
@@ -57,7 +57,7 @@ export class Game {
     this.quizDeck = new QuizDeck();
 
     // Inizializzazione manager
-    this.turnManager = new TurnManager(players);
+    this.turnManager = new TurnManager(board.getPlayers());
     this.gameStateManager = new GameStateManager(board.getSquares().length);
     this.movementManager = new MovementManager(
       this.board,
@@ -115,7 +115,7 @@ export class Game {
 
     const board = Board.fromJSON(json.board, players);
 
-    const game = new Game(board, players);
+    const game = new Game(board);
 
     game.turnManager = TurnManager.fromJSON(
       json.currentTurn,
