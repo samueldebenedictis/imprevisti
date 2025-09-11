@@ -1,7 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { useGameStore } from "../../store/game-store";
+import { URL_GAME } from "../../vars";
 import Button from "../components/ui/button";
 import {
   LABEL_CONTINUE_GAME_BUTTON,
@@ -10,8 +12,6 @@ import {
   LABEL_RESTORE_GAME_TITLE,
   LABEL_UPLOAD_FILE,
 } from "../texts";
-import { loadGame, loadGameFromLocalStorage } from "../utils/game-storage";
-import { STORAGE_STATE_KEY_GAME_INSTANCE, URL_GAME } from "../vars";
 
 function Label(props: { children: string; htmlFor: string }) {
   return (
@@ -23,20 +23,21 @@ function Label(props: { children: string; htmlFor: string }) {
 
 export default function RestoreGamePage() {
   const router = useRouter();
-  const [hasSavedGame, setHasSavedGame] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  // Selettori form
+  const hasSavedGame = useGameStore((state) => state.hasSavedGame);
+  const selectedFile = useGameStore((state) => state.selectedFile);
+  const actions = useGameStore((state) => state.actions);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const savedGame = loadGameFromLocalStorage();
-    if (savedGame) {
-      setHasSavedGame(true);
-    }
-  }, []);
+    actions.checkSavedGame();
+  }, [actions]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files?.[0]) {
-      setSelectedFile(event.target.files[0]);
+      actions.setSelectedFile(event.target.files[0]);
     }
   };
 
@@ -44,34 +45,23 @@ export default function RestoreGamePage() {
     fileInputRef.current?.click();
   };
 
-  const handleUploadAndRestore = () => {
-    if (selectedFile) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        try {
-          const jsonString = e.target?.result as string;
-          const loadedGame = loadGame(jsonString);
-          if (loadedGame) {
-            localStorage.setItem(
-              STORAGE_STATE_KEY_GAME_INSTANCE,
-              JSON.stringify(loadedGame),
-            );
-            router.push(URL_GAME);
-          } else {
-            alert("File non valido.");
-          }
-        } catch (error) {
-          alert("File non valido.");
-          console.error("File non valido:", error);
-        }
-      };
-      reader.readAsText(selectedFile);
-    } else {
+  const handleUploadAndRestore = async () => {
+    if (!selectedFile) {
       alert("Per favore, seleziona un file.");
+      return;
+    }
+
+    try {
+      await actions.loadFromFile();
+      router.push(URL_GAME);
+    } catch (error) {
+      alert("File non valido.");
+      console.error("File non valido:", error);
     }
   };
 
   const handleRestoreFromLocalStorage = () => {
+    actions.restoreFromLocalStorage();
     router.push(URL_GAME);
   };
 

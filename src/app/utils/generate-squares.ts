@@ -4,19 +4,50 @@ import type {
   SquareType,
 } from "@/model/square/square";
 
-// Funzione per generare le caselle all'avvio della partita
-// Percentuale di caselle speciali (deve essere comprese tra 0 e 1)
-
+/**
+ * Genera un array di caselle per l'avvio di una nuova partita.
+ *
+ * Questa funzione crea un tabellone di gioco con caselle normali e speciali.
+ * Le caselle speciali vengono distribuite casualmente mantenendo la percentuale
+ * richiesta e rispettando i tipi di caselle abilitati.
+ *
+ * @param numSquares - Il numero totale di caselle da generare (deve essere ≥ 3)
+ * @param squareTypes - Oggetto che specifica quali tipi di caselle speciali sono abilitati
+ * @param specialPercentage - Percentuale di caselle che dovrebbero essere speciali (tra 0 e 1, default 0.4)
+ * @returns Array di oggetti SquareJSON rappresentante tutte le caselle del gioco
+ *
+ * @example
+ * ```typescript
+ * // Genera 20 caselle con 30% di caselle speciali (mime e quiz abilitati)
+ * const squares = generateSquares(20, { mime: true, quiz: true, move: false }, 0.3);
+ *
+ * // Genera 15 caselle con tutte le tipologie speciali abilitate
+ * const squares2 = generateSquares(15, { mime: true, quiz: true, move: true }, 0.5);
+ * ```
+ *
+ * @throws {Error} Se numSquares è minore di 3 (serve almeno START, una casella intermedia, END)
+ */
 export const generateSquares = (
   numSquares: number,
   squareTypes: { mime: boolean; quiz: boolean; move: boolean },
   specialPercentage: number = 0.4,
 ): SquareJSON[] => {
-  // Genera un array di caselle normali
+  // Validazione input
+  if (numSquares < 3) {
+    throw new Error(
+      "Il numero di caselle deve essere almeno 3 (START, intermedia, END)",
+    );
+  }
+
+  if (specialPercentage < 0 || specialPercentage > 1) {
+    throw new Error("La percentuale speciale deve essere compresa tra 0 e 1");
+  }
+
+  // Genera un array di caselle normali come base
   const squares: SquareJSON[] = Array.from(Array(numSquares).keys()).map(
     (i) => ({
       number: i,
-      type: "normal",
+      type: "normal" as SquareType,
     }),
   );
 
@@ -36,17 +67,18 @@ export const generateSquares = (
     ];
   }
 
-  // Controllo le caselle speciali consentite
-  const enabledSpecialTypes: string[] = [];
+  // Determina quali tipi di caselle speciali sono abilitati
+  const enabledSpecialTypes: SquareType[] = [];
   if (squareTypes.mime) enabledSpecialTypes.push("mime");
   if (squareTypes.quiz) enabledSpecialTypes.push("quiz");
   if (squareTypes.move) enabledSpecialTypes.push("move");
 
+  // Se nessun tipo speciale è abilitato, restituisci solo caselle normali
   if (enabledSpecialTypes.length === 0) {
     return squares;
   }
 
-  // Calcolo le caselle speciali da generare
+  // Calcola quante caselle speciali posizionare
   const specialSquaresToPlace = Math.min(
     Math.floor(numSquares * specialPercentage),
     specialSquareIndices.length,
@@ -54,13 +86,16 @@ export const generateSquares = (
 
   let currentSpecialTypeIndex = 0;
   // Fino a quando ci sono caselle speciali inseribili ciclo e creo una casella speciale
-  for (let i = 0; i < specialSquaresToPlace; i++) {
-    if (specialSquareIndices.length === 0) break;
+  for (
+    let i = 0;
+    i < specialSquaresToPlace && specialSquareIndices.length > 0;
+    i++
+  ) {
+    const randomIndex = specialSquareIndices.pop();
+    if (randomIndex === undefined) break;
 
-    const randomIndex = specialSquareIndices.pop() || 0;
-    const typeToAssign: SquareType = enabledSpecialTypes[
-      currentSpecialTypeIndex % enabledSpecialTypes.length
-    ] as SquareType;
+    const typeToAssign =
+      enabledSpecialTypes[currentSpecialTypeIndex % enabledSpecialTypes.length];
 
     // Se la casella è move
     if (typeToAssign === "move") {
@@ -69,13 +104,18 @@ export const generateSquares = (
       while (moveValue === 0) {
         moveValue = Math.floor(Math.random() * 11) - 5;
       }
+
       squares[randomIndex] = {
         number: randomIndex,
         type: typeToAssign,
         moveValue: moveValue,
       } as MoveSquareJSON;
     } else {
-      squares[randomIndex] = { number: randomIndex, type: typeToAssign };
+      // Caselle mime o quiz standard
+      squares[randomIndex] = {
+        number: randomIndex,
+        type: typeToAssign,
+      };
     }
 
     currentSpecialTypeIndex++;

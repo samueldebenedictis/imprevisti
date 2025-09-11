@@ -2,9 +2,13 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { MODAL_CLOSE_BUTTON } from "../../texts";
+import { useSoundSettings } from "../../store/sound-store";
 import { URL_GAME, URL_HOME, URL_RESTORE_GAME } from "../../vars";
-import Button from "./button";
+import { MODAL_CLOSE_BUTTON } from "../texts";
+import { soundManager } from "../utils/sound-manager";
+import Button from "./ui/button";
+import { Divider } from "./ui/divider";
+import { LabelCheckbox } from "./ui/label";
 
 interface DropdownMenuItem {
   text: string;
@@ -17,7 +21,7 @@ const menuItems: DropdownMenuItem[] = [
   { text: "Carica partita", url: URL_RESTORE_GAME },
 ];
 
-export default function DropdownMenu() {
+export default function Menu() {
   const closeFunction = (e: { key: string }) => {
     if (e.key === "Escape" || e.key === " ") {
       closeMenu();
@@ -25,13 +29,21 @@ export default function DropdownMenu() {
   };
 
   const [isOpen, setIsOpen] = useState(false);
+  const { isSoundEnabled, toggleSound } = useSoundSettings();
 
   const toggleMenu = () => {
+    // Genera il suono
+    soundManager.playButtonClick();
+    // Esegue l'azione
     setIsOpen(!isOpen);
   };
 
   const closeMenu = () => {
     setIsOpen(false);
+  };
+
+  const handleSoundToggle = () => {
+    toggleSound();
   };
 
   return (
@@ -61,18 +73,36 @@ export default function DropdownMenu() {
             <h2 className="ui-text-dark ui-text-title mb-4">MENU</h2>
             <div className="mt-6">
               {menuItems.map((item) => (
-                <Link
-                  key={item.url}
-                  href={item.url}
-                  prefetch={false}
-                  onClick={closeMenu}
-                >
-                  <Button color="blue" className="w-full">
+                <Link key={item.url} href={item.url} prefetch={false}>
+                  <Button color="blue" className="w-full" onClick={closeMenu}>
                     {item.text}
                   </Button>
                 </Link>
               ))}
             </div>
+
+            <Divider />
+
+            {/* Sound Settings */}
+            <div className="mt-6 border-gray-200">
+              <h3 className="ui-text-dark ui-text-subtitle mb-4">
+                IMPOSTAZIONI AUDIO
+              </h3>
+              <div className="flex items-center justify-center space-x-3">
+                <input
+                  type="checkbox"
+                  id="sound-toggle"
+                  name="sound-toggle"
+                  checked={isSoundEnabled}
+                  onChange={handleSoundToggle}
+                  className="ui-custom-checkbox mr-2"
+                />
+                <LabelCheckbox htmlFor="sound-toggle">
+                  {isSoundEnabled ? "Suoni attivati" : "Suoni disattivati"}
+                </LabelCheckbox>
+              </div>
+            </div>
+
             <div className="mt-6">
               <Button onClick={closeMenu} color="red" className="w-full">
                 {MODAL_CLOSE_BUTTON}

@@ -12,16 +12,16 @@ import {
 import Pawn from "./pawn";
 import { type Color, colorToCss } from "./ui/color";
 
+type ExtendedSquareType = SquareType | "first" | "last";
 type SquareProps = {
   number: number;
-  squareType: SquareType;
+  squareType: ExtendedSquareType;
   moveValue?: number;
   playersOn?: { name: string; isCurrentPlayerTurn: boolean }[];
-  boardSize?: number;
   isMoving?: boolean;
 };
 
-const typeToColor = (type: SquareType, moveValue?: number): Color => {
+const typeToColor = (type: ExtendedSquareType, moveValue?: number): Color => {
   switch (type) {
     case "mime":
       return "purple";
@@ -34,23 +34,28 @@ const typeToColor = (type: SquareType, moveValue?: number): Color => {
       return "red";
     case "normal":
       return "blue";
+    case "first":
+    case "last":
+      return "teal";
     default:
       return "black";
   }
 };
 
-const text = (n: number, boardSize?: number) => {
+const text = (n: number, squareType: ExtendedSquareType) => {
   const classBase = "ui-text-light m-auto";
-  if (n === 0) {
-    return <span className={`${classBase} ui-text-title`}>{SQUARE_START}</span>;
-  } else if (n + 1 === boardSize) {
-    return <span className={`${classBase} ui-text-title`}>{SQUARE_WIN}</span>;
+  if (squareType === "first" || squareType === "last") {
+    return (
+      <span className={`${classBase} ui-text-title`}>
+        {squareType === "first" ? SQUARE_START : SQUARE_WIN}
+      </span>
+    );
   } else {
     return <span className={`${classBase} ui-text-title text-7xl`}>{n}</span>;
   }
 };
 
-const typeText = (type: SquareType, moveValue: number | undefined) => {
+const typeText = (type: ExtendedSquareType, moveValue: number | undefined) => {
   let displayText = "";
   if (type === "move" && moveValue !== undefined) {
     const sign = moveValue > 0 ? SQUARE_MOVE_FORWARD : SQUARE_MOVE_BACKWARD;
@@ -132,11 +137,8 @@ const background = (number: number) => {
 
 export default function Square(props: SquareProps) {
   const typeColor = typeToColor(props.squareType, props.moveValue);
-  const color = colorToCss(
-    props.number === 0 || props.number + 1 === props.boardSize
-      ? "teal"
-      : typeColor,
-  );
+  const color = colorToCss(typeColor);
+
   const bg = background(props.number);
   return (
     <div className="ui-border-dark relative shadow-xl">
@@ -144,7 +146,7 @@ export default function Square(props: SquareProps) {
         <div className={`h-full ${bg}`}></div>
       </div>
       <div className="absolute top-0 flex h-full w-full text-center">
-        {text(props.number, props.boardSize)}
+        {text(props.number, props.squareType)}
       </div>
       {typeText(props.squareType, props.moveValue)}
       <div className="absolute bottom-0 w-full pr-1 pl-1">

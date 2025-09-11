@@ -1,6 +1,6 @@
 {
   "name": "tesi",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "install": "husky",
@@ -16,7 +16,10 @@
     "e2e:app": "playwright test -c playwright.app.config.ts",
     "e2e:storybook": "playwright test -c playwright.storybook.config.ts",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "patch": "npm version patch",
+    "minor": "npm version minor",
+    "major": "npm version major"
   },
   "dependencies": {
     "@commitlint/cli": "^19.8.1",
@@ -24,7 +27,8 @@
     "husky": "^9.1.7",
     "next": "^15.5.2",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@biomejs/biome": "2.0.6",

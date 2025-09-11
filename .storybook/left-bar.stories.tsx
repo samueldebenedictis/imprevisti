@@ -1,21 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import LeftBar from "../src/app/components/left-bar";
+import { Player } from "../src/model/player";
 
 // Mock Player class
-class MockPlayer {
-  constructor(
-    private id: number,
-    private name: string,
-  ) {}
-
-  getId(): number {
-    return this.id;
-  }
-
-  getName(): string {
-    return this.name;
-  }
-}
+class MockPlayer extends Player {}
 
 // Mock GameJSON
 const mockGameJSON = {

@@ -1,10 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import type { GameJSON } from "@/model/game";
+import { useConfigStore } from "../store/config-store";
+import { MAX_PLAYERS, MAX_SQUARES, MIN_PLAYERS, MIN_SQUARES } from "../vars";
 import Button from "./components/ui/button";
 import Input from "./components/ui/input";
+import { Label, LabelCheckbox } from "./components/ui/label";
 import {
   LABEL_GAME_CONFIGURATION,
   LABEL_MIME,
@@ -17,104 +18,28 @@ import {
   LABEL_SQUARES_NUMBER,
   LABEL_SUBMIT,
 } from "./texts";
-import { generateSquares } from "./utils/generate-squares";
-import {
-  MAX_PLAYERS,
-  MIN_PLAYERS,
-  STORAGE_STATE_KEY_GAME_CONFIG,
-} from "./vars";
-
-function Label(props: { children: string; htmlFor: string }) {
-  return (
-    <label htmlFor={props.htmlFor} className="ui-text-dark ui-text-subtitle">
-      {props.children}
-    </label>
-  );
-}
-
-function LabelCheckbox(props: { children: string; htmlFor: string }) {
-  return (
-    <label htmlFor={props.htmlFor} className="ui-text-dark ui-text-normal">
-      {props.children}
-    </label>
-  );
-}
 
 export default function Home() {
   const router = useRouter();
-  const [numPlayers, setNumPlayers] = useState(2);
-  const [playerNames, setPlayerNames] = useState<string[]>([""]);
-  const [numSquares, setNumSquares] = useState(20);
-  const [squareTypes, setSquareTypes] = useState({
-    mime: true,
-    quiz: true,
-    move: true,
-  });
-  const [specialPercentage, setSpecialPercentage] = useState(40);
 
-  const handleNumPlayersChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value);
-    if (value > 0) {
-      setNumPlayers(value);
-      setPlayerNames(Array(value).fill(""));
-    }
-  };
+  // Selettori store form
+  const numPlayers = useConfigStore((state) => state.numPlayers);
+  const playerNames = useConfigStore((state) => state.playerNames);
+  const numSquares = useConfigStore((state) => state.numSquares);
+  const squareTypes = useConfigStore((state) => state.squareTypes);
+  const specialPercentage = useConfigStore((state) => state.specialPercentage);
+  const actions = useConfigStore((state) => state.actions);
 
-  const handlePlayerNameChange = (index: number, name: string) => {
-    const newPlayerNames = [...playerNames];
-    newPlayerNames[index] = name;
-    setPlayerNames(newPlayerNames);
-  };
-
-  const handleSquareTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSquareTypes({
-      ...squareTypes,
-      [e.target.name]: e.target.checked,
-    });
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const gameConfig = {
-      numPlayers,
-      playerNames,
-      numSquares,
-      squareTypes,
-    };
-    localStorage.setItem(
-      STORAGE_STATE_KEY_GAME_CONFIG,
-      JSON.stringify(gameConfig),
-    );
 
-    const playersJSON = playerNames.map((el, id) => ({
-      id,
-      name: el,
-      turnsToSkip: 0,
-    }));
-
-    const squareJSON = generateSquares(
-      numSquares,
-      squareTypes,
-      specialPercentage / 100,
-    );
-
-    const gameInstance: GameJSON = {
-      currentRound: 1,
-      currentTurn: 0,
-      players: playersJSON,
-      winnerId: undefined,
-      gameEnded: false,
-      board: {
-        playersPosition: playersJSON.map((el) => ({
-          playerId: el.id,
-          position: 0,
-        })),
-        squares: squareJSON,
-      },
-    };
-    localStorage.setItem("gameInstance", JSON.stringify(gameInstance));
-
-    router.push("/game");
+    try {
+      actions.createGame();
+      router.push("/game");
+    } catch (error) {
+      console.error("Failed to create game:", error);
+      // TODO: aggiungere gestione errore
+    }
   };
 
   return (
@@ -132,7 +57,7 @@ export default function Home() {
             min={`${MIN_PLAYERS}`}
             max={`${MAX_PLAYERS}`}
             value={numPlayers}
-            onChange={handleNumPlayersChange}
+            onChange={(e) => actions.setNumPlayers(parseInt(e.target.value))}
             required
           />
         </div>
@@ -147,7 +72,7 @@ export default function Home() {
               id={`playerName${index}`}
               name={`playerName${index}`}
               value={playerNames[index] || ""}
-              onChange={(e) => handlePlayerNameChange(index, e.target.value)}
+              onChange={(e) => actions.setPlayerName(index, e.target.value)}
               required
             />
           </div>
@@ -159,9 +84,10 @@ export default function Home() {
             type="number"
             id="numSquares"
             name="numSquares"
-            min="10"
+            min={`${MIN_SQUARES}`}
+            max={`${MAX_SQUARES}`}
             value={numSquares}
-            onChange={(e) => setNumSquares(parseInt(e.target.value))}
+            onChange={(e) => actions.setNumSquares(parseInt(e.target.value))}
             required
           />
         </div>
@@ -174,7 +100,12 @@ export default function Home() {
               id="mime"
               name="mime"
               checked={squareTypes.mime}
-              onChange={handleSquareTypeChange}
+              onChange={(e) =>
+                actions.setSquareType(
+                  e.target.name as keyof typeof squareTypes,
+                  e.target.checked,
+                )
+              }
               className="ui-custom-checkbox mr-2"
             />
             <LabelCheckbox htmlFor="mime">{LABEL_MIME}</LabelCheckbox>
@@ -185,7 +116,12 @@ export default function Home() {
               id="quiz"
               name="quiz"
               checked={squareTypes.quiz}
-              onChange={handleSquareTypeChange}
+              onChange={(e) =>
+                actions.setSquareType(
+                  e.target.name as keyof typeof squareTypes,
+                  e.target.checked,
+                )
+              }
               className="ui-custom-checkbox mr-2"
             />
             <LabelCheckbox htmlFor="quiz">{LABEL_QUIZ}</LabelCheckbox>
@@ -196,7 +132,12 @@ export default function Home() {
               id="move"
               name="move"
               checked={squareTypes.move}
-              onChange={handleSquareTypeChange}
+              onChange={(e) =>
+                actions.setSquareType(
+                  e.target.name as keyof typeof squareTypes,
+                  e.target.checked,
+                )
+              }
               className="ui-custom-checkbox mr-2"
             />
             <LabelCheckbox htmlFor="move">{LABEL_MOVE}</LabelCheckbox>
@@ -214,7 +155,9 @@ export default function Home() {
             min="0"
             max="100"
             value={specialPercentage}
-            onChange={(e) => setSpecialPercentage(parseInt(e.target.value))}
+            onChange={(e) =>
+              actions.setSpecialPercentage(parseInt(e.target.value))
+            }
             className="w-full"
           />
         </div>

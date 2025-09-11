@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { GameJSON } from "@/model/game";
 import type { Player } from "@/model/player";
+import { URL_RESTORE_GAME } from "../../vars";
 import {
   LABEL_DELETE_GAME_BUTTON,
   LABEL_RESTORE_GAME_BUTTON,
@@ -15,7 +16,6 @@ import {
   LEFT_BAR_WINNER,
 } from "../texts";
 import { saveGame } from "../utils/game-storage";
-import { URL_RESTORE_GAME } from "../vars";
 import DiceRollDisplay from "./dice-roll-display";
 import Button from "./ui/button";
 

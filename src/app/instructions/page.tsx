@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { MAX_PLAYERS, MIN_PLAYERS, URL_HOME } from "../../vars";
 import Button from "../components/ui/button";
-import { MAX_PLAYERS, MIN_PLAYERS, URL_HOME } from "../vars";
 
 export default function InstructionsPage() {
   const router = useRouter();

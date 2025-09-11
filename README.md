@@ -16,11 +16,14 @@ https://samueldebenedictis.github.io/tesi/
 - **Gioco interattivo**: Pagina del gioco con tabellone, pedine e stato del gioco
 - **Istruzioni**: Regole del gioco
 - **Salvataggio partite**: Sistema di salvataggio e caricamento della partita (la partita viene salvata in formato JSON). Lo stato della partita è conservato nello StorageState del browser.
+- **Effetti sonori**: Suoni di feedback per azioni dei giocatori (lancio dado, caselle speciali, combattimenti)
+- **State management avanzato**: Utilizzo di Zustand per una gestione efficiente dello stato dell'applicazione
 
 ## Tecnologie Utilizzate
 
 - **Next.js 15**: Framework React
 - **TypeScript**: Tipizzazione per JavaScript
+- **Zustand**: State management library
 - **Tailwind CSS**: Framework CSS
 - **Biome**: Linter e formatter
 - **Vitest**: Framework per unit test
@@ -114,6 +117,11 @@ src/
 │   ├── deck/              # Sistema di carte (mimo, quiz)
 │   ├── managers/          # Gestori di gioco (turni, battaglie, eccetera)
 │   └── square/            # Tipi di caselle della plancia
+├── store/                 # Zustand
+│   ├── config-store.ts    # Game configuration state
+│   └── game-store.ts      # Game state management
+├── utils/                 # Funzioni di utility
+│   └── sound-manager.ts   # Audio effects manager
 └── tests/                 # Test automatici
     ├── e2e/               # Test end-to-end
     └── vitest/            # Test unitari
