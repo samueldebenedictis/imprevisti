@@ -1,4 +1,4 @@
-name: 'Version tag'
+name: 'Version - Tag'
 
 on:
   push:
@@ -28,6 +28,7 @@ jobs:
           major-wording:  'major'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_USER: samueldebenedictis
       - name: 'cat package.json'
         run: cat ./package.json
       - name: 'Output Step'
