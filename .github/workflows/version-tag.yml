@@ -24,8 +24,8 @@ jobs:
         uses: 'phips28/gh-action-bump-version@master'
         with:
           tag-prefix: 'v'
-          minor-wording:  'add,new'
-          major-wording:  'major'
+          minor-wording: 'MINOR'
+          major-wording: 'MAJOR'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_USER: samueldebenedictis
