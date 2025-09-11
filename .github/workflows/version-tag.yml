@@ -9,6 +9,8 @@ jobs:
   bump-version:
     name: 'Bump Version on main'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: 'Checkout source code'
@@ -24,7 +26,6 @@ jobs:
           tag-prefix: 'v'
           minor-wording:  'add,new'
           major-wording:  'major'
-          patch-wording:  'patch,fix' 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: 'cat package.json'
