@@ -1,18 +1,13 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import TurnResultModal from "../src/app/components/turn-result-modal";
 import { Battle } from "../src/model/battle";
-import { Mime, Quiz } from "../src/model/deck";
+import { Card, Mime, Quiz } from "../src/model/deck";
 import { Player } from "../src/model/player";
 
 // Mock classes
 class MockPlayer extends Player {}
 class MockBattle extends Battle {}
-class MockCard {
-  constructor(
-    public cardTitle: string,
-    public cardText: string,
-  ) {}
-}
+class MockCard extends Card {}
 class MockQuiz extends Quiz {}
 class MockMime extends Mime {}
 

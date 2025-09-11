@@ -57,7 +57,6 @@ export default function Page() {
   );
 
   const size = game ? game.getBoard().getSquares().length : 0;
-
   const squaresC = useMemo(
     () =>
       game
@@ -67,7 +66,12 @@ export default function Page() {
             .map((el, index) =>
               SquareC({
                 number: el.getNumber(),
-                squareType: el.getType(),
+                squareType:
+                  index === 0
+                    ? "first"
+                    : index === size - 1
+                      ? "last"
+                      : el.getType(),
                 moveValue: el instanceof MoveSquare ? el.moveValue : undefined,
                 playersOn: game
                   .getBoard()
@@ -77,12 +81,11 @@ export default function Page() {
                     isCurrentPlayerTurn:
                       player.getName() === currentPlayer?.getName(),
                   })),
-                boardSize: size,
                 isMoving: isRolling,
               }),
             )
         : [],
-    [game, size, isRolling, currentPlayer?.getName],
+    [game, isRolling, currentPlayer?.getName, size],
   );
 
   // Render del gioco

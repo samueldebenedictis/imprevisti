@@ -64,16 +64,14 @@ export const MoveSquareNegative: Story = {
 export const StartSquare: Story = {
   args: {
     number: 0,
-    squareType: "normal",
-    boardSize: 25,
+    squareType: "first",
   },
 };
 
 export const WinSquare: Story = {
   args: {
     number: 24,
-    squareType: "normal",
-    boardSize: 25,
+    squareType: "last",
   },
 };
 

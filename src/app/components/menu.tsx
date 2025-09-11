@@ -21,7 +21,7 @@ const menuItems: DropdownMenuItem[] = [
   { text: "Carica partita", url: URL_RESTORE_GAME },
 ];
 
-export default function DropdownMenu() {
+export default function Menu() {
   const closeFunction = (e: { key: string }) => {
     if (e.key === "Escape" || e.key === " ") {
       closeMenu();
