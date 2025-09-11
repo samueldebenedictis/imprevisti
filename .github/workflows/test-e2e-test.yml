@@ -19,6 +19,8 @@ jobs:
       run: npm i
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
+    - name: Build app
+      run: npm run build
     - name: Run Playwright tests
       run: npx playwright test -c playwright.app.config.ts
     - uses: actions/upload-artifact@v4
