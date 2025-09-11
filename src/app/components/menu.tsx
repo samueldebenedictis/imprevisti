@@ -4,7 +4,16 @@ import Link from "next/link";
 import { useState } from "react";
 import { useSoundSettings } from "../../store/sound-store";
 import { URL_GAME, URL_HOME, URL_RESTORE_GAME } from "../../vars";
-import { MODAL_CLOSE_BUTTON } from "../texts";
+import {
+  LABEL_AUDIO_SETTINGS,
+  LABEL_CONTINUE_GAME,
+  LABEL_LOAD_GAME,
+  LABEL_MENU,
+  LABEL_NEW_GAME,
+  LABEL_SOUNDS_DISABLED,
+  LABEL_SOUNDS_ENABLED,
+  MODAL_CLOSE_BUTTON,
+} from "../texts";
 import { soundManager } from "../utils/sound-manager";
 import Button from "./ui/button";
 import { Divider } from "./ui/divider";
@@ -16,9 +25,9 @@ interface DropdownMenuItem {
 }
 
 const menuItems: DropdownMenuItem[] = [
-  { text: "Continua partita", url: URL_GAME },
-  { text: "Nuova partita", url: URL_HOME },
-  { text: "Carica partita", url: URL_RESTORE_GAME },
+  { text: LABEL_CONTINUE_GAME, url: URL_GAME },
+  { text: LABEL_NEW_GAME, url: URL_HOME },
+  { text: LABEL_LOAD_GAME, url: URL_RESTORE_GAME },
 ];
 
 export default function Menu() {
@@ -53,7 +62,7 @@ export default function Menu() {
         onClick={toggleMenu}
         className="ui-text-title ui-animation-scale ui-text-light hover:underline"
       >
-        MENU
+        {LABEL_MENU}
       </button>
       {isOpen && (
         <div
@@ -70,7 +79,7 @@ export default function Menu() {
             role="dialog"
             aria-modal="true"
           >
-            <h2 className="ui-text-dark ui-text-title mb-4">MENU</h2>
+            <h2 className="ui-text-dark ui-text-title mb-4">{LABEL_MENU}</h2>
             <div className="mt-6">
               {menuItems.map((item) => (
                 <Link key={item.url} href={item.url} prefetch={false}>
@@ -86,7 +95,7 @@ export default function Menu() {
             {/* Sound Settings */}
             <div className="mt-6 border-gray-200">
               <h3 className="ui-text-dark ui-text-subtitle mb-4">
-                IMPOSTAZIONI AUDIO
+                {LABEL_AUDIO_SETTINGS}
               </h3>
               <div className="flex items-center justify-center space-x-3">
                 <input
@@ -98,7 +107,9 @@ export default function Menu() {
                   className="ui-custom-checkbox mr-2"
                 />
                 <LabelCheckbox htmlFor="sound-toggle">
-                  {isSoundEnabled ? "Suoni attivati" : "Suoni disattivati"}
+                  {isSoundEnabled
+                    ? LABEL_SOUNDS_ENABLED
+                    : LABEL_SOUNDS_DISABLED}
                 </LabelCheckbox>
               </div>
             </div>
