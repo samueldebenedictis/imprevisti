@@ -1,1 +1,8 @@
+branch_name=$(git rev-parse --abbrev-ref HEAD)
+
+if [ "$branch_name" = "main" ]; then
+    echo "Error: You are not allowed to push directly to the main branch."
+    exit 1
+fi
+
 npx biome check

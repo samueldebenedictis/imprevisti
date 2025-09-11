@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { URL_INSTRUCTION } from "../../vars";
+import { LABEL_BACK, LABEL_INSTRUCTIONS } from "../texts";
 import { soundManager } from "../utils/sound-manager";
 import Menu from "./menu";
 import { colorToCss } from "./ui/color";
@@ -43,10 +44,10 @@ export default function Header() {
             onClick={handleBack}
             className={headerTextClasses}
           >
-            INDIETRO
+            {LABEL_BACK}
           </button>
         ) : (
-          <HeaderLink text="ISTRUZIONI" url={URL_INSTRUCTION} />
+          <HeaderLink text={LABEL_INSTRUCTIONS} url={URL_INSTRUCTION} />
         )}
       </nav>
     </header>

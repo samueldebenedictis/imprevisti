@@ -8,8 +8,12 @@ import Button from "../components/ui/button";
 import {
   LABEL_CONTINUE_GAME_BUTTON,
   LABEL_CONTINUE_GAME_TITLE,
+  LABEL_INVALID_FILE,
+  LABEL_LOAD_AND_RESUME,
   LABEL_NO_SAVE_NO_STORAGE,
   LABEL_RESTORE_GAME_TITLE,
+  LABEL_SELECT_FILE,
+  LABEL_SELECT_FILE_PLEASE,
   LABEL_UPLOAD_FILE,
 } from "../texts";
 
@@ -47,7 +51,7 @@ export default function RestoreGamePage() {
 
   const handleUploadAndRestore = async () => {
     if (!selectedFile) {
-      alert("Per favore, seleziona un file.");
+      alert(LABEL_SELECT_FILE_PLEASE);
       return;
     }
 
@@ -55,7 +59,7 @@ export default function RestoreGamePage() {
       await actions.loadFromFile();
       router.push(URL_GAME);
     } catch (error) {
-      alert("File non valido.");
+      alert(LABEL_INVALID_FILE);
       console.error("File non valido:", error);
     }
   };
@@ -86,7 +90,7 @@ export default function RestoreGamePage() {
           onClick={handleCustomButtonClick}
           className="ui-text-dark ui-border-focus ui-text-normal mt-2 w-full p-2"
         >
-          {selectedFile ? selectedFile.name : "Seleziona un file..."}
+          {selectedFile ? selectedFile.name : LABEL_SELECT_FILE}
         </button>
         <Button
           color="blue"
@@ -94,7 +98,7 @@ export default function RestoreGamePage() {
           disabled={!selectedFile}
           className="w-full"
         >
-          Carica e riprendi
+          {LABEL_LOAD_AND_RESUME}
         </Button>
       </div>
 

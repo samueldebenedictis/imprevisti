@@ -98,7 +98,7 @@ describe("Mime square", () => {
 
     const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
     const board = new Board([square1, mimeSquare, square2], players);
-    const game = new Game(board, players, 1);
+    const game = new Game(board, 1);
 
     expect(mimeSquare.getNumber()).toBe(1);
     expect(mimeSquare).toBeInstanceOf(SpecialSquare);
@@ -123,7 +123,7 @@ describe("Mime square", () => {
 
     const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
     const board = new Board([square1, mimeSquare, square2], players);
-    const game = new Game(board, players, 1);
+    const game = new Game(board, 1);
 
     const renzo = game.getPlayers()[0];
     const lucia = game.getPlayers()[1];

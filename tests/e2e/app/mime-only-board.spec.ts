@@ -9,7 +9,7 @@ test.beforeEach(async ({ page }) => {
   const squares = Array.from({ length: 10 }, (_, i) => new MimeSquare(i));
   const players = ["Alice", "Bob"].map((name, i) => new Player(i, name));
   const board = new Board(squares, players);
-  const game = new Game(board, players);
+  const game = new Game(board);
 
   const gameData = game.toJSON();
   await addZustandInitScript(page, gameData);

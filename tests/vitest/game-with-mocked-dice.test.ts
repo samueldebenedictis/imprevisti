@@ -18,11 +18,14 @@ vi.mock("@/model/dice", () => {
 });
 
 import type { Battle } from "@/model/battle";
-import { Board, SquaresBuilder } from "@/model/board";
+import { Board } from "@/model/board";
 import { Dice } from "@/model/dice";
 import { Game } from "@/model/game";
 import { Player } from "@/model/player";
 import { MoveSquare, Square } from "@/model/square";
+
+const getSquares = (n: number) =>
+  Array.from(Array(n).keys()).map((_, i) => new Square(i));
 
 describe("Game with mocked dice", () => {
   afterAll(() => {
@@ -30,10 +33,10 @@ describe("Game with mocked dice", () => {
   });
 
   test("Should always return 1 from mocked Dice", () => {
-    const squares = new SquaresBuilder().setBoardSize(10).build();
+    const squares = getSquares(10);
     const players = ["Lucia", "Renzo"].map((el, i) => new Player(i, el));
     const board = new Board(squares, players);
-    const game = new Game(board, players);
+    const game = new Game(board);
 
     expect(Dice).toHaveBeenCalledWith(6);
 
@@ -75,7 +78,7 @@ describe("Game with mocked dice", () => {
     ];
     const players = ["Lucia", "Renzo"].map((el, i) => new Player(i, el));
     const board = new Board(s, players);
-    const game = new Game(board, players);
+    const game = new Game(board);
     expect(Dice).toHaveBeenCalledWith(6);
 
     expect(game.getBoard().getPlayerPosition(players[0])).toBe(0);
@@ -109,7 +112,7 @@ describe("Game with mocked dice", () => {
 
     const players = ["Lucia", "Renzo"].map((el, i) => new Player(i, el));
     const board = new Board(s, players);
-    const game = new Game(board, players);
+    const game = new Game(board);
     expect(Dice).toHaveBeenCalledWith(6);
 
     expect(game.getBoard().getPlayerPosition(players[0])).toBe(0);
@@ -137,7 +140,7 @@ describe("Game with mocked dice", () => {
 
     const players = ["Lucia", "Renzo"].map((el, i) => new Player(i, el));
     const board = new Board(s, players);
-    const game = new Game(board, players);
+    const game = new Game(board);
 
     expect(game.getBoard().getPlayerPosition(players[0])).toBe(0);
 
@@ -151,12 +154,12 @@ describe("Game with mocked dice", () => {
   });
 
   test("Battle after battle", () => {
-    const squares = new SquaresBuilder().setBoardSize(10).build();
+    const squares = getSquares(10);
     const players = ["Lucia", "Renzo", "Samuel"].map(
       (el, i) => new Player(i, el),
     );
     const board = new Board(squares, players);
-    const game = new Game(board, players);
+    const game = new Game(board);
 
     expect(game.getBoard().getPlayerPosition(players[0])).toBe(0);
     expect(game.getBoard().getPlayerPosition(players[1])).toBe(0);

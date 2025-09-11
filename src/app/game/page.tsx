@@ -11,6 +11,7 @@ import LeftBar from "../components/left-bar";
 import SquareC from "../components/square";
 import DiceResultModal from "../components/turn-result-modal";
 import Button from "../components/ui/button";
+import { LABEL_BACK_TO_HOME, LABEL_NO_GAME_FOUND } from "../texts";
 
 export default function Page() {
   // Game state store
@@ -93,9 +94,9 @@ export default function Page() {
     return (
       <ClientOnly>
         <div className="flex h-96 flex-col items-center justify-center">
-          <p className="ui-text-title m-4">Nessuna partita trovata.</p>
+          <p className="ui-text-title m-4">{LABEL_NO_GAME_FOUND}</p>
           <Button onClick={() => redirect(URL_HOME)} color="blue">
-            Torna alla Home
+            {LABEL_BACK_TO_HOME}
           </Button>
         </div>
       </ClientOnly>

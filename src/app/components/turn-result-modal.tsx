@@ -4,6 +4,7 @@ import type { Battle } from "@/model/battle";
 import type { Mime, Quiz } from "@/model/deck";
 import type { Player } from "@/model/player";
 import {
+  LABEL_SELECT_PLAYER,
   MODAL_BATTLE_TITLE,
   MODAL_BATTLE_WINNER_SELECTION,
   MODAL_CLOSE_BUTTON,
@@ -350,7 +351,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                         label: player.getName(),
                       }))}
                     className="m-2"
-                    placeholder="Seleziona un giocatore"
+                    placeholder={LABEL_SELECT_PLAYER}
                   />
                   <Button
                     onClick={() =>

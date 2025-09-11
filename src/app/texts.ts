@@ -74,9 +74,40 @@ export const SQUARE_MIME = "MIMO";
 
 // Turn Result Modal
 export const MODAL_SPECIAL_EFFECT = "Effetto Speciale!";
-export const MODAL_SPECIAL_SQUARE_MESSAGE =
-  "Sei atterrato su una casella speciale! Ti muovi ";
+export const MODAL_SPECIAL_SQUARE_MESSAGE = "Casella speciale! Ti muovi ";
 export const MODAL_MOVE_FORWARD = "avanti di ";
 export const MODAL_MOVE_BACKWARD = "indietro di ";
 export const MODAL_TOTAL_MOVEMENT = "Movimento totale:";
 export const MODAL_NEW_POSITION = "Nuova posizione:";
+
+// Homepage additional
+export const LABEL_NO_GAME_FOUND = "Nessuna partita trovata.";
+export const LABEL_BACK_TO_HOME = "Torna alla Home";
+
+// Restore game additional
+export const LABEL_SELECT_FILE_PLEASE = "Per favore, seleziona un file.";
+export const LABEL_INVALID_FILE = "File non valido.";
+export const LABEL_LOAD_AND_RESUME = "Carica e riprendi";
+export const LABEL_SELECT_FILE = "Seleziona un file...";
+export const LABEL_UPLOAD_SAVE_FILE = "Carica un file di salvataggio:";
+export const LABEL_RESUME_LAST_LOCAL_SAVE =
+  "Oppure riprendi dall'ultima partita salvata localmente:";
+export const LABEL_NO_LOCAL_SAVE_NO_FILE =
+  "Nessuna partita salvata localmente e nessun file selezionato.";
+export const LABEL_SELECT_PLAYER = "Seleziona un giocatore";
+
+// Header
+export const LABEL_MENU = "MENU";
+export const LABEL_BACK = "INDIETRO";
+export const LABEL_INSTRUCTIONS = "ISTRUZIONI";
+
+// Menu
+export const LABEL_AUDIO_SETTINGS = "IMPOSTAZIONI AUDIO";
+export const LABEL_SOUNDS_ENABLED = "Suoni attivati";
+export const LABEL_SOUNDS_DISABLED = "Suoni disattivati";
+export const LABEL_CONTINUE_GAME = "Continua partita";
+export const LABEL_NEW_GAME = "Nuova partita";
+export const LABEL_LOAD_GAME = "Carica partita";
+
+// Pawn
+export const LABEL_OTHER_PLAYERS = "giocatori";

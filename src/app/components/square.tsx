@@ -2,6 +2,7 @@
 
 import type { SquareType } from "@/model/square/square";
 import {
+  LABEL_OTHER_PLAYERS,
   SQUARE_MIME,
   SQUARE_MOVE_BACKWARD,
   SQUARE_MOVE_FORWARD,
@@ -119,7 +120,7 @@ const playersOn = (
       // Viene mostrati il count
       pawns.push(
         Pawn({
-          name: `${otherPlayers.length.toString()} giocatori`,
+          name: `${otherPlayers.length.toString()} ${LABEL_OTHER_PLAYERS}`,
           color: "yellow",
           isCurrentPlayerTurn: false,
           isMoving: false, // Gli altri giocatori non si animano

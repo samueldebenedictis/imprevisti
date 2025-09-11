@@ -1,6 +1,7 @@
-import { Board, SquaresBuilder } from "@/model/board";
+import { Board } from "@/model/board";
 import { Game } from "@/model/game";
 import { Player } from "@/model/player";
+import { Square } from "@/model/square";
 import { expect, test } from "./fixtures";
 import { GamePage } from "./pages/game-page";
 
@@ -33,10 +34,10 @@ test("Fill form", async ({ homePage }) => {
 
 test("Player skip turn modal", async ({ page }) => {
   const gamePage = new GamePage(page);
-  const squares = new SquaresBuilder().setBoardSize(10).build();
+  const squares = Array.from(Array(10).keys()).map((_, i) => new Square(i));
   const players = ["Alice", "Bob"].map((name, i) => new Player(i, name));
   const board = new Board(squares, players);
-  const game = new Game(board, players);
+  const game = new Game(board);
 
   players[0].skipNextTurn();
   const gameData = game.toJSON();
