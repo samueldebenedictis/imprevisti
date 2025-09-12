@@ -44,9 +44,6 @@ next-env.d.ts
 # Mandatory for build and deploy to GitHub Pages
 # package-lock.json
 
-# docs
-.docs
-
 # Playwright
 node_modules/
 /test-results/
