@@ -68,9 +68,7 @@ export class Board {
         return position;
       }
     }
-
-    // TODO: se ritorna 0 c'è un bug, fallback
-    return 0;
+    throw Error("Not found");
   };
 
   /**
@@ -91,12 +89,9 @@ export class Board {
     }
 
     if (!playerFound) {
-      // If the player instance was not found (e.g., a new instance with the same ID), add it.
+      // If the player instance was not found throw an error
       // This case should ideally not happen if GameModel.fromJSON correctly re-hydrates player instances.
-      this.playersPosition.set(player, position);
-      console.warn(
-        `[Board.movePlayer] Added new player instance ${player.getName()} (ID: ${player.getId()}) to map. This might indicate an instance mismatch.`,
-      );
+      throw Error("Not found");
     }
   };
 

@@ -79,4 +79,52 @@ describe("Board", () => {
 
     expect(board.getPlayerPosition(player1)).toBe(2);
   });
+
+  test("movePlayer throws error for non-existent player", () => {
+    const squares = [new Square(0), new Square(1), new Square(2)];
+    const player1 = new Player(0, "Lucia");
+    const player2 = new Player(1, "Mario");
+
+    // Create board with only player1 in the position map
+    const playersPositionMap = new Map([[player1, 0]]);
+    const board = new Board(squares, [player1, player2], playersPositionMap);
+
+    // Try to move player2 who exists in players array but not in position map
+    let errorMove = false;
+    try {
+      board.movePlayer(player2, 2);
+    } catch (error) {
+      errorMove = true;
+      expect((error as Error).message).toBe("Not found");
+    }
+    expect(errorMove).toBe(true);
+
+    let errorGet = false;
+    try {
+      board.getPlayerPosition(player2);
+    } catch (error) {
+      errorGet = true;
+      expect((error as Error).message).toBe("Not found");
+    }
+    expect(errorGet).toBe(true);
+  });
+
+  test("fromJSON handles missing player gracefully", () => {
+    const json = {
+      squares: [
+        { number: 0, type: "normal" as const },
+        { number: 1, type: "normal" as const },
+      ],
+      playersPosition: [
+        { playerId: 0, position: 1 },
+        { playerId: 999, position: 2 }, // Player ID that doesn't exist
+      ],
+    };
+    const players = [new Player(0, "Lucia")]; // Only player 0 exists
+    const board = Board.fromJSON(json, players);
+
+    // Should only set position for existing player
+    expect(board.getPlayerPosition(players[0])).toBe(1);
+    // The non-existent player position should not be set
+  });
 });
