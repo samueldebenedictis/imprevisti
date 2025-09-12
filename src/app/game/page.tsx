@@ -142,6 +142,7 @@ export default function Page() {
           onResolveBattle={actions.resolveBattle}
           onResolveMime={actions.resolveMime}
           onResolveQuiz={actions.resolveQuiz}
+          onResolveDraw={actions.resolveDraw}
           allPlayers={game.getPlayers()}
           currentPlayerName={playerWhoRolledName || ""}
           startPosition={startPosition}

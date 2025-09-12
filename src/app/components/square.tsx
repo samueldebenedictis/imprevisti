@@ -3,6 +3,7 @@
 import type { SquareType } from "@/model/square/square";
 import {
   LABEL_OTHER_PLAYERS,
+  SQUARE_DRAW,
   SQUARE_MIME,
   SQUARE_MOVE_BACKWARD,
   SQUARE_MOVE_FORWARD,
@@ -28,6 +29,8 @@ const typeToColor = (type: ExtendedSquareType, moveValue?: number): Color => {
       return "purple";
     case "quiz":
       return "yellow";
+    case "draw":
+      return "orange";
     case "move":
       if (moveValue && moveValue > 0) {
         return "green";
@@ -65,6 +68,8 @@ const typeText = (type: ExtendedSquareType, moveValue: number | undefined) => {
     displayText = SQUARE_QUIZ;
   } else if (type === "mime") {
     displayText = SQUARE_MIME;
+  } else if (type === "draw") {
+    displayText = SQUARE_DRAW;
   } else {
     return null;
   }

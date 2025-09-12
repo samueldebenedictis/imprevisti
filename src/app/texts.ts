@@ -10,6 +10,7 @@ export const LABEL_SPECIAL_PERCENTAGE = (n: number) =>
   `Percentuale di caselle speciali: ${n}%`;
 export const LABEL_MIME = "Caselle mimo";
 export const LABEL_QUIZ = "Caselle quiz";
+export const LABEL_DRAW = "Caselle disegno";
 export const LABEL_MOVE = "Caselle movimento";
 export const LABEL_SUBMIT = "Inizia gioco";
 
@@ -71,6 +72,7 @@ export const SQUARE_MOVE_FORWARD = " AVANTI +";
 export const SQUARE_MOVE_BACKWARD = "INDIETRO ";
 export const SQUARE_QUIZ = "QUIZ";
 export const SQUARE_MIME = "MIMO";
+export const SQUARE_DRAW = "DISEGNO";
 
 // Turn Result Modal
 export const MODAL_SPECIAL_EFFECT = "Effetto Speciale!";

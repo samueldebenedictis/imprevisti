@@ -1,7 +1,7 @@
 import type React from "react";
 import { useEffect, useState } from "react";
 import type { Battle } from "@/model/battle";
-import type { Mime, Quiz } from "@/model/deck";
+import type { Draw, Mime, Quiz } from "@/model/deck";
 import type { Player } from "@/model/player";
 import {
   LABEL_SELECT_PLAYER,
@@ -40,10 +40,11 @@ interface DiceResultModalProps {
   onClose: () => void;
   diceResult: number;
   actionType: string | null;
-  actionData: Battle | Mime | Quiz | null;
+  actionData: Battle | Mime | Quiz | Draw | null;
   onResolveBattle?: (winnerId: number) => void;
   onResolveMime?: (success: boolean, guessPlayerId?: number) => void;
   onResolveQuiz?: (success: boolean) => void;
+  onResolveDraw?: (success: boolean, guessPlayerId?: number) => void;
   allPlayers: Player[];
   currentPlayerName: string;
   startPosition?: number;
@@ -64,6 +65,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
   onResolveBattle,
   onResolveMime,
   onResolveQuiz,
+  onResolveDraw,
   allPlayers,
   currentPlayerName,
   startPosition,
@@ -74,6 +76,9 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
   const [showMimeTopic, setShowMimeTopic] = useState(false);
   const [mimeGuessed, setMimeGuessed] = useState<boolean | null>(null);
   const [mimeGuesserId, setMimeGuesserId] = useState<number | null>(null);
+  const [showDrawWord, setShowDrawWord] = useState(false);
+  const [drawGuessed, setDrawGuessed] = useState<boolean | null>(null);
+  const [drawGuesserId, setDrawGuesserId] = useState<number | null>(null);
 
   // Reset della parte relativa al mimo
   useEffect(() => {
@@ -81,6 +86,15 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
       setShowMimeTopic(false);
       setMimeGuessed(null);
       setMimeGuesserId(null);
+    }
+  }, [isOpen, actionType]);
+
+  // Reset della parte relativa al disegno
+  useEffect(() => {
+    if (isOpen && actionType === "draw") {
+      setShowDrawWord(false);
+      setDrawGuessed(null);
+      setDrawGuesserId(null);
     }
   }, [isOpen, actionType]);
 
@@ -120,6 +134,23 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
     // Mimo indovinato e giocatore selezionato
     if (onResolveMime) {
       onResolveMime(success, guesserId);
+    }
+    onClose();
+  };
+
+  const handleDrawResolution = (success: boolean, guesserId?: number) => {
+    setDrawGuessed(success);
+    setDrawGuesserId(guesserId || null);
+
+    // Disegno indovinato ma giocatore che ha indovinato non ancora selezionato
+    if (success && guesserId === undefined) {
+      return;
+    }
+
+    // Disegno non indovinato o
+    // Disegno indovinato e giocatore selezionato
+    if (onResolveDraw) {
+      onResolveDraw(success, guesserId);
     }
     onClose();
   };
@@ -365,6 +396,101 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                     disabled={mimeGuesserId === null}
                   >
                     {MODAL_MIME_CONFIRM}
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+
+        {actionType === "draw" &&
+          actionData &&
+          (actionData as Draw).cardTopic && (
+            <div className="mt-4">
+              <H3>Disegno</H3>
+              {!showDrawWord && (
+                <Button
+                  onClick={() => setShowDrawWord(true)}
+                  color="purple"
+                  className="mx-auto"
+                >
+                  Mostra parola da disegnare
+                </Button>
+              )}
+              {showDrawWord && (
+                <>
+                  <p className="mb-1 text-xl">
+                    Parola da disegnare:{" "}
+                    <span className="font-bold">
+                      {(actionData as Draw).cardTopic.cardTitle}
+                    </span>
+                  </p>
+                  <Button
+                    onClick={() => setShowDrawWord(false)}
+                    color="purple"
+                    className="mx-auto"
+                  >
+                    Nascondi parola
+                  </Button>
+                  <div className="mt-2 flex justify-center space-x-4">
+                    <Button
+                      onClick={() =>
+                        handleDrawResolution(
+                          true,
+                          drawGuesserId !== null ? drawGuesserId : undefined,
+                        )
+                      }
+                      color="green"
+                    >
+                      Indovinato
+                    </Button>
+                    <Button
+                      onClick={() => handleDrawResolution(false)}
+                      color="red"
+                    >
+                      Non indovinato
+                    </Button>
+                  </div>
+                </>
+              )}
+              {drawGuessed !== null && drawGuessed && (
+                <div className="mt-2">
+                  <H3>Chi ha indovinato?</H3>
+                  <Select
+                    value={
+                      drawGuesserId !== null ? drawGuesserId.toString() : ""
+                    }
+                    onChange={(e) => setDrawGuesserId(Number(e.target.value))}
+                    options={allPlayers
+                      .filter((player) => {
+                        // Trova il drawPlayer corrente in allPlayers per evitare problemi di riferimento
+                        const currentDrawPlayer = allPlayers.find(
+                          (p) =>
+                            p.getId() ===
+                            (actionData as Draw).drawPlayer.getId(),
+                        );
+                        return currentDrawPlayer
+                          ? player.getId() !== currentDrawPlayer.getId()
+                          : true;
+                      })
+                      .map((player) => ({
+                        value: player.getId(),
+                        label: player.getName(),
+                      }))}
+                    className="m-2"
+                    placeholder={LABEL_SELECT_PLAYER}
+                  />
+                  <Button
+                    onClick={() =>
+                      handleDrawResolution(
+                        true,
+                        drawGuesserId !== null ? drawGuesserId : undefined,
+                      )
+                    }
+                    color="blue"
+                    className="mx-auto"
+                    disabled={drawGuesserId === null}
+                  >
+                    Conferma
                   </Button>
                 </div>
               )}

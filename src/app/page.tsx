@@ -7,6 +7,7 @@ import Button from "./components/ui/button";
 import Input from "./components/ui/input";
 import { Label, LabelCheckbox } from "./components/ui/label";
 import {
+  LABEL_DRAW,
   LABEL_GAME_CONFIGURATION,
   LABEL_MIME,
   LABEL_MOVE,
@@ -125,6 +126,22 @@ export default function Home() {
               className="ui-custom-checkbox mr-2"
             />
             <LabelCheckbox htmlFor="quiz">{LABEL_QUIZ}</LabelCheckbox>
+          </div>
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="draw"
+              name="draw"
+              checked={squareTypes.draw}
+              onChange={(e) =>
+                actions.setSquareType(
+                  e.target.name as keyof typeof squareTypes,
+                  e.target.checked,
+                )
+              }
+              className="ui-custom-checkbox mr-2"
+            />
+            <LabelCheckbox htmlFor="draw">{LABEL_DRAW}</LabelCheckbox>
           </div>
           <div className="flex items-center">
             <input

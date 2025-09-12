@@ -23,6 +23,7 @@ export interface GameConfig {
     mime: boolean;
     quiz: boolean;
     move: boolean;
+    draw: boolean;
   };
   specialPercentage: number;
 }
@@ -60,6 +61,7 @@ const defaultConfig: GameConfig = {
     mime: true,
     quiz: true,
     move: true,
+    draw: true,
   },
   specialPercentage: DEFAULT_SPECIAL_PERCENTAGE_SQUARES,
 };

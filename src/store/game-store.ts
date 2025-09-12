@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { Battle } from "@/model/battle";
+import { Draw } from "@/model/deck/draw";
 import { Mime } from "@/model/deck/mime";
 import { Quiz } from "@/model/deck/quiz";
 import { type GameJSON, Game as GameModel } from "@/model/game";
@@ -21,7 +22,7 @@ export interface GameState {
   diceResult: number | null;
   modalDiceResult: number | null;
   actionType: string | null;
-  actionData: Battle | Mime | Quiz | null;
+  actionData: Battle | Mime | Quiz | Draw | null;
 
   // Player state
   playerWhoRolledName: string | null;
@@ -50,6 +51,7 @@ export interface GameActions {
   resolveBattle: (winnerId: number) => void;
   resolveMime: (success: boolean, guesserId?: number) => void;
   resolveQuiz: (success: boolean) => void;
+  resolveDraw: (success: boolean, guesserId?: number) => void;
 
   // UI management
   openDiceModal: () => void;
@@ -311,6 +313,39 @@ export const useGameStore = create<GameStore>()(
             quizAction.cardTopic,
           );
           game.resolveQuiz(currentQuizAction, success);
+
+          const updatedGame = GameModel.fromJSON(game.toJSON());
+          const updatedGameData = updatedGame.toJSON();
+          set({ game: updatedGame, gameData: updatedGameData });
+          get().actions.closeModal();
+        },
+
+        resolveDraw: (success: boolean, guesserId?: number) => {
+          const { game, actionData, actionType } = get();
+          if (!game || !actionData || actionType !== "draw") return;
+
+          const drawAction = actionData as Draw;
+          let guesserPlayer: Player | undefined;
+          if (guesserId !== undefined) {
+            guesserPlayer = game
+              .getPlayers()
+              .find((p) => p.getId() === guesserId);
+          }
+
+          const currentDrawPlayer = game
+            .getPlayers()
+            .find((p) => p.getId() === drawAction.drawPlayer.getId());
+
+          if (!currentDrawPlayer) {
+            get().actions.closeModal();
+            return;
+          }
+
+          const currentDrawAction = new Draw(
+            currentDrawPlayer,
+            drawAction.cardTopic,
+          );
+          game.resolveDraw(currentDrawAction, success, guesserPlayer);
 
           const updatedGame = GameModel.fromJSON(game.toJSON());
           const updatedGameData = updatedGame.toJSON();
