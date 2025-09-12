@@ -15,6 +15,7 @@ test("Fill form", async ({ homePage }) => {
   await homePage.mimeCheckbox.uncheck();
   await homePage.quizCheckbox.uncheck();
   await homePage.moveCheckbox.uncheck();
+  await homePage.drawCheckbox.uncheck();
 
   await homePage.submit.click();
   await expect(homePage.page).toHaveURL(/game/);
