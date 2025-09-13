@@ -163,7 +163,7 @@
           "mime": false,
           "quiz": false,
           "move": false,
-          "draw": false
+          "backwrite": false
         },
         "specialPercentage": 20
       },

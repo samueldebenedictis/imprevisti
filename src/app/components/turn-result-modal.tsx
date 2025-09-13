@@ -1,7 +1,7 @@
 import type React from "react";
 import { useEffect, useState } from "react";
 import type { Battle } from "@/model/battle";
-import type { Draw, Mime, Quiz } from "@/model/deck";
+import type { BackWrite, Mime, Quiz } from "@/model/deck";
 import type { Player } from "@/model/player";
 import {
   LABEL_SELECT_PLAYER,
@@ -40,11 +40,11 @@ interface DiceResultModalProps {
   onClose: () => void;
   diceResult: number;
   actionType: string | null;
-  actionData: Battle | Mime | Quiz | Draw | null;
+  actionData: Battle | Mime | Quiz | BackWrite | null;
   onResolveBattle?: (winnerId: number) => void;
   onResolveMime?: (success: boolean, guessPlayerId?: number) => void;
   onResolveQuiz?: (success: boolean) => void;
-  onResolveDraw?: (success: boolean, guessPlayerId?: number) => void;
+  onResolveBackWrite?: (success: boolean, guessPlayerId?: number) => void;
   allPlayers: Player[];
   currentPlayerName: string;
   startPosition?: number;
@@ -65,7 +65,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
   onResolveBattle,
   onResolveMime,
   onResolveQuiz,
-  onResolveDraw,
+  onResolveBackWrite,
   allPlayers,
   currentPlayerName,
   startPosition,
@@ -76,9 +76,13 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
   const [showMimeTopic, setShowMimeTopic] = useState(false);
   const [mimeGuessed, setMimeGuessed] = useState<boolean | null>(null);
   const [mimeGuesserId, setMimeGuesserId] = useState<number | null>(null);
-  const [showDrawWord, setShowDrawWord] = useState(false);
-  const [drawGuessed, setDrawGuessed] = useState<boolean | null>(null);
-  const [drawGuesserId, setDrawGuesserId] = useState<number | null>(null);
+  const [showBackWriteWord, setShowBackWriteWord] = useState(false);
+  const [backWriteGuessed, setBackWriteGuessed] = useState<boolean | null>(
+    null,
+  );
+  const [backWriteGuesserId, setBackWriteGuesserId] = useState<number | null>(
+    null,
+  );
 
   // Reset della parte relativa al mimo
   useEffect(() => {
@@ -89,12 +93,12 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
     }
   }, [isOpen, actionType]);
 
-  // Reset della parte relativa al disegno
+  // Reset della parte relativa alla scrittura sulla schiena
   useEffect(() => {
-    if (isOpen && actionType === "draw") {
-      setShowDrawWord(false);
-      setDrawGuessed(null);
-      setDrawGuesserId(null);
+    if (isOpen && actionType === "backwrite") {
+      setShowBackWriteWord(false);
+      setBackWriteGuessed(null);
+      setBackWriteGuesserId(null);
     }
   }, [isOpen, actionType]);
 
@@ -138,19 +142,19 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
     onClose();
   };
 
-  const handleDrawResolution = (success: boolean, guesserId?: number) => {
-    setDrawGuessed(success);
-    setDrawGuesserId(guesserId || null);
+  const handleBackWriteResolution = (success: boolean, guesserId?: number) => {
+    setBackWriteGuessed(success);
+    setBackWriteGuesserId(guesserId || null);
 
-    // Disegno indovinato ma giocatore che ha indovinato non ancora selezionato
+    // Scrittura sulla schiena indovinata ma giocatore che ha indovinato non ancora selezionato
     if (success && guesserId === undefined) {
       return;
     }
 
-    // Disegno non indovinato o
-    // Disegno indovinato e giocatore selezionato
-    if (onResolveDraw) {
-      onResolveDraw(success, guesserId);
+    // Scrittura sulla schiena non indovinata o
+    // Scrittura sulla schiena indovinata e giocatore selezionato
+    if (onResolveBackWrite) {
+      onResolveBackWrite(success, guesserId);
     }
     onClose();
   };
@@ -402,30 +406,30 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
             </div>
           )}
 
-        {actionType === "draw" &&
+        {actionType === "backwrite" &&
           actionData &&
-          (actionData as Draw).cardTopic && (
+          (actionData as BackWrite).cardTopic && (
             <div className="mt-4">
-              <H3>Disegno</H3>
-              {!showDrawWord && (
+              <H3>Scrittura sulla schiena</H3>
+              {!showBackWriteWord && (
                 <Button
-                  onClick={() => setShowDrawWord(true)}
+                  onClick={() => setShowBackWriteWord(true)}
                   color="purple"
                   className="mx-auto"
                 >
-                  Mostra parola da disegnare
+                  Mostra parola da scrivere
                 </Button>
               )}
-              {showDrawWord && (
+              {showBackWriteWord && (
                 <>
                   <p className="mb-1 text-xl">
-                    Parola da disegnare:{" "}
+                    Parola da scrivere:{" "}
                     <span className="font-bold">
-                      {(actionData as Draw).cardTopic.cardTitle}
+                      {(actionData as BackWrite).cardTopic.cardTitle}
                     </span>
                   </p>
                   <Button
-                    onClick={() => setShowDrawWord(false)}
+                    onClick={() => setShowBackWriteWord(false)}
                     color="purple"
                     className="mx-auto"
                   >
@@ -434,9 +438,11 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                   <div className="mt-2 flex justify-center space-x-4">
                     <Button
                       onClick={() =>
-                        handleDrawResolution(
+                        handleBackWriteResolution(
                           true,
-                          drawGuesserId !== null ? drawGuesserId : undefined,
+                          backWriteGuesserId !== null
+                            ? backWriteGuesserId
+                            : undefined,
                         )
                       }
                       color="green"
@@ -444,7 +450,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                       Indovinato
                     </Button>
                     <Button
-                      onClick={() => handleDrawResolution(false)}
+                      onClick={() => handleBackWriteResolution(false)}
                       color="red"
                     >
                       Non indovinato
@@ -452,24 +458,28 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                   </div>
                 </>
               )}
-              {drawGuessed !== null && drawGuessed && (
+              {backWriteGuessed !== null && backWriteGuessed && (
                 <div className="mt-2">
-                  <H3>Chi ha indovinato?</H3>
+                  <H3>Chi ha aiutato ad indovinare?</H3>
                   <Select
                     value={
-                      drawGuesserId !== null ? drawGuesserId.toString() : ""
+                      backWriteGuesserId !== null
+                        ? backWriteGuesserId.toString()
+                        : ""
                     }
-                    onChange={(e) => setDrawGuesserId(Number(e.target.value))}
+                    onChange={(e) =>
+                      setBackWriteGuesserId(Number(e.target.value))
+                    }
                     options={allPlayers
                       .filter((player) => {
-                        // Trova il drawPlayer corrente in allPlayers per evitare problemi di riferimento
-                        const currentDrawPlayer = allPlayers.find(
+                        // Trova il backWritePlayer corrente in allPlayers per evitare problemi di riferimento
+                        const currentBackWritePlayer = allPlayers.find(
                           (p) =>
                             p.getId() ===
-                            (actionData as Draw).drawPlayer.getId(),
+                            (actionData as BackWrite).backWritePlayer.getId(),
                         );
-                        return currentDrawPlayer
-                          ? player.getId() !== currentDrawPlayer.getId()
+                        return currentBackWritePlayer
+                          ? player.getId() !== currentBackWritePlayer.getId()
                           : true;
                       })
                       .map((player) => ({
@@ -481,14 +491,16 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                   />
                   <Button
                     onClick={() =>
-                      handleDrawResolution(
+                      handleBackWriteResolution(
                         true,
-                        drawGuesserId !== null ? drawGuesserId : undefined,
+                        backWriteGuesserId !== null
+                          ? backWriteGuesserId
+                          : undefined,
                       )
                     }
                     color="blue"
                     className="mx-auto"
-                    disabled={drawGuesserId === null}
+                    disabled={backWriteGuesserId === null}
                   >
                     Conferma
                   </Button>

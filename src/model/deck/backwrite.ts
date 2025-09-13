@@ -1,19 +1,19 @@
 import type { Player } from "../player";
 import type { Card } from "./card";
 
-export class Draw {
+export class BackWrite {
   /**
-   * Crea una nuova istanza di Draw.
-   * @param drawPlayer - Il giocatore che deve disegnare la parola.
-   * @param cardTopic - La parola da disegnare (simulata da una carta).
+   * Crea una nuova istanza di BackWrite.
+   * @param backWritePlayer - Il giocatore che deve scrivere sulla schiena.
+   * @param cardTopic - La parola da scrivere (simulata da una carta).
    */
   constructor(
-    public drawPlayer: Player,
+    public backWritePlayer: Player,
     public cardTopic: Card,
   ) {}
 }
 
-export const drawWords = [
+export const backWriteWords = [
   "Casa",
   "Albero",
   "Sole",
@@ -46,4 +46,4 @@ export const drawWords = [
   "Neve",
 ];
 
-export const drawCards = drawWords.map((word) => word);
+export const backWriteCards = backWriteWords.map((word) => word);

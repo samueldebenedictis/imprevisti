@@ -1,5 +1,5 @@
+export { BackWriteManager } from "./backwrite-manager";
 export { BattleManager } from "./battle-manager";
-export { DrawManager } from "./draw-manager";
 export { GameStateManager } from "./game-state-manager";
 export { MimeManager } from "./mime-manager";
 export { MovementManager } from "./movement-manager";

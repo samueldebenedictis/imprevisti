@@ -3,9 +3,9 @@ import type { Deck } from "../deck";
 import type { Dice } from "../dice";
 import type { Player } from "../player";
 import {
+  type BackWrite,
+  BackWriteSquare,
   type CommandDependencies, // Importa CommandDependencies
-  type Draw,
-  DrawSquare,
   type Mime,
   MimeSquare,
   type Quiz,
@@ -25,7 +25,7 @@ export class SpecialSquareProcessor {
    * @param board - Il tabellone di gioco
    * @param mimeDeck - Il mazzo di carte per il mimo
    * @param quizDeck - Il mazzo di carte per il quiz
-   * @param drawDeck - Il mazzo di carte per il disegno
+   * @param backWriteDeck - Il mazzo di carte per lo scrivere sulla schiena
    * @param dice - Il dado del gioco
    * @param movementManager - Manager per gestire i movimenti
    * @param gameStateManager - Manager per gestire lo stato del gioco
@@ -34,7 +34,7 @@ export class SpecialSquareProcessor {
     private board: Board,
     private mimeDeck: Deck,
     private quizDeck: Deck,
-    private drawDeck: Deck,
+    private backWriteDeck: Deck,
     private dice: Dice,
     private movementManager: MovementManager,
     private gameStateManager: GameStateManager,
@@ -46,12 +46,12 @@ export class SpecialSquareProcessor {
    * ed esegue il comando associato.
    * @param player - Il giocatore per cui elaborare gli effetti della casella
    * @param allPlayers - Array di tutti i giocatori della partita
-   * @returns Un oggetto Mime, Quiz o Draw se il giocatore atterra su una casella speciale, undefined altrimenti
+   * @returns Un oggetto Mime, Quiz o BackWrite se il giocatore atterra su una casella speciale, undefined altrimenti
    */
   processSquareEffects(
     player: Player,
     allPlayers: Player[],
-  ): Mime | Quiz | Draw | undefined {
+  ): Mime | Quiz | BackWrite | undefined {
     const playerPosition = this.board.getPlayerPosition(player);
     const landingSquare = this.board.getSquares()[playerPosition];
 
@@ -62,7 +62,7 @@ export class SpecialSquareProcessor {
       allPlayers,
       mimeDeck: this.mimeDeck,
       quizDeck: this.quizDeck,
-      drawDeck: this.drawDeck,
+      backWriteDeck: this.backWriteDeck,
       dice: this.dice,
       movementManager: this.movementManager,
       gameStateManager: this.gameStateManager,
@@ -80,8 +80,8 @@ export class SpecialSquareProcessor {
         const command = (landingSquare as QuizSquare).getCommand();
         return command.execute(commandDependencies);
       }
-      case "draw": {
-        const command = (landingSquare as DrawSquare).getCommand();
+      case "backwrite": {
+        const command = (landingSquare as BackWriteSquare).getCommand();
         return command.execute(commandDependencies);
       }
       // Casella SpecialSquare - esegue il comando senza restituire valori
@@ -99,11 +99,11 @@ export class SpecialSquareProcessor {
   /**
    * Restituisce il tipo di casella speciale alla posizione specificata.
    * @param position - La posizione della casella da controllare
-   * @returns Il tipo di casella ('mime', 'special', 'normal', 'quiz', 'draw')
+   * @returns Il tipo di casella ('mime', 'special', 'normal', 'quiz', 'backwrite')
    */
   getSquareType(
     position: number,
-  ): "mime" | "special" | "normal" | "quiz" | "draw" {
+  ): "mime" | "special" | "normal" | "quiz" | "backwrite" {
     const square = this.board.getSquares()[position];
 
     if (square instanceof MimeSquare) {
@@ -114,8 +114,8 @@ export class SpecialSquareProcessor {
       return "quiz";
     }
 
-    if (square instanceof DrawSquare) {
-      return "draw";
+    if (square instanceof BackWriteSquare) {
+      return "backwrite";
     }
 
     if (square instanceof SpecialSquare) {

@@ -1,5 +1,5 @@
-export { Draw, Mime, Quiz } from "../deck";
-export { DrawSquare } from "./draw-square";
+export { BackWrite, Mime, Quiz } from "../deck";
+export { BackWriteSquare } from "./backwrite-square";
 export { MimeSquare } from "./mime-square";
 export { GoToStartSquare, MoveSquare } from "./move-square";
 export { QuizSquare } from "./quiz-square";

@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { Battle } from "@/model/battle";
-import { Draw } from "@/model/deck/draw";
+import { BackWrite } from "@/model/deck/backwrite";
 import { Mime } from "@/model/deck/mime";
 import { Quiz } from "@/model/deck/quiz";
 import { type GameJSON, Game as GameModel } from "@/model/game";
@@ -22,7 +22,7 @@ export interface GameState {
   diceResult: number | null;
   modalDiceResult: number | null;
   actionType: string | null;
-  actionData: Battle | Mime | Quiz | Draw | null;
+  actionData: Battle | Mime | Quiz | BackWrite | null;
 
   // Player state
   playerWhoRolledName: string | null;
@@ -51,7 +51,7 @@ export interface GameActions {
   resolveBattle: (winnerId: number) => void;
   resolveMime: (success: boolean, guesserId?: number) => void;
   resolveQuiz: (success: boolean) => void;
-  resolveDraw: (success: boolean, guesserId?: number) => void;
+  resolveBackWrite: (success: boolean, guesserId?: number) => void;
 
   // UI management
   openDiceModal: () => void;
@@ -320,11 +320,11 @@ export const useGameStore = create<GameStore>()(
           get().actions.closeModal();
         },
 
-        resolveDraw: (success: boolean, guesserId?: number) => {
+        resolveBackWrite: (success: boolean, guesserId?: number) => {
           const { game, actionData, actionType } = get();
-          if (!game || !actionData || actionType !== "draw") return;
+          if (!game || !actionData || actionType !== "backwrite") return;
 
-          const drawAction = actionData as Draw;
+          const backWriteAction = actionData as BackWrite;
           let guesserPlayer: Player | undefined;
           if (guesserId !== undefined) {
             guesserPlayer = game
@@ -332,20 +332,20 @@ export const useGameStore = create<GameStore>()(
               .find((p) => p.getId() === guesserId);
           }
 
-          const currentDrawPlayer = game
+          const currentBackWritePlayer = game
             .getPlayers()
-            .find((p) => p.getId() === drawAction.drawPlayer.getId());
+            .find((p) => p.getId() === backWriteAction.backWritePlayer.getId());
 
-          if (!currentDrawPlayer) {
+          if (!currentBackWritePlayer) {
             get().actions.closeModal();
             return;
           }
 
-          const currentDrawAction = new Draw(
-            currentDrawPlayer,
-            drawAction.cardTopic,
+          const currentBackWriteAction = new BackWrite(
+            currentBackWritePlayer,
+            backWriteAction.cardTopic,
           );
-          game.resolveDraw(currentDrawAction, success, guesserPlayer);
+          game.resolveBackWrite(currentBackWriteAction, success, guesserPlayer);
 
           const updatedGame = GameModel.fromJSON(game.toJSON());
           const updatedGameData = updatedGame.toJSON();
