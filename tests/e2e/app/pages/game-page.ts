@@ -38,4 +38,12 @@ export class GamePage {
   turnResultModal = this.page.getByRole("heading", {
     name: MODAL_TITLE_TURN_RESULT,
   });
+
+  async getPlayerPosition(playerIndex: number): Promise<number> {
+    const playersPositions = this.page.locator('[id="players-position"] ul li');
+    const playerLocator = playersPositions.nth(playerIndex);
+    const innerText = await playerLocator.innerText();
+
+    return parseInt(innerText.split(" ")[1]) || 0;
+  }
 }

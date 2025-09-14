@@ -94,7 +94,7 @@ export default function LeftBar({
           {LEFT_BAR_CURRENT_TURN}{" "}
           <span className="text-blue-500">{currentPlayer.getName()}</span>
         </p>
-        <div className="ui-text-subtitle mt-2">
+        <div id="players-position" className="ui-text-subtitle mt-2">
           {LEFT_BAR_PLAYERS_POSITION}
           <ul className="ui-text-normal">
             {playersPositions.map((p) => (

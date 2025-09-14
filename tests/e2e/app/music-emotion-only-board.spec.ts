@@ -32,3 +32,50 @@ test("MusicEmotion only board - Modal appears after dice roll", async ({
   await expect(gamePage.turnResultModal).toBeVisible();
   await expect(gamePage.page.getByText("Musica Emozioni")).toBeVisible();
 });
+
+test("MusicEmotion only board - Success moves player forward", async ({
+  gamePage,
+}) => {
+  await gamePage.goto();
+
+  await gamePage.playTurnButton.click();
+  await gamePage.rollDiceButton.click();
+
+  await expect(gamePage.turnResultModal).toBeVisible();
+  const initialPositionLocator = gamePage.page
+    .getByRole("paragraph")
+    .filter({ hasText: "Nuova posizione:" })
+    .locator("span");
+  const initialPositionText = await initialPositionLocator.innerText();
+  const initialPosition = parseInt(initialPositionText);
+  await gamePage.page
+    .getByRole("button", { name: "Emozione Indovinata" })
+    .click();
+  const finalPosition = await gamePage.getPlayerPosition(0);
+
+  await expect(gamePage.turnResultModal).not.toBeVisible();
+  await expect(finalPosition).toBe(initialPosition + 1);
+});
+
+test("MusicEmotion only board - Failure skips player turn", async ({
+  gamePage,
+}) => {
+  await gamePage.goto();
+
+  await gamePage.playTurnButton.click();
+  await gamePage.rollDiceButton.click();
+
+  await expect(gamePage.turnResultModal).toBeVisible();
+  const initialPositionLocator = gamePage.page
+    .getByRole("paragraph")
+    .filter({ hasText: "Nuova posizione:" })
+    .locator("span");
+  const initialPositionText = await initialPositionLocator.innerText();
+  const initialPosition = parseInt(initialPositionText);
+  await gamePage.page
+    .getByRole("button", { name: "Emozione Non Indovinata" })
+    .click();
+
+  const finalPosition = await gamePage.getPlayerPosition(0);
+  expect(finalPosition).toBe(initialPosition);
+});

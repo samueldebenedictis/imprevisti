@@ -32,3 +32,48 @@ test("PhysicalTest only board - Modal appears after dice roll", async ({
   await expect(gamePage.turnResultModal).toBeVisible();
   await expect(gamePage.page.getByText("Test Fisico")).toBeVisible();
 });
+
+test("PhysicalTest only board - Success moves player forward", async ({
+  gamePage,
+}) => {
+  await gamePage.goto();
+
+  await gamePage.playTurnButton.click();
+  await gamePage.rollDiceButton.click();
+
+  await expect(gamePage.turnResultModal).toBeVisible();
+  const initialPositionLocator = gamePage.page
+    .getByRole("paragraph")
+    .filter({ hasText: "Nuova posizione:" })
+    .locator("span");
+  const initialPositionText = await initialPositionLocator.innerText();
+  const initialPosition = parseInt(initialPositionText);
+  await gamePage.page.getByRole("button", { name: "Test Completato" }).click();
+  const finalPosition = await gamePage.getPlayerPosition(0);
+
+  await expect(gamePage.turnResultModal).not.toBeVisible();
+  expect(finalPosition).toBe(initialPosition + 1);
+});
+
+test("PhysicalTest only board - Failure skips player turn", async ({
+  gamePage,
+}) => {
+  await gamePage.goto();
+
+  await gamePage.playTurnButton.click();
+  await gamePage.rollDiceButton.click();
+
+  await expect(gamePage.turnResultModal).toBeVisible();
+  const initialPositionLocator = gamePage.page
+    .getByRole("paragraph")
+    .filter({ hasText: "Nuova posizione:" })
+    .locator("span");
+  const initialPositionText = await initialPositionLocator.innerText();
+  const initialPosition = parseInt(initialPositionText);
+  await gamePage.page
+    .getByRole("button", { name: "Test Non Completato" })
+    .click();
+
+  const finalPosition = await gamePage.getPlayerPosition(0);
+  expect(finalPosition).toBe(initialPosition);
+});
