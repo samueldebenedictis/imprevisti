@@ -7,7 +7,10 @@ export type Color =
   | "purple"
   | "orange"
   | "teal"
-  | "black";
+  | "black"
+  | "pink"
+  | "cyan"
+  | "lime";
 
 export const colorToCss = (color: Color) => {
   const base = "bg-linear-to-br";
@@ -28,6 +31,12 @@ export const colorToCss = (color: Color) => {
       return `${base} from-orange-600 to-orange-400`;
     case "teal":
       return `${base} from-teal-600 to-teal-400`;
+    case "pink":
+      return `${base} from-pink-600 to-pink-400`;
+    case "cyan":
+      return `${base} from-cyan-600 to-cyan-400`;
+    case "lime":
+      return `${base} from-lime-600 to-lime-400`;
     default:
       return `${base} from-gray-600 to-gray-400`;
   }

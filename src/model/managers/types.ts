@@ -1,12 +1,34 @@
 import type { Battle } from "../battle";
-import type { BackWrite, Mime, Quiz } from "../square";
+import type {
+  BackWrite,
+  Mime,
+  MusicEmotion,
+  PhysicalTest,
+  Quiz,
+  WhatWouldYouDo,
+} from "../square";
 
 /**
- * Risultato di un'azione di gioco che può essere una battaglia, un mimo, un quiz, uno scrivere sulla schiena o nessuna azione speciale.
+ * Risultato di un'azione di gioco che può essere una battaglia, un mimo, un quiz, uno scrivere sulla schiena, musica emozioni, test fisico, cosa faresti se o nessuna azione speciale.
  */
 export type GameActionResult = {
-  type: "battle" | "mime" | "quiz" | "backwrite" | "none";
-  data?: Battle | Mime | Quiz | BackWrite;
+  type:
+    | "battle"
+    | "mime"
+    | "quiz"
+    | "backwrite"
+    | "music-emotion"
+    | "physical-test"
+    | "what-would-you-do"
+    | "none";
+  data?:
+    | Battle
+    | Mime
+    | Quiz
+    | BackWrite
+    | MusicEmotion
+    | PhysicalTest
+    | WhatWouldYouDo;
   diceResult: number;
   actionType: string | null;
 };

@@ -143,6 +143,9 @@ export default function Page() {
           onResolveMime={actions.resolveMime}
           onResolveQuiz={actions.resolveQuiz}
           onResolveBackWrite={actions.resolveBackWrite}
+          onResolveMusicEmotion={actions.resolveMusicEmotion}
+          onResolvePhysicalTest={actions.resolvePhysicalTest}
+          onResolveWhatWouldYouDo={actions.resolveWhatWouldYouDo}
           allPlayers={game.getPlayers()}
           currentPlayerName={playerWhoRolledName || ""}
           startPosition={startPosition}

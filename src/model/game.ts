@@ -1,6 +1,14 @@
 import type { Battle } from "./battle";
 import { Board, type BoardJSON } from "./board";
-import { BackWriteDeck, type Deck, MimeDeck, QuizDeck } from "./deck";
+import {
+  BackWriteDeck,
+  type Deck,
+  MimeDeck,
+  MusicEmotionDeck,
+  PhysicalTestDeck,
+  QuizDeck,
+  WhatWouldYouDoDeck,
+} from "./deck";
 import { Dice } from "./dice";
 import {
   BackWriteManager,
@@ -9,12 +17,22 @@ import {
   GameStateManager,
   MimeManager,
   MovementManager,
+  MusicEmotionManager,
+  PhysicalTestManager,
   QuizManager,
   SpecialSquareProcessor,
   TurnManager,
+  WhatWouldYouDoManager,
 } from "./managers";
 import { Player, type PlayerJSON } from "./player";
-import { BackWrite, Mime, Quiz } from "./square";
+import {
+  BackWrite,
+  Mime,
+  MusicEmotion,
+  PhysicalTest,
+  Quiz,
+  WhatWouldYouDo,
+} from "./square";
 
 export interface GameJSON {
   board: BoardJSON;
@@ -35,6 +53,9 @@ export class Game {
   private mimeDeck: Deck;
   private quizDeck: Deck;
   private backWriteDeck: Deck;
+  private musicEmotionDeck: Deck;
+  private physicalTestDeck: Deck;
+  private whatWouldYouDoDeck: Deck;
 
   // Manager per responsabilità specifiche
   private turnManager: TurnManager;
@@ -45,6 +66,9 @@ export class Game {
   private mimeManager: MimeManager;
   private quizManager: QuizManager;
   private backWriteManager: BackWriteManager;
+  private musicEmotionManager: MusicEmotionManager;
+  private physicalTestManager: PhysicalTestManager;
+  private whatWouldYouDoManager: WhatWouldYouDoManager;
 
   /**
    * Crea una nuova partita con i parametri specificati.
@@ -59,6 +83,9 @@ export class Game {
     this.mimeDeck = new MimeDeck();
     this.quizDeck = new QuizDeck();
     this.backWriteDeck = new BackWriteDeck();
+    this.musicEmotionDeck = new MusicEmotionDeck();
+    this.physicalTestDeck = new PhysicalTestDeck();
+    this.whatWouldYouDoDeck = new WhatWouldYouDoDeck();
 
     // Inizializzazione manager
     this.turnManager = new TurnManager(board.getPlayers());
@@ -72,6 +99,9 @@ export class Game {
       this.mimeDeck,
       this.quizDeck,
       this.backWriteDeck,
+      this.musicEmotionDeck,
+      this.physicalTestDeck,
+      this.whatWouldYouDoDeck,
       this.dice,
       this.movementManager,
       this.gameStateManager,
@@ -84,6 +114,11 @@ export class Game {
     this.mimeManager = new MimeManager(this.movementManager);
     this.quizManager = new QuizManager(this.movementManager);
     this.backWriteManager = new BackWriteManager(this.movementManager);
+    this.musicEmotionManager = new MusicEmotionManager(this.movementManager);
+    this.physicalTestManager = new PhysicalTestManager(this.movementManager);
+    this.whatWouldYouDoManager = new WhatWouldYouDoManager(
+      this.movementManager,
+    );
   }
 
   /**
@@ -147,6 +182,9 @@ export class Game {
       game.mimeDeck,
       game.quizDeck,
       game.backWriteDeck,
+      game.musicEmotionDeck,
+      game.physicalTestDeck,
+      game.whatWouldYouDoDeck,
       game.dice,
       game.movementManager, // movementManager also needs to be updated first
       reconstructedGameStateManager,
@@ -159,6 +197,11 @@ export class Game {
     game.mimeManager = new MimeManager(game.movementManager);
     game.quizManager = new QuizManager(game.movementManager);
     game.backWriteManager = new BackWriteManager(game.movementManager);
+    game.musicEmotionManager = new MusicEmotionManager(game.movementManager);
+    game.physicalTestManager = new PhysicalTestManager(game.movementManager);
+    game.whatWouldYouDoManager = new WhatWouldYouDoManager(
+      game.movementManager,
+    );
 
     return game;
   }
@@ -257,6 +300,30 @@ export class Game {
           actionType: "backwrite",
         };
       }
+      if (specialAction instanceof MusicEmotion) {
+        return {
+          type: "music-emotion",
+          data: specialAction,
+          diceResult: diceValue,
+          actionType: "music-emotion",
+        };
+      }
+      if (specialAction instanceof PhysicalTest) {
+        return {
+          type: "physical-test",
+          data: specialAction,
+          diceResult: diceValue,
+          actionType: "physical-test",
+        };
+      }
+      if (specialAction instanceof WhatWouldYouDo) {
+        return {
+          type: "what-would-you-do",
+          data: specialAction,
+          diceResult: diceValue,
+          actionType: "what-would-you-do",
+        };
+      }
     }
 
     return { type: "none", diceResult: diceValue, actionType: null };
@@ -316,6 +383,57 @@ export class Game {
       success,
       guessPlayer,
     );
+  }
+
+  /**
+   * Risolve un'azione di musica emozioni utilizzando il MusicEmotionManager.
+   * @param musicEmotionAction - L'oggetto MusicEmotion da risolvere
+   * @param success - True se l'emozione è stata indovinata, false altrimenti
+   * @returns Un oggetto Battle se si verifica una collisione, null altrimenti
+   */
+  resolveMusicEmotion(
+    musicEmotionAction: MusicEmotion,
+    success: boolean,
+  ): Battle | null {
+    const [collision] = this.musicEmotionManager.resolveMusicEmotion(
+      musicEmotionAction,
+      success,
+    );
+    return collision;
+  }
+
+  /**
+   * Risolve un'azione di test fisico utilizzando il PhysicalTestManager.
+   * @param physicalTestAction - L'oggetto PhysicalTest da risolvere
+   * @param success - True se il test è stato completato, false altrimenti
+   * @returns Un oggetto Battle se si verifica una collisione, null altrimenti
+   */
+  resolvePhysicalTest(
+    physicalTestAction: PhysicalTest,
+    success: boolean,
+  ): Battle | null {
+    const [collision] = this.physicalTestManager.resolvePhysicalTest(
+      physicalTestAction,
+      success,
+    );
+    return collision;
+  }
+
+  /**
+   * Risolve un'azione di domanda "cosa faresti se" utilizzando il WhatWouldYouDoManager.
+   * @param whatWouldYouDoAction - L'oggetto WhatWouldYouDo da risolvere
+   * @param success - True se la risposta convince, false altrimenti
+   * @returns Un oggetto Battle se si verifica una collisione, null altrimenti
+   */
+  resolveWhatWouldYouDo(
+    whatWouldYouDoAction: WhatWouldYouDo,
+    success: boolean,
+  ): Battle | null {
+    const [collision] = this.whatWouldYouDoManager.resolveWhatWouldYouDo(
+      whatWouldYouDoAction,
+      success,
+    );
+    return collision;
   }
 
   // Getter per accesso ai dati del gioco

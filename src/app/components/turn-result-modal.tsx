@@ -1,7 +1,14 @@
 import type React from "react";
 import { useEffect, useState } from "react";
 import type { Battle } from "@/model/battle";
-import type { BackWrite, Mime, Quiz } from "@/model/deck";
+import type {
+  BackWrite,
+  Mime,
+  MusicEmotion,
+  PhysicalTest,
+  Quiz,
+  WhatWouldYouDo,
+} from "@/model/deck";
 import type { Player } from "@/model/player";
 import {
   LABEL_SELECT_PLAYER,
@@ -40,11 +47,22 @@ interface DiceResultModalProps {
   onClose: () => void;
   diceResult: number;
   actionType: string | null;
-  actionData: Battle | Mime | Quiz | BackWrite | null;
+  actionData:
+    | Battle
+    | Mime
+    | Quiz
+    | BackWrite
+    | MusicEmotion
+    | PhysicalTest
+    | WhatWouldYouDo
+    | null;
   onResolveBattle?: (winnerId: number) => void;
   onResolveMime?: (success: boolean, guessPlayerId?: number) => void;
   onResolveQuiz?: (success: boolean) => void;
   onResolveBackWrite?: (success: boolean, guessPlayerId?: number) => void;
+  onResolveMusicEmotion?: (success: boolean) => void;
+  onResolvePhysicalTest?: (success: boolean) => void;
+  onResolveWhatWouldYouDo?: (success: boolean) => void;
   allPlayers: Player[];
   currentPlayerName: string;
   startPosition?: number;
@@ -66,6 +84,9 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
   onResolveMime,
   onResolveQuiz,
   onResolveBackWrite,
+  onResolveMusicEmotion,
+  onResolvePhysicalTest,
+  onResolveWhatWouldYouDo,
   allPlayers,
   currentPlayerName,
   startPosition,
@@ -506,6 +527,120 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                   </Button>
                 </div>
               )}
+            </div>
+          )}
+
+        {actionType === "music-emotion" &&
+          actionData &&
+          (actionData as MusicEmotion).cardEmotion && (
+            <div className="mt-4">
+              <H3>Musica Emozioni</H3>
+              <p className="mb-1 text-xl">
+                Emozione da esprimere con una canzone:{" "}
+                <span className="font-bold">
+                  {(actionData as MusicEmotion).cardEmotion.cardTitle}
+                </span>
+              </p>
+              <div className="mt-2 flex justify-center space-x-4">
+                <Button
+                  onClick={() => {
+                    if (onResolveMusicEmotion) {
+                      onResolveMusicEmotion(true);
+                    }
+                    onClose();
+                  }}
+                  color="green"
+                >
+                  Emozione Indovinata
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (onResolveMusicEmotion) {
+                      onResolveMusicEmotion(false);
+                    }
+                    onClose();
+                  }}
+                  color="red"
+                >
+                  Emozione Non Indovinata
+                </Button>
+              </div>
+            </div>
+          )}
+
+        {actionType === "physical-test" &&
+          actionData &&
+          (actionData as PhysicalTest).cardTest && (
+            <div className="mt-4">
+              <H3>Test Fisico</H3>
+              <p className="mb-1 text-xl">
+                Test da eseguire:{" "}
+                <span className="font-bold">
+                  {(actionData as PhysicalTest).cardTest.cardTitle}
+                </span>
+              </p>
+              <div className="mt-2 flex justify-center space-x-4">
+                <Button
+                  onClick={() => {
+                    if (onResolvePhysicalTest) {
+                      onResolvePhysicalTest(true);
+                    }
+                    onClose();
+                  }}
+                  color="green"
+                >
+                  Test Completato
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (onResolvePhysicalTest) {
+                      onResolvePhysicalTest(false);
+                    }
+                    onClose();
+                  }}
+                  color="red"
+                >
+                  Test Non Completato
+                </Button>
+              </div>
+            </div>
+          )}
+
+        {actionType === "what-would-you-do" &&
+          actionData &&
+          (actionData as WhatWouldYouDo).cardQuestion && (
+            <div className="mt-4">
+              <H3>Cosa Faresti Se</H3>
+              <p className="mb-1 text-xl">
+                Domanda:{" "}
+                <span className="font-bold">
+                  {(actionData as WhatWouldYouDo).cardQuestion.cardTitle}
+                </span>
+              </p>
+              <div className="mt-2 flex justify-center space-x-4">
+                <Button
+                  onClick={() => {
+                    if (onResolveWhatWouldYouDo) {
+                      onResolveWhatWouldYouDo(true);
+                    }
+                    onClose();
+                  }}
+                  color="green"
+                >
+                  Risposta Convincente
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (onResolveWhatWouldYouDo) {
+                      onResolveWhatWouldYouDo(false);
+                    }
+                    onClose();
+                  }}
+                  color="red"
+                >
+                  Risposta Non Convincente
+                </Button>
+              </div>
             </div>
           )}
 

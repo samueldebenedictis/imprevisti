@@ -7,8 +7,11 @@ import {
   SQUARE_MIME,
   SQUARE_MOVE_BACKWARD,
   SQUARE_MOVE_FORWARD,
+  SQUARE_MUSIC_EMOTION,
+  SQUARE_PHYSICAL_TEST,
   SQUARE_QUIZ,
   SQUARE_START,
+  SQUARE_WHAT_WOULD_YOU_DO,
   SQUARE_WIN,
 } from "../texts";
 import Pawn from "./pawn";
@@ -31,6 +34,12 @@ const typeToColor = (type: ExtendedSquareType, moveValue?: number): Color => {
       return "yellow";
     case "backwrite":
       return "orange";
+    case "music-emotion":
+      return "pink";
+    case "physical-test":
+      return "cyan";
+    case "what-would-you-do":
+      return "lime";
     case "move":
       if (moveValue && moveValue > 0) {
         return "green";
@@ -70,6 +79,12 @@ const typeText = (type: ExtendedSquareType, moveValue: number | undefined) => {
     displayText = SQUARE_MIME;
   } else if (type === "backwrite") {
     displayText = SQUARE_BACKWRITE;
+  } else if (type === "music-emotion") {
+    displayText = SQUARE_MUSIC_EMOTION;
+  } else if (type === "physical-test") {
+    displayText = SQUARE_PHYSICAL_TEST;
+  } else if (type === "what-would-you-do") {
+    displayText = SQUARE_WHAT_WOULD_YOU_DO;
   } else {
     return null;
   }

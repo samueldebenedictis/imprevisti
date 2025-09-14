@@ -12,6 +12,9 @@ export const LABEL_MIME = "Caselle mimo";
 export const LABEL_QUIZ = "Caselle quiz";
 export const LABEL_BACKWRITE = "Caselle scrivi sulla schiena";
 export const LABEL_MOVE = "Caselle movimento";
+export const LABEL_MUSIC_EMOTION = "Caselle musica emozioni";
+export const LABEL_PHYSICAL_TEST = "Caselle test fisici";
+export const LABEL_WHAT_WOULD_YOU_DO = "Caselle cosa faresti se";
 export const LABEL_SUBMIT = "Inizia gioco";
 
 // Dice Result Modal
@@ -73,6 +76,9 @@ export const SQUARE_MOVE_BACKWARD = "INDIETRO ";
 export const SQUARE_QUIZ = "QUIZ";
 export const SQUARE_MIME = "MIMO";
 export const SQUARE_BACKWRITE = "SCHIENA";
+export const SQUARE_MUSIC_EMOTION = "MUSICA";
+export const SQUARE_PHYSICAL_TEST = "FISICO";
+export const SQUARE_WHAT_WOULD_YOU_DO = "DOMANDA";
 
 // Turn Result Modal
 export const MODAL_SPECIAL_EFFECT = "Effetto Speciale!";

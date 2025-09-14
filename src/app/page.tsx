@@ -11,6 +11,8 @@ import {
   LABEL_GAME_CONFIGURATION,
   LABEL_MIME,
   LABEL_MOVE,
+  LABEL_MUSIC_EMOTION,
+  LABEL_PHYSICAL_TEST,
   LABEL_PLAYER_NAME,
   LABEL_PLAYERS_NUMBER,
   LABEL_QUIZ,
@@ -18,6 +20,7 @@ import {
   LABEL_SPECIAL_SQUARES,
   LABEL_SQUARES_NUMBER,
   LABEL_SUBMIT,
+  LABEL_WHAT_WOULD_YOU_DO,
 } from "./texts";
 
 export default function Home() {
@@ -158,6 +161,60 @@ export default function Home() {
               className="ui-custom-checkbox mr-2"
             />
             <LabelCheckbox htmlFor="move">{LABEL_MOVE}</LabelCheckbox>
+          </div>
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="music-emotion"
+              name="music-emotion"
+              checked={squareTypes["music-emotion"]}
+              onChange={(e) =>
+                actions.setSquareType(
+                  e.target.name as keyof typeof squareTypes,
+                  e.target.checked,
+                )
+              }
+              className="ui-custom-checkbox mr-2"
+            />
+            <LabelCheckbox htmlFor="music-emotion">
+              {LABEL_MUSIC_EMOTION}
+            </LabelCheckbox>
+          </div>
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="physical-test"
+              name="physical-test"
+              checked={squareTypes["physical-test"]}
+              onChange={(e) =>
+                actions.setSquareType(
+                  e.target.name as keyof typeof squareTypes,
+                  e.target.checked,
+                )
+              }
+              className="ui-custom-checkbox mr-2"
+            />
+            <LabelCheckbox htmlFor="physical-test">
+              {LABEL_PHYSICAL_TEST}
+            </LabelCheckbox>
+          </div>
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="what-would-you-do"
+              name="what-would-you-do"
+              checked={squareTypes["what-would-you-do"]}
+              onChange={(e) =>
+                actions.setSquareType(
+                  e.target.name as keyof typeof squareTypes,
+                  e.target.checked,
+                )
+              }
+              className="ui-custom-checkbox mr-2"
+            />
+            <LabelCheckbox htmlFor="what-would-you-do">
+              {LABEL_WHAT_WOULD_YOU_DO}
+            </LabelCheckbox>
           </div>
         </div>
 

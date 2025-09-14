@@ -1,4 +1,12 @@
-export type SquareType = "normal" | "mime" | "quiz" | "move" | "backwrite";
+export type SquareType =
+  | "normal"
+  | "mime"
+  | "quiz"
+  | "move"
+  | "backwrite"
+  | "music-emotion"
+  | "physical-test"
+  | "what-would-you-do";
 
 export interface SquareJSON {
   number: number;
