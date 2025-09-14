@@ -97,3 +97,58 @@ export const MimeWithMultiplePlayers: Story = {
     ],
   },
 };
+
+export const MusicEmotionSquare: Story = {
+  args: {
+    number: 12,
+    squareType: "music-emotion",
+  },
+};
+
+export const PhysicalTestSquare: Story = {
+  args: {
+    number: 14,
+    squareType: "physical-test",
+  },
+};
+
+export const WhatWouldYouDoSquare: Story = {
+  args: {
+    number: 16,
+    squareType: "what-would-you-do",
+  },
+};
+
+export const MusicEmotionWithPlayers: Story = {
+  args: {
+    number: 12,
+    squareType: "music-emotion",
+    playersOn: [
+      { name: "Sofia", isCurrentPlayerTurn: true },
+      { name: "Marco", isCurrentPlayerTurn: false },
+    ],
+  },
+};
+
+export const PhysicalTestWithPlayers: Story = {
+  args: {
+    number: 14,
+    squareType: "physical-test",
+    playersOn: [
+      { name: "Elena", isCurrentPlayerTurn: false },
+      { name: "Davide", isCurrentPlayerTurn: true },
+    ],
+  },
+};
+
+export const WhatWouldYouDoWithPlayers: Story = {
+  args: {
+    number: 16,
+    squareType: "what-would-you-do",
+    playersOn: [
+      { name: "Chiara", isCurrentPlayerTurn: true },
+      { name: "Roberto", isCurrentPlayerTurn: false },
+      { name: "Francesca", isCurrentPlayerTurn: false },
+    ],
+  },
+};
