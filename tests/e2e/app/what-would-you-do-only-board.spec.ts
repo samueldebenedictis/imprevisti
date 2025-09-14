@@ -44,12 +44,7 @@ test("WhatWouldYouDo only board - Success moves player forward", async ({
   await gamePage.rollDiceButton.click();
 
   await expect(gamePage.turnResultModal).toBeVisible();
-  const initialPositionLocator = gamePage.page
-    .getByRole("paragraph")
-    .filter({ hasText: "Nuova posizione:" })
-    .locator("span");
-  const initialPositionText = await initialPositionLocator.innerText();
-  const initialPosition = parseInt(initialPositionText);
+  const initialPosition = await gamePage.getPositionInModal();
   await gamePage.page
     .getByRole("button", { name: "Risposta Convincente" })
     .click();
@@ -68,12 +63,7 @@ test("WhatWouldYouDo only board - Failure skips player turn", async ({
   await gamePage.rollDiceButton.click();
 
   await expect(gamePage.turnResultModal).toBeVisible();
-  const initialPositionLocator = gamePage.page
-    .getByRole("paragraph")
-    .filter({ hasText: "Nuova posizione:" })
-    .locator("span");
-  const initialPositionText = await initialPositionLocator.innerText();
-  const initialPosition = parseInt(initialPositionText);
+  const initialPosition = await gamePage.getPositionInModal();
   await gamePage.page
     .getByRole("button", { name: "Risposta Non Convincente" })
     .click();

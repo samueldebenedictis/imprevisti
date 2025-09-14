@@ -46,4 +46,14 @@ export class GamePage {
 
     return parseInt(innerText.split(" ")[1]) || 0;
   }
+
+  async getPositionInModal(): Promise<number> {
+    const initialPositionLocator = this.page
+      .getByRole("paragraph")
+      .filter({ hasText: "Nuova posizione:" })
+      .locator("span");
+    const initialPositionText = await initialPositionLocator.innerText();
+    const initialPosition = parseInt(initialPositionText);
+    return initialPosition;
+  }
 }
