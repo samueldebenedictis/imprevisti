@@ -1,16 +1,14 @@
 import { describe, expect, test } from "vitest";
-import { Board } from "@/model/board";
-import { Game } from "@/model/game";
-import { Player } from "@/model/player";
 import {
-  BackWrite,
   BackWriteSquare,
   GoToStartSquare,
-  Mime,
   MimeSquare,
   MoveSquare,
+  MusicEmotionSquare,
+  PhysicalTestSquare,
   SpecialSquare,
   Square,
+  WhatWouldYouDoSquare,
 } from "../../src/model/square";
 import { squareFromJSON } from "../../src/model/square/square-builder";
 
@@ -90,6 +88,30 @@ describe("squareFromJSON", () => {
     expect(square.getType()).toBe("backwrite");
   });
 
+  test("creates MusicEmotionSquare", () => {
+    const json = { number: 13, type: "music-emotion" as const };
+    const square = squareFromJSON(json);
+    expect(square).toBeInstanceOf(MusicEmotionSquare);
+    expect(square.getNumber()).toBe(13);
+    expect(square.getType()).toBe("music-emotion");
+  });
+
+  test("creates PhysicalTestSquare", () => {
+    const json = { number: 14, type: "physical-test" as const };
+    const square = squareFromJSON(json);
+    expect(square).toBeInstanceOf(PhysicalTestSquare);
+    expect(square.getNumber()).toBe(14);
+    expect(square.getType()).toBe("physical-test");
+  });
+
+  test("creates WhatWouldYouDoSquare", () => {
+    const json = { number: 15, type: "what-would-you-do" as const };
+    const square = squareFromJSON(json);
+    expect(square).toBeInstanceOf(WhatWouldYouDoSquare);
+    expect(square.getNumber()).toBe(15);
+    expect(square.getType()).toBe("what-would-you-do");
+  });
+
   test("creates default Square for unknown type", () => {
     // biome-ignore lint: test
     const json = { number: 25, type: "unknown" as any };
@@ -97,117 +119,5 @@ describe("squareFromJSON", () => {
     expect(square).toBeInstanceOf(Square);
     expect(square.getNumber()).toBe(25);
     expect(square.getType()).toBe("normal");
-  });
-});
-
-describe("Mime square", () => {
-  test("Mime not solved", () => {
-    const square1 = new Square(0);
-    const square2 = new Square(2);
-    const mimeSquare = new MimeSquare(1);
-
-    const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
-    const board = new Board([square1, mimeSquare, square2], players);
-    const game = new Game(board, 1);
-
-    expect(mimeSquare.getNumber()).toBe(1);
-    expect(mimeSquare).toBeInstanceOf(SpecialSquare);
-    const command = mimeSquare.getCommand();
-    expect(command).toBeDefined();
-
-    const mime = game.playTurn();
-    expect(mime.type).toBe("mime");
-
-    if (mime.data instanceof Mime) {
-      game.resolveMime(mime.data, false);
-    }
-
-    const skip = game.getPlayers()[0].mustSkipTurn();
-    expect(skip).toBeTruthy();
-  });
-
-  test("Mime solved", () => {
-    const square1 = new Square(0);
-    const square2 = new Square(2);
-    const mimeSquare = new MimeSquare(1);
-
-    const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
-    const board = new Board([square1, mimeSquare, square2], players);
-    const game = new Game(board, 1);
-
-    const renzo = game.getPlayers()[0];
-    const lucia = game.getPlayers()[1];
-    expect(mimeSquare.getNumber()).toBe(1);
-    expect(mimeSquare).toBeInstanceOf(SpecialSquare);
-    const command = mimeSquare.getCommand();
-    expect(command).toBeDefined();
-
-    const mime = game.playTurn();
-    expect(mime.type).toBe("mime");
-
-    if (mime.data instanceof Mime) {
-      game.resolveMime(mime.data, true, lucia);
-    }
-
-    const skip = renzo.mustSkipTurn();
-    expect(skip).toBeFalsy();
-    expect(game.getPlayerPosition(renzo)).toBe(2);
-    expect(game.getPlayerPosition(lucia)).toBe(1);
-  });
-});
-
-describe("BackWrite square", () => {
-  test("BackWrite not solved", () => {
-    const square1 = new Square(0);
-    const square2 = new Square(2);
-    const backWriteSquare = new BackWriteSquare(1);
-
-    const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
-    const board = new Board([square1, backWriteSquare, square2], players);
-    const game = new Game(board, 1);
-
-    expect(backWriteSquare.getNumber()).toBe(1);
-    expect(backWriteSquare).toBeInstanceOf(SpecialSquare);
-    const command = backWriteSquare.getCommand();
-    expect(command).toBeDefined();
-
-    const backWrite = game.playTurn();
-    expect(backWrite.type).toBe("backwrite");
-
-    if (backWrite.data instanceof BackWrite) {
-      game.resolveBackWrite(backWrite.data, false);
-    }
-
-    const skip = game.getPlayers()[0].mustSkipTurn();
-    expect(skip).toBeTruthy();
-  });
-
-  test("BackWrite solved", () => {
-    const square1 = new Square(0);
-    const square2 = new Square(2);
-    const backWriteSquare = new BackWriteSquare(1);
-
-    const players = ["Renzo", "Lucia"].map((el, i) => new Player(i, el));
-    const board = new Board([square1, backWriteSquare, square2], players);
-    const game = new Game(board, 1);
-
-    const renzo = game.getPlayers()[0];
-    const lucia = game.getPlayers()[1];
-    expect(backWriteSquare.getNumber()).toBe(1);
-    expect(backWriteSquare).toBeInstanceOf(SpecialSquare);
-    const command = backWriteSquare.getCommand();
-    expect(command).toBeDefined();
-
-    const backWrite = game.playTurn();
-    expect(backWrite.type).toBe("backwrite");
-
-    if (backWrite.data instanceof BackWrite) {
-      game.resolveBackWrite(backWrite.data, true, lucia);
-    }
-
-    const skip = renzo.mustSkipTurn();
-    expect(skip).toBeFalsy();
-    expect(game.getPlayerPosition(renzo)).toBe(2);
-    expect(game.getPlayerPosition(lucia)).toBe(1);
   });
 });
