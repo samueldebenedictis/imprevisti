@@ -1,3 +1,5 @@
+export { BackWrite } from "./backwrite";
+export { BackWriteDeck } from "./backwrite-deck";
 export { Card } from "./card";
 export { Deck } from "./deck";
 export { Mime } from "./mime";

@@ -29,7 +29,12 @@ import type {
  */
 export const generateSquares = (
   numSquares: number,
-  squareTypes: { mime: boolean; quiz: boolean; move: boolean },
+  squareTypes: {
+    mime: boolean;
+    quiz: boolean;
+    move: boolean;
+    backwrite: boolean;
+  },
   specialPercentage: number = 0.4,
 ): SquareJSON[] => {
   // Validazione input
@@ -72,6 +77,7 @@ export const generateSquares = (
   if (squareTypes.mime) enabledSpecialTypes.push("mime");
   if (squareTypes.quiz) enabledSpecialTypes.push("quiz");
   if (squareTypes.move) enabledSpecialTypes.push("move");
+  if (squareTypes.backwrite) enabledSpecialTypes.push("backwrite");
 
   // Se nessun tipo speciale è abilitato, restituisci solo caselle normali
   if (enabledSpecialTypes.length === 0) {

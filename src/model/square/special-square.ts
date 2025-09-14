@@ -1,5 +1,6 @@
 import type { Board } from "../board";
 import type { Deck, Mime, Quiz } from "../deck";
+import type { BackWrite } from "../deck/backwrite";
 import type { Dice } from "../dice";
 import type { GameStateManager, MovementManager } from "../managers";
 import type { Player } from "../player";
@@ -12,6 +13,7 @@ export type CommandDependencies = {
   allPlayers: Player[];
   mimeDeck: Deck;
   quizDeck: Deck;
+  backWriteDeck: Deck;
   dice: Dice;
   movementManager: MovementManager;
   gameStateManager: GameStateManager;
@@ -26,7 +28,9 @@ export interface Command {
    * Esegue il comando utilizzando le dipendenze fornite.
    * @param dependencies - Oggetto contenente tutte le dipendenze necessarie
    */
-  execute(dependencies: CommandDependencies): undefined | Mime | Quiz;
+  execute(
+    dependencies: CommandDependencies,
+  ): undefined | Mime | Quiz | BackWrite;
 }
 
 /**

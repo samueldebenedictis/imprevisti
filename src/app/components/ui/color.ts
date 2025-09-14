@@ -5,6 +5,7 @@ export type Color =
   | "green"
   | "red"
   | "purple"
+  | "orange"
   | "teal"
   | "black";
 
@@ -23,6 +24,8 @@ export const colorToCss = (color: Color) => {
       return `${base} from-red-600 to-red-400`;
     case "purple":
       return `${base} from-purple-600 to-purple-400`;
+    case "orange":
+      return `${base} from-orange-600 to-orange-400`;
     case "teal":
       return `${base} from-teal-600 to-teal-400`;
     default:

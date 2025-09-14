@@ -1,8 +1,9 @@
 import type { Battle } from "./battle";
 import { Board, type BoardJSON } from "./board";
-import { type Deck, MimeDeck, QuizDeck } from "./deck";
+import { BackWriteDeck, type Deck, MimeDeck, QuizDeck } from "./deck";
 import { Dice } from "./dice";
 import {
+  BackWriteManager,
   BattleManager,
   type GameActionResult,
   GameStateManager,
@@ -13,7 +14,7 @@ import {
   TurnManager,
 } from "./managers";
 import { Player, type PlayerJSON } from "./player";
-import { Mime, Quiz } from "./square";
+import { BackWrite, Mime, Quiz } from "./square";
 
 export interface GameJSON {
   board: BoardJSON;
@@ -33,6 +34,7 @@ export class Game {
   private dice: Dice;
   private mimeDeck: Deck;
   private quizDeck: Deck;
+  private backWriteDeck: Deck;
 
   // Manager per responsabilità specifiche
   private turnManager: TurnManager;
@@ -42,6 +44,7 @@ export class Game {
   private battleManager: BattleManager;
   private mimeManager: MimeManager;
   private quizManager: QuizManager;
+  private backWriteManager: BackWriteManager;
 
   /**
    * Crea una nuova partita con i parametri specificati.
@@ -55,6 +58,7 @@ export class Game {
     this.dice = new Dice(diceFaces);
     this.mimeDeck = new MimeDeck();
     this.quizDeck = new QuizDeck();
+    this.backWriteDeck = new BackWriteDeck();
 
     // Inizializzazione manager
     this.turnManager = new TurnManager(board.getPlayers());
@@ -67,6 +71,7 @@ export class Game {
       this.board,
       this.mimeDeck,
       this.quizDeck,
+      this.backWriteDeck,
       this.dice,
       this.movementManager,
       this.gameStateManager,
@@ -78,6 +83,7 @@ export class Game {
     );
     this.mimeManager = new MimeManager(this.movementManager);
     this.quizManager = new QuizManager(this.movementManager);
+    this.backWriteManager = new BackWriteManager(this.movementManager);
   }
 
   /**
@@ -140,6 +146,7 @@ export class Game {
       game.board,
       game.mimeDeck,
       game.quizDeck,
+      game.backWriteDeck,
       game.dice,
       game.movementManager, // movementManager also needs to be updated first
       reconstructedGameStateManager,
@@ -151,6 +158,7 @@ export class Game {
     );
     game.mimeManager = new MimeManager(game.movementManager);
     game.quizManager = new QuizManager(game.movementManager);
+    game.backWriteManager = new BackWriteManager(game.movementManager);
 
     return game;
   }
@@ -241,6 +249,14 @@ export class Game {
           actionType: "quiz",
         };
       }
+      if (specialAction instanceof BackWrite) {
+        return {
+          type: "backwrite",
+          data: specialAction,
+          diceResult: diceValue,
+          actionType: "backwrite",
+        };
+      }
     }
 
     return { type: "none", diceResult: diceValue, actionType: null };
@@ -281,6 +297,25 @@ export class Game {
    */
   resolveQuiz(quizAction: Quiz, success: boolean): Battle | null {
     return this.quizManager.resolveQuiz(quizAction, success);
+  }
+
+  /**
+   * Risolve un'azione di scrittura sulla schiena utilizzando il BackWriteManager.
+   * @param backWriteAction - L'oggetto BackWrite da risolvere
+   * @param success - True se la scrittura è stata indovinata, false altrimenti
+   * @param guessPlayer - Il giocatore che ha indovinato la scrittura (richiesto se success è true)
+   * @returns Array con eventuali collisioni risultanti dal movimento dei giocatori
+   */
+  resolveBackWrite(
+    backWriteAction: BackWrite,
+    success: boolean,
+    guessPlayer?: Player,
+  ): [Battle | null, Battle | null] {
+    return this.backWriteManager.resolveBackWrite(
+      backWriteAction,
+      success,
+      guessPlayer,
+    );
   }
 
   // Getter per accesso ai dati del gioco

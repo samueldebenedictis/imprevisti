@@ -1,7 +1,7 @@
 import type React from "react";
 import { useEffect, useState } from "react";
 import type { Battle } from "@/model/battle";
-import type { Mime, Quiz } from "@/model/deck";
+import type { BackWrite, Mime, Quiz } from "@/model/deck";
 import type { Player } from "@/model/player";
 import {
   LABEL_SELECT_PLAYER,
@@ -40,10 +40,11 @@ interface DiceResultModalProps {
   onClose: () => void;
   diceResult: number;
   actionType: string | null;
-  actionData: Battle | Mime | Quiz | null;
+  actionData: Battle | Mime | Quiz | BackWrite | null;
   onResolveBattle?: (winnerId: number) => void;
   onResolveMime?: (success: boolean, guessPlayerId?: number) => void;
   onResolveQuiz?: (success: boolean) => void;
+  onResolveBackWrite?: (success: boolean, guessPlayerId?: number) => void;
   allPlayers: Player[];
   currentPlayerName: string;
   startPosition?: number;
@@ -64,6 +65,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
   onResolveBattle,
   onResolveMime,
   onResolveQuiz,
+  onResolveBackWrite,
   allPlayers,
   currentPlayerName,
   startPosition,
@@ -74,6 +76,13 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
   const [showMimeTopic, setShowMimeTopic] = useState(false);
   const [mimeGuessed, setMimeGuessed] = useState<boolean | null>(null);
   const [mimeGuesserId, setMimeGuesserId] = useState<number | null>(null);
+  const [showBackWriteWord, setShowBackWriteWord] = useState(false);
+  const [backWriteGuessed, setBackWriteGuessed] = useState<boolean | null>(
+    null,
+  );
+  const [backWriteGuesserId, setBackWriteGuesserId] = useState<number | null>(
+    null,
+  );
 
   // Reset della parte relativa al mimo
   useEffect(() => {
@@ -81,6 +90,15 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
       setShowMimeTopic(false);
       setMimeGuessed(null);
       setMimeGuesserId(null);
+    }
+  }, [isOpen, actionType]);
+
+  // Reset della parte relativa alla scrittura sulla schiena
+  useEffect(() => {
+    if (isOpen && actionType === "backwrite") {
+      setShowBackWriteWord(false);
+      setBackWriteGuessed(null);
+      setBackWriteGuesserId(null);
     }
   }, [isOpen, actionType]);
 
@@ -120,6 +138,23 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
     // Mimo indovinato e giocatore selezionato
     if (onResolveMime) {
       onResolveMime(success, guesserId);
+    }
+    onClose();
+  };
+
+  const handleBackWriteResolution = (success: boolean, guesserId?: number) => {
+    setBackWriteGuessed(success);
+    setBackWriteGuesserId(guesserId || null);
+
+    // Scrittura sulla schiena indovinata ma giocatore che ha indovinato non ancora selezionato
+    if (success && guesserId === undefined) {
+      return;
+    }
+
+    // Scrittura sulla schiena non indovinata o
+    // Scrittura sulla schiena indovinata e giocatore selezionato
+    if (onResolveBackWrite) {
+      onResolveBackWrite(success, guesserId);
     }
     onClose();
   };
@@ -365,6 +400,109 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
                     disabled={mimeGuesserId === null}
                   >
                     {MODAL_MIME_CONFIRM}
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+
+        {actionType === "backwrite" &&
+          actionData &&
+          (actionData as BackWrite).cardTopic && (
+            <div className="mt-4">
+              <H3>Scrittura sulla schiena</H3>
+              {!showBackWriteWord && (
+                <Button
+                  onClick={() => setShowBackWriteWord(true)}
+                  color="purple"
+                  className="mx-auto"
+                >
+                  Mostra parola da scrivere
+                </Button>
+              )}
+              {showBackWriteWord && (
+                <>
+                  <p className="mb-1 text-xl">
+                    Parola da scrivere:{" "}
+                    <span className="font-bold">
+                      {(actionData as BackWrite).cardTopic.cardTitle}
+                    </span>
+                  </p>
+                  <Button
+                    onClick={() => setShowBackWriteWord(false)}
+                    color="purple"
+                    className="mx-auto"
+                  >
+                    Nascondi parola
+                  </Button>
+                  <div className="mt-2 flex justify-center space-x-4">
+                    <Button
+                      onClick={() =>
+                        handleBackWriteResolution(
+                          true,
+                          backWriteGuesserId !== null
+                            ? backWriteGuesserId
+                            : undefined,
+                        )
+                      }
+                      color="green"
+                    >
+                      Indovinato
+                    </Button>
+                    <Button
+                      onClick={() => handleBackWriteResolution(false)}
+                      color="red"
+                    >
+                      Non indovinato
+                    </Button>
+                  </div>
+                </>
+              )}
+              {backWriteGuessed !== null && backWriteGuessed && (
+                <div className="mt-2">
+                  <H3>Chi ha aiutato ad indovinare?</H3>
+                  <Select
+                    value={
+                      backWriteGuesserId !== null
+                        ? backWriteGuesserId.toString()
+                        : ""
+                    }
+                    onChange={(e) =>
+                      setBackWriteGuesserId(Number(e.target.value))
+                    }
+                    options={allPlayers
+                      .filter((player) => {
+                        // Trova il backWritePlayer corrente in allPlayers per evitare problemi di riferimento
+                        const currentBackWritePlayer = allPlayers.find(
+                          (p) =>
+                            p.getId() ===
+                            (actionData as BackWrite).backWritePlayer.getId(),
+                        );
+                        return currentBackWritePlayer
+                          ? player.getId() !== currentBackWritePlayer.getId()
+                          : true;
+                      })
+                      .map((player) => ({
+                        value: player.getId(),
+                        label: player.getName(),
+                      }))}
+                    className="m-2"
+                    placeholder={LABEL_SELECT_PLAYER}
+                  />
+                  <Button
+                    onClick={() =>
+                      handleBackWriteResolution(
+                        true,
+                        backWriteGuesserId !== null
+                          ? backWriteGuesserId
+                          : undefined,
+                      )
+                    }
+                    color="blue"
+                    className="mx-auto"
+                    disabled={backWriteGuesserId === null}
+                  >
+                    Conferma
                   </Button>
                 </div>
               )}

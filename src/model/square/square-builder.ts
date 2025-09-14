@@ -1,3 +1,4 @@
+import { BackWriteSquare } from "./backwrite-square";
 import { MimeSquare } from "./mime-square";
 import { MoveSquare } from "./move-square";
 import { QuizSquare } from "./quiz-square";
@@ -17,6 +18,8 @@ export function squareFromJSON(json: SquareJSON): Square {
       return new MimeSquare(json.number);
     case "quiz":
       return new QuizSquare(json.number);
+    case "backwrite":
+      return new BackWriteSquare(json.number);
     case "move":
       return new MoveSquare(json.number, (json as MoveSquareJSON).moveValue);
     default:

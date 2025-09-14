@@ -162,7 +162,8 @@
         "squareTypes": {
           "mime": false,
           "quiz": false,
-          "move": false
+          "move": false,
+          "backwrite": false
         },
         "specialPercentage": 20
       },

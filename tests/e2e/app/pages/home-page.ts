@@ -1,5 +1,6 @@
 import type { Page } from "@playwright/test";
 import {
+  LABEL_BACKWRITE,
   LABEL_MIME,
   LABEL_MOVE,
   LABEL_PLAYER_NAME,
@@ -30,5 +31,8 @@ export class HomePage {
   // Checkbox locators
   mimeCheckbox = this.page.getByRole("checkbox", { name: LABEL_MIME });
   quizCheckbox = this.page.getByRole("checkbox", { name: LABEL_QUIZ });
+  backwriteCheckbox = this.page.getByRole("checkbox", {
+    name: LABEL_BACKWRITE,
+  });
   moveCheckbox = this.page.getByRole("checkbox", { name: LABEL_MOVE });
 }
