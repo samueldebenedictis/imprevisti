@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { Battle } from "@/model/battle";
 import { BackWrite } from "@/model/deck/backwrite";
+import { DictationDraw } from "@/model/deck/dictation-draw";
 import { Mime } from "@/model/deck/mime";
 import { MusicEmotion } from "@/model/deck/music-emotion";
 import { PhysicalTest } from "@/model/deck/physical-test";
@@ -33,6 +34,7 @@ export interface GameState {
     | MusicEmotion
     | PhysicalTest
     | WhatWouldYouDo
+    | DictationDraw
     | null;
 
   // Player state
@@ -66,6 +68,7 @@ export interface GameActions {
   resolveMusicEmotion: (success: boolean) => void;
   resolvePhysicalTest: (success: boolean) => void;
   resolveWhatWouldYouDo: (success: boolean) => void;
+  resolveDictationDraw: (success: boolean, drawingPlayerId?: number) => void;
 
   // UI management
   openDiceModal: () => void;
@@ -448,6 +451,46 @@ export const useGameStore = create<GameStore>()(
             whatWouldYouDoAction.cardQuestion,
           );
           game.resolveWhatWouldYouDo(currentWhatWouldYouDoAction, success);
+
+          const updatedGame = GameModel.fromJSON(game.toJSON());
+          const updatedGameData = updatedGame.toJSON();
+          set({ game: updatedGame, gameData: updatedGameData });
+          get().actions.closeModal();
+        },
+
+        resolveDictationDraw: (success: boolean, drawingPlayerId?: number) => {
+          const { game, actionData, actionType } = get();
+          if (!game || !actionData || actionType !== "dictation-draw") return;
+
+          const dictationDrawAction = actionData as DictationDraw;
+          let drawingPlayer: Player | undefined;
+          if (drawingPlayerId !== undefined) {
+            drawingPlayer = game
+              .getPlayers()
+              .find((p) => p.getId() === drawingPlayerId);
+          }
+
+          const currentDictationDrawPlayer = game
+            .getPlayers()
+            .find(
+              (p) => p.getId() === dictationDrawAction.drawingPlayer.getId(),
+            );
+
+          if (!currentDictationDrawPlayer) {
+            get().actions.closeModal();
+            return;
+          }
+
+          const currentDictationDrawAction = new DictationDraw(
+            currentDictationDrawPlayer,
+            dictationDrawAction.cardTopic,
+            dictationDrawAction.imageUrl,
+          );
+          game.resolveDictationDraw(
+            currentDictationDrawAction,
+            success,
+            drawingPlayer,
+          );
 
           const updatedGame = GameModel.fromJSON(game.toJSON());
           const updatedGameData = updatedGame.toJSON();

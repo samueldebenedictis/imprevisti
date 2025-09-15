@@ -4,6 +4,7 @@ import type { SquareType } from "@/model/square/square";
 import {
   LABEL_OTHER_PLAYERS,
   SQUARE_BACKWRITE,
+  SQUARE_DICTATION_DRAW,
   SQUARE_MIME,
   SQUARE_MOVE_BACKWARD,
   SQUARE_MOVE_FORWARD,
@@ -34,6 +35,8 @@ const typeToColor = (type: ExtendedSquareType, moveValue?: number): Color => {
       return "yellow";
     case "backwrite":
       return "orange";
+    case "dictation-draw":
+      return "purple";
     case "music-emotion":
       return "pink";
     case "physical-test":
@@ -85,6 +88,8 @@ const typeText = (type: ExtendedSquareType, moveValue: number | undefined) => {
     displayText = SQUARE_PHYSICAL_TEST;
   } else if (type === "what-would-you-do") {
     displayText = SQUARE_WHAT_WOULD_YOU_DO;
+  } else if (type === "dictation-draw") {
+    displayText = SQUARE_DICTATION_DRAW;
   } else {
     return null;
   }

@@ -2,6 +2,7 @@ import type React from "react";
 import type { Battle } from "@/model/battle";
 import type {
   BackWrite,
+  DictationDraw,
   Mime,
   MusicEmotion,
   PhysicalTest,
@@ -17,6 +18,7 @@ import {
 } from "../texts";
 import BackWriteResult from "./turn-result-modal/back-write-result";
 import BattleResult from "./turn-result-modal/battle-result";
+import DictationDrawResult from "./turn-result-modal/dictation-draw-result";
 import MimeResult from "./turn-result-modal/mime-result";
 import MusicEmotionResult from "./turn-result-modal/music-emotion-result";
 import PhysicalTestResult from "./turn-result-modal/physical-test-result";
@@ -39,6 +41,7 @@ interface DiceResultModalProps {
     | MusicEmotion
     | PhysicalTest
     | WhatWouldYouDo
+    | DictationDraw
     | null;
   onResolveBattle?: (winnerId: number) => void;
   onResolveMime?: (success: boolean, guessPlayerId?: number) => void;
@@ -47,6 +50,7 @@ interface DiceResultModalProps {
   onResolveMusicEmotion?: (success: boolean) => void;
   onResolvePhysicalTest?: (success: boolean) => void;
   onResolveWhatWouldYouDo?: (success: boolean) => void;
+  onResolveDictationDraw?: (success: boolean, drawingPlayerId?: number) => void;
   allPlayers: Player[];
   currentPlayerName: string;
   startPosition?: number;
@@ -67,6 +71,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
   onResolveMusicEmotion,
   onResolvePhysicalTest,
   onResolveWhatWouldYouDo,
+  onResolveDictationDraw,
   allPlayers,
   currentPlayerName,
   startPosition,
@@ -188,6 +193,18 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
               actionData={actionData as WhatWouldYouDo}
               onResolveWhatWouldYouDo={onResolveWhatWouldYouDo}
               onClose={onClose}
+            />
+          )}
+
+        {actionType === "dictation-draw" &&
+          actionData &&
+          (actionData as DictationDraw).cardTopic && (
+            <DictationDrawResult
+              isOpen={isOpen}
+              actionData={actionData as DictationDraw}
+              onResolveDictationDraw={onResolveDictationDraw}
+              onClose={onClose}
+              allPlayers={allPlayers}
             />
           )}
 

@@ -15,6 +15,7 @@ export const LABEL_MOVE = "Caselle movimento";
 export const LABEL_MUSIC_EMOTION = "Caselle musica emozioni";
 export const LABEL_PHYSICAL_TEST = "Caselle test fisici";
 export const LABEL_WHAT_WOULD_YOU_DO = "Caselle cosa faresti se";
+export const LABEL_DICTATION_DRAW = "Caselle disegno dettato";
 export const LABEL_SUBMIT = "Inizia gioco";
 
 // Dice Result Modal
@@ -36,6 +37,15 @@ export const MODAL_MIME_GUESSED = "Indovinato";
 export const MODAL_MIME_NOT_GUESSED = "Non Indovinato";
 export const MODAL_MIME_WHO_GUESSED = "Chi ha indovinato?";
 export const MODAL_MIME_CONFIRM = "Conferma";
+export const MODAL_DICTATION_DRAW_TITLE = "Disegno Dettato!";
+export const MODAL_DICTATION_DRAW_SHOW_IMAGE = "Mostra Immagine";
+export const MODAL_DICTATION_DRAW_HIDE_IMAGE = "Nascondi Immagine";
+export const MODAL_DICTATION_DRAW_TOPIC =
+  "Descrivi questa immagine da disegnare:";
+export const MODAL_DICTATION_DRAW_DRAWN = "Disegnato bene";
+export const MODAL_DICTATION_DRAW_NOT_DRAWN = "Disegnato male";
+export const MODAL_DICTATION_DRAW_WHO_DREW = "Chi l'ha disegnato?";
+export const MODAL_DICTATION_DRAW_CONFIRM = "Conferma";
 export const MODAL_CLOSE_BUTTON = "Chiudi";
 
 // Game Save and Restore
@@ -75,6 +85,7 @@ export const SQUARE_MOVE_FORWARD = " AVANTI +";
 export const SQUARE_MOVE_BACKWARD = "INDIETRO ";
 export const SQUARE_QUIZ = "QUIZ";
 export const SQUARE_MIME = "MIMO";
+export const SQUARE_DICTATION_DRAW = "DISEGNO";
 export const SQUARE_BACKWRITE = "SCHIENA";
 export const SQUARE_MUSIC_EMOTION = "MUSICA";
 export const SQUARE_PHYSICAL_TEST = "FISICO";

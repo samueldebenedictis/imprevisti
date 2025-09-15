@@ -37,6 +37,7 @@ export const generateSquares = (
     "music-emotion": boolean;
     "physical-test": boolean;
     "what-would-you-do": boolean;
+    "dictation-draw": boolean;
   },
   specialPercentage: number = 0.4,
 ): SquareJSON[] => {
@@ -85,6 +86,7 @@ export const generateSquares = (
   if (squareTypes["physical-test"]) enabledSpecialTypes.push("physical-test");
   if (squareTypes["what-would-you-do"])
     enabledSpecialTypes.push("what-would-you-do");
+  if (squareTypes["dictation-draw"]) enabledSpecialTypes.push("dictation-draw");
 
   // Se nessun tipo speciale è abilitato, restituisci solo caselle normali
   if (enabledSpecialTypes.length === 0) {

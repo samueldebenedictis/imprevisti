@@ -27,6 +27,7 @@ export interface GameConfig {
     "music-emotion": boolean;
     "physical-test": boolean;
     "what-would-you-do": boolean;
+    "dictation-draw": boolean;
   };
   specialPercentage: number;
 }
@@ -68,6 +69,7 @@ const defaultConfig: GameConfig = {
     "music-emotion": true,
     "physical-test": true,
     "what-would-you-do": true,
+    "dictation-draw": true,
   },
   specialPercentage: DEFAULT_SPECIAL_PERCENTAGE_SQUARES,
 };

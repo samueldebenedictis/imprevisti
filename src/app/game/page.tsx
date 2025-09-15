@@ -146,6 +146,7 @@ export default function Page() {
           onResolveMusicEmotion={actions.resolveMusicEmotion}
           onResolvePhysicalTest={actions.resolvePhysicalTest}
           onResolveWhatWouldYouDo={actions.resolveWhatWouldYouDo}
+          onResolveDictationDraw={actions.resolveDictationDraw}
           allPlayers={game.getPlayers()}
           currentPlayerName={playerWhoRolledName || ""}
           startPosition={startPosition}

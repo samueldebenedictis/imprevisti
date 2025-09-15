@@ -8,6 +8,7 @@ import Input from "./components/ui/input";
 import { Label, LabelCheckbox } from "./components/ui/label";
 import {
   LABEL_BACKWRITE,
+  LABEL_DICTATION_DRAW,
   LABEL_GAME_CONFIGURATION,
   LABEL_MIME,
   LABEL_MOVE,
@@ -214,6 +215,24 @@ export default function Home() {
             />
             <LabelCheckbox htmlFor="what-would-you-do">
               {LABEL_WHAT_WOULD_YOU_DO}
+            </LabelCheckbox>
+          </div>
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="dictation-draw"
+              name="dictation-draw"
+              checked={squareTypes["dictation-draw"]}
+              onChange={(e) =>
+                actions.setSquareType(
+                  e.target.name as keyof typeof squareTypes,
+                  e.target.checked,
+                )
+              }
+              className="ui-custom-checkbox mr-2"
+            />
+            <LabelCheckbox htmlFor="dictation-draw">
+              {LABEL_DICTATION_DRAW}
             </LabelCheckbox>
           </div>
         </div>
