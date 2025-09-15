@@ -1,4 +1,4 @@
-import { DictationDraw } from "../deck";
+import { DictationDraw, type DictationDrawDeck } from "../deck";
 import {
   type Command,
   type CommandDependencies,
@@ -37,9 +37,10 @@ class DictationDrawCommand implements Command {
    */
   execute(dependencies: CommandDependencies) {
     const drawingPlayer = dependencies.player;
-    const card = dependencies.dictationDrawDeck.draw();
+    const deck = dependencies.dictationDrawDeck as DictationDrawDeck;
+    const card = deck.draw();
     // Get the image URL from the card topic
-    const imageData = dependencies.dictationDrawDeck.getImageData(card);
+    const imageData = deck.getImageData(card);
     const dictationDrawAction = new DictationDraw(
       drawingPlayer,
       card,
