@@ -3,6 +3,7 @@ import TurnResultModal from "../src/app/components/turn-result-modal";
 import { Battle } from "../src/model/battle";
 import {
   Card,
+  DictationDraw,
   Mime,
   MusicEmotion,
   PhysicalTest,
@@ -20,6 +21,7 @@ class MockMime extends Mime {}
 class MockMusicEmotion extends MusicEmotion {}
 class MockPhysicalTest extends PhysicalTest {}
 class MockWhatWouldYouDo extends WhatWouldYouDo {}
+class MockDictationDraw extends DictationDraw {}
 
 const meta = {
   title: "Example/TurnResultModal",
@@ -38,6 +40,7 @@ const meta = {
         "music-emotion",
         "physical-test",
         "what-would-you-do",
+        "dictation-draw",
         null,
       ],
     },
@@ -189,6 +192,26 @@ export const WhatWouldYouDoScenario: Story = {
     ),
     onResolveWhatWouldYouDo: (success) =>
       console.log(`What would you do success: ${success}`),
+    allPlayers: allPlayers,
+    currentPlayerName: allPlayers[0].getName(),
+  },
+};
+
+export const DictationDrawScenario: Story = {
+  args: {
+    isOpen: true,
+    onClose: () => console.log("Close modal"),
+    diceResult: 4,
+    actionType: "dictation-draw",
+    actionData: new MockDictationDraw(
+      allPlayers[0],
+      new MockCard("Casa: Una semplice casa con tetto e porta 🏠", ""),
+      "/images/dictation-draw/house.svg",
+    ),
+    onResolveDictationDraw: (success, drawingPlayerId) =>
+      console.log(
+        `Dictation draw success: ${success}, Drawing player: ${drawingPlayerId}`,
+      ),
     allPlayers: allPlayers,
     currentPlayerName: allPlayers[0].getName(),
   },

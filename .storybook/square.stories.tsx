@@ -152,3 +152,21 @@ export const WhatWouldYouDoWithPlayers: Story = {
     ],
   },
 };
+
+export const DictationDrawSquare: Story = {
+  args: {
+    number: 18,
+    squareType: "dictation-draw",
+  },
+};
+
+export const DictationDrawWithPlayers: Story = {
+  args: {
+    number: 18,
+    squareType: "dictation-draw",
+    playersOn: [
+      { name: "Valentina", isCurrentPlayerTurn: true },
+      { name: "Andrea", isCurrentPlayerTurn: false },
+    ],
+  },
+};
