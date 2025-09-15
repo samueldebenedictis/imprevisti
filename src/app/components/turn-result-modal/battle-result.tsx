@@ -3,6 +3,7 @@ import type { Battle } from "@/model/battle";
 import type { Player } from "@/model/player";
 import { MODAL_BATTLE_TITLE, MODAL_BATTLE_WINNER_SELECTION } from "../../texts";
 import Button from "../ui/button";
+import { H3 } from "./h3";
 
 interface BattleResultProps {
   actionData: Battle;
@@ -10,10 +11,6 @@ interface BattleResultProps {
   onClose: () => void;
   allPlayers: Player[];
 }
-
-const H3 = (props: { children: string }) => (
-  <h3 className="ui-text-dark ui-text-subtitle">{props.children}</h3>
-);
 
 const BattleResult: React.FC<BattleResultProps> = ({
   actionData,

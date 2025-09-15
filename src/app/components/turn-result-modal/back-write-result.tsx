@@ -2,9 +2,20 @@ import type React from "react";
 import { useEffect, useState } from "react";
 import type { BackWrite } from "@/model/deck";
 import type { Player } from "@/model/player";
-import { LABEL_SELECT_PLAYER } from "../../texts";
+import {
+  LABEL_SELECT_PLAYER,
+  MODAL_BACKWRITE_CONFIRM,
+  MODAL_BACKWRITE_GUESSED,
+  MODAL_BACKWRITE_HIDE_WORD,
+  MODAL_BACKWRITE_NOT_GUESSED,
+  MODAL_BACKWRITE_SHOW_WORD,
+  MODAL_BACKWRITE_TITLE,
+  MODAL_BACKWRITE_WHO_GUESSED,
+  MODAL_BACKWRITE_WORD_TO_WRITE,
+} from "../../texts";
 import Button from "../ui/button";
 import Select from "../ui/select";
+import { H3 } from "./h3";
 
 interface BackWriteResultProps {
   isOpen: boolean;
@@ -13,10 +24,6 @@ interface BackWriteResultProps {
   onClose: () => void;
   allPlayers: Player[];
 }
-
-const H3 = (props: { children: string }) => (
-  <h3 className="ui-text-dark ui-text-subtitle">{props.children}</h3>
-);
 
 const BackWriteResult: React.FC<BackWriteResultProps> = ({
   isOpen,
@@ -61,20 +68,20 @@ const BackWriteResult: React.FC<BackWriteResultProps> = ({
 
   return (
     <div className="mt-4">
-      <H3>Scrittura sulla schiena</H3>
+      <H3>{MODAL_BACKWRITE_TITLE}</H3>
       {!showBackWriteWord && (
         <Button
           onClick={() => setShowBackWriteWord(true)}
           color="purple"
           className="mx-auto"
         >
-          Mostra parola da scrivere
+          {MODAL_BACKWRITE_SHOW_WORD}
         </Button>
       )}
       {showBackWriteWord && (
         <>
           <p className="mb-1 text-xl">
-            Parola da scrivere:{" "}
+            {MODAL_BACKWRITE_WORD_TO_WRITE}{" "}
             <span className="font-bold">{actionData.cardTopic.cardTitle}</span>
           </p>
           <Button
@@ -82,7 +89,7 @@ const BackWriteResult: React.FC<BackWriteResultProps> = ({
             color="purple"
             className="mx-auto"
           >
-            Nascondi parola
+            {MODAL_BACKWRITE_HIDE_WORD}
           </Button>
           <div className="mt-2 flex justify-center space-x-4">
             <Button
@@ -94,20 +101,20 @@ const BackWriteResult: React.FC<BackWriteResultProps> = ({
               }
               color="green"
             >
-              Indovinato
+              {MODAL_BACKWRITE_GUESSED}
             </Button>
             <Button
               onClick={() => handleBackWriteResolution(false)}
               color="red"
             >
-              Non indovinato
+              {MODAL_BACKWRITE_NOT_GUESSED}
             </Button>
           </div>
         </>
       )}
       {backWriteGuessed !== null && backWriteGuessed && (
         <div className="mt-2">
-          <H3>Chi ha aiutato ad indovinare?</H3>
+          <H3>{MODAL_BACKWRITE_WHO_GUESSED}</H3>
           <Select
             value={
               backWriteGuesserId !== null ? backWriteGuesserId.toString() : ""
@@ -141,7 +148,7 @@ const BackWriteResult: React.FC<BackWriteResultProps> = ({
             className="mx-auto"
             disabled={backWriteGuesserId === null}
           >
-            Conferma
+            {MODAL_BACKWRITE_CONFIRM}
           </Button>
         </div>
       )}

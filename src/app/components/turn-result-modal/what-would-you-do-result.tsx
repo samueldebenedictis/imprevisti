@@ -1,16 +1,19 @@
 import type React from "react";
 import type { WhatWouldYouDo } from "@/model/deck";
+import {
+  MODAL_WHAT_WOULD_YOU_DO_CONVINCING_ANSWER,
+  MODAL_WHAT_WOULD_YOU_DO_NOT_CONVINCING_ANSWER,
+  MODAL_WHAT_WOULD_YOU_DO_QUESTION,
+  MODAL_WHAT_WOULD_YOU_DO_TITLE,
+} from "../../texts";
 import Button from "../ui/button";
+import { H3 } from "./h3";
 
 interface WhatWouldYouDoResultProps {
   actionData: WhatWouldYouDo;
   onResolveWhatWouldYouDo?: (success: boolean) => void;
   onClose: () => void;
 }
-
-const H3 = (props: { children: string }) => (
-  <h3 className="ui-text-dark ui-text-subtitle">{props.children}</h3>
-);
 
 const WhatWouldYouDoResult: React.FC<WhatWouldYouDoResultProps> = ({
   actionData,
@@ -19,9 +22,9 @@ const WhatWouldYouDoResult: React.FC<WhatWouldYouDoResultProps> = ({
 }) => {
   return (
     <div className="mt-4">
-      <H3>Cosa Faresti Se</H3>
+      <H3>{MODAL_WHAT_WOULD_YOU_DO_TITLE}</H3>
       <p className="mb-1 text-xl">
-        Domanda:{" "}
+        {MODAL_WHAT_WOULD_YOU_DO_QUESTION}{" "}
         <span className="font-bold">{actionData.cardQuestion.cardTitle}</span>
       </p>
       <div className="mt-2 flex justify-center space-x-4">
@@ -34,7 +37,7 @@ const WhatWouldYouDoResult: React.FC<WhatWouldYouDoResultProps> = ({
           }}
           color="green"
         >
-          Risposta Convincente
+          {MODAL_WHAT_WOULD_YOU_DO_CONVINCING_ANSWER}
         </Button>
         <Button
           onClick={() => {
@@ -45,7 +48,7 @@ const WhatWouldYouDoResult: React.FC<WhatWouldYouDoResultProps> = ({
           }}
           color="red"
         >
-          Risposta Non Convincente
+          {MODAL_WHAT_WOULD_YOU_DO_NOT_CONVINCING_ANSWER}
         </Button>
       </div>
     </div>

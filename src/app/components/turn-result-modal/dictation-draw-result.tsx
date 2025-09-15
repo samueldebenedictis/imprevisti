@@ -16,6 +16,7 @@ import {
 } from "../../texts";
 import Button from "../ui/button";
 import Select from "../ui/select";
+import { H3 } from "./h3";
 
 interface DictationDrawResultProps {
   isOpen: boolean;
@@ -24,10 +25,6 @@ interface DictationDrawResultProps {
   onClose: () => void;
   allPlayers: Player[];
 }
-
-const H3 = (props: { children: string }) => (
-  <h3 className="ui-text-dark ui-text-subtitle">{props.children}</h3>
-);
 
 const DictationDrawResult: React.FC<DictationDrawResultProps> = ({
   isOpen,
@@ -87,6 +84,8 @@ const DictationDrawResult: React.FC<DictationDrawResultProps> = ({
             <p className="mb-2 text-xl">{MODAL_DICTATION_DRAW_TOPIC}</p>
             {actionData.imageUrl && (
               <Image
+                width={200}
+                height={200}
                 src={actionData.imageUrl}
                 alt={actionData.cardTopic.cardTitle}
                 className="ui-border-dark m-4 max-h-64 max-w-full"

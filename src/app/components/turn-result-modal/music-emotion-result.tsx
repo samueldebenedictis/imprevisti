@@ -1,16 +1,19 @@
 import type React from "react";
+import {
+  MODAL_MUSIC_EMOTION_EMOTION_TO_EXPRESS,
+  MODAL_MUSIC_EMOTION_GUESSED,
+  MODAL_MUSIC_EMOTION_NOT_GUESSED,
+  MODAL_MUSIC_EMOTION_TITLE,
+} from "@/app/texts";
 import type { MusicEmotion } from "@/model/deck";
 import Button from "../ui/button";
+import { H3 } from "./h3";
 
 interface MusicEmotionResultProps {
   actionData: MusicEmotion;
   onResolveMusicEmotion?: (success: boolean) => void;
   onClose: () => void;
 }
-
-const H3 = (props: { children: string }) => (
-  <h3 className="ui-text-dark ui-text-subtitle">{props.children}</h3>
-);
 
 const MusicEmotionResult: React.FC<MusicEmotionResultProps> = ({
   actionData,
@@ -19,9 +22,9 @@ const MusicEmotionResult: React.FC<MusicEmotionResultProps> = ({
 }) => {
   return (
     <div className="mt-4">
-      <H3>Musica Emozioni</H3>
+      <H3>{MODAL_MUSIC_EMOTION_TITLE}</H3>
       <p className="mb-1 text-xl">
-        Emozione da esprimere con una canzone:{" "}
+        {MODAL_MUSIC_EMOTION_EMOTION_TO_EXPRESS}{" "}
         <span className="font-bold">{actionData.cardEmotion.cardTitle}</span>
       </p>
       <div className="mt-2 flex justify-center space-x-4">
@@ -34,7 +37,7 @@ const MusicEmotionResult: React.FC<MusicEmotionResultProps> = ({
           }}
           color="green"
         >
-          Emozione Indovinata
+          {MODAL_MUSIC_EMOTION_GUESSED}
         </Button>
         <Button
           onClick={() => {
@@ -45,7 +48,7 @@ const MusicEmotionResult: React.FC<MusicEmotionResultProps> = ({
           }}
           color="red"
         >
-          Emozione Non Indovinata
+          {MODAL_MUSIC_EMOTION_NOT_GUESSED}
         </Button>
       </div>
     </div>

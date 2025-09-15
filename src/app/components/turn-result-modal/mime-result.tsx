@@ -15,6 +15,7 @@ import {
 } from "../../texts";
 import Button from "../ui/button";
 import Select from "../ui/select";
+import { H3 } from "./h3";
 
 interface MimeResultProps {
   isOpen: boolean;
@@ -23,10 +24,6 @@ interface MimeResultProps {
   onClose: () => void;
   allPlayers: Player[];
 }
-
-const H3 = (props: { children: string }) => (
-  <h3 className="ui-text-dark ui-text-subtitle">{props.children}</h3>
-);
 
 const MimeResult: React.FC<MimeResultProps> = ({
   isOpen,

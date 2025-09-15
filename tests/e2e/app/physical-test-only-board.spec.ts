@@ -1,3 +1,8 @@
+import {
+  MODAL_PHYSICAL_TEST,
+  MODAL_PHYSICAL_TEST_COMPLETED,
+  MODAL_PHYSICAL_TEST_NOT_COMPLETED,
+} from "@/app/texts";
 import { Board } from "@/model/board";
 import { Game } from "@/model/game";
 import { Player } from "@/model/player";
@@ -30,7 +35,7 @@ test("PhysicalTest only board - Modal appears after dice roll", async ({
   await gamePage.playTurnButton.click();
   await gamePage.rollDiceButton.click();
   await expect(gamePage.turnResultModal).toBeVisible();
-  await expect(gamePage.page.getByText("Test Fisico")).toBeVisible();
+  await expect(gamePage.page.getByText(MODAL_PHYSICAL_TEST)).toBeVisible();
 });
 
 test("PhysicalTest only board - Success moves player forward", async ({
@@ -43,7 +48,9 @@ test("PhysicalTest only board - Success moves player forward", async ({
 
   await expect(gamePage.turnResultModal).toBeVisible();
   const initialPosition = await gamePage.getPositionInModal();
-  await gamePage.page.getByRole("button", { name: "Test Completato" }).click();
+  await gamePage.page
+    .getByRole("button", { name: MODAL_PHYSICAL_TEST_COMPLETED, exact: true })
+    .click();
   const finalPosition = await gamePage.getPlayerPosition(0);
 
   await expect(gamePage.turnResultModal).not.toBeVisible();
@@ -61,7 +68,7 @@ test("PhysicalTest only board - Failure skips player turn", async ({
   await expect(gamePage.turnResultModal).toBeVisible();
   const initialPosition = await gamePage.getPositionInModal();
   await gamePage.page
-    .getByRole("button", { name: "Test Non Completato" })
+    .getByRole("button", { name: MODAL_PHYSICAL_TEST_NOT_COMPLETED })
     .click();
 
   const finalPosition = await gamePage.getPlayerPosition(0);

@@ -18,7 +18,7 @@ export const LABEL_WHAT_WOULD_YOU_DO = "Caselle cosa faresti se";
 export const LABEL_DICTATION_DRAW = "Caselle disegno dettato";
 export const LABEL_SUBMIT = "Inizia gioco";
 
-// Dice Result Modal
+// Turn Result Modal Constants
 export const MODAL_TITLE_TURN_RESULT = "Risultato del Turno";
 export const MODAL_DICE_ROLL_MESSAGE = " ha tirato un ";
 export const MODAL_BATTLE_TITLE = "Battaglia!";
@@ -47,6 +47,33 @@ export const MODAL_DICTATION_DRAW_NOT_DRAWN = "Disegnato male";
 export const MODAL_DICTATION_DRAW_WHO_DREW = "Chi l'ha disegnato?";
 export const MODAL_DICTATION_DRAW_CONFIRM = "Conferma";
 export const MODAL_CLOSE_BUTTON = "Chiudi";
+export const MODAL_MUSIC_EMOTION_TITLE = "Emozioni in musica!";
+export const MODAL_MUSIC_EMOTION_EMOTION_TO_EXPRESS =
+  "Emozione da esprimere con una canzone:";
+export const MODAL_MUSIC_EMOTION_GUESSED = "Convincente";
+export const MODAL_MUSIC_EMOTION_NOT_GUESSED = "Non convincente";
+export const MODAL_PHYSICAL_TEST = "Test Fisico!";
+export const MODAL_PHYSICAL_TEST_TEST_TO_EXECUTE = "Test da eseguire:";
+export const MODAL_PHYSICAL_TEST_COMPLETED = "Completato";
+export const MODAL_PHYSICAL_TEST_NOT_COMPLETED = "Non completato";
+export const MODAL_WHAT_WOULD_YOU_DO_TITLE = "Cosa Faresti Se...";
+export const MODAL_WHAT_WOULD_YOU_DO_QUESTION = "Domanda:";
+export const MODAL_WHAT_WOULD_YOU_DO_CONVINCING_ANSWER = "Convincente";
+export const MODAL_WHAT_WOULD_YOU_DO_NOT_CONVINCING_ANSWER = "Non convincente";
+export const MODAL_BACKWRITE_TITLE = "Scrittura sulla schiena";
+export const MODAL_BACKWRITE_SHOW_WORD = "Mostra parola da scrivere";
+export const MODAL_BACKWRITE_WORD_TO_WRITE = "Parola da scrivere:";
+export const MODAL_BACKWRITE_HIDE_WORD = "Nascondi parola";
+export const MODAL_BACKWRITE_GUESSED = "Indovinato";
+export const MODAL_BACKWRITE_NOT_GUESSED = "Non indovinato";
+export const MODAL_BACKWRITE_WHO_GUESSED = "Chi ha aiutato ad indovinare?";
+export const MODAL_BACKWRITE_CONFIRM = "Conferma";
+export const MODAL_SPECIAL_EFFECT = "Effetto Speciale!";
+export const MODAL_SPECIAL_SQUARE_MESSAGE = "Casella speciale! Ti muovi ";
+export const MODAL_MOVE_FORWARD = "avanti di ";
+export const MODAL_MOVE_BACKWARD = "indietro di ";
+export const MODAL_TOTAL_MOVEMENT = "Movimento totale:";
+export const MODAL_NEW_POSITION = "Nuova posizione:";
 
 // Game Save and Restore
 export const LABEL_SAVE_GAME_BUTTON = "Salva partita";
@@ -90,14 +117,6 @@ export const SQUARE_BACKWRITE = "SCHIENA";
 export const SQUARE_MUSIC_EMOTION = "MUSICA";
 export const SQUARE_PHYSICAL_TEST = "FISICO";
 export const SQUARE_WHAT_WOULD_YOU_DO = "DOMANDA";
-
-// Turn Result Modal
-export const MODAL_SPECIAL_EFFECT = "Effetto Speciale!";
-export const MODAL_SPECIAL_SQUARE_MESSAGE = "Casella speciale! Ti muovi ";
-export const MODAL_MOVE_FORWARD = "avanti di ";
-export const MODAL_MOVE_BACKWARD = "indietro di ";
-export const MODAL_TOTAL_MOVEMENT = "Movimento totale:";
-export const MODAL_NEW_POSITION = "Nuova posizione:";
 
 // Homepage additional
 export const LABEL_NO_GAME_FOUND = "Nessuna partita trovata.";

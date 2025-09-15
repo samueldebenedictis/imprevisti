@@ -1,3 +1,8 @@
+import {
+  MODAL_MUSIC_EMOTION_GUESSED,
+  MODAL_MUSIC_EMOTION_NOT_GUESSED,
+  MODAL_MUSIC_EMOTION_TITLE,
+} from "@/app/texts";
 import { Board } from "@/model/board";
 import { Game } from "@/model/game";
 import { Player } from "@/model/player";
@@ -30,7 +35,9 @@ test("MusicEmotion only board - Modal appears after dice roll", async ({
   await gamePage.playTurnButton.click();
   await gamePage.rollDiceButton.click();
   await expect(gamePage.turnResultModal).toBeVisible();
-  await expect(gamePage.page.getByText("Musica Emozioni")).toBeVisible();
+  await expect(
+    gamePage.page.getByText(MODAL_MUSIC_EMOTION_TITLE),
+  ).toBeVisible();
 });
 
 test("MusicEmotion only board - Success moves player forward", async ({
@@ -44,7 +51,7 @@ test("MusicEmotion only board - Success moves player forward", async ({
   await expect(gamePage.turnResultModal).toBeVisible();
   const initialPosition = await gamePage.getPositionInModal();
   await gamePage.page
-    .getByRole("button", { name: "Emozione Indovinata" })
+    .getByRole("button", { name: MODAL_MUSIC_EMOTION_GUESSED, exact: true })
     .click();
   const finalPosition = await gamePage.getPlayerPosition(0);
 
@@ -63,7 +70,7 @@ test("MusicEmotion only board - Failure skips player turn", async ({
   await expect(gamePage.turnResultModal).toBeVisible();
   const initialPosition = await gamePage.getPositionInModal();
   await gamePage.page
-    .getByRole("button", { name: "Emozione Non Indovinata" })
+    .getByRole("button", { name: MODAL_MUSIC_EMOTION_NOT_GUESSED })
     .click();
 
   const finalPosition = await gamePage.getPlayerPosition(0);

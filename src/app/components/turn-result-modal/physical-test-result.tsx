@@ -1,16 +1,19 @@
 import type React from "react";
+import {
+  MODAL_PHYSICAL_TEST,
+  MODAL_PHYSICAL_TEST_COMPLETED,
+  MODAL_PHYSICAL_TEST_NOT_COMPLETED,
+  MODAL_PHYSICAL_TEST_TEST_TO_EXECUTE,
+} from "@/app/texts";
 import type { PhysicalTest } from "@/model/deck";
 import Button from "../ui/button";
+import { H3 } from "./h3";
 
 interface PhysicalTestResultProps {
   actionData: PhysicalTest;
   onResolvePhysicalTest?: (success: boolean) => void;
   onClose: () => void;
 }
-
-const H3 = (props: { children: string }) => (
-  <h3 className="ui-text-dark ui-text-subtitle">{props.children}</h3>
-);
 
 const PhysicalTestResult: React.FC<PhysicalTestResultProps> = ({
   actionData,
@@ -19,9 +22,9 @@ const PhysicalTestResult: React.FC<PhysicalTestResultProps> = ({
 }) => {
   return (
     <div className="mt-4">
-      <H3>Test Fisico</H3>
+      <H3>{MODAL_PHYSICAL_TEST}</H3>
       <p className="mb-1 text-xl">
-        Test da eseguire:{" "}
+        {MODAL_PHYSICAL_TEST_TEST_TO_EXECUTE}{" "}
         <span className="font-bold">{actionData.cardTest.cardTitle}</span>
       </p>
       <div className="mt-2 flex justify-center space-x-4">
@@ -34,7 +37,7 @@ const PhysicalTestResult: React.FC<PhysicalTestResultProps> = ({
           }}
           color="green"
         >
-          Test Completato
+          {MODAL_PHYSICAL_TEST_COMPLETED}
         </Button>
         <Button
           onClick={() => {
@@ -45,7 +48,7 @@ const PhysicalTestResult: React.FC<PhysicalTestResultProps> = ({
           }}
           color="red"
         >
-          Test Non Completato
+          {MODAL_PHYSICAL_TEST_NOT_COMPLETED}
         </Button>
       </div>
     </div>

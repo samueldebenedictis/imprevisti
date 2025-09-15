@@ -10,16 +10,13 @@ import {
   MODAL_QUIZ_WRONG,
 } from "../../texts";
 import Button from "../ui/button";
+import { H3 } from "./h3";
 
 interface QuizResultProps {
   actionData: Quiz;
   onResolveQuiz?: (success: boolean) => void;
   onClose: () => void;
 }
-
-const H3 = (props: { children: string }) => (
-  <h3 className="ui-text-dark ui-text-subtitle">{props.children}</h3>
-);
 
 const QuizResult: React.FC<QuizResultProps> = ({
   actionData,
@@ -44,8 +41,8 @@ const QuizResult: React.FC<QuizResultProps> = ({
     <div className="mt-4">
       <H3>{MODAL_QUIZ_TITLE}</H3>
       <p className="m-1 text-xl">
-        <span className="font-bold">{MODAL_QUIZ_QUESTION} </span>
-        {actionData.cardTopic.cardTitle}
+        {MODAL_QUIZ_QUESTION}{" "}
+        <span className="font-bold">{actionData.cardTopic.cardTitle}</span>
       </p>
       {!showQuizAnswer && (
         <Button

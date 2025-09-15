@@ -1,3 +1,9 @@
+import {
+  MODAL_DICTATION_DRAW_CONFIRM,
+  MODAL_DICTATION_DRAW_DRAWN,
+  MODAL_DICTATION_DRAW_NOT_DRAWN,
+  MODAL_DICTATION_DRAW_SHOW_IMAGE,
+} from "@/app/texts";
 import { Board } from "@/model/board";
 import { Game } from "@/model/game";
 import { Player } from "@/model/player";
@@ -43,13 +49,15 @@ test("Dictation draw only board - Success moves both players forward", async ({
   await expect(gamePage.turnResultModal).toBeVisible();
   const initialPosition = await gamePage.getPositionInModal();
 
-  await gamePage.page.getByRole("button", { name: "Mostra Immagine" }).click();
   await gamePage.page
-    .getByRole("button", { name: "Ben Disegnato", exact: true })
+    .getByRole("button", { name: MODAL_DICTATION_DRAW_SHOW_IMAGE })
+    .click();
+  await gamePage.page
+    .getByRole("button", { name: MODAL_DICTATION_DRAW_DRAWN, exact: true })
     .click();
   await gamePage.page.getByRole("combobox").selectOption("Bob");
   await gamePage.page
-    .getByRole("button", { name: "Conferma", exact: true })
+    .getByRole("button", { name: MODAL_DICTATION_DRAW_CONFIRM, exact: true })
     .click();
 
   const player1Position = await gamePage.getPlayerPosition(0);
@@ -70,9 +78,13 @@ test("Dictation draw only board - Failure skips describing player turn", async (
 
   await expect(gamePage.turnResultModal).toBeVisible();
   const initialPosition = await gamePage.getPositionInModal();
-  await gamePage.page.getByRole("button", { name: "Mostra Immagine" }).click();
+  await gamePage.page
+    .getByRole("button", { name: MODAL_DICTATION_DRAW_SHOW_IMAGE })
+    .click();
 
-  await gamePage.page.getByRole("button", { name: "Male Disegnato" }).click();
+  await gamePage.page
+    .getByRole("button", { name: MODAL_DICTATION_DRAW_NOT_DRAWN })
+    .click();
 
   const player1Position = await gamePage.getPlayerPosition(0);
   expect(player1Position).toBe(initialPosition);
@@ -89,7 +101,9 @@ test("Dictation draw only board - Image is displayed when shown", async ({
   await expect(gamePage.turnResultModal).toBeVisible();
 
   await expect(gamePage.page.locator("img")).not.toBeVisible();
-  await gamePage.page.getByRole("button", { name: "Mostra Immagine" }).click();
+  await gamePage.page
+    .getByRole("button", { name: MODAL_DICTATION_DRAW_SHOW_IMAGE })
+    .click();
 
   await expect(gamePage.page.locator("img")).toBeVisible();
 });
