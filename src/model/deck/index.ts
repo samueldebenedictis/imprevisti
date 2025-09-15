@@ -2,6 +2,8 @@ export { BackWrite } from "./backwrite";
 export { BackWriteDeck } from "./backwrite-deck";
 export { Card } from "./card";
 export { Deck } from "./deck";
+export { DictationDraw } from "./dictation-draw";
+export { DictationDrawDeck } from "./dictation-draw-deck";
 export { Mime } from "./mime";
 export { MimeDeck } from "./mime-deck";
 export { MusicEmotion } from "./music-emotion";

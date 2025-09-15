@@ -3,6 +3,7 @@ import { Board, type BoardJSON } from "./board";
 import {
   BackWriteDeck,
   type Deck,
+  DictationDrawDeck,
   MimeDeck,
   MusicEmotionDeck,
   PhysicalTestDeck,
@@ -13,6 +14,7 @@ import { Dice } from "./dice";
 import {
   BackWriteManager,
   BattleManager,
+  DictationDrawManager,
   type GameActionResult,
   GameStateManager,
   MimeManager,
@@ -27,6 +29,7 @@ import {
 import { Player, type PlayerJSON } from "./player";
 import {
   BackWrite,
+  DictationDraw,
   Mime,
   MusicEmotion,
   PhysicalTest,
@@ -56,6 +59,7 @@ export class Game {
   private musicEmotionDeck: Deck;
   private physicalTestDeck: Deck;
   private whatWouldYouDoDeck: Deck;
+  private dictationDrawDeck: Deck;
 
   // Manager per responsabilità specifiche
   private turnManager: TurnManager;
@@ -69,6 +73,7 @@ export class Game {
   private musicEmotionManager: MusicEmotionManager;
   private physicalTestManager: PhysicalTestManager;
   private whatWouldYouDoManager: WhatWouldYouDoManager;
+  private dictationDrawManager: DictationDrawManager;
 
   /**
    * Crea una nuova partita con i parametri specificati.
@@ -86,6 +91,7 @@ export class Game {
     this.musicEmotionDeck = new MusicEmotionDeck();
     this.physicalTestDeck = new PhysicalTestDeck();
     this.whatWouldYouDoDeck = new WhatWouldYouDoDeck();
+    this.dictationDrawDeck = new DictationDrawDeck();
 
     // Inizializzazione manager
     this.turnManager = new TurnManager(board.getPlayers());
@@ -102,6 +108,7 @@ export class Game {
       this.musicEmotionDeck,
       this.physicalTestDeck,
       this.whatWouldYouDoDeck,
+      this.dictationDrawDeck,
       this.dice,
       this.movementManager,
       this.gameStateManager,
@@ -119,6 +126,7 @@ export class Game {
     this.whatWouldYouDoManager = new WhatWouldYouDoManager(
       this.movementManager,
     );
+    this.dictationDrawManager = new DictationDrawManager(this.movementManager);
   }
 
   /**
@@ -185,6 +193,7 @@ export class Game {
       game.musicEmotionDeck,
       game.physicalTestDeck,
       game.whatWouldYouDoDeck,
+      game.dictationDrawDeck,
       game.dice,
       game.movementManager, // movementManager also needs to be updated first
       reconstructedGameStateManager,
@@ -324,6 +333,14 @@ export class Game {
           actionType: "what-would-you-do",
         };
       }
+      if (specialAction instanceof DictationDraw) {
+        return {
+          type: "dictation-draw",
+          data: specialAction,
+          diceResult: diceValue,
+          actionType: "dictation-draw",
+        };
+      }
     }
 
     return { type: "none", diceResult: diceValue, actionType: null };
@@ -434,6 +451,25 @@ export class Game {
       success,
     );
     return collision;
+  }
+
+  /**
+   * Risolve un'azione di disegno dettato utilizzando il DictationDrawManager.
+   * @param dictationDrawAction - L'oggetto DictationDraw da risolvere
+   * @param success - True se il disegno è stato simile, false altrimenti
+   * @param drawingPlayer - Il giocatore che ha disegnato (richiesto se success è true)
+   * @returns Array con eventuali collisioni risultanti dal movimento dei giocatori
+   */
+  resolveDictationDraw(
+    dictationDrawAction: DictationDraw,
+    success: boolean,
+    drawingPlayer?: Player,
+  ): [Battle | null, Battle | null] {
+    return this.dictationDrawManager.resolveDictationDraw(
+      dictationDrawAction,
+      success,
+      drawingPlayer,
+    );
   }
 
   // Getter per accesso ai dati del gioco

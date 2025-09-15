@@ -6,7 +6,8 @@ export type SquareType =
   | "backwrite"
   | "music-emotion"
   | "physical-test"
-  | "what-would-you-do";
+  | "what-would-you-do"
+  | "dictation-draw";
 
 export interface SquareJSON {
   number: number;
