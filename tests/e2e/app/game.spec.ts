@@ -19,6 +19,7 @@ test("Fill form @snapshot", async ({ homePage }) => {
   await homePage.musicEmotionCheckbox.uncheck();
   await homePage.physicalTestCheckbox.uncheck();
   await homePage.whatWouldYouDoCheckbox.uncheck();
+  await homePage.dictationDrawCheckbox.uncheck();
 
   await homePage.submit.click();
   await expect(homePage.page).toHaveURL(/game/);
