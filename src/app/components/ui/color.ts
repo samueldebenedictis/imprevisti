@@ -1,6 +1,5 @@
 export type Color =
   | "yellow"
-  | "yellow-light"
   | "blue"
   | "green"
   | "red"
@@ -17,8 +16,6 @@ export const colorToCss = (color: Color) => {
   switch (color) {
     case "yellow":
       return `${base} from-amber-600 to-amber-400`;
-    case "yellow-light":
-      return `${base} from-amber-300 to-amber-200`;
     case "blue":
       return `${base} from-sky-600 to-sky-400`;
     case "green":
