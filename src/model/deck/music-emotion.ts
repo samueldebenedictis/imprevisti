@@ -14,9 +14,9 @@ export class MusicEmotion {
 }
 
 export const musicEmotionWords = [
-  "Felice",
-  "Triste",
-  "Arrabbiato",
+  "Felicità",
+  "Tristezza",
+  "Rabbia",
   "Sorpresa",
   "Paura",
   "Disgusto",
@@ -32,8 +32,7 @@ export const musicEmotionWords = [
   "Noia",
   "Orgoglio",
   "Vergogna",
-  "Geloso",
-  "Grato",
+  "Gelosia",
 ];
 
 export const musicEmotionCards = musicEmotionWords.map((word) => word);
