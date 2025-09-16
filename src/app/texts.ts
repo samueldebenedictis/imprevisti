@@ -108,15 +108,25 @@ export const LEFT_BAR_PLAYERS_POSITION = "Posizione dei giocatori";
 // Square
 export const SQUARE_START = "START";
 export const SQUARE_WIN = "WIN!";
-export const SQUARE_MOVE_FORWARD = " AVANTI +";
-export const SQUARE_MOVE_BACKWARD = "INDIETRO ";
+export const SQUARE_MOVE_FORWARD = " AVANTI";
+export const SQUARE_MOVE_BACKWARD = "INDIETRO";
 export const SQUARE_QUIZ = "QUIZ";
 export const SQUARE_MIME = "MIMO";
-export const SQUARE_DICTATION_DRAW = "DISEGNO";
-export const SQUARE_BACKWRITE = "SCHIENA";
-export const SQUARE_MUSIC_EMOTION = "MUSICA";
-export const SQUARE_PHYSICAL_TEST = "FISICO";
-export const SQUARE_WHAT_WOULD_YOU_DO = "DOMANDA";
+// Dictation draw
+export const SQUARE_DICTATION_DRAW_TOP = "DISEGNO";
+export const SQUARE_DICTATION_DRAW_BOTTOM = "DETTATO";
+// Back write
+export const SQUARE_BACKWRITE_TOP = "PAROLA";
+export const SQUARE_BACKWRITE_BOTTOM = "SULLA SCHIENA";
+// Music emotion
+export const SQUARE_MUSIC_EMOTION_TOP = "EMOZIONI";
+export const SQUARE_MUSIC_EMOTION_BOTTOM = "IN MUSICA";
+// Physical test
+export const SQUARE_PHYSICAL_TEST_TOP = "PROVA";
+export const SQUARE_PHYSICAL_TEST_BOTTOM = "FISICA";
+// What would you do if
+export const SQUARE_WHAT_WOULD_YOU_DO_TOP = "COSA FARESTI";
+export const SQUARE_WHAT_WOULD_YOU_DO_BOTTOM = "SE...";
 
 // Homepage additional
 export const LABEL_NO_GAME_FOUND = "Nessuna partita trovata.";

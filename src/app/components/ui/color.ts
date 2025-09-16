@@ -1,5 +1,9 @@
 export type Color =
+  | "amber"
+  | "emerald"
   | "yellow"
+  | "indigo"
+  | "violet"
   | "blue"
   | "green"
   | "red"
@@ -14,8 +18,10 @@ export type Color =
 export const colorToCss = (color: Color) => {
   const base = "bg-linear-to-br";
   switch (color) {
-    case "yellow":
+    case "amber":
       return `${base} from-amber-600 to-amber-400`;
+    case "yellow":
+      return `${base} from-yellow-600 to-yellow-400`;
     case "blue":
       return `${base} from-sky-600 to-sky-400`;
     case "green":
@@ -30,10 +36,16 @@ export const colorToCss = (color: Color) => {
       return `${base} from-teal-600 to-teal-400`;
     case "pink":
       return `${base} from-pink-600 to-pink-400`;
+    case "indigo":
+      return `${base} from-indigo-600 to-indigo-400`;
     case "cyan":
       return `${base} from-cyan-600 to-cyan-400`;
     case "lime":
       return `${base} from-lime-600 to-lime-400`;
+    case "violet":
+      return `${base} from-viole-600 to-violet-400`;
+    case "emerald":
+      return `${base} from-emerald-600 to-emerald-400`;
     default:
       return `${base} from-gray-600 to-gray-400`;
   }

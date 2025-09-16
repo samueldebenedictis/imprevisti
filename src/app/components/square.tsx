@@ -3,16 +3,21 @@
 import type { SquareType } from "@/model/square/square";
 import {
   LABEL_OTHER_PLAYERS,
-  SQUARE_BACKWRITE,
-  SQUARE_DICTATION_DRAW,
+  SQUARE_BACKWRITE_BOTTOM,
+  SQUARE_BACKWRITE_TOP,
+  SQUARE_DICTATION_DRAW_BOTTOM,
+  SQUARE_DICTATION_DRAW_TOP,
   SQUARE_MIME,
   SQUARE_MOVE_BACKWARD,
   SQUARE_MOVE_FORWARD,
-  SQUARE_MUSIC_EMOTION,
-  SQUARE_PHYSICAL_TEST,
+  SQUARE_MUSIC_EMOTION_BOTTOM,
+  SQUARE_MUSIC_EMOTION_TOP,
+  SQUARE_PHYSICAL_TEST_BOTTOM,
+  SQUARE_PHYSICAL_TEST_TOP,
   SQUARE_QUIZ,
   SQUARE_START,
-  SQUARE_WHAT_WOULD_YOU_DO,
+  SQUARE_WHAT_WOULD_YOU_DO_BOTTOM,
+  SQUARE_WHAT_WOULD_YOU_DO_TOP,
   SQUARE_WIN,
 } from "../texts";
 import Pawn from "./pawn";
@@ -36,7 +41,7 @@ const typeToColor = (type: ExtendedSquareType, moveValue?: number): Color => {
     case "backwrite":
       return "orange";
     case "dictation-draw":
-      return "purple";
+      return "indigo";
     case "music-emotion":
       return "pink";
     case "physical-test":
@@ -62,41 +67,54 @@ const text = (n: number, squareType: ExtendedSquareType) => {
   const classBase = "ui-text-light m-auto";
   if (squareType === "first" || squareType === "last") {
     return (
-      <span className={`${classBase} ui-text-title`}>
+      <span className={`${classBase} ui-text-title text-5xl`}>
         {squareType === "first" ? SQUARE_START : SQUARE_WIN}
       </span>
     );
   } else {
-    return <span className={`${classBase} ui-text-title text-7xl`}>{n}</span>;
+    return <span className={`${classBase} ui-text-title text-8xl`}>{n}</span>;
   }
 };
 
 const typeText = (type: ExtendedSquareType, moveValue: number | undefined) => {
-  let displayText = "";
+  let topDisplayText = "";
+  let bottomDisplayText = "";
   if (type === "move" && moveValue !== undefined) {
-    const sign = moveValue > 0 ? SQUARE_MOVE_FORWARD : SQUARE_MOVE_BACKWARD;
-    displayText = `${sign}${moveValue}`;
+    const text = moveValue > 0 ? SQUARE_MOVE_FORWARD : SQUARE_MOVE_BACKWARD;
+    const sign = moveValue > 0 ? "+" : "";
+    topDisplayText = `${text}`;
+    bottomDisplayText = `${sign}${moveValue}`;
   } else if (type === "quiz") {
-    displayText = SQUARE_QUIZ;
+    topDisplayText = SQUARE_QUIZ;
   } else if (type === "mime") {
-    displayText = SQUARE_MIME;
+    topDisplayText = SQUARE_MIME;
   } else if (type === "backwrite") {
-    displayText = SQUARE_BACKWRITE;
+    topDisplayText = SQUARE_BACKWRITE_TOP;
+    bottomDisplayText = SQUARE_BACKWRITE_BOTTOM;
   } else if (type === "music-emotion") {
-    displayText = SQUARE_MUSIC_EMOTION;
+    topDisplayText = SQUARE_MUSIC_EMOTION_TOP;
+    bottomDisplayText = SQUARE_MUSIC_EMOTION_BOTTOM;
   } else if (type === "physical-test") {
-    displayText = SQUARE_PHYSICAL_TEST;
+    topDisplayText = SQUARE_PHYSICAL_TEST_TOP;
+    bottomDisplayText = SQUARE_PHYSICAL_TEST_BOTTOM;
   } else if (type === "what-would-you-do") {
-    displayText = SQUARE_WHAT_WOULD_YOU_DO;
+    topDisplayText = SQUARE_WHAT_WOULD_YOU_DO_TOP;
+    bottomDisplayText = SQUARE_WHAT_WOULD_YOU_DO_BOTTOM;
   } else if (type === "dictation-draw") {
-    displayText = SQUARE_DICTATION_DRAW;
+    topDisplayText = SQUARE_DICTATION_DRAW_TOP;
+    bottomDisplayText = SQUARE_DICTATION_DRAW_BOTTOM;
   } else {
     return null;
   }
   return (
-    <span className="ui-text-light ui-text-subtitle -translate-x-1/2 absolute top-1 left-1/2 transform whitespace-nowrap">
-      {displayText}
-    </span>
+    <>
+      <span className="ui-text-light ui-text-subtitle -translate-x-1/2 absolute top-1 left-1/2 transform whitespace-nowrap">
+        {topDisplayText}
+      </span>
+      <span className="ui-text-light ui-text-subtitle -translate-x-1/2 absolute bottom-1 left-1/2 transform whitespace-nowrap">
+        {bottomDisplayText}
+      </span>
+    </>
   );
 };
 
@@ -135,7 +153,7 @@ const playersOn = (
       pawns.push(
         Pawn({
           name: el.name,
-          color: "yellow",
+          color: "amber",
           isCurrentPlayerTurn: false,
           isMoving: false, // Gli altri giocatori non si animano
         }),
@@ -146,7 +164,7 @@ const playersOn = (
       pawns.push(
         Pawn({
           name: `${otherPlayers.length.toString()} ${LABEL_OTHER_PLAYERS}`,
-          color: "yellow",
+          color: "amber",
           isCurrentPlayerTurn: false,
           isMoving: false, // Gli altri giocatori non si animano
         }),
@@ -168,7 +186,7 @@ export default function Square(props: SquareProps) {
   const bg = background(props.number);
   return (
     <div className="ui-border-dark relative shadow-xl">
-      <div className={`h-32 w-32 ${color}`}>
+      <div className={`h-40 w-40 ${color}`}>
         <div className={`h-full ${bg}`}></div>
       </div>
       <div className="absolute top-0 flex h-full w-full text-center">
