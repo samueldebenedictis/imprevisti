@@ -8,14 +8,14 @@ export const LABEL_GAME_CONFIGURATION = "Configurazione gioco";
 export const LABEL_SPECIAL_SQUARES = "Caselle speciali";
 export const LABEL_SPECIAL_PERCENTAGE = (n: number) =>
   `Percentuale di caselle speciali: ${n}%`;
-export const LABEL_MIME = "Caselle mimo";
-export const LABEL_QUIZ = "Caselle quiz";
-export const LABEL_BACKWRITE = "Caselle scrivi sulla schiena";
-export const LABEL_MOVE = "Caselle movimento";
-export const LABEL_MUSIC_EMOTION = "Caselle musica emozioni";
-export const LABEL_PHYSICAL_TEST = "Caselle test fisici";
-export const LABEL_WHAT_WOULD_YOU_DO = "Caselle cosa faresti se";
-export const LABEL_DICTATION_DRAW = "Caselle disegno dettato";
+export const LABEL_MIME = "Mimo";
+export const LABEL_QUIZ = "Quiz";
+export const LABEL_BACKWRITE = "Parole sulla schiena";
+export const LABEL_MOVE = "Avanti e indietro";
+export const LABEL_MUSIC_EMOTION = "Emozioni in musica";
+export const LABEL_PHYSICAL_TEST = "Test fisici";
+export const LABEL_WHAT_WOULD_YOU_DO = "Cosa faresti se...";
+export const LABEL_DICTATION_DRAW = "Disegno dettato";
 export const LABEL_SUBMIT = "Inizia gioco";
 
 // Turn Result Modal Constants
