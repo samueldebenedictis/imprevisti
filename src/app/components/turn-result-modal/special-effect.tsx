@@ -45,13 +45,13 @@ const SpecialEffect: React.FC<SpecialEffectProps> = ({
             {MODAL_SPECIAL_EFFECT}
           </p>
 
-          <p className="ui-text-dark">
+          <p>
             {specialEffectMessage}
             <span className={`font-bold text-xl ${specialColor(moveValue)}`}>
               {Math.abs(moveValue)}
             </span>
           </p>
-          <p className="ui-text-dark font-bold">
+          <p className=" font-bold">
             {MODAL_TOTAL_MOVEMENT}{" "}
             <span
               className={`font-bold text-xl ${specialColor(newPosition - startPosition)}`}

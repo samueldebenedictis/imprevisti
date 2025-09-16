@@ -83,11 +83,9 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div className=" ui-text-dark fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="ui-border-dark min-w-[600px] bg-white p-6 text-center shadow-lg">
-        <h2 className="ui-text-dark ui-text-title mb-4">
-          {MODAL_TITLE_TURN_RESULT}
-        </h2>
+        <h2 className=" ui-text-title mb-4">{MODAL_TITLE_TURN_RESULT}</h2>
 
         {diceResult !== null && !(diceResult === 0 && actionType === null) && (
           <p className="mb-1 text-xl">

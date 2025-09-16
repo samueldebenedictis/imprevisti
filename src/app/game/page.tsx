@@ -93,7 +93,7 @@ export default function Page() {
   if (!game) {
     return (
       <ClientOnly>
-        <div className="flex h-96 flex-col items-center justify-center">
+        <div className="ui-text-dark flex h-96 flex-col items-center justify-center">
           <p className="ui-text-title m-4">{LABEL_NO_GAME_FOUND}</p>
           <Button onClick={() => redirect(URL_HOME)} color="blue">
             {LABEL_BACK_TO_HOME}
