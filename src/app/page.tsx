@@ -8,9 +8,12 @@ import Input from "./components/ui/input";
 import { Label, LabelCheckbox } from "./components/ui/label";
 import {
   LABEL_BACKWRITE,
+  LABEL_DICTATION_DRAW,
   LABEL_GAME_CONFIGURATION,
   LABEL_MIME,
   LABEL_MOVE,
+  LABEL_MUSIC_EMOTION,
+  LABEL_PHYSICAL_TEST,
   LABEL_PLAYER_NAME,
   LABEL_PLAYERS_NUMBER,
   LABEL_QUIZ,
@@ -18,6 +21,7 @@ import {
   LABEL_SPECIAL_SQUARES,
   LABEL_SQUARES_NUMBER,
   LABEL_SUBMIT,
+  LABEL_WHAT_WOULD_YOU_DO,
 } from "./texts";
 
 export default function Home() {
@@ -44,10 +48,8 @@ export default function Home() {
   };
 
   return (
-    <div className="my-8 flex flex-col items-center justify-center p-2">
-      <h1 className="ui-text-dark ui-text-title m-2">
-        {LABEL_GAME_CONFIGURATION}
-      </h1>
+    <div className="ui-text-dark my-8 flex flex-col items-center justify-center p-2">
+      <h1 className=" ui-text-title m-2">{LABEL_GAME_CONFIGURATION}</h1>
       <form onSubmit={handleSubmit} className="m-2 w-full max-w-md bg-white">
         <div className="mb-4">
           <Label htmlFor="numPlayers">{LABEL_PLAYERS_NUMBER}</Label>
@@ -158,6 +160,78 @@ export default function Home() {
               className="ui-custom-checkbox mr-2"
             />
             <LabelCheckbox htmlFor="move">{LABEL_MOVE}</LabelCheckbox>
+          </div>
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="music-emotion"
+              name="music-emotion"
+              checked={squareTypes["music-emotion"]}
+              onChange={(e) =>
+                actions.setSquareType(
+                  e.target.name as keyof typeof squareTypes,
+                  e.target.checked,
+                )
+              }
+              className="ui-custom-checkbox mr-2"
+            />
+            <LabelCheckbox htmlFor="music-emotion">
+              {LABEL_MUSIC_EMOTION}
+            </LabelCheckbox>
+          </div>
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="physical-test"
+              name="physical-test"
+              checked={squareTypes["physical-test"]}
+              onChange={(e) =>
+                actions.setSquareType(
+                  e.target.name as keyof typeof squareTypes,
+                  e.target.checked,
+                )
+              }
+              className="ui-custom-checkbox mr-2"
+            />
+            <LabelCheckbox htmlFor="physical-test">
+              {LABEL_PHYSICAL_TEST}
+            </LabelCheckbox>
+          </div>
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="what-would-you-do"
+              name="what-would-you-do"
+              checked={squareTypes["what-would-you-do"]}
+              onChange={(e) =>
+                actions.setSquareType(
+                  e.target.name as keyof typeof squareTypes,
+                  e.target.checked,
+                )
+              }
+              className="ui-custom-checkbox mr-2"
+            />
+            <LabelCheckbox htmlFor="what-would-you-do">
+              {LABEL_WHAT_WOULD_YOU_DO}
+            </LabelCheckbox>
+          </div>
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="dictation-draw"
+              name="dictation-draw"
+              checked={squareTypes["dictation-draw"]}
+              onChange={(e) =>
+                actions.setSquareType(
+                  e.target.name as keyof typeof squareTypes,
+                  e.target.checked,
+                )
+              }
+              className="ui-custom-checkbox mr-2"
+            />
+            <LabelCheckbox htmlFor="dictation-draw">
+              {LABEL_DICTATION_DRAW}
+            </LabelCheckbox>
           </div>
         </div>
 

@@ -163,7 +163,11 @@
           "mime": false,
           "quiz": false,
           "move": false,
-          "backwrite": false
+          "backwrite": false,
+          "music-emotion": false,
+          "physical-test": false,
+          "what-would-you-do": false,
+          "dictation-draw": false
         },
         "specialPercentage": 20
       },

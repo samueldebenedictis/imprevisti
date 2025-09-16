@@ -1,6 +1,10 @@
 import type { Board } from "../board";
 import type { Deck, Mime, Quiz } from "../deck";
 import type { BackWrite } from "../deck/backwrite";
+import type { DictationDraw } from "../deck/dictation-draw";
+import type { MusicEmotion } from "../deck/music-emotion";
+import type { PhysicalTest } from "../deck/physical-test";
+import type { WhatWouldYouDo } from "../deck/what-would-you-do";
 import type { Dice } from "../dice";
 import type { GameStateManager, MovementManager } from "../managers";
 import type { Player } from "../player";
@@ -14,6 +18,10 @@ export type CommandDependencies = {
   mimeDeck: Deck;
   quizDeck: Deck;
   backWriteDeck: Deck;
+  musicEmotionDeck: Deck;
+  physicalTestDeck: Deck;
+  whatWouldYouDoDeck: Deck;
+  dictationDrawDeck: Deck;
   dice: Dice;
   movementManager: MovementManager;
   gameStateManager: GameStateManager;
@@ -30,7 +38,15 @@ export interface Command {
    */
   execute(
     dependencies: CommandDependencies,
-  ): undefined | Mime | Quiz | BackWrite;
+  ):
+    | undefined
+    | Mime
+    | Quiz
+    | BackWrite
+    | MusicEmotion
+    | PhysicalTest
+    | WhatWouldYouDo
+    | DictationDraw;
 }
 
 /**

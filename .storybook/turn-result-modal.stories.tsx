@@ -1,7 +1,15 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import TurnResultModal from "../src/app/components/turn-result-modal";
 import { Battle } from "../src/model/battle";
-import { Card, Mime, Quiz } from "../src/model/deck";
+import {
+  Card,
+  DictationDraw,
+  Mime,
+  MusicEmotion,
+  PhysicalTest,
+  Quiz,
+  WhatWouldYouDo,
+} from "../src/model/deck";
 import { Player } from "../src/model/player";
 
 // Mock classes
@@ -10,6 +18,10 @@ class MockBattle extends Battle {}
 class MockCard extends Card {}
 class MockQuiz extends Quiz {}
 class MockMime extends Mime {}
+class MockMusicEmotion extends MusicEmotion {}
+class MockPhysicalTest extends PhysicalTest {}
+class MockWhatWouldYouDo extends WhatWouldYouDo {}
+class MockDictationDraw extends DictationDraw {}
 
 const meta = {
   title: "Example/TurnResultModal",
@@ -21,7 +33,16 @@ const meta = {
   argTypes: {
     actionType: {
       control: { type: "select" },
-      options: ["battle", "quiz", "mime", null],
+      options: [
+        "battle",
+        "quiz",
+        "mime",
+        "music-emotion",
+        "physical-test",
+        "what-would-you-do",
+        "dictation-draw",
+        null,
+      ],
     },
   },
 } satisfies Meta<typeof TurnResultModal>;
@@ -119,5 +140,79 @@ export const PositionChangeWithSpecialEffect: Story = {
     newPosition: 12,
     diceResult: 4,
     boardSize: 20,
+  },
+};
+
+export const MusicEmotionScenario: Story = {
+  args: {
+    isOpen: true,
+    onClose: () => console.log("Close modal"),
+    diceResult: 4,
+    actionType: "music-emotion",
+    actionData: new MockMusicEmotion(
+      allPlayers[0],
+      new MockCard("Felicità", "Canta una canzone allegra"),
+    ),
+    onResolveMusicEmotion: (success) =>
+      console.log(`Music emotion success: ${success}`),
+    allPlayers: allPlayers,
+    currentPlayerName: allPlayers[0].getName(),
+  },
+};
+
+export const PhysicalTestScenario: Story = {
+  args: {
+    isOpen: true,
+    onClose: () => console.log("Close modal"),
+    diceResult: 3,
+    actionType: "physical-test",
+    actionData: new MockPhysicalTest(
+      allPlayers[0],
+      new MockCard("Test fisico", "Fai 10 flessioni"),
+    ),
+    onResolvePhysicalTest: (success) =>
+      console.log(`Physical test success: ${success}`),
+    allPlayers: allPlayers,
+    currentPlayerName: allPlayers[0].getName(),
+  },
+};
+
+export const WhatWouldYouDoScenario: Story = {
+  args: {
+    isOpen: true,
+    onClose: () => console.log("Close modal"),
+    diceResult: 6,
+    actionType: "what-would-you-do",
+    actionData: new MockWhatWouldYouDo(
+      allPlayers[0],
+      new MockCard(
+        "Situazione ipotetica",
+        "Se vincessi un viaggio intorno al mondo?",
+      ),
+    ),
+    onResolveWhatWouldYouDo: (success) =>
+      console.log(`What would you do success: ${success}`),
+    allPlayers: allPlayers,
+    currentPlayerName: allPlayers[0].getName(),
+  },
+};
+
+export const DictationDrawScenario: Story = {
+  args: {
+    isOpen: true,
+    onClose: () => console.log("Close modal"),
+    diceResult: 4,
+    actionType: "dictation-draw",
+    actionData: new MockDictationDraw(
+      allPlayers[0],
+      new MockCard("Casa: Una semplice casa con tetto e porta 🏠", ""),
+      "/images/dictation-draw/house.svg",
+    ),
+    onResolveDictationDraw: (success, drawingPlayerId) =>
+      console.log(
+        `Dictation draw success: ${success}, Drawing player: ${drawingPlayerId}`,
+      ),
+    allPlayers: allPlayers,
+    currentPlayerName: allPlayers[0].getName(),
   },
 };

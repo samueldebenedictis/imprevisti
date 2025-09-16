@@ -1,9 +1,13 @@
 export { BackWriteManager } from "./backwrite-manager";
 export { BattleManager } from "./battle-manager";
+export { DictationDrawManager } from "./dictation-draw-manager";
 export { GameStateManager } from "./game-state-manager";
 export { MimeManager } from "./mime-manager";
 export { MovementManager } from "./movement-manager";
+export { MusicEmotionManager } from "./music-emotion-manager";
+export { PhysicalTestManager } from "./physical-test-manager";
 export { QuizManager } from "./quiz-manager";
 export { SpecialSquareProcessor } from "./special-square-processor";
 export { TurnManager } from "./turn-manager";
 export type { GameActionResult, MovementResult } from "./types";
+export { WhatWouldYouDoManager } from "./what-would-you-do-manager";

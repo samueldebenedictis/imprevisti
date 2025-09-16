@@ -6,7 +6,6 @@ import { MoveSquare } from "@/model/square";
 import { useCurrentPlayer, useGameStore } from "../../store/game-store";
 import { URL_HOME } from "../../vars";
 import BoardComponent from "../components/board";
-import ClientOnly from "../components/client-only";
 import LeftBar from "../components/left-bar";
 import SquareC from "../components/square";
 import DiceResultModal from "../components/turn-result-modal";
@@ -92,64 +91,64 @@ export default function Page() {
   // Render del gioco
   if (!game) {
     return (
-      <ClientOnly>
-        <div className="flex h-96 flex-col items-center justify-center">
-          <p className="ui-text-title m-4">{LABEL_NO_GAME_FOUND}</p>
-          <Button onClick={() => redirect(URL_HOME)} color="blue">
-            {LABEL_BACK_TO_HOME}
-          </Button>
-        </div>
-      </ClientOnly>
+      <div className="ui-text-dark flex h-96 flex-col items-center justify-center">
+        <p className="ui-text-title m-4">{LABEL_NO_GAME_FOUND}</p>
+        <Button onClick={() => redirect(URL_HOME)} color="blue">
+          {LABEL_BACK_TO_HOME}
+        </Button>
+      </div>
     );
   }
 
   return (
-    <ClientOnly>
-      <div className="mt-6 flex items-start justify-center gap-8 p-4">
-        <div className="sticky top-30 flex-shrink-0 self-start">
-          {currentPlayer && (
-            <LeftBar
-              currentPlayer={currentPlayer}
-              playersPositions={playersPositions}
-              gameEnded={game.isGameEnded()}
-              winnerName={game.getWinner()?.getName()}
-              onPlayTurnClick={actions.openDiceModal}
-              onDeleteGame={handleDeleteGame}
-              gameInstance={game.toJSON()}
-              showDiceRoll={isDiceModalOpen}
-              diceRollProps={{
-                onRollDice: actions.playTurn,
-                isRolling,
-                diceResult: modalDiceResult,
-                onContinue: actions.continueAfterDice,
-                currentPlayerName: playerWhoRolledName || "",
-              }}
-            />
-          )}
-        </div>
-        <div className="flex flex-shrink-0 flex-col items-center justify-center">
-          {BoardComponent({
-            squares: squaresC,
-            cols: 5,
-          })}
-        </div>
-        <DiceResultModal
-          isOpen={isModalOpen}
-          onClose={actions.closeModal}
-          diceResult={diceResult as number}
-          actionType={actionType}
-          actionData={actionData}
-          onResolveBattle={actions.resolveBattle}
-          onResolveMime={actions.resolveMime}
-          onResolveQuiz={actions.resolveQuiz}
-          onResolveBackWrite={actions.resolveBackWrite}
-          allPlayers={game.getPlayers()}
-          currentPlayerName={playerWhoRolledName || ""}
-          startPosition={startPosition}
-          newPosition={newPosition}
-          boardSize={game.getBoard().getSquares().length}
-        />
+    <div className="mt-6 flex items-start justify-center gap-8 p-4">
+      <div className="sticky top-30 flex-shrink-0 self-start">
+        {currentPlayer && (
+          <LeftBar
+            currentPlayer={currentPlayer}
+            playersPositions={playersPositions}
+            gameEnded={game.isGameEnded()}
+            winnerName={game.getWinner()?.getName()}
+            onPlayTurnClick={actions.openDiceModal}
+            onDeleteGame={handleDeleteGame}
+            gameInstance={game.toJSON()}
+            showDiceRoll={isDiceModalOpen}
+            diceRollProps={{
+              onRollDice: actions.playTurn,
+              isRolling,
+              diceResult: modalDiceResult,
+              onContinue: actions.continueAfterDice,
+              currentPlayerName: playerWhoRolledName || "",
+            }}
+          />
+        )}
       </div>
-    </ClientOnly>
+      <div className="flex flex-shrink-0 flex-col items-center justify-center">
+        {BoardComponent({
+          squares: squaresC,
+          cols: 5,
+        })}
+      </div>
+      <DiceResultModal
+        isOpen={isModalOpen}
+        onClose={actions.closeModal}
+        diceResult={diceResult as number}
+        actionType={actionType}
+        actionData={actionData}
+        onResolveBattle={actions.resolveBattle}
+        onResolveMime={actions.resolveMime}
+        onResolveQuiz={actions.resolveQuiz}
+        onResolveBackWrite={actions.resolveBackWrite}
+        onResolveMusicEmotion={actions.resolveMusicEmotion}
+        onResolvePhysicalTest={actions.resolvePhysicalTest}
+        onResolveWhatWouldYouDo={actions.resolveWhatWouldYouDo}
+        onResolveDictationDraw={actions.resolveDictationDraw}
+        allPlayers={game.getPlayers()}
+        currentPlayerName={playerWhoRolledName || ""}
+        startPosition={startPosition}
+        newPosition={newPosition}
+        boardSize={game.getBoard().getSquares().length}
+      />
+    </div>
   );
 }

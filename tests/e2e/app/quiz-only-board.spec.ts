@@ -28,3 +28,36 @@ test("Quiz only board - modal appears after dice roll", async ({
   await gamePage.rollDiceButton.click();
   await expect(gamePage.turnResultModal).toBeVisible();
 });
+
+test("Quiz only board - Success moves player forward", async ({ gamePage }) => {
+  await gamePage.goto();
+
+  await gamePage.playTurnButton.click();
+  await gamePage.rollDiceButton.click();
+
+  await expect(gamePage.turnResultModal).toBeVisible();
+  const initialPosition = await gamePage.getPositionInModal();
+  await gamePage.page.getByRole("button", { name: "Mostra risposta" }).click();
+
+  await gamePage.page.getByRole("button", { name: "Corretto" }).click();
+  const finalPosition = await gamePage.getPlayerPosition(0);
+
+  await expect(gamePage.turnResultModal).not.toBeVisible();
+  expect(finalPosition).toBe(initialPosition + 1);
+});
+
+test("Quiz only board - Failure skips player turn", async ({ gamePage }) => {
+  await gamePage.goto();
+
+  await gamePage.playTurnButton.click();
+  await gamePage.rollDiceButton.click();
+
+  await expect(gamePage.turnResultModal).toBeVisible();
+  const initialPosition = await gamePage.getPositionInModal();
+
+  await gamePage.page.getByRole("button", { name: "Mostra risposta" }).click();
+  await gamePage.page.getByRole("button", { name: "Sbagliato" }).click();
+
+  const finalPosition = await gamePage.getPlayerPosition(0);
+  expect(finalPosition).toBe(initialPosition);
+});

@@ -1,0 +1,82 @@
+import {
+  MODAL_WHAT_WOULD_YOU_DO_CONVINCING_ANSWER,
+  MODAL_WHAT_WOULD_YOU_DO_NOT_CONVINCING_ANSWER,
+} from "@/app/texts";
+import { Board } from "@/model/board";
+import { Game } from "@/model/game";
+import { Player } from "@/model/player";
+import { WhatWouldYouDoSquare } from "@/model/square/what-would-you-do-square";
+import { expect, test } from "./fixtures";
+import { addZustandInitScript } from "./zustand";
+
+test.beforeEach(async ({ page }) => {
+  const squares = Array.from(
+    { length: 10 },
+    (_, i) => new WhatWouldYouDoSquare(i),
+  );
+  const players = ["Alice", "Bob"].map((name, i) => new Player(i, name));
+  const board = new Board(squares, players);
+  const game = new Game(board);
+
+  const gameData = game.toJSON();
+  await addZustandInitScript(page, gameData);
+});
+
+test("WhatWouldYouDo only board", async ({ gamePage }) => {
+  await gamePage.goto();
+  await expect(gamePage.page.getByText("COSA FARESTI")).toHaveCount(8);
+});
+
+test("WhatWouldYouDo only board - Modal appears after dice roll", async ({
+  gamePage,
+}) => {
+  await gamePage.goto();
+  await gamePage.playTurnButton.click();
+  await gamePage.rollDiceButton.click();
+  await expect(gamePage.turnResultModal).toBeVisible();
+  await expect(
+    gamePage.page.getByRole("heading", { name: "Cosa Faresti Se" }),
+  ).toBeVisible();
+});
+
+test("WhatWouldYouDo only board - Success moves player forward", async ({
+  gamePage,
+}) => {
+  await gamePage.goto();
+
+  await gamePage.playTurnButton.click();
+  await gamePage.rollDiceButton.click();
+
+  await expect(gamePage.turnResultModal).toBeVisible();
+  const initialPosition = await gamePage.getPositionInModal();
+  await gamePage.page
+    .getByRole("button", {
+      name: MODAL_WHAT_WOULD_YOU_DO_CONVINCING_ANSWER,
+      exact: true,
+    })
+    .click();
+  const finalPosition = await gamePage.getPlayerPosition(0);
+
+  await expect(gamePage.turnResultModal).not.toBeVisible();
+  expect(finalPosition).toBe(initialPosition + 1);
+});
+
+test("WhatWouldYouDo only board - Failure skips player turn", async ({
+  gamePage,
+}) => {
+  await gamePage.goto();
+
+  await gamePage.playTurnButton.click();
+  await gamePage.rollDiceButton.click();
+
+  await expect(gamePage.turnResultModal).toBeVisible();
+  const initialPosition = await gamePage.getPositionInModal();
+  await gamePage.page
+    .getByRole("button", {
+      name: MODAL_WHAT_WOULD_YOU_DO_NOT_CONVINCING_ANSWER,
+    })
+    .click();
+
+  const finalPosition = await gamePage.getPlayerPosition(0);
+  expect(finalPosition).toBe(initialPosition);
+});

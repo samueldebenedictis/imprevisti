@@ -5,7 +5,7 @@ import { Square } from "@/model/square";
 import { expect, test } from "./fixtures";
 import { GamePage } from "./pages/game-page";
 
-test("Fill form", async ({ homePage }) => {
+test("Fill form @snapshot", async ({ homePage }) => {
   await homePage.playersNumber.fill("3");
   await homePage.playerName(1).fill("Qui");
   await homePage.playerName(2).fill("Quo");
@@ -16,6 +16,10 @@ test("Fill form", async ({ homePage }) => {
   await homePage.quizCheckbox.uncheck();
   await homePage.moveCheckbox.uncheck();
   await homePage.backwriteCheckbox.uncheck();
+  await homePage.musicEmotionCheckbox.uncheck();
+  await homePage.physicalTestCheckbox.uncheck();
+  await homePage.whatWouldYouDoCheckbox.uncheck();
+  await homePage.dictationDrawCheckbox.uncheck();
 
   await homePage.submit.click();
   await expect(homePage.page).toHaveURL(/game/);

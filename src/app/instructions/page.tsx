@@ -8,10 +8,10 @@ export default function InstructionsPage() {
   const router = useRouter();
 
   return (
-    <div className="my-8 flex flex-col items-center justify-center p-4">
-      <h1 className="ui-text-dark ui-text-title m-2">Istruzioni di gioco</h1>
+    <div className="ui-text-dark my-8 flex flex-col items-center justify-center p-4">
+      <h1 className=" ui-text-title m-2">Istruzioni di gioco</h1>
 
-      <div className="ui-text-dark m-2 w-full max-w-4xl p-6">
+      <div className=" m-2 w-full max-w-4xl p-6">
         <section className="mb-6">
           <h2 className="mb-2 font-semibold text-xl">
             1. Introduzione al gioco
@@ -56,8 +56,8 @@ export default function InstructionsPage() {
               tabellone.
             </li>
             <li>
-              <strong>Caselle speciali:</strong> decidete se includere caselle
-              "Mimo" e/o "Quiz" per aggiungere varietà al gioco.
+              <strong>Caselle speciali:</strong> decidete quali tipi di caselle
+              speciali includere per aggiungere varietà al gioco.
             </li>
           </ul>
           <p className="mb-2">
@@ -92,6 +92,7 @@ export default function InstructionsPage() {
           <p className="mb-2">
             Il tabellone può contenere diverse tipologie di caselle speciali:
           </p>
+
           <h3 className="mb-1 font-medium text-lg">Battaglia</h3>
           <p className="mb-2">
             Se un giocatore atterra su una casella già occupata da un altro
@@ -99,6 +100,7 @@ export default function InstructionsPage() {
             decidere un vincitore. Il giocatore vincente potrà avanzare di una
             casella.
           </p>
+
           <h3 className="mb-1 font-medium text-lg">Mimo</h3>
           <p className="mb-2">
             Se un giocatore atterra su una casella Mimo, dovrà mimare una parola
@@ -106,11 +108,61 @@ export default function InstructionsPage() {
             qualcuno indovina, il giocatore che ha mimato e quello che ha
             indovinato potranno avanzare di una casella.
           </p>
+
           <h3 className="mb-1 font-medium text-lg">Quiz</h3>
           <p className="mb-2">
             Se un giocatore atterra su una casella Quiz, gli verrà posta una
             domanda. Se risponde correttamente, potrà avanzare di una casella.
             Se sbaglia, dovrà saltare un turno.
+          </p>
+
+          <h3 className="mb-1 font-medium text-lg">Parola sulla schiena</h3>
+          <p className="mb-2">
+            Il giocatore dovrà scrivere una parola sulla schiena di un altro
+            giocatore, se questo indovina entrambi potranno avanzare di una
+            casella. Altrimenti, il giocatore che ha scritto salterà il prossimo
+            turno.
+          </p>
+
+          <h3 className="mb-1 font-medium text-lg">Disegno dettato</h3>
+          <p className="mb-2">
+            Se un giocatore atterra su una casella "Disegno dettato", dovrà
+            descrivere un'immagine a un altro giocatore che cercherà di
+            disegnarla. Se il disegno è giudicato sufficientemente simile
+            all'immagine originale, entrambi i giocatori potranno avanzare di
+            una casella. Altrimenti, il giocatore che ha descritto salterà il
+            prossimo turno.
+          </p>
+
+          <h3 className="mb-1 font-medium text-lg">Emozioni in musica</h3>
+          <p className="mb-2">
+            Il giocatore dovrà esprimere una specifica emozione attraverso una
+            canzone. Gli altri giocatori dovranno valutare se l'emozione è
+            rappresentata correttamente, in quel caso il giocatore potrà
+            avanzare di una casella. Altrimenti, salterà il prossimo turno.
+          </p>
+
+          <h3 className="mb-1 font-medium text-lg">Test fisico</h3>
+          <p className="mb-2">
+            Il giocatore dovrà eseguire un test fisico proposto dalla carta. Se
+            il test è completato con successo, il giocatore potrà avanzare di
+            una casella. Altrimenti, salterà il prossimo turno.
+          </p>
+
+          <h3 className="mb-1 font-medium text-lg">Cosa faresti se...</h3>
+          <p className="mb-2">
+            Se un giocatore atterra su questa casella dovrà rispondere a una
+            domanda ipotetica del tipo "Cosa faresti se...". Gli altri giocatori
+            giudicheranno se la risposta è convincente. Se la risposta convince
+            la maggioranza, il giocatore potrà avanzare di una casella.
+            Altrimenti, salterà il prossimo turno.
+          </p>
+
+          <h3 className="mb-1 font-medium text-lg">Caselle movimento</h3>
+          <p className="mb-2">
+            Alcune caselle possono far avanzare o retrocedere il giocatore di un
+            numero specifico di posizioni. Queste caselle non richiedono azioni
+            particolari, ma modificano direttamente la posizione del giocatore.
           </p>
         </section>
 

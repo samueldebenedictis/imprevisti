@@ -2,8 +2,12 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { Battle } from "@/model/battle";
 import { BackWrite } from "@/model/deck/backwrite";
+import { DictationDraw } from "@/model/deck/dictation-draw";
 import { Mime } from "@/model/deck/mime";
+import { MusicEmotion } from "@/model/deck/music-emotion";
+import { PhysicalTest } from "@/model/deck/physical-test";
 import { Quiz } from "@/model/deck/quiz";
+import { WhatWouldYouDo } from "@/model/deck/what-would-you-do";
 import { type GameJSON, Game as GameModel } from "@/model/game";
 import type { Player } from "@/model/player";
 import { soundManager } from "../app/utils/sound-manager";
@@ -22,7 +26,16 @@ export interface GameState {
   diceResult: number | null;
   modalDiceResult: number | null;
   actionType: string | null;
-  actionData: Battle | Mime | Quiz | BackWrite | null;
+  actionData:
+    | Battle
+    | Mime
+    | Quiz
+    | BackWrite
+    | MusicEmotion
+    | PhysicalTest
+    | WhatWouldYouDo
+    | DictationDraw
+    | null;
 
   // Player state
   playerWhoRolledName: string | null;
@@ -52,6 +65,10 @@ export interface GameActions {
   resolveMime: (success: boolean, guesserId?: number) => void;
   resolveQuiz: (success: boolean) => void;
   resolveBackWrite: (success: boolean, guesserId?: number) => void;
+  resolveMusicEmotion: (success: boolean) => void;
+  resolvePhysicalTest: (success: boolean) => void;
+  resolveWhatWouldYouDo: (success: boolean) => void;
+  resolveDictationDraw: (success: boolean, drawingPlayerId?: number) => void;
 
   // UI management
   openDiceModal: () => void;
@@ -346,6 +363,134 @@ export const useGameStore = create<GameStore>()(
             backWriteAction.cardTopic,
           );
           game.resolveBackWrite(currentBackWriteAction, success, guesserPlayer);
+
+          const updatedGame = GameModel.fromJSON(game.toJSON());
+          const updatedGameData = updatedGame.toJSON();
+          set({ game: updatedGame, gameData: updatedGameData });
+          get().actions.closeModal();
+        },
+
+        resolveMusicEmotion: (success: boolean) => {
+          const { game, actionData, actionType } = get();
+          if (!game || !actionData || actionType !== "music-emotion") return;
+
+          const musicEmotionAction = actionData as MusicEmotion;
+          const currentMusicEmotionPlayer = game
+            .getPlayers()
+            .find(
+              (p) =>
+                p.getId() === musicEmotionAction.musicEmotionPlayer.getId(),
+            );
+
+          if (!currentMusicEmotionPlayer) {
+            get().actions.closeModal();
+            return;
+          }
+
+          const currentMusicEmotionAction = new MusicEmotion(
+            currentMusicEmotionPlayer,
+            musicEmotionAction.cardEmotion,
+          );
+          game.resolveMusicEmotion(currentMusicEmotionAction, success);
+
+          const updatedGame = GameModel.fromJSON(game.toJSON());
+          const updatedGameData = updatedGame.toJSON();
+          set({ game: updatedGame, gameData: updatedGameData });
+          get().actions.closeModal();
+        },
+
+        resolvePhysicalTest: (success: boolean) => {
+          const { game, actionData, actionType } = get();
+          if (!game || !actionData || actionType !== "physical-test") return;
+
+          const physicalTestAction = actionData as PhysicalTest;
+          const currentPhysicalTestPlayer = game
+            .getPlayers()
+            .find(
+              (p) =>
+                p.getId() === physicalTestAction.physicalTestPlayer.getId(),
+            );
+
+          if (!currentPhysicalTestPlayer) {
+            get().actions.closeModal();
+            return;
+          }
+
+          const currentPhysicalTestAction = new PhysicalTest(
+            currentPhysicalTestPlayer,
+            physicalTestAction.cardTest,
+          );
+          game.resolvePhysicalTest(currentPhysicalTestAction, success);
+
+          const updatedGame = GameModel.fromJSON(game.toJSON());
+          const updatedGameData = updatedGame.toJSON();
+          set({ game: updatedGame, gameData: updatedGameData });
+          get().actions.closeModal();
+        },
+
+        resolveWhatWouldYouDo: (success: boolean) => {
+          const { game, actionData, actionType } = get();
+          if (!game || !actionData || actionType !== "what-would-you-do")
+            return;
+
+          const whatWouldYouDoAction = actionData as WhatWouldYouDo;
+          const currentWhatWouldYouDoPlayer = game
+            .getPlayers()
+            .find(
+              (p) =>
+                p.getId() === whatWouldYouDoAction.whatWouldYouDoPlayer.getId(),
+            );
+
+          if (!currentWhatWouldYouDoPlayer) {
+            get().actions.closeModal();
+            return;
+          }
+
+          const currentWhatWouldYouDoAction = new WhatWouldYouDo(
+            currentWhatWouldYouDoPlayer,
+            whatWouldYouDoAction.cardQuestion,
+          );
+          game.resolveWhatWouldYouDo(currentWhatWouldYouDoAction, success);
+
+          const updatedGame = GameModel.fromJSON(game.toJSON());
+          const updatedGameData = updatedGame.toJSON();
+          set({ game: updatedGame, gameData: updatedGameData });
+          get().actions.closeModal();
+        },
+
+        resolveDictationDraw: (success: boolean, drawingPlayerId?: number) => {
+          const { game, actionData, actionType } = get();
+          if (!game || !actionData || actionType !== "dictation-draw") return;
+
+          const dictationDrawAction = actionData as DictationDraw;
+          let drawingPlayer: Player | undefined;
+          if (drawingPlayerId !== undefined) {
+            drawingPlayer = game
+              .getPlayers()
+              .find((p) => p.getId() === drawingPlayerId);
+          }
+
+          const currentDictationDrawPlayer = game
+            .getPlayers()
+            .find(
+              (p) => p.getId() === dictationDrawAction.drawingPlayer.getId(),
+            );
+
+          if (!currentDictationDrawPlayer) {
+            get().actions.closeModal();
+            return;
+          }
+
+          const currentDictationDrawAction = new DictationDraw(
+            currentDictationDrawPlayer,
+            dictationDrawAction.cardTopic,
+            dictationDrawAction.imageUrl,
+          );
+          game.resolveDictationDraw(
+            currentDictationDrawAction,
+            success,
+            drawingPlayer,
+          );
 
           const updatedGame = GameModel.fromJSON(game.toJSON());
           const updatedGameData = updatedGame.toJSON();

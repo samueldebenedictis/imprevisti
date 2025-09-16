@@ -73,13 +73,13 @@ export default function Menu() {
           aria-label="Close menu"
         >
           <div
-            className="ui-border-dark min-w-[600px] bg-white p-6 text-center shadow-lg"
+            className="ui-text-dark ui-border-dark min-w-[600px] bg-white p-6 text-center shadow-lg"
             onClick={(e) => e.stopPropagation()}
             onKeyDown={closeFunction}
             role="dialog"
             aria-modal="true"
           >
-            <h2 className="ui-text-dark ui-text-title mb-4">{LABEL_MENU}</h2>
+            <h2 className=" ui-text-title mb-4">{LABEL_MENU}</h2>
             <div className="mt-6">
               {menuItems.map((item) => (
                 <Link key={item.url} href={item.url} prefetch={false}>
@@ -93,10 +93,8 @@ export default function Menu() {
             <Divider />
 
             {/* Sound Settings */}
-            <div className="mt-6 border-gray-200">
-              <h3 className="ui-text-dark ui-text-subtitle mb-4">
-                {LABEL_AUDIO_SETTINGS}
-              </h3>
+            <div className="ui-text-dark mt-6 border-gray-200">
+              <h3 className=" ui-text-subtitle mb-4">{LABEL_AUDIO_SETTINGS}</h3>
               <div className="flex items-center justify-center space-x-3">
                 <input
                   type="checkbox"

@@ -34,6 +34,10 @@ export const generateSquares = (
     quiz: boolean;
     move: boolean;
     backwrite: boolean;
+    "music-emotion": boolean;
+    "physical-test": boolean;
+    "what-would-you-do": boolean;
+    "dictation-draw": boolean;
   },
   specialPercentage: number = 0.4,
 ): SquareJSON[] => {
@@ -78,6 +82,11 @@ export const generateSquares = (
   if (squareTypes.quiz) enabledSpecialTypes.push("quiz");
   if (squareTypes.move) enabledSpecialTypes.push("move");
   if (squareTypes.backwrite) enabledSpecialTypes.push("backwrite");
+  if (squareTypes["music-emotion"]) enabledSpecialTypes.push("music-emotion");
+  if (squareTypes["physical-test"]) enabledSpecialTypes.push("physical-test");
+  if (squareTypes["what-would-you-do"])
+    enabledSpecialTypes.push("what-would-you-do");
+  if (squareTypes["dictation-draw"]) enabledSpecialTypes.push("dictation-draw");
 
   // Se nessun tipo speciale è abilitato, restituisci solo caselle normali
   if (enabledSpecialTypes.length === 0) {

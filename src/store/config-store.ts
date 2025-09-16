@@ -24,6 +24,10 @@ export interface GameConfig {
     quiz: boolean;
     move: boolean;
     backwrite: boolean;
+    "music-emotion": boolean;
+    "physical-test": boolean;
+    "what-would-you-do": boolean;
+    "dictation-draw": boolean;
   };
   specialPercentage: number;
 }
@@ -62,6 +66,10 @@ const defaultConfig: GameConfig = {
     quiz: true,
     move: true,
     backwrite: true,
+    "music-emotion": true,
+    "physical-test": true,
+    "what-would-you-do": true,
+    "dictation-draw": true,
   },
   specialPercentage: DEFAULT_SPECIAL_PERCENTAGE_SQUARES,
 };

@@ -8,13 +8,17 @@ export const LABEL_GAME_CONFIGURATION = "Configurazione gioco";
 export const LABEL_SPECIAL_SQUARES = "Caselle speciali";
 export const LABEL_SPECIAL_PERCENTAGE = (n: number) =>
   `Percentuale di caselle speciali: ${n}%`;
-export const LABEL_MIME = "Caselle mimo";
-export const LABEL_QUIZ = "Caselle quiz";
-export const LABEL_BACKWRITE = "Caselle scrivi sulla schiena";
-export const LABEL_MOVE = "Caselle movimento";
+export const LABEL_MIME = "Mimo";
+export const LABEL_QUIZ = "Quiz";
+export const LABEL_BACKWRITE = "Parole sulla schiena";
+export const LABEL_MOVE = "Avanti e indietro";
+export const LABEL_MUSIC_EMOTION = "Emozioni in musica";
+export const LABEL_PHYSICAL_TEST = "Test fisici";
+export const LABEL_WHAT_WOULD_YOU_DO = "Cosa faresti se...";
+export const LABEL_DICTATION_DRAW = "Disegno dettato";
 export const LABEL_SUBMIT = "Inizia gioco";
 
-// Dice Result Modal
+// Turn Result Modal Constants
 export const MODAL_TITLE_TURN_RESULT = "Risultato del Turno";
 export const MODAL_DICE_ROLL_MESSAGE = " ha tirato un ";
 export const MODAL_BATTLE_TITLE = "Battaglia!";
@@ -33,7 +37,43 @@ export const MODAL_MIME_GUESSED = "Indovinato";
 export const MODAL_MIME_NOT_GUESSED = "Non Indovinato";
 export const MODAL_MIME_WHO_GUESSED = "Chi ha indovinato?";
 export const MODAL_MIME_CONFIRM = "Conferma";
+export const MODAL_DICTATION_DRAW_TITLE = "Disegno Dettato!";
+export const MODAL_DICTATION_DRAW_SHOW_IMAGE = "Mostra Immagine";
+export const MODAL_DICTATION_DRAW_HIDE_IMAGE = "Nascondi Immagine";
+export const MODAL_DICTATION_DRAW_TOPIC =
+  "Descrivi questa immagine da disegnare:";
+export const MODAL_DICTATION_DRAW_DRAWN = "Disegnato bene";
+export const MODAL_DICTATION_DRAW_NOT_DRAWN = "Disegnato male";
+export const MODAL_DICTATION_DRAW_WHO_DREW = "Chi l'ha disegnato?";
+export const MODAL_DICTATION_DRAW_CONFIRM = "Conferma";
 export const MODAL_CLOSE_BUTTON = "Chiudi";
+export const MODAL_MUSIC_EMOTION_TITLE = "Emozioni in musica!";
+export const MODAL_MUSIC_EMOTION_EMOTION_TO_EXPRESS =
+  "Emozione da esprimere con una canzone:";
+export const MODAL_MUSIC_EMOTION_GUESSED = "Convincente";
+export const MODAL_MUSIC_EMOTION_NOT_GUESSED = "Non convincente";
+export const MODAL_PHYSICAL_TEST = "Test Fisico!";
+export const MODAL_PHYSICAL_TEST_TEST_TO_EXECUTE = "Prova da eseguire:";
+export const MODAL_PHYSICAL_TEST_COMPLETED = "Completato";
+export const MODAL_PHYSICAL_TEST_NOT_COMPLETED = "Non completato";
+export const MODAL_WHAT_WOULD_YOU_DO_TITLE = "Cosa Faresti Se...";
+export const MODAL_WHAT_WOULD_YOU_DO_QUESTION = "Domanda:";
+export const MODAL_WHAT_WOULD_YOU_DO_CONVINCING_ANSWER = "Convincente";
+export const MODAL_WHAT_WOULD_YOU_DO_NOT_CONVINCING_ANSWER = "Non convincente";
+export const MODAL_BACKWRITE_TITLE = "Scrittura sulla schiena";
+export const MODAL_BACKWRITE_SHOW_WORD = "Mostra parola da scrivere";
+export const MODAL_BACKWRITE_WORD_TO_WRITE = "Parola da scrivere:";
+export const MODAL_BACKWRITE_HIDE_WORD = "Nascondi parola";
+export const MODAL_BACKWRITE_GUESSED = "Indovinato";
+export const MODAL_BACKWRITE_NOT_GUESSED = "Non indovinato";
+export const MODAL_BACKWRITE_WHO_GUESSED = "Chi ha aiutato ad indovinare?";
+export const MODAL_BACKWRITE_CONFIRM = "Conferma";
+export const MODAL_SPECIAL_EFFECT = "Effetto Speciale!";
+export const MODAL_SPECIAL_SQUARE_MESSAGE = "Casella speciale! Ti muovi ";
+export const MODAL_MOVE_FORWARD = "avanti di ";
+export const MODAL_MOVE_BACKWARD = "indietro di ";
+export const MODAL_TOTAL_MOVEMENT = "Movimento totale:";
+export const MODAL_NEW_POSITION = "Nuova posizione:";
 
 // Game Save and Restore
 export const LABEL_SAVE_GAME_BUTTON = "Salva partita";
@@ -68,19 +108,25 @@ export const LEFT_BAR_PLAYERS_POSITION = "Posizione dei giocatori";
 // Square
 export const SQUARE_START = "START";
 export const SQUARE_WIN = "WIN!";
-export const SQUARE_MOVE_FORWARD = " AVANTI +";
-export const SQUARE_MOVE_BACKWARD = "INDIETRO ";
+export const SQUARE_MOVE_FORWARD = " AVANTI";
+export const SQUARE_MOVE_BACKWARD = "INDIETRO";
 export const SQUARE_QUIZ = "QUIZ";
 export const SQUARE_MIME = "MIMO";
-export const SQUARE_BACKWRITE = "SCHIENA";
-
-// Turn Result Modal
-export const MODAL_SPECIAL_EFFECT = "Effetto Speciale!";
-export const MODAL_SPECIAL_SQUARE_MESSAGE = "Casella speciale! Ti muovi ";
-export const MODAL_MOVE_FORWARD = "avanti di ";
-export const MODAL_MOVE_BACKWARD = "indietro di ";
-export const MODAL_TOTAL_MOVEMENT = "Movimento totale:";
-export const MODAL_NEW_POSITION = "Nuova posizione:";
+// Dictation draw
+export const SQUARE_DICTATION_DRAW_TOP = "DISEGNO";
+export const SQUARE_DICTATION_DRAW_BOTTOM = "DETTATO";
+// Back write
+export const SQUARE_BACKWRITE_TOP = "PAROLA";
+export const SQUARE_BACKWRITE_BOTTOM = "SULLA SCHIENA";
+// Music emotion
+export const SQUARE_MUSIC_EMOTION_TOP = "EMOZIONI";
+export const SQUARE_MUSIC_EMOTION_BOTTOM = "IN MUSICA";
+// Physical test
+export const SQUARE_PHYSICAL_TEST_TOP = "PROVA";
+export const SQUARE_PHYSICAL_TEST_BOTTOM = "FISICA";
+// What would you do if
+export const SQUARE_WHAT_WOULD_YOU_DO_TOP = "COSA FARESTI";
+export const SQUARE_WHAT_WOULD_YOU_DO_BOTTOM = "SE...";
 
 // Homepage additional
 export const LABEL_NO_GAME_FOUND = "Nessuna partita trovata.";
