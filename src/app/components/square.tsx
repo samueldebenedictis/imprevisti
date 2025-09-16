@@ -137,7 +137,7 @@ const playersOn = (
     pawns.push(
       Pawn({
         name: currentPlayer.name,
-        color: "yellow",
+        color: "green",
         isCurrentPlayerTurn: true,
         isMoving, // Solo il giocatore corrente si anima
       }),
