@@ -2,6 +2,7 @@ import {
   MODAL_MUSIC_EMOTION_GUESSED,
   MODAL_MUSIC_EMOTION_NOT_GUESSED,
   MODAL_MUSIC_EMOTION_TITLE,
+  SQUARE_MUSIC_EMOTION_TOP,
 } from "@/app/texts";
 import { Board } from "@/model/board";
 import { Game } from "@/model/game";
@@ -25,7 +26,9 @@ test.beforeEach(async ({ page }) => {
 
 test("MusicEmotion only board", async ({ gamePage }) => {
   await gamePage.goto();
-  await expect(gamePage.page.getByText("MUSICA")).toHaveCount(8);
+  await expect(gamePage.page.getByText(SQUARE_MUSIC_EMOTION_TOP)).toHaveCount(
+    8,
+  );
 });
 
 test("MusicEmotion only board - Modal appears after dice roll", async ({

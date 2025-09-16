@@ -24,7 +24,7 @@ test.beforeEach(async ({ page }) => {
 
 test("WhatWouldYouDo only board", async ({ gamePage }) => {
   await gamePage.goto();
-  await expect(gamePage.page.getByText("DOMANDA")).toHaveCount(8);
+  await expect(gamePage.page.getByText("COSA FARESTI")).toHaveCount(8);
 });
 
 test("WhatWouldYouDo only board - Modal appears after dice roll", async ({

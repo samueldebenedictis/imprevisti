@@ -2,6 +2,7 @@ import {
   MODAL_PHYSICAL_TEST,
   MODAL_PHYSICAL_TEST_COMPLETED,
   MODAL_PHYSICAL_TEST_NOT_COMPLETED,
+  SQUARE_PHYSICAL_TEST_TOP,
 } from "@/app/texts";
 import { Board } from "@/model/board";
 import { Game } from "@/model/game";
@@ -25,7 +26,9 @@ test.beforeEach(async ({ page }) => {
 
 test("PhysicalTest only board", async ({ gamePage }) => {
   await gamePage.goto();
-  await expect(gamePage.page.getByText("FISICO")).toHaveCount(8);
+  await expect(gamePage.page.getByText(SQUARE_PHYSICAL_TEST_TOP)).toHaveCount(
+    8,
+  );
 });
 
 test("PhysicalTest only board - Modal appears after dice roll", async ({

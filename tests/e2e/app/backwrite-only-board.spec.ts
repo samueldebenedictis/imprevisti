@@ -3,6 +3,7 @@ import {
   MODAL_BACKWRITE_GUESSED,
   MODAL_BACKWRITE_NOT_GUESSED,
   MODAL_BACKWRITE_SHOW_WORD,
+  SQUARE_BACKWRITE_TOP,
 } from "@/app/texts";
 import { Board } from "@/model/board";
 import { Game } from "@/model/game";
@@ -23,7 +24,7 @@ test.beforeEach(async ({ page }) => {
 
 test("BackWrite only board", async ({ gamePage }) => {
   await gamePage.goto();
-  await expect(gamePage.page.getByText("SCHIENA")).toHaveCount(8);
+  await expect(gamePage.page.getByText(SQUARE_BACKWRITE_TOP)).toHaveCount(8);
 });
 
 test("BackWrite only board - Modal appears after dice roll", async ({

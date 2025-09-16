@@ -3,6 +3,7 @@ import {
   MODAL_DICTATION_DRAW_DRAWN,
   MODAL_DICTATION_DRAW_NOT_DRAWN,
   MODAL_DICTATION_DRAW_SHOW_IMAGE,
+  SQUARE_DICTATION_DRAW_TOP,
 } from "@/app/texts";
 import { Board } from "@/model/board";
 import { Game } from "@/model/game";
@@ -26,7 +27,9 @@ test.beforeEach(async ({ page }) => {
 
 test("Dictation draw only board", async ({ gamePage }) => {
   await gamePage.goto();
-  await expect(gamePage.page.getByText("DISEGNO")).toHaveCount(8);
+  await expect(gamePage.page.getByText(SQUARE_DICTATION_DRAW_TOP)).toHaveCount(
+    8,
+  );
 });
 
 test("Dictation draw only board - Modal appears after dice roll", async ({
