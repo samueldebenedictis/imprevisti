@@ -1,7 +1,3 @@
-import {
-  MODAL_WHAT_WOULD_YOU_DO_CONVINCING_ANSWER,
-  MODAL_WHAT_WOULD_YOU_DO_NOT_CONVINCING_ANSWER,
-} from "@/app/texts";
 import { Board } from "@/model/board";
 import { Game } from "@/model/game";
 import { Player } from "@/model/player";
@@ -49,12 +45,7 @@ test("WhatWouldYouDo only board - Success moves player forward", async ({
 
   await expect(gamePage.turnResultModal).toBeVisible();
   const initialPosition = await gamePage.getPositionInModal();
-  await gamePage.page
-    .getByRole("button", {
-      name: MODAL_WHAT_WOULD_YOU_DO_CONVINCING_ANSWER,
-      exact: true,
-    })
-    .click();
+  await gamePage.whatWouldYouDoConvincingButton.click();
   const finalPosition = await gamePage.getPlayerPosition(0);
 
   await expect(gamePage.turnResultModal).not.toBeVisible();
@@ -71,11 +62,7 @@ test("WhatWouldYouDo only board - Failure skips player turn", async ({
 
   await expect(gamePage.turnResultModal).toBeVisible();
   const initialPosition = await gamePage.getPositionInModal();
-  await gamePage.page
-    .getByRole("button", {
-      name: MODAL_WHAT_WOULD_YOU_DO_NOT_CONVINCING_ANSWER,
-    })
-    .click();
+  await gamePage.whatWouldYouDoNotConvincingButton.click();
 
   const finalPosition = await gamePage.getPlayerPosition(0);
   expect(finalPosition).toBe(initialPosition);

@@ -38,14 +38,10 @@ test("Mime only board - Success moves player forward", async ({ gamePage }) => {
   await expect(gamePage.turnResultModal).toBeVisible();
   const initialPosition = await gamePage.getPositionInModal();
 
-  await gamePage.page.getByRole("button", { name: "Mostra mimo" }).click();
-  await gamePage.page
-    .getByRole("button", { name: "Indovinato", exact: true })
-    .click();
-  await gamePage.page.getByRole("combobox").selectOption("Bob");
-  await gamePage.page
-    .getByRole("button", { name: "Conferma", exact: true })
-    .click();
+  await gamePage.mimeShowTopicButton.click();
+  await gamePage.mimeGuessedButton.click();
+  await gamePage.playerSelectDropdown.selectOption("Bob");
+  await gamePage.mimeConfirmButton.click();
 
   const finalPosition = await gamePage.getPlayerPosition(0);
 
@@ -61,9 +57,9 @@ test("Mime only board - Failure skips player turn", async ({ gamePage }) => {
 
   await expect(gamePage.turnResultModal).toBeVisible();
   const initialPosition = await gamePage.getPositionInModal();
-  await gamePage.page.getByRole("button", { name: "Mostra mimo" }).click();
+  await gamePage.mimeShowTopicButton.click();
 
-  await gamePage.page.getByRole("button", { name: "Non indovinato" }).click();
+  await gamePage.mimeNotGuessedButton.click();
 
   const finalPosition = await gamePage.getPlayerPosition(0);
   expect(finalPosition).toBe(initialPosition);

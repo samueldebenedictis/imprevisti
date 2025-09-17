@@ -1,6 +1,4 @@
 import {
-  MODAL_MUSIC_EMOTION_GUESSED,
-  MODAL_MUSIC_EMOTION_NOT_GUESSED,
   MODAL_MUSIC_EMOTION_TITLE,
   SQUARE_MUSIC_EMOTION_TOP,
 } from "@/app/texts";
@@ -53,9 +51,7 @@ test("MusicEmotion only board - Success moves player forward", async ({
 
   await expect(gamePage.turnResultModal).toBeVisible();
   const initialPosition = await gamePage.getPositionInModal();
-  await gamePage.page
-    .getByRole("button", { name: MODAL_MUSIC_EMOTION_GUESSED, exact: true })
-    .click();
+  await gamePage.musicEmotionGuessedButton.click();
   const finalPosition = await gamePage.getPlayerPosition(0);
 
   await expect(gamePage.turnResultModal).not.toBeVisible();
@@ -72,9 +68,7 @@ test("MusicEmotion only board - Failure skips player turn", async ({
 
   await expect(gamePage.turnResultModal).toBeVisible();
   const initialPosition = await gamePage.getPositionInModal();
-  await gamePage.page
-    .getByRole("button", { name: MODAL_MUSIC_EMOTION_NOT_GUESSED })
-    .click();
+  await gamePage.musicEmotionNotGuessedButton.click();
 
   const finalPosition = await gamePage.getPlayerPosition(0);
   expect(finalPosition).toBe(initialPosition);

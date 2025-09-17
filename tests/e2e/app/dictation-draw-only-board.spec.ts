@@ -1,10 +1,4 @@
-import {
-  MODAL_DICTATION_DRAW_CONFIRM,
-  MODAL_DICTATION_DRAW_DRAWN,
-  MODAL_DICTATION_DRAW_NOT_DRAWN,
-  MODAL_DICTATION_DRAW_SHOW_IMAGE,
-  SQUARE_DICTATION_DRAW_TOP,
-} from "@/app/texts";
+import { SQUARE_DICTATION_DRAW_TOP } from "@/app/texts";
 import { Board } from "@/model/board";
 import { Game } from "@/model/game";
 import { Player } from "@/model/player";
@@ -52,16 +46,10 @@ test("Dictation draw only board - Success moves both players forward", async ({
   await expect(gamePage.turnResultModal).toBeVisible();
   const initialPosition = await gamePage.getPositionInModal();
 
-  await gamePage.page
-    .getByRole("button", { name: MODAL_DICTATION_DRAW_SHOW_IMAGE })
-    .click();
-  await gamePage.page
-    .getByRole("button", { name: MODAL_DICTATION_DRAW_DRAWN, exact: true })
-    .click();
-  await gamePage.page.getByRole("combobox").selectOption("Bob");
-  await gamePage.page
-    .getByRole("button", { name: MODAL_DICTATION_DRAW_CONFIRM, exact: true })
-    .click();
+  await gamePage.dictationDrawShowImageButton.click();
+  await gamePage.dictationDrawDrawnButton.click();
+  await gamePage.playerSelectDropdown.selectOption("Bob");
+  await gamePage.dictationDrawConfirmButton.click();
 
   const player1Position = await gamePage.getPlayerPosition(0);
   const player2Position = await gamePage.getPlayerPosition(1);
@@ -81,13 +69,9 @@ test("Dictation draw only board - Failure skips describing player turn", async (
 
   await expect(gamePage.turnResultModal).toBeVisible();
   const initialPosition = await gamePage.getPositionInModal();
-  await gamePage.page
-    .getByRole("button", { name: MODAL_DICTATION_DRAW_SHOW_IMAGE })
-    .click();
+  await gamePage.dictationDrawShowImageButton.click();
 
-  await gamePage.page
-    .getByRole("button", { name: MODAL_DICTATION_DRAW_NOT_DRAWN })
-    .click();
+  await gamePage.dictationDrawNotDrawnButton.click();
 
   const player1Position = await gamePage.getPlayerPosition(0);
   expect(player1Position).toBe(initialPosition);
@@ -104,9 +88,7 @@ test("Dictation draw only board - Image is displayed when shown", async ({
   await expect(gamePage.turnResultModal).toBeVisible();
 
   await expect(gamePage.page.locator("img")).not.toBeVisible();
-  await gamePage.page
-    .getByRole("button", { name: MODAL_DICTATION_DRAW_SHOW_IMAGE })
-    .click();
+  await gamePage.dictationDrawShowImageButton.click();
 
   await expect(gamePage.page.locator("img")).toBeVisible();
 });

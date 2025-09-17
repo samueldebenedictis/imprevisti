@@ -1,10 +1,4 @@
-import {
-  MODAL_BACKWRITE_CONFIRM,
-  MODAL_BACKWRITE_GUESSED,
-  MODAL_BACKWRITE_NOT_GUESSED,
-  MODAL_BACKWRITE_SHOW_WORD,
-  SQUARE_BACKWRITE_TOP,
-} from "@/app/texts";
+import { SQUARE_BACKWRITE_TOP } from "@/app/texts";
 import { Board } from "@/model/board";
 import { Game } from "@/model/game";
 import { Player } from "@/model/player";
@@ -47,16 +41,10 @@ test("BackWrite only board - Success moves player forward", async ({
   await expect(gamePage.turnResultModal).toBeVisible();
   const initialPosition = await gamePage.getPositionInModal();
 
-  await gamePage.page
-    .getByRole("button", { name: MODAL_BACKWRITE_SHOW_WORD })
-    .click();
-  await gamePage.page
-    .getByRole("button", { name: MODAL_BACKWRITE_GUESSED, exact: true })
-    .click();
-  await gamePage.page.getByRole("combobox").selectOption("Bob");
-  await gamePage.page
-    .getByRole("button", { name: MODAL_BACKWRITE_CONFIRM, exact: true })
-    .click();
+  await gamePage.backwriteShowWordButton.click();
+  await gamePage.backwriteGuessedButton.click();
+  await gamePage.playerSelectDropdown.selectOption("Bob");
+  await gamePage.backwriteConfirmButton.click();
 
   const finalPosition = await gamePage.getPlayerPosition(0);
 
@@ -75,12 +63,8 @@ test("BackWrite only board - Failure skips player turn", async ({
   await expect(gamePage.turnResultModal).toBeVisible();
   const initialPosition = await gamePage.getPositionInModal();
 
-  await gamePage.page
-    .getByRole("button", { name: MODAL_BACKWRITE_SHOW_WORD })
-    .click();
-  await gamePage.page
-    .getByRole("button", { name: MODAL_BACKWRITE_NOT_GUESSED })
-    .click();
+  await gamePage.backwriteShowWordButton.click();
+  await gamePage.backwriteNotGuessedButton.click();
 
   const finalPosition = await gamePage.getPlayerPosition(0);
   expect(finalPosition).toBe(initialPosition);
