@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 import { Battle } from "@/model/battle";
 import { BackWrite } from "@/model/deck/backwrite";
 import { DictationDraw } from "@/model/deck/dictation-draw";
+import { FaceEmotion } from "@/model/deck/face-emotion";
 import { Mime } from "@/model/deck/mime";
 import { MusicEmotion } from "@/model/deck/music-emotion";
 import { PhysicalTest } from "@/model/deck/physical-test";
@@ -31,6 +32,7 @@ export interface GameState {
     | Mime
     | Quiz
     | BackWrite
+    | FaceEmotion
     | MusicEmotion
     | PhysicalTest
     | WhatWouldYouDo
@@ -65,6 +67,7 @@ export interface GameActions {
   resolveMime: (success: boolean, guesserId?: number) => void;
   resolveQuiz: (success: boolean) => void;
   resolveBackWrite: (success: boolean, guesserId?: number) => void;
+  resolveFaceEmotion: (success: boolean) => void;
   resolveMusicEmotion: (success: boolean) => void;
   resolvePhysicalTest: (success: boolean) => void;
   resolveWhatWouldYouDo: (success: boolean) => void;
@@ -363,6 +366,33 @@ export const useGameStore = create<GameStore>()(
             backWriteAction.cardTopic,
           );
           game.resolveBackWrite(currentBackWriteAction, success, guesserPlayer);
+
+          const updatedGame = GameModel.fromJSON(game.toJSON());
+          const updatedGameData = updatedGame.toJSON();
+          set({ game: updatedGame, gameData: updatedGameData });
+          get().actions.closeModal();
+        },
+
+        resolveFaceEmotion: (success: boolean) => {
+          const { game, actionData, actionType } = get();
+          if (!game || !actionData || actionType !== "face-emotion") return;
+
+          const faceEmotionAction = actionData as FaceEmotion;
+          const currentFaceEmotionPlayer = game
+            .getPlayers()
+            .find((p) => p.getId() === faceEmotionAction.emotionPlayer.getId());
+
+          if (!currentFaceEmotionPlayer) {
+            get().actions.closeModal();
+            return;
+          }
+
+          const currentFaceEmotionAction = new FaceEmotion(
+            currentFaceEmotionPlayer,
+            faceEmotionAction.cardEmotion,
+            faceEmotionAction.imageUrl,
+          );
+          game.resolveFaceEmotion(currentFaceEmotionAction, success);
 
           const updatedGame = GameModel.fromJSON(game.toJSON());
           const updatedGameData = updatedGame.toJSON();

@@ -2,6 +2,7 @@ import type { Page } from "@playwright/test";
 import {
   LABEL_BACKWRITE,
   LABEL_DICTATION_DRAW,
+  LABEL_FACE_EMOTION,
   LABEL_MIME,
   LABEL_MOVE,
   LABEL_MUSIC_EMOTION,
@@ -50,5 +51,8 @@ export class HomePage {
   });
   dictationDrawCheckbox = this.page.getByRole("checkbox", {
     name: LABEL_DICTATION_DRAW,
+  });
+  faceEmotionsCheckbox = this.page.getByRole("checkbox", {
+    name: LABEL_FACE_EMOTION,
   });
 }

@@ -17,6 +17,10 @@ import {
   MODAL_DICTATION_DRAW_NOT_DRAWN,
   MODAL_DICTATION_DRAW_SHOW_IMAGE,
   MODAL_DICTATION_DRAW_TITLE,
+  MODAL_FACE_EMOTION_CORRECT,
+  MODAL_FACE_EMOTION_SHOW_ANSWER,
+  MODAL_FACE_EMOTION_TITLE,
+  MODAL_FACE_EMOTION_WRONG,
   MODAL_MIME_CONFIRM,
   MODAL_MIME_GUESSED,
   MODAL_MIME_NOT_GUESSED,
@@ -151,6 +155,19 @@ export class GamePage {
     exact: true,
   });
 
+  faceEmotionShowAnswerButton = this.page.getByRole("button", {
+    name: MODAL_FACE_EMOTION_SHOW_ANSWER,
+    exact: true,
+  });
+  faceEmotionCorrectButton = this.page.getByRole("button", {
+    name: MODAL_FACE_EMOTION_CORRECT,
+    exact: true,
+  });
+  faceEmotionWrongButton = this.page.getByRole("button", {
+    name: MODAL_FACE_EMOTION_WRONG,
+    exact: true,
+  });
+
   musicEmotionGuessedButton = this.page.getByRole("button", {
     name: MODAL_MUSIC_EMOTION_GUESSED,
     exact: true,
@@ -188,6 +205,7 @@ export class GamePage {
   dictationDrawModalTitle = this.page.getByText(MODAL_DICTATION_DRAW_TITLE);
   mimeModalTitle = this.page.getByText(MODAL_MIME_TITLE);
   backwriteModalTitle = this.page.getByText(MODAL_BACKWRITE_TITLE);
+  faceEmotionModalTitle = this.page.getByText(MODAL_FACE_EMOTION_TITLE);
   musicEmotionModalTitle = this.page.getByText(MODAL_MUSIC_EMOTION_TITLE);
   physicalTestModalTitle = this.page.getByText(MODAL_PHYSICAL_TEST);
   whatWouldYouDoModalTitle = this.page.getByText(MODAL_WHAT_WOULD_YOU_DO_TITLE);
