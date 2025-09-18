@@ -1,5 +1,6 @@
 import { BackWriteSquare } from "./backwrite-square";
 import { DictationDrawSquare } from "./dictation-draw-square";
+import { FaceEmotionSquare } from "./face-emotion-square";
 import { MimeSquare } from "./mime-square";
 import { MoveSquare } from "./move-square";
 import { MusicEmotionSquare } from "./music-emotion-square";
@@ -24,6 +25,8 @@ export function squareFromJSON(json: SquareJSON): Square {
       return new QuizSquare(json.number);
     case "backwrite":
       return new BackWriteSquare(json.number);
+    case "face-emotion":
+      return new FaceEmotionSquare(json.number);
     case "music-emotion":
       return new MusicEmotionSquare(json.number);
     case "physical-test":

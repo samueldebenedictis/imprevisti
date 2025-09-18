@@ -2,6 +2,7 @@ import type { Battle } from "../battle";
 import type {
   BackWrite,
   DictationDraw,
+  FaceEmotion,
   Mime,
   MusicEmotion,
   PhysicalTest,
@@ -10,7 +11,7 @@ import type {
 } from "../square";
 
 /**
- * Risultato di un'azione di gioco che può essere una battaglia, un mimo, un quiz, uno scrivere sulla schiena, musica emozioni, test fisico, cosa faresti se, disegno dettato o nessuna azione speciale.
+ * Risultato di un'azione di gioco che può essere una battaglia, un mimo, un quiz, uno scrivere sulla schiena, musica emozioni, test fisico, cosa faresti se, disegno dettato, emozione facciale o nessuna azione speciale.
  */
 export type GameActionResult = {
   type:
@@ -18,6 +19,7 @@ export type GameActionResult = {
     | "mime"
     | "quiz"
     | "backwrite"
+    | "face-emotion"
     | "music-emotion"
     | "physical-test"
     | "what-would-you-do"
@@ -28,6 +30,7 @@ export type GameActionResult = {
     | Mime
     | Quiz
     | BackWrite
+    | FaceEmotion
     | MusicEmotion
     | PhysicalTest
     | WhatWouldYouDo

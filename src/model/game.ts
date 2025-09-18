@@ -4,6 +4,7 @@ import {
   BackWriteDeck,
   type Deck,
   DictationDrawDeck,
+  FaceEmotionDeck,
   MimeDeck,
   MusicEmotionDeck,
   PhysicalTestDeck,
@@ -15,6 +16,7 @@ import {
   BackWriteManager,
   BattleManager,
   DictationDrawManager,
+  FaceEmotionManager,
   type GameActionResult,
   GameStateManager,
   MimeManager,
@@ -30,6 +32,7 @@ import { Player, type PlayerJSON } from "./player";
 import {
   BackWrite,
   DictationDraw,
+  FaceEmotion,
   Mime,
   MusicEmotion,
   PhysicalTest,
@@ -56,6 +59,7 @@ export class Game {
   private mimeDeck: Deck;
   private quizDeck: Deck;
   private backWriteDeck: Deck;
+  private faceEmotionDeck: Deck;
   private musicEmotionDeck: Deck;
   private physicalTestDeck: Deck;
   private whatWouldYouDoDeck: Deck;
@@ -70,6 +74,7 @@ export class Game {
   private mimeManager: MimeManager;
   private quizManager: QuizManager;
   private backWriteManager: BackWriteManager;
+  private faceEmotionManager: FaceEmotionManager;
   private musicEmotionManager: MusicEmotionManager;
   private physicalTestManager: PhysicalTestManager;
   private whatWouldYouDoManager: WhatWouldYouDoManager;
@@ -88,6 +93,7 @@ export class Game {
     this.mimeDeck = new MimeDeck();
     this.quizDeck = new QuizDeck();
     this.backWriteDeck = new BackWriteDeck();
+    this.faceEmotionDeck = new FaceEmotionDeck();
     this.musicEmotionDeck = new MusicEmotionDeck();
     this.physicalTestDeck = new PhysicalTestDeck();
     this.whatWouldYouDoDeck = new WhatWouldYouDoDeck();
@@ -105,6 +111,7 @@ export class Game {
       this.mimeDeck,
       this.quizDeck,
       this.backWriteDeck,
+      this.faceEmotionDeck,
       this.musicEmotionDeck,
       this.physicalTestDeck,
       this.whatWouldYouDoDeck,
@@ -121,6 +128,7 @@ export class Game {
     this.mimeManager = new MimeManager(this.movementManager);
     this.quizManager = new QuizManager(this.movementManager);
     this.backWriteManager = new BackWriteManager(this.movementManager);
+    this.faceEmotionManager = new FaceEmotionManager(this.movementManager);
     this.musicEmotionManager = new MusicEmotionManager(this.movementManager);
     this.physicalTestManager = new PhysicalTestManager(this.movementManager);
     this.whatWouldYouDoManager = new WhatWouldYouDoManager(
@@ -190,6 +198,7 @@ export class Game {
       game.mimeDeck,
       game.quizDeck,
       game.backWriteDeck,
+      game.faceEmotionDeck,
       game.musicEmotionDeck,
       game.physicalTestDeck,
       game.whatWouldYouDoDeck,
@@ -206,6 +215,7 @@ export class Game {
     game.mimeManager = new MimeManager(game.movementManager);
     game.quizManager = new QuizManager(game.movementManager);
     game.backWriteManager = new BackWriteManager(game.movementManager);
+    game.faceEmotionManager = new FaceEmotionManager(game.movementManager);
     game.musicEmotionManager = new MusicEmotionManager(game.movementManager);
     game.physicalTestManager = new PhysicalTestManager(game.movementManager);
     game.whatWouldYouDoManager = new WhatWouldYouDoManager(
@@ -341,6 +351,14 @@ export class Game {
           actionType: "dictation-draw",
         };
       }
+      if (specialAction instanceof FaceEmotion) {
+        return {
+          type: "face-emotion",
+          data: specialAction,
+          diceResult: diceValue,
+          actionType: "face-emotion",
+        };
+      }
     }
 
     return { type: "none", diceResult: diceValue, actionType: null };
@@ -469,6 +487,22 @@ export class Game {
       dictationDrawAction,
       success,
       drawingPlayer,
+    );
+  }
+
+  /**
+   * Risolve un'azione di emozione facciale utilizzando il FaceEmotionManager.
+   * @param faceEmotionAction - L'oggetto FaceEmotion da risolvere
+   * @param success - True se l'emozione è stata indovinata, false altrimenti
+   * @returns Un oggetto Battle se si verifica una collisione, null altrimenti
+   */
+  resolveFaceEmotion(
+    faceEmotionAction: FaceEmotion,
+    success: boolean,
+  ): Battle | null {
+    return this.faceEmotionManager.resolveFaceEmotion(
+      faceEmotionAction,
+      success,
     );
   }
 

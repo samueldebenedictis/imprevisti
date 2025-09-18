@@ -1,6 +1,7 @@
 import type { Board } from "../board";
 import type { Deck } from "../deck";
 import type { DictationDraw } from "../deck/dictation-draw";
+import type { FaceEmotion } from "../deck/face-emotion";
 import type { MusicEmotion } from "../deck/music-emotion";
 import type { PhysicalTest } from "../deck/physical-test";
 import type { WhatWouldYouDo } from "../deck/what-would-you-do";
@@ -17,6 +18,7 @@ import {
   SpecialSquare,
 } from "../square";
 import { DictationDrawSquare } from "../square/dictation-draw-square";
+import { FaceEmotionSquare } from "../square/face-emotion-square";
 import { MusicEmotionSquare } from "../square/music-emotion-square";
 import { PhysicalTestSquare } from "../square/physical-test-square";
 import { WhatWouldYouDoSquare } from "../square/what-would-you-do-square";
@@ -34,6 +36,7 @@ export class SpecialSquareProcessor {
    * @param mimeDeck - Il mazzo di carte per il mimo
    * @param quizDeck - Il mazzo di carte per il quiz
    * @param backWriteDeck - Il mazzo di carte per lo scrivere sulla schiena
+   * @param faceEmotionDeck - Il mazzo di carte per le emozioni facciali
    * @param musicEmotionDeck - Il mazzo di carte per la musica emozioni
    * @param physicalTestDeck - Il mazzo di carte per i test fisici
    * @param whatWouldYouDoDeck - Il mazzo di carte per le domande "cosa faresti se"
@@ -47,6 +50,7 @@ export class SpecialSquareProcessor {
     private mimeDeck: Deck,
     private quizDeck: Deck,
     private backWriteDeck: Deck,
+    private faceEmotionDeck: Deck,
     private musicEmotionDeck: Deck,
     private physicalTestDeck: Deck,
     private whatWouldYouDoDeck: Deck,
@@ -62,7 +66,7 @@ export class SpecialSquareProcessor {
    * ed esegue il comando associato.
    * @param player - Il giocatore per cui elaborare gli effetti della casella
    * @param allPlayers - Array di tutti i giocatori della partita
-   * @returns Un oggetto Mime, Quiz, BackWrite, MusicEmotion, PhysicalTest, WhatWouldYouDo o DictationDraw se il giocatore atterra su una casella speciale, undefined altrimenti
+   * @returns Un oggetto Mime, Quiz, BackWrite, FaceEmotion, MusicEmotion, PhysicalTest, WhatWouldYouDo o DictationDraw se il giocatore atterra su una casella speciale, undefined altrimenti
    */
   processSquareEffects(
     player: Player,
@@ -71,6 +75,7 @@ export class SpecialSquareProcessor {
     | Mime
     | Quiz
     | BackWrite
+    | FaceEmotion
     | MusicEmotion
     | PhysicalTest
     | WhatWouldYouDo
@@ -87,6 +92,7 @@ export class SpecialSquareProcessor {
       mimeDeck: this.mimeDeck,
       quizDeck: this.quizDeck,
       backWriteDeck: this.backWriteDeck,
+      faceEmotionDeck: this.faceEmotionDeck,
       musicEmotionDeck: this.musicEmotionDeck,
       physicalTestDeck: this.physicalTestDeck,
       whatWouldYouDoDeck: this.whatWouldYouDoDeck,
@@ -110,6 +116,10 @@ export class SpecialSquareProcessor {
       }
       case "backwrite": {
         const command = (landingSquare as BackWriteSquare).getCommand();
+        return command.execute(commandDependencies);
+      }
+      case "face-emotion": {
+        const command = (landingSquare as FaceEmotionSquare).getCommand();
         return command.execute(commandDependencies);
       }
       case "music-emotion": {
@@ -143,7 +153,7 @@ export class SpecialSquareProcessor {
   /**
    * Restituisce il tipo di casella speciale alla posizione specificata.
    * @param position - La posizione della casella da controllare
-   * @returns Il tipo di casella ('mime', 'special', 'normal', 'quiz', 'backwrite', 'music-emotion', 'physical-test', 'what-would-you-do', 'dictation-draw')
+   * @returns Il tipo di casella ('mime', 'special', 'normal', 'quiz', 'backwrite', 'face-emotion', 'music-emotion', 'physical-test', 'what-would-you-do', 'dictation-draw')
    */
   getSquareType(
     position: number,
@@ -153,6 +163,7 @@ export class SpecialSquareProcessor {
     | "normal"
     | "quiz"
     | "backwrite"
+    | "face-emotion"
     | "music-emotion"
     | "physical-test"
     | "what-would-you-do"
@@ -169,6 +180,10 @@ export class SpecialSquareProcessor {
 
     if (square instanceof BackWriteSquare) {
       return "backwrite";
+    }
+
+    if (square instanceof FaceEmotionSquare) {
+      return "face-emotion";
     }
 
     if (square instanceof MusicEmotionSquare) {

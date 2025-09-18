@@ -1,6 +1,7 @@
 export {
   BackWrite,
   DictationDraw,
+  FaceEmotion,
   Mime,
   MusicEmotion,
   PhysicalTest,
@@ -9,6 +10,7 @@ export {
 } from "../deck";
 export { BackWriteSquare } from "./backwrite-square";
 export { DictationDrawSquare } from "./dictation-draw-square";
+export { FaceEmotionSquare } from "./face-emotion-square";
 export { MimeSquare } from "./mime-square";
 export { GoToStartSquare, MoveSquare } from "./move-square";
 export { MusicEmotionSquare } from "./music-emotion-square";
