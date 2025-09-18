@@ -43,7 +43,7 @@ export const colorToCss = (color: Color) => {
     case "lime":
       return `${base} from-lime-600 to-lime-400`;
     case "violet":
-      return `${base} from-viole-600 to-violet-400`;
+      return `${base} from-violet-600 to-violet-400`;
     case "emerald":
       return `${base} from-emerald-600 to-emerald-400`;
     default:
