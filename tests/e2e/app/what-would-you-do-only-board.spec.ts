@@ -1,3 +1,4 @@
+import { SQUARE_WHAT_WOULD_YOU_DO_TOP } from "@/app/texts";
 import { Board } from "@/model/board";
 import { Game } from "@/model/game";
 import { Player } from "@/model/player";
@@ -20,7 +21,9 @@ test.beforeEach(async ({ page }) => {
 
 test("WhatWouldYouDo only board", async ({ gamePage }) => {
   await gamePage.goto();
-  await expect(gamePage.page.getByText("COSA FARESTI")).toHaveCount(8);
+  await expect(
+    gamePage.page.getByText(SQUARE_WHAT_WOULD_YOU_DO_TOP),
+  ).toHaveCount(8);
 });
 
 test("WhatWouldYouDo only board - Modal appears after dice roll", async ({
