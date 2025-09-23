@@ -103,17 +103,16 @@ export default function InstructionsPage() {
 
           <h3 className="mb-1 font-medium text-lg">Mimo</h3>
           <p className="mb-2">
-            Se un giocatore atterra su una casella Mimo, dovrà mimare una parola
-            o una frase. Gli altri giocatori cercheranno di indovinare. Se
-            qualcuno indovina, il giocatore che ha mimato e quello che ha
-            indovinato potranno avanzare di una casella.
+            Il giocatore dovrà mimare una parola o una frase. Gli altri
+            giocatori cercheranno di indovinare. Se qualcuno indovina, il
+            giocatore che ha mimato e quello che ha indovinato potranno avanzare
+            di una casella.
           </p>
 
           <h3 className="mb-1 font-medium text-lg">Quiz</h3>
           <p className="mb-2">
-            Se un giocatore atterra su una casella Quiz, gli verrà posta una
-            domanda. Se risponde correttamente, potrà avanzare di una casella.
-            Se sbaglia, dovrà saltare un turno.
+            Al giocatore verrà posta una domanda. Se risponde correttamente,
+            potrà avanzare di una casella. Se sbaglia, dovrà saltare un turno.
           </p>
 
           <h3 className="mb-1 font-medium text-lg">Parola sulla schiena</h3>
@@ -126,12 +125,11 @@ export default function InstructionsPage() {
 
           <h3 className="mb-1 font-medium text-lg">Disegno dettato</h3>
           <p className="mb-2">
-            Se un giocatore atterra su una casella "Disegno dettato", dovrà
-            descrivere un'immagine a un altro giocatore che cercherà di
-            disegnarla. Se il disegno è giudicato sufficientemente simile
-            all'immagine originale, entrambi i giocatori potranno avanzare di
-            una casella. Altrimenti, il giocatore che ha descritto salterà il
-            prossimo turno.
+            Il giocatore dovrà descrivere un'immagine a un altro giocatore che
+            cercherà di disegnarla. Se il disegno è giudicato sufficientemente
+            simile all'immagine originale, entrambi i giocatori potranno
+            avanzare di una casella. Altrimenti, il giocatore che ha descritto
+            salterà il prossimo turno.
           </p>
 
           <h3 className="mb-1 font-medium text-lg">Emozioni in musica</h3>
@@ -156,6 +154,13 @@ export default function InstructionsPage() {
             giudicheranno se la risposta è convincente. Se la risposta convince
             la maggioranza, il giocatore potrà avanzare di una casella.
             Altrimenti, salterà il prossimo turno.
+          </p>
+
+          <h3 className="mb-1 font-medium text-lg">Indovina l'emozione</h3>
+          <p className="mb-2">
+            Il giocatore dovrà indovinare l'emozione espressa dal volto che gli
+            verrà mostrato. Se risponde correttamente, potrà avanzare di una
+            casella. Se sbaglia, dovrà saltare un turno.
           </p>
 
           <h3 className="mb-1 font-medium text-lg">Caselle movimento</h3>
