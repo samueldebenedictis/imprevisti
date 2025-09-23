@@ -3,6 +3,7 @@ import type React from "react";
 import { useEffect, useState } from "react";
 import type { DictationDraw } from "@/model/deck";
 import type { Player } from "@/model/player";
+import { imagePrefix } from "../../image-prefix";
 import {
   LABEL_SELECT_PLAYER,
   MODAL_DICTATION_DRAW_CONFIRM,
@@ -66,8 +67,6 @@ const DictationDrawResult: React.FC<DictationDrawResultProps> = ({
     onClose();
   };
 
-  const prefix = process.env.NODE_ENV === "production" ? "/tesi" : "";
-
   return (
     <div className="mt-4">
       <H3>{MODAL_DICTATION_DRAW_TITLE}</H3>
@@ -88,7 +87,7 @@ const DictationDrawResult: React.FC<DictationDrawResultProps> = ({
               <Image
                 width={200}
                 height={200}
-                src={`${prefix}${actionData.imageUrl}`}
+                src={`${imagePrefix}${actionData.imageUrl}`}
                 alt={actionData.cardTopic.cardTitle}
                 className="ui-border-dark m-4 max-h-64 max-w-full"
                 onError={(e) => {

@@ -2,6 +2,7 @@ import Image from "next/image";
 import type React from "react";
 import { useState } from "react";
 import type { FaceEmotion } from "@/model/deck";
+import { imagePrefix } from "../../image-prefix";
 import {
   MODAL_FACE_EMOTION_ANSWER,
   MODAL_FACE_EMOTION_CORRECT,
@@ -17,8 +18,6 @@ interface FaceEmotionResultProps {
   onResolveFaceEmotion?: (success: boolean) => void;
   onClose: () => void;
 }
-
-const prefix = process.env.NODE_ENV === "production" ? "/tesi" : "";
 
 const FaceEmotionResult: React.FC<FaceEmotionResultProps> = ({
   actionData,
@@ -46,7 +45,7 @@ const FaceEmotionResult: React.FC<FaceEmotionResultProps> = ({
         <Image
           width={200}
           height={200}
-          src={`${prefix}${actionData.imageUrl}`}
+          src={`${imagePrefix}${actionData.imageUrl}`}
           alt={actionData.cardEmotion.cardTitle}
           className="ui-border-dark m-4 max-h-64 max-w-full"
           onError={(e) => {
