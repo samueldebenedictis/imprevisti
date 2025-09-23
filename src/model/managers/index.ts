@@ -1,6 +1,7 @@
 export { BackWriteManager } from "./backwrite-manager";
 export { BattleManager } from "./battle-manager";
 export { DictationDrawManager } from "./dictation-draw-manager";
+export { FaceEmotionManager } from "./face-emotion-manager";
 export { GameStateManager } from "./game-state-manager";
 export { MimeManager } from "./mime-manager";
 export { MovementManager } from "./movement-manager";

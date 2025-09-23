@@ -24,6 +24,7 @@ export interface GameConfig {
     quiz: boolean;
     move: boolean;
     backwrite: boolean;
+    "face-emotion": boolean;
     "music-emotion": boolean;
     "physical-test": boolean;
     "what-would-you-do": boolean;
@@ -66,6 +67,7 @@ const defaultConfig: GameConfig = {
     quiz: true,
     move: true,
     backwrite: true,
+    "face-emotion": true,
     "music-emotion": true,
     "physical-test": true,
     "what-would-you-do": true,
@@ -82,14 +84,19 @@ export const useConfigStore = create<ConfigStore>()(
       actions: {
         setNumPlayers: (num) => {
           const currentNames = get().playerNames;
-          const newNames = Array(num)
-            .fill("")
-            .map((_, i) => currentNames[i] || "");
+          const newNames = Array.from(
+            { length: num },
+            (_, i) => currentNames[i] || "",
+          );
           set({ numPlayers: num, playerNames: newNames });
         },
 
         setPlayerName: (index, name) => {
           const currentNames = [...get().playerNames];
+          // Ensure the array has enough elements
+          while (currentNames.length <= index) {
+            currentNames.push("");
+          }
           currentNames[index] = name;
           set({ playerNames: currentNames });
         },

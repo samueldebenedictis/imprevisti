@@ -4,6 +4,7 @@ export type SquareType =
   | "quiz"
   | "move"
   | "backwrite"
+  | "face-emotion"
   | "music-emotion"
   | "physical-test"
   | "what-would-you-do"

@@ -139,6 +139,7 @@ export default function Page() {
         onResolveMime={actions.resolveMime}
         onResolveQuiz={actions.resolveQuiz}
         onResolveBackWrite={actions.resolveBackWrite}
+        onResolveFaceEmotion={actions.resolveFaceEmotion}
         onResolveMusicEmotion={actions.resolveMusicEmotion}
         onResolvePhysicalTest={actions.resolvePhysicalTest}
         onResolveWhatWouldYouDo={actions.resolveWhatWouldYouDo}

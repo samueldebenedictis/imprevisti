@@ -3,6 +3,7 @@ import type { Battle } from "@/model/battle";
 import type {
   BackWrite,
   DictationDraw,
+  FaceEmotion,
   Mime,
   MusicEmotion,
   PhysicalTest,
@@ -19,6 +20,7 @@ import {
 import BackWriteResult from "./turn-result-modal/back-write-result";
 import BattleResult from "./turn-result-modal/battle-result";
 import DictationDrawResult from "./turn-result-modal/dictation-draw-result";
+import FaceEmotionResult from "./turn-result-modal/face-emotion-result";
 import MimeResult from "./turn-result-modal/mime-result";
 import MusicEmotionResult from "./turn-result-modal/music-emotion-result";
 import PhysicalTestResult from "./turn-result-modal/physical-test-result";
@@ -38,6 +40,7 @@ interface DiceResultModalProps {
     | Mime
     | Quiz
     | BackWrite
+    | FaceEmotion
     | MusicEmotion
     | PhysicalTest
     | WhatWouldYouDo
@@ -47,6 +50,7 @@ interface DiceResultModalProps {
   onResolveMime?: (success: boolean, guessPlayerId?: number) => void;
   onResolveQuiz?: (success: boolean) => void;
   onResolveBackWrite?: (success: boolean, guessPlayerId?: number) => void;
+  onResolveFaceEmotion?: (success: boolean) => void;
   onResolveMusicEmotion?: (success: boolean) => void;
   onResolvePhysicalTest?: (success: boolean) => void;
   onResolveWhatWouldYouDo?: (success: boolean) => void;
@@ -68,6 +72,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
   onResolveMime,
   onResolveQuiz,
   onResolveBackWrite,
+  onResolveFaceEmotion,
   onResolveMusicEmotion,
   onResolvePhysicalTest,
   onResolveWhatWouldYouDo,
@@ -161,6 +166,16 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
               onResolveBackWrite={onResolveBackWrite}
               onClose={onClose}
               allPlayers={allPlayers}
+            />
+          )}
+
+        {actionType === "face-emotion" &&
+          actionData &&
+          (actionData as FaceEmotion).cardEmotion && (
+            <FaceEmotionResult
+              actionData={actionData as FaceEmotion}
+              onResolveFaceEmotion={onResolveFaceEmotion}
+              onClose={onClose}
             />
           )}
 

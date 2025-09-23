@@ -9,6 +9,7 @@ import { Label, LabelCheckbox } from "./components/ui/label";
 import {
   LABEL_BACKWRITE,
   LABEL_DICTATION_DRAW,
+  LABEL_FACE_EMOTION,
   LABEL_GAME_CONFIGURATION,
   LABEL_MIME,
   LABEL_MOVE,
@@ -74,7 +75,7 @@ export default function Home() {
               type="text"
               id={`playerName${index}`}
               name={`playerName${index}`}
-              value={playerNames[index] || ""}
+              value={playerNames[index] ?? ""}
               onChange={(e) => actions.setPlayerName(index, e.target.value)}
               required
             />
@@ -144,6 +145,24 @@ export default function Home() {
               className="ui-custom-checkbox mr-2"
             />
             <LabelCheckbox htmlFor="backwrite">{LABEL_BACKWRITE}</LabelCheckbox>
+          </div>
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="face-emotion"
+              name="face-emotion"
+              checked={squareTypes["face-emotion"]}
+              onChange={(e) =>
+                actions.setSquareType(
+                  e.target.name as keyof typeof squareTypes,
+                  e.target.checked,
+                )
+              }
+              className="ui-custom-checkbox mr-2"
+            />
+            <LabelCheckbox htmlFor="face-emotion">
+              {LABEL_FACE_EMOTION}
+            </LabelCheckbox>
           </div>
           <div className="flex items-center">
             <input
