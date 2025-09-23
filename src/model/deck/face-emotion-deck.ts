@@ -4,7 +4,9 @@ import { faceEmotionCards } from "./face-emotion";
 
 export class FaceEmotionDeck extends Deck {
   constructor(
-    cards: Card[] = faceEmotionCards.map((el) => new Card(el.emozione, "")),
+    cards: Card[] = faceEmotionCards.map(
+      (el) => new Card(el.emotion, el.title),
+    ),
   ) {
     super(cards);
   }
@@ -15,7 +17,7 @@ export class FaceEmotionDeck extends Deck {
    * @returns The image data object or undefined if not found
    */
   getImageData(card: Card) {
-    const cardText = card.cardTitle;
-    return faceEmotionCards.find((emotion) => emotion.emozione === cardText);
+    const cardText = card.cardText;
+    return faceEmotionCards.find((el) => el.title === cardText);
   }
 }
