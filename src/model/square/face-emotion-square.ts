@@ -41,7 +41,7 @@ class FaceEmotionCommand implements Command {
     const imageData = (
       dependencies.faceEmotionDeck as FaceEmotionDeck
     ).getImageData(card);
-    const imageUrl = imageData ? imageData.immagine : "";
+    const imageUrl = imageData ? imageData.imageUrl : "";
     const faceEmotionAction = new FaceEmotion(emotionPlayer, card, imageUrl);
     return faceEmotionAction;
   }

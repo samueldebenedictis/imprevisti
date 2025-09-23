@@ -72,8 +72,10 @@ const FaceEmotionResult: React.FC<FaceEmotionResultProps> = ({
       {showEmotionAnswer && (
         <>
           <p className="mb-1 text-xl">
-            <span className="font-bold">{MODAL_FACE_EMOTION_ANSWER} </span>
-            {actionData.cardEmotion.cardTitle}
+            {MODAL_FACE_EMOTION_ANSWER}{" "}
+            <span className="font-bold">
+              {actionData.cardEmotion.cardTitle}
+            </span>
           </p>
           <div className="flex justify-center space-x-4">
             <Button onClick={() => handleEmotionResolution(true)} color="green">
