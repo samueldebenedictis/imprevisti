@@ -80,6 +80,26 @@ export const MODAL_MOVE_FORWARD = "avanti di ";
 export const MODAL_MOVE_BACKWARD = "indietro di ";
 export const MODAL_TOTAL_MOVEMENT = "Movimento totale:";
 export const MODAL_NEW_POSITION = "Nuova posizione:";
+export const MODAL_SPECIAL_EFFECT_INFO_MOVE =
+  "Le caselle movimento possono spostarti di posizioni extra in avanti o indietro oltre al lancio del dado normale.";
+export const MODAL_SPECIAL_EFFECT_INFO_BATTLE =
+  "Se atterri su una casella occupata da un altro giocatore, si verifica una battaglia. Il vincitore avanza di una casella.";
+export const MODAL_SPECIAL_EFFECT_INFO_MIME =
+  "Il giocatore deve mimare una parola o frase. Se qualcuno indovina, entrambi avanzano di una casella.";
+export const MODAL_SPECIAL_EFFECT_INFO_QUIZ =
+  "Al giocatore viene posta una domanda. Se risponde correttamente, avanza di una casella. Altrimenti salta un turno.";
+export const MODAL_SPECIAL_EFFECT_INFO_BACKWRITE =
+  "Il giocatore scrive una parola sulla schiena di un altro. Se questo indovina, entrambi avanzano. Altrimenti il primo salta un turno.";
+export const MODAL_SPECIAL_EFFECT_INFO_DICTATION_DRAW =
+  "Il giocatore descrive un'immagine da disegnare. Se il disegno è buono, entrambi avanzano. Altrimenti il primo salta un turno.";
+export const MODAL_SPECIAL_EFFECT_INFO_MUSIC_EMOTION =
+  "Il giocatore esprime un'emozione con una canzone. Se convince, avanza. Altrimenti salta un turno.";
+export const MODAL_SPECIAL_EFFECT_INFO_PHYSICAL_TEST =
+  "Il giocatore esegue un test fisico. Se riesce, avanza. Altrimenti salta un turno.";
+export const MODAL_SPECIAL_EFFECT_INFO_WHAT_WOULD_YOU_DO =
+  "Il giocatore risponde a una domanda ipotetica. Se convince la maggioranza, avanza. Altrimenti salta un turno.";
+export const MODAL_SPECIAL_EFFECT_INFO_FACE_EMOTION =
+  "Il giocatore deve indovinare l'emozione mostrata. Se risponde correttamente, avanza. Altrimenti salta un turno.";
 
 // Game Save and Restore
 export const LABEL_SAVE_GAME_BUTTON = "Salva partita";

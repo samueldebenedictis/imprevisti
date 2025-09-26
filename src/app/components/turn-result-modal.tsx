@@ -1,4 +1,5 @@
 import type React from "react";
+import { useState } from "react";
 import type { Battle } from "@/model/battle";
 import type {
   BackWrite,
@@ -15,6 +16,16 @@ import {
   MODAL_CLOSE_BUTTON,
   MODAL_DICE_ROLL_MESSAGE,
   MODAL_NEW_POSITION,
+  MODAL_SPECIAL_EFFECT_INFO_BACKWRITE,
+  MODAL_SPECIAL_EFFECT_INFO_BATTLE,
+  MODAL_SPECIAL_EFFECT_INFO_DICTATION_DRAW,
+  MODAL_SPECIAL_EFFECT_INFO_FACE_EMOTION,
+  MODAL_SPECIAL_EFFECT_INFO_MIME,
+  MODAL_SPECIAL_EFFECT_INFO_MOVE,
+  MODAL_SPECIAL_EFFECT_INFO_MUSIC_EMOTION,
+  MODAL_SPECIAL_EFFECT_INFO_PHYSICAL_TEST,
+  MODAL_SPECIAL_EFFECT_INFO_QUIZ,
+  MODAL_SPECIAL_EFFECT_INFO_WHAT_WOULD_YOU_DO,
   MODAL_TITLE_TURN_RESULT,
 } from "../texts";
 import BackWriteResult from "./turn-result-modal/back-write-result";
@@ -83,14 +94,76 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
   newPosition,
   boardSize,
 }) => {
+  const [showInfo, setShowInfo] = useState(false);
+
+  const getSpecialEffectInfo = (actionType: string | null) => {
+    switch (actionType) {
+      case "battle":
+        return MODAL_SPECIAL_EFFECT_INFO_BATTLE;
+      case "mime":
+        return MODAL_SPECIAL_EFFECT_INFO_MIME;
+      case "quiz":
+        return MODAL_SPECIAL_EFFECT_INFO_QUIZ;
+      case "backwrite":
+        return MODAL_SPECIAL_EFFECT_INFO_BACKWRITE;
+      case "dictation-draw":
+        return MODAL_SPECIAL_EFFECT_INFO_DICTATION_DRAW;
+      case "music-emotion":
+        return MODAL_SPECIAL_EFFECT_INFO_MUSIC_EMOTION;
+      case "physical-test":
+        return MODAL_SPECIAL_EFFECT_INFO_PHYSICAL_TEST;
+      case "what-would-you-do":
+        return MODAL_SPECIAL_EFFECT_INFO_WHAT_WOULD_YOU_DO;
+      case "face-emotion":
+        return MODAL_SPECIAL_EFFECT_INFO_FACE_EMOTION;
+      default:
+        return MODAL_SPECIAL_EFFECT_INFO_MOVE;
+    }
+  };
+
   if (!isOpen) {
     return null;
   }
 
   return (
-    <div className=" ui-text-dark fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div className="ui-text-dark fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="ui-border-dark min-w-[600px] bg-white p-6 text-center shadow-lg">
-        <h2 className=" ui-text-title mb-4">{MODAL_TITLE_TURN_RESULT}</h2>
+        <div className="relative mb-4">
+          <h2 className="ui-text-title text-center">
+            {MODAL_TITLE_TURN_RESULT}
+          </h2>
+          <div className="absolute top-0 right-0">
+            <button
+              onMouseEnter={() => setShowInfo(true)}
+              onMouseLeave={() => setShowInfo(false)}
+              className="text-gray-600 hover:text-gray-800"
+              type="button"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                role="img"
+                aria-label="Informazioni effetto speciale"
+              >
+                <title>Informazioni effetto speciale</title>
+                <circle cx="12" cy="12" r="10" />
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                <path d="M12 17h.01" />
+              </svg>
+            </button>
+            {showInfo && (
+              <div className="ui-border-dark absolute right-full bottom-8 z-10 mr-2 w-120 bg-white p-2 text-xl shadow-lg">
+                {getSpecialEffectInfo(actionType)}
+              </div>
+            )}
+          </div>
+        </div>
 
         {diceResult !== null && !(diceResult === 0 && actionType === null) && (
           <p className="mb-1 text-xl">
