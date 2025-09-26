@@ -1,5 +1,6 @@
 import {
   MODAL_MUSIC_EMOTION_TITLE,
+  MODAL_SPECIAL_EFFECT_INFO_MUSIC_EMOTION,
   SQUARE_MUSIC_EMOTION_TOP,
 } from "@/app/texts";
 import { Board } from "@/model/board";
@@ -72,4 +73,19 @@ test("MusicEmotion only board - Failure skips player turn", async ({
 
   const finalPosition = await gamePage.getPlayerPosition(0);
   expect(finalPosition).toBe(initialPosition);
+});
+
+test("MusicEmotion only board - Info icon shows tooltip on hover", async ({
+  gamePage,
+}) => {
+  await gamePage.goto();
+  await gamePage.playTurnButton.click();
+  await gamePage.rollDiceButton.click();
+
+  await expect(gamePage.turnResultModal).toBeVisible();
+
+  await gamePage.specialEffectInfoIcon.hover();
+  await expect(
+    gamePage.page.getByText(MODAL_SPECIAL_EFFECT_INFO_MUSIC_EMOTION),
+  ).toBeVisible();
 });

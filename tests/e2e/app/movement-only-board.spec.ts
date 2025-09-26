@@ -1,3 +1,4 @@
+import { MODAL_SPECIAL_EFFECT_INFO_MOVE } from "@/app/texts";
 import { Board } from "@/model/board";
 import { Game } from "@/model/game";
 import { Player } from "@/model/player";
@@ -30,4 +31,19 @@ test("Movement only board - Modal appears after dice roll", async ({
   await gamePage.playTurnButton.click();
   await gamePage.rollDiceButton.click();
   await expect(gamePage.turnResultModal).toBeVisible();
+});
+
+test("Movement only board - Info icon shows tooltip on hover", async ({
+  gamePage,
+}) => {
+  await gamePage.goto();
+  await gamePage.playTurnButton.click();
+  await gamePage.rollDiceButton.click();
+
+  await expect(gamePage.turnResultModal).toBeVisible();
+
+  await gamePage.specialEffectInfoIcon.hover();
+  await expect(
+    gamePage.page.getByText(MODAL_SPECIAL_EFFECT_INFO_MOVE),
+  ).toBeVisible();
 });

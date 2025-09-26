@@ -1,4 +1,7 @@
-import { SQUARE_DICTATION_DRAW_TOP } from "@/app/texts";
+import {
+  MODAL_SPECIAL_EFFECT_INFO_DICTATION_DRAW,
+  SQUARE_DICTATION_DRAW_TOP,
+} from "@/app/texts";
 import { Board } from "@/model/board";
 import { Game } from "@/model/game";
 import { Player } from "@/model/player";
@@ -91,4 +94,19 @@ test("Dictation draw only board - Image is displayed when shown", async ({
   await gamePage.dictationDrawShowImageButton.click();
 
   await expect(gamePage.page.locator("img")).toBeVisible();
+});
+
+test("Dictation draw only board - Info icon shows tooltip on hover", async ({
+  gamePage,
+}) => {
+  await gamePage.goto();
+  await gamePage.playTurnButton.click();
+  await gamePage.rollDiceButton.click();
+
+  await expect(gamePage.turnResultModal).toBeVisible();
+
+  await gamePage.specialEffectInfoIcon.hover();
+  await expect(
+    gamePage.page.getByText(MODAL_SPECIAL_EFFECT_INFO_DICTATION_DRAW),
+  ).toBeVisible();
 });
