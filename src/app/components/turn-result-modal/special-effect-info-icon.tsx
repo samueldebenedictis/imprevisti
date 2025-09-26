@@ -48,37 +48,39 @@ const SpecialEffectInfoIcon: React.FC<SpecialEffectInfoIconProps> = ({
   };
 
   return (
-    <div className="absolute top-0 right-0">
-      <button
-        onMouseEnter={() => setShowInfo(true)}
-        onMouseLeave={() => setShowInfo(false)}
-        className="text-gray-600 hover:text-gray-800"
-        type="button"
-      >
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          role="img"
-          aria-label="Informazioni effetto speciale"
+    <>
+      <div className="absolute top-0 right-0">
+        <button
+          onMouseEnter={() => setShowInfo(true)}
+          onMouseLeave={() => setShowInfo(false)}
+          className="text-gray-600 hover:text-gray-800"
+          type="button"
         >
-          <title>Informazioni effetto speciale</title>
-          <circle cx="12" cy="12" r="10" />
-          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-          <path d="M12 17h.01" />
-        </svg>
-      </button>
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            role="img"
+            aria-label="Informazioni effetto speciale"
+          >
+            <title>Informazioni effetto speciale</title>
+            <circle cx="12" cy="12" r="10" />
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+            <path d="M12 17h.01" />
+          </svg>
+        </button>
+      </div>
       {showInfo && (
-        <div className="ui-border-dark absolute right-full bottom-8 z-10 mr-2 w-122 bg-white p-4 text-xl shadow-lg">
+        <div className="ui-border-dark -translate-x-1/2 absolute bottom-10 left-1/2 z-10 min-w-[500px] bg-white p-4 text-xl shadow-lg">
           {getSpecialEffectInfo(actionType)}
         </div>
       )}
-    </div>
+    </>
   );
 };
 
