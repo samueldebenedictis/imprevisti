@@ -200,6 +200,10 @@ export class GamePage {
     exact: true,
   });
 
+  specialEffectInfoIcon = this.page.getByRole("img", {
+    name: "Informazioni effetto speciale",
+  });
+
   // Modal title locators
   quizModalTitle = this.page.getByText(MODAL_QUIZ_TITLE);
   dictationDrawModalTitle = this.page.getByText(MODAL_DICTATION_DRAW_TITLE);

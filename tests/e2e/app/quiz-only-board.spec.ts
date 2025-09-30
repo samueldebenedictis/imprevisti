@@ -1,3 +1,4 @@
+import { MODAL_SPECIAL_EFFECT_INFO_QUIZ } from "@/app/texts";
 import { Board } from "@/model/board";
 import { Game } from "@/model/game";
 import { Player } from "@/model/player";
@@ -60,4 +61,19 @@ test("Quiz only board - Failure skips player turn", async ({ gamePage }) => {
 
   const finalPosition = await gamePage.getPlayerPosition(0);
   expect(finalPosition).toBe(initialPosition);
+});
+
+test("Quiz only board - Info icon shows tooltip on hover", async ({
+  gamePage,
+}) => {
+  await gamePage.goto();
+  await gamePage.playTurnButton.click();
+  await gamePage.rollDiceButton.click();
+
+  await expect(gamePage.turnResultModal).toBeVisible();
+
+  await gamePage.specialEffectInfoIcon.hover();
+  await expect(
+    gamePage.page.getByText(MODAL_SPECIAL_EFFECT_INFO_QUIZ),
+  ).toBeVisible();
 });

@@ -36,6 +36,18 @@ export default function Home() {
   const specialPercentage = useConfigStore((state) => state.specialPercentage);
   const actions = useConfigStore((state) => state.actions);
 
+  const squareTypeOptions = [
+    { key: "mime", label: LABEL_MIME },
+    { key: "quiz", label: LABEL_QUIZ },
+    { key: "backwrite", label: LABEL_BACKWRITE },
+    { key: "face-emotion", label: LABEL_FACE_EMOTION },
+    { key: "move", label: LABEL_MOVE },
+    { key: "music-emotion", label: LABEL_MUSIC_EMOTION },
+    { key: "physical-test", label: LABEL_PHYSICAL_TEST },
+    { key: "what-would-you-do", label: LABEL_WHAT_WOULD_YOU_DO },
+    { key: "dictation-draw", label: LABEL_DICTATION_DRAW },
+  ];
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -98,160 +110,24 @@ export default function Home() {
 
         <div className="mb-4">
           <Label htmlFor="squareTypes">{LABEL_SPECIAL_SQUARES}</Label>
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="mime"
-              name="mime"
-              checked={squareTypes.mime}
-              onChange={(e) =>
-                actions.setSquareType(
-                  e.target.name as keyof typeof squareTypes,
-                  e.target.checked,
-                )
-              }
-              className="ui-custom-checkbox mr-2"
-            />
-            <LabelCheckbox htmlFor="mime">{LABEL_MIME}</LabelCheckbox>
-          </div>
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="quiz"
-              name="quiz"
-              checked={squareTypes.quiz}
-              onChange={(e) =>
-                actions.setSquareType(
-                  e.target.name as keyof typeof squareTypes,
-                  e.target.checked,
-                )
-              }
-              className="ui-custom-checkbox mr-2"
-            />
-            <LabelCheckbox htmlFor="quiz">{LABEL_QUIZ}</LabelCheckbox>
-          </div>
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="backwrite"
-              name="backwrite"
-              checked={squareTypes.backwrite}
-              onChange={(e) =>
-                actions.setSquareType(
-                  e.target.name as keyof typeof squareTypes,
-                  e.target.checked,
-                )
-              }
-              className="ui-custom-checkbox mr-2"
-            />
-            <LabelCheckbox htmlFor="backwrite">{LABEL_BACKWRITE}</LabelCheckbox>
-          </div>
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="face-emotion"
-              name="face-emotion"
-              checked={squareTypes["face-emotion"]}
-              onChange={(e) =>
-                actions.setSquareType(
-                  e.target.name as keyof typeof squareTypes,
-                  e.target.checked,
-                )
-              }
-              className="ui-custom-checkbox mr-2"
-            />
-            <LabelCheckbox htmlFor="face-emotion">
-              {LABEL_FACE_EMOTION}
-            </LabelCheckbox>
-          </div>
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="move"
-              name="move"
-              checked={squareTypes.move}
-              onChange={(e) =>
-                actions.setSquareType(
-                  e.target.name as keyof typeof squareTypes,
-                  e.target.checked,
-                )
-              }
-              className="ui-custom-checkbox mr-2"
-            />
-            <LabelCheckbox htmlFor="move">{LABEL_MOVE}</LabelCheckbox>
-          </div>
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="music-emotion"
-              name="music-emotion"
-              checked={squareTypes["music-emotion"]}
-              onChange={(e) =>
-                actions.setSquareType(
-                  e.target.name as keyof typeof squareTypes,
-                  e.target.checked,
-                )
-              }
-              className="ui-custom-checkbox mr-2"
-            />
-            <LabelCheckbox htmlFor="music-emotion">
-              {LABEL_MUSIC_EMOTION}
-            </LabelCheckbox>
-          </div>
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="physical-test"
-              name="physical-test"
-              checked={squareTypes["physical-test"]}
-              onChange={(e) =>
-                actions.setSquareType(
-                  e.target.name as keyof typeof squareTypes,
-                  e.target.checked,
-                )
-              }
-              className="ui-custom-checkbox mr-2"
-            />
-            <LabelCheckbox htmlFor="physical-test">
-              {LABEL_PHYSICAL_TEST}
-            </LabelCheckbox>
-          </div>
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="what-would-you-do"
-              name="what-would-you-do"
-              checked={squareTypes["what-would-you-do"]}
-              onChange={(e) =>
-                actions.setSquareType(
-                  e.target.name as keyof typeof squareTypes,
-                  e.target.checked,
-                )
-              }
-              className="ui-custom-checkbox mr-2"
-            />
-            <LabelCheckbox htmlFor="what-would-you-do">
-              {LABEL_WHAT_WOULD_YOU_DO}
-            </LabelCheckbox>
-          </div>
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="dictation-draw"
-              name="dictation-draw"
-              checked={squareTypes["dictation-draw"]}
-              onChange={(e) =>
-                actions.setSquareType(
-                  e.target.name as keyof typeof squareTypes,
-                  e.target.checked,
-                )
-              }
-              className="ui-custom-checkbox mr-2"
-            />
-            <LabelCheckbox htmlFor="dictation-draw">
-              {LABEL_DICTATION_DRAW}
-            </LabelCheckbox>
-          </div>
+          {squareTypeOptions.map(({ key, label }) => (
+            <div key={key} className="flex items-center">
+              <input
+                type="checkbox"
+                id={key}
+                name={key}
+                checked={squareTypes[key as keyof typeof squareTypes]}
+                onChange={(e) =>
+                  actions.setSquareType(
+                    key as keyof typeof squareTypes,
+                    e.target.checked,
+                  )
+                }
+                className="ui-custom-checkbox mr-2"
+              />
+              <LabelCheckbox htmlFor={key}>{label}</LabelCheckbox>
+            </div>
+          ))}
         </div>
 
         <div className="mb-6">

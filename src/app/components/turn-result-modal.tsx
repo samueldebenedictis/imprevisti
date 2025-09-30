@@ -26,6 +26,7 @@ import MusicEmotionResult from "./turn-result-modal/music-emotion-result";
 import PhysicalTestResult from "./turn-result-modal/physical-test-result";
 import QuizResult from "./turn-result-modal/quiz-result";
 import SpecialEffect from "./turn-result-modal/special-effect";
+import SpecialEffectInfoIcon from "./turn-result-modal/special-effect-info-icon";
 import WhatWouldYouDoResult from "./turn-result-modal/what-would-you-do-result";
 import Button from "./ui/button";
 import { Divider } from "./ui/divider";
@@ -88,9 +89,14 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
   }
 
   return (
-    <div className=" ui-text-dark fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div className="ui-text-dark fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="ui-border-dark min-w-[600px] bg-white p-6 text-center shadow-lg">
-        <h2 className=" ui-text-title mb-4">{MODAL_TITLE_TURN_RESULT}</h2>
+        <div className="relative mb-4">
+          <h2 className="ui-text-title text-center">
+            {MODAL_TITLE_TURN_RESULT}
+          </h2>
+          <SpecialEffectInfoIcon actionType={actionType} />
+        </div>
 
         {diceResult !== null && !(diceResult === 0 && actionType === null) && (
           <p className="mb-1 text-xl">

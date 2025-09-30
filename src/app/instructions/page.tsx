@@ -3,9 +3,74 @@
 import { useRouter } from "next/navigation";
 import { MAX_PLAYERS, MIN_PLAYERS, URL_HOME } from "../../vars";
 import Button from "../components/ui/button";
+import {
+  LABEL_BACKWRITE,
+  LABEL_BATTLE,
+  LABEL_DICTATION_DRAW,
+  LABEL_FACE_EMOTION,
+  LABEL_MIME,
+  LABEL_MOVE,
+  LABEL_MUSIC_EMOTION,
+  LABEL_PHYSICAL_TEST,
+  LABEL_QUIZ,
+  LABEL_WHAT_WOULD_YOU_DO,
+  MODAL_SPECIAL_EFFECT_INFO_BACKWRITE,
+  MODAL_SPECIAL_EFFECT_INFO_BATTLE,
+  MODAL_SPECIAL_EFFECT_INFO_DICTATION_DRAW,
+  MODAL_SPECIAL_EFFECT_INFO_FACE_EMOTION,
+  MODAL_SPECIAL_EFFECT_INFO_MIME,
+  MODAL_SPECIAL_EFFECT_INFO_MOVE,
+  MODAL_SPECIAL_EFFECT_INFO_MUSIC_EMOTION,
+  MODAL_SPECIAL_EFFECT_INFO_PHYSICAL_TEST,
+  MODAL_SPECIAL_EFFECT_INFO_QUIZ,
+  MODAL_SPECIAL_EFFECT_INFO_WHAT_WOULD_YOU_DO,
+} from "../texts";
 
 export default function InstructionsPage() {
   const router = useRouter();
+
+  const specialEffects = [
+    {
+      title: LABEL_BATTLE,
+      description: MODAL_SPECIAL_EFFECT_INFO_BATTLE,
+    },
+    {
+      title: LABEL_MIME,
+      description: MODAL_SPECIAL_EFFECT_INFO_MIME,
+    },
+    {
+      title: LABEL_QUIZ,
+      description: MODAL_SPECIAL_EFFECT_INFO_QUIZ,
+    },
+    {
+      title: LABEL_BACKWRITE,
+      description: MODAL_SPECIAL_EFFECT_INFO_BACKWRITE,
+    },
+    {
+      title: LABEL_DICTATION_DRAW,
+      description: MODAL_SPECIAL_EFFECT_INFO_DICTATION_DRAW,
+    },
+    {
+      title: LABEL_MUSIC_EMOTION,
+      description: MODAL_SPECIAL_EFFECT_INFO_MUSIC_EMOTION,
+    },
+    {
+      title: LABEL_PHYSICAL_TEST,
+      description: MODAL_SPECIAL_EFFECT_INFO_PHYSICAL_TEST,
+    },
+    {
+      title: LABEL_WHAT_WOULD_YOU_DO,
+      description: MODAL_SPECIAL_EFFECT_INFO_WHAT_WOULD_YOU_DO,
+    },
+    {
+      title: LABEL_FACE_EMOTION,
+      description: MODAL_SPECIAL_EFFECT_INFO_FACE_EMOTION,
+    },
+    {
+      title: LABEL_MOVE,
+      description: MODAL_SPECIAL_EFFECT_INFO_MOVE,
+    },
+  ];
 
   return (
     <div className="ui-text-dark my-8 flex flex-col items-center justify-center p-4">
@@ -93,82 +158,12 @@ export default function InstructionsPage() {
             Il tabellone può contenere diverse tipologie di caselle speciali:
           </p>
 
-          <h3 className="mb-1 font-medium text-lg">Battaglia</h3>
-          <p className="mb-2">
-            Se un giocatore atterra su una casella già occupata da un altro
-            giocatore, si verifica una battaglia. I giocatori coinvolti dovranno
-            decidere un vincitore. Il giocatore vincente potrà avanzare di una
-            casella.
-          </p>
-
-          <h3 className="mb-1 font-medium text-lg">Mimo</h3>
-          <p className="mb-2">
-            Il giocatore dovrà mimare una parola o una frase. Gli altri
-            giocatori cercheranno di indovinare. Se qualcuno indovina, il
-            giocatore che ha mimato e quello che ha indovinato potranno avanzare
-            di una casella.
-          </p>
-
-          <h3 className="mb-1 font-medium text-lg">Quiz</h3>
-          <p className="mb-2">
-            Al giocatore verrà posta una domanda. Se risponde correttamente,
-            potrà avanzare di una casella. Se sbaglia, dovrà saltare un turno.
-          </p>
-
-          <h3 className="mb-1 font-medium text-lg">Parola sulla schiena</h3>
-          <p className="mb-2">
-            Il giocatore dovrà scrivere una parola sulla schiena di un altro
-            giocatore, se questo indovina entrambi potranno avanzare di una
-            casella. Altrimenti, il giocatore che ha scritto salterà il prossimo
-            turno.
-          </p>
-
-          <h3 className="mb-1 font-medium text-lg">Disegno dettato</h3>
-          <p className="mb-2">
-            Il giocatore dovrà descrivere un'immagine a un altro giocatore che
-            cercherà di disegnarla. Se il disegno è giudicato sufficientemente
-            simile all'immagine originale, entrambi i giocatori potranno
-            avanzare di una casella. Altrimenti, il giocatore che ha descritto
-            salterà il prossimo turno.
-          </p>
-
-          <h3 className="mb-1 font-medium text-lg">Emozioni in musica</h3>
-          <p className="mb-2">
-            Il giocatore dovrà esprimere una specifica emozione attraverso una
-            canzone. Gli altri giocatori dovranno valutare se l'emozione è
-            rappresentata correttamente, in quel caso il giocatore potrà
-            avanzare di una casella. Altrimenti, salterà il prossimo turno.
-          </p>
-
-          <h3 className="mb-1 font-medium text-lg">Test fisico</h3>
-          <p className="mb-2">
-            Il giocatore dovrà eseguire un test fisico proposto dalla carta. Se
-            il test è completato con successo, il giocatore potrà avanzare di
-            una casella. Altrimenti, salterà il prossimo turno.
-          </p>
-
-          <h3 className="mb-1 font-medium text-lg">Cosa faresti se...</h3>
-          <p className="mb-2">
-            Se un giocatore atterra su questa casella dovrà rispondere a una
-            domanda ipotetica del tipo "Cosa faresti se...". Gli altri giocatori
-            giudicheranno se la risposta è convincente. Se la risposta convince
-            la maggioranza, il giocatore potrà avanzare di una casella.
-            Altrimenti, salterà il prossimo turno.
-          </p>
-
-          <h3 className="mb-1 font-medium text-lg">Indovina l'emozione</h3>
-          <p className="mb-2">
-            Il giocatore dovrà indovinare l'emozione espressa dal volto che gli
-            verrà mostrato. Se risponde correttamente, potrà avanzare di una
-            casella. Se sbaglia, dovrà saltare un turno.
-          </p>
-
-          <h3 className="mb-1 font-medium text-lg">Caselle movimento</h3>
-          <p className="mb-2">
-            Alcune caselle possono far avanzare o retrocedere il giocatore di un
-            numero specifico di posizioni. Queste caselle non richiedono azioni
-            particolari, ma modificano direttamente la posizione del giocatore.
-          </p>
+          {specialEffects.map((effect) => (
+            <div key={effect.title}>
+              <h3 className="mb-1 font-bold">{effect.title}</h3>
+              <p className="mb-2">{effect.description}</p>
+            </div>
+          ))}
         </section>
 
         <section className="mb-6">
