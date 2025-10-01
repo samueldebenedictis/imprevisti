@@ -127,22 +127,26 @@ src/
     └── vitest/            # Test unitari
 ```
 
-## Come Iniziare
+## Installazione
 
-1. **Clona il repository**:
+1. **Clone**:
    ```bash
    git clone https://github.com/samueldebenedictis/tesi.git
    cd tesi
    ```
 
-2. **Installa le dipendenze**:
+2. **Install**:
    ```bash
    npm install
    ```
 
-3. **Avvia il server di sviluppo**:
+3. **Dev server**:
    ```bash
    npm run dev
    ```
+   goto `http://localhost:3000`
 
-4. **Naviga** `http://localhost:3000`
+4. **Build**
+   ```bash
+   npm run build
+   ```
