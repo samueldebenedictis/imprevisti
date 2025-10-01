@@ -170,3 +170,39 @@ export const DictationDrawWithPlayers: Story = {
     ],
   },
 };
+
+export const BackWriteSquare: Story = {
+  args: {
+    number: 20,
+    squareType: "backwrite",
+  },
+};
+
+export const BackWriteWithPlayers: Story = {
+  args: {
+    number: 20,
+    squareType: "backwrite",
+    playersOn: [
+      { name: "Giorgio", isCurrentPlayerTurn: true },
+      { name: "Sara", isCurrentPlayerTurn: false },
+    ],
+  },
+};
+
+export const FaceEmotionSquare: Story = {
+  args: {
+    number: 22,
+    squareType: "face-emotion",
+  },
+};
+
+export const FaceEmotionWithPlayers: Story = {
+  args: {
+    number: 22,
+    squareType: "face-emotion",
+    playersOn: [
+      { name: "Lorenzo", isCurrentPlayerTurn: false },
+      { name: "Isabella", isCurrentPlayerTurn: true },
+    ],
+  },
+};
