@@ -37,11 +37,11 @@ export default function Home() {
   const actions = useConfigStore((state) => state.actions);
 
   const squareTypeOptions = [
+    { key: "move", label: LABEL_MOVE },
     { key: "mime", label: LABEL_MIME },
     { key: "quiz", label: LABEL_QUIZ },
     { key: "backwrite", label: LABEL_BACKWRITE },
     { key: "face-emotion", label: LABEL_FACE_EMOTION },
-    { key: "move", label: LABEL_MOVE },
     { key: "music-emotion", label: LABEL_MUSIC_EMOTION },
     { key: "physical-test", label: LABEL_PHYSICAL_TEST },
     { key: "what-would-you-do", label: LABEL_WHAT_WOULD_YOU_DO },
