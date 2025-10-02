@@ -115,10 +115,9 @@ export const MODAL_SPECIAL_EFFECT_INFO_FACE_EMOTION =
 
 // Game Save and Restore
 export const LABEL_SAVE_GAME_BUTTON = "Salva partita";
-export const LABEL_RESTORE_GAME_BUTTON = "Carica partita";
 export const LABEL_DELETE_GAME_BUTTON = "Elimina partita";
+export const LABEL_RESTORE_GAME = "Carica partita";
 
-export const LABEL_RESTORE_GAME_TITLE = "Carica partita";
 export const LABEL_CONTINUE_GAME_BUTTON = "Continua partita attuale";
 export const LABEL_UPLOAD_FILE = "Carica un file di salvataggio:";
 export const LABEL_CONTINUE_GAME_TITLE =

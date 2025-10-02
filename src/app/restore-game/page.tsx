@@ -11,7 +11,7 @@ import {
   LABEL_INVALID_FILE,
   LABEL_LOAD_AND_RESUME,
   LABEL_NO_SAVE_NO_STORAGE,
-  LABEL_RESTORE_GAME_TITLE,
+  LABEL_RESTORE_GAME,
   LABEL_SELECT_FILE,
   LABEL_SELECT_FILE_PLEASE,
   LABEL_UPLOAD_FILE,
@@ -72,7 +72,7 @@ export default function RestoreGamePage() {
   const divClasses = "flex w-full flex-col items-center text-center my-4";
   return (
     <div className="ui-text-dark m-8 mx-auto flex max-w-md flex-col items-center justify-center gap-4">
-      <h1 className=" ui-text-title m-2">{LABEL_RESTORE_GAME_TITLE}</h1>
+      <h1 className=" ui-text-title m-2">{LABEL_RESTORE_GAME}</h1>
 
       <div className={`${divClasses}`}>
         <Label htmlFor="restore">{LABEL_UPLOAD_FILE}</Label>

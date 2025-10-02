@@ -19,12 +19,12 @@ import Button from "./ui/button";
 import { Divider } from "./ui/divider";
 import { LabelCheckbox } from "./ui/label";
 
-interface DropdownMenuItem {
+interface MenuItem {
   text: string;
   url: string;
 }
 
-const menuItems: DropdownMenuItem[] = [
+const menuItems: MenuItem[] = [
   { text: LABEL_CONTINUE_GAME, url: URL_GAME },
   { text: LABEL_NEW_GAME, url: URL_HOME },
   { text: LABEL_LOAD_GAME, url: URL_RESTORE_GAME },

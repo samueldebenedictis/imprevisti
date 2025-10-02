@@ -6,7 +6,7 @@ import type { Player } from "@/model/player";
 import { URL_RESTORE_GAME } from "../../vars";
 import {
   LABEL_DELETE_GAME_BUTTON,
-  LABEL_RESTORE_GAME_BUTTON,
+  LABEL_RESTORE_GAME,
   LABEL_SAVE_GAME_BUTTON,
   LEFT_BAR_CURRENT_TURN,
   LEFT_BAR_GAME_SAVED,
@@ -116,8 +116,8 @@ export default function LeftBar({
         </Button>
       </div>
       <div className="mr-4 mb-4 w-full">
-        <Button color="black" className="w-full">
-          <Link href={URL_RESTORE_GAME}>{LABEL_RESTORE_GAME_BUTTON}</Link>
+        <Button color="blue" className="w-full">
+          <Link href={URL_RESTORE_GAME}>{LABEL_RESTORE_GAME}</Link>
         </Button>
       </div>
     </div>
