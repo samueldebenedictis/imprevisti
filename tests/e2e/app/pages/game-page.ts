@@ -217,6 +217,12 @@ export class GamePage {
 
   async playTurn(outcome: "positive" | "negative" = "positive"): Promise<void> {
     await this.playTurnButton.click();
+    await this.page.waitForTimeout(500);
+    if (await this.skipTurnButton.isVisible()) {
+      await this.skipTurnButton.click();
+      await this.continueButton.click();
+      return;
+    }
     await this.rollDiceButton.waitFor();
     await this.rollDiceButton.click();
     // Wait for turn result modal to appear, with timeout in case no modal for normal squares
@@ -313,5 +319,14 @@ export class GamePage {
     const initialPositionText = await this.modalNewPositionText.innerText();
     const initialPosition = parseInt(initialPositionText);
     return initialPosition;
+  }
+
+  async getWinner() {
+    const winnerLocator = this.page.getByText("Vincitore:");
+    if (await winnerLocator.isVisible({ timeout: 200 })) {
+      const winner = (await winnerLocator.innerText()).split(": ")[1];
+      return winner.replace("!", "");
+    }
+    return undefined;
   }
 }

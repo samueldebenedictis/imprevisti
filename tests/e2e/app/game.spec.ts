@@ -106,3 +106,28 @@ test("Play turns", async ({ homePage }) => {
   expect(await gamePage.getPlayerPosition(1)).toBeGreaterThan(0);
   expect(await gamePage.getPlayerPosition(2)).toBeGreaterThan(0);
 });
+
+test("End game", async ({ homePage }) => {
+  await homePage.playersNumber.fill("3");
+  await homePage.playerName(1).fill("Qui");
+  await homePage.playerName(2).fill("Quo");
+  await homePage.playerName(3).fill("Qua");
+  await homePage.squaresNumber.fill("10");
+
+  await homePage.mimeCheckbox.uncheck();
+  await homePage.quizCheckbox.uncheck();
+  await homePage.moveCheckbox.uncheck();
+  await homePage.backwriteCheckbox.uncheck();
+  await homePage.musicEmotionCheckbox.uncheck();
+  await homePage.physicalTestCheckbox.uncheck();
+  await homePage.whatWouldYouDoCheckbox.uncheck();
+  await homePage.dictationDrawCheckbox.uncheck();
+  await homePage.faceEmotionsCheckbox.uncheck();
+
+  const gamePage = await homePage.submitAndGotoGame();
+
+  while (!(await gamePage.getWinner())) {
+    await gamePage.playTurn();
+  }
+  expect(await gamePage.getWinner()).toMatch(/Qui|Quo|Qua/);
+});
