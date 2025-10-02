@@ -74,9 +74,9 @@ export default function InstructionsPage() {
 
   return (
     <div className="ui-text-dark my-8 flex flex-col items-center justify-center p-4">
-      <h1 className=" ui-text-title m-2">Istruzioni di gioco</h1>
+      <h1 className="ui-text-title m-2">Istruzioni di gioco</h1>
 
-      <div className=" m-2 w-full max-w-4xl p-6">
+      <div className="m-2 w-full max-w-4xl p-6">
         <section className="mb-6">
           <h2 className="mb-2 font-semibold text-xl">
             1. Introduzione al gioco

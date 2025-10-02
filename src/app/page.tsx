@@ -62,7 +62,7 @@ export default function Home() {
 
   return (
     <div className="ui-text-dark my-8 flex flex-col items-center justify-center p-2">
-      <h1 className=" ui-text-title m-2">{LABEL_GAME_CONFIGURATION}</h1>
+      <h1 className="ui-text-title m-2">{LABEL_GAME_CONFIGURATION}</h1>
       <form onSubmit={handleSubmit} className="m-2 w-full max-w-md bg-white">
         <div className="mb-4">
           <Label htmlFor="numPlayers">{LABEL_PLAYERS_NUMBER}</Label>
