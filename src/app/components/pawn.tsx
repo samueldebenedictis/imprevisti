@@ -18,7 +18,7 @@ export default function Pawn(props: PawnProps) {
   return (
     <div
       key={`pawn-${props.name}`}
-      className={`ui-border-dark mb-1 text-center shadow-xl ${color} ${bounceClass} ${movingClass}`}
+      className={`ui-border-dark mb-1 text-center shadow-xl hover:opacity-50 ${color} ${bounceClass} ${movingClass}`}
     >
       <span className="ui-text-normal ui-text-light m-1">{props.name}</span>
     </div>
