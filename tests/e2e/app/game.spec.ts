@@ -129,5 +129,7 @@ test("End game", async ({ homePage }) => {
   while (!(await gamePage.getWinner())) {
     await gamePage.playTurn();
   }
+
   expect(await gamePage.getWinner()).toMatch(/Qui|Quo|Qua/);
+  await expect(gamePage.playTurnButton).toBeHidden();
 });
