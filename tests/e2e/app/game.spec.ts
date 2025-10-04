@@ -85,3 +85,51 @@ test("Player skip turn modal", async ({ page }) => {
   await gamePage.continueButton.click();
   await expect(gamePage.skipTurnMessage("Alice")).not.toBeVisible();
 });
+
+test("Play turns", async ({ homePage }) => {
+  await homePage.playersNumber.fill("3");
+  await homePage.playerName(1).fill("Qui");
+  await homePage.playerName(2).fill("Quo");
+  await homePage.playerName(3).fill("Qua");
+  await homePage.squaresNumber.fill("25");
+  // uncheck the move checkbox because
+  // move square can send player back to square 0
+  await homePage.moveCheckbox.uncheck();
+
+  const gamePage = await homePage.submitAndGotoGame();
+
+  await gamePage.playTurn();
+  await gamePage.playTurn();
+  await gamePage.playTurn();
+
+  expect(await gamePage.getPlayerPosition(0)).toBeGreaterThan(0);
+  expect(await gamePage.getPlayerPosition(1)).toBeGreaterThan(0);
+  expect(await gamePage.getPlayerPosition(2)).toBeGreaterThan(0);
+});
+
+test("End game", async ({ homePage }) => {
+  await homePage.playersNumber.fill("3");
+  await homePage.playerName(1).fill("Qui");
+  await homePage.playerName(2).fill("Quo");
+  await homePage.playerName(3).fill("Qua");
+  await homePage.squaresNumber.fill("10");
+
+  await homePage.mimeCheckbox.uncheck();
+  await homePage.quizCheckbox.uncheck();
+  await homePage.moveCheckbox.uncheck();
+  await homePage.backwriteCheckbox.uncheck();
+  await homePage.musicEmotionCheckbox.uncheck();
+  await homePage.physicalTestCheckbox.uncheck();
+  await homePage.whatWouldYouDoCheckbox.uncheck();
+  await homePage.dictationDrawCheckbox.uncheck();
+  await homePage.faceEmotionsCheckbox.uncheck();
+
+  const gamePage = await homePage.submitAndGotoGame();
+
+  while (!(await gamePage.getWinner())) {
+    await gamePage.playTurn();
+  }
+
+  expect(await gamePage.getWinner()).toMatch(/Qui|Quo|Qua/);
+  await expect(gamePage.playTurnButton).toBeHidden();
+});

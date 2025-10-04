@@ -37,11 +37,11 @@ export default function Home() {
   const actions = useConfigStore((state) => state.actions);
 
   const squareTypeOptions = [
+    { key: "move", label: LABEL_MOVE },
     { key: "mime", label: LABEL_MIME },
     { key: "quiz", label: LABEL_QUIZ },
     { key: "backwrite", label: LABEL_BACKWRITE },
     { key: "face-emotion", label: LABEL_FACE_EMOTION },
-    { key: "move", label: LABEL_MOVE },
     { key: "music-emotion", label: LABEL_MUSIC_EMOTION },
     { key: "physical-test", label: LABEL_PHYSICAL_TEST },
     { key: "what-would-you-do", label: LABEL_WHAT_WOULD_YOU_DO },
@@ -62,7 +62,7 @@ export default function Home() {
 
   return (
     <div className="ui-text-dark my-8 flex flex-col items-center justify-center p-2">
-      <h1 className=" ui-text-title m-2">{LABEL_GAME_CONFIGURATION}</h1>
+      <h1 className="ui-text-title m-2">{LABEL_GAME_CONFIGURATION}</h1>
       <form onSubmit={handleSubmit} className="m-2 w-full max-w-md bg-white">
         <div className="mb-4">
           <Label htmlFor="numPlayers">{LABEL_PLAYERS_NUMBER}</Label>

@@ -82,8 +82,8 @@ export class GamePage {
   // Reusable locators for modal interactions
   playerSelectDropdown = this.page.locator("select");
   battlePlayerButtons = this.page
-    .getByRole("button")
-    .filter({ hasText: /^[A-Za-z]+$/ });
+    .getByText("Battaglia!Seleziona il")
+    .locator("button");
   playersPositionsList = this.page.locator('[id="players-position"] ul li');
   modalNewPositionText = this.page
     .getByRole("paragraph")
@@ -215,6 +215,99 @@ export class GamePage {
   whatWouldYouDoModalTitle = this.page.getByText(MODAL_WHAT_WOULD_YOU_DO_TITLE);
   battleModalTitle = this.page.getByText(MODAL_BATTLE_TITLE);
 
+  async playTurn(outcome: "positive" | "negative" = "positive"): Promise<void> {
+    await this.playTurnButton.click();
+    await this.page.waitForTimeout(500);
+    if (await this.skipTurnButton.isVisible()) {
+      await this.skipTurnButton.click();
+      await this.continueButton.click();
+      return;
+    }
+    await this.rollDiceButton.waitFor();
+    await this.rollDiceButton.click();
+    // Wait for turn result modal to appear, with timeout in case no modal for normal squares
+    await this.page.waitForTimeout(2_000);
+    if (!(await this.turnResultModal.isVisible())) {
+      // No modal appeared, turn complete
+      await this.continueButton.click();
+      return;
+    }
+    if (await this.quizModalTitle.isVisible()) {
+      await this.quizShowAnswerButton.click();
+      if (outcome === "positive") {
+        await this.quizCorrectButton.click();
+      } else {
+        await this.quizWrongButton.click();
+      }
+    }
+    if (await this.mimeModalTitle.isVisible()) {
+      await this.mimeShowTopicButton.click();
+      if (outcome === "positive") {
+        await this.mimeGuessedButton.click();
+        await this.playerSelectDropdown.waitFor();
+        await this.playerSelectDropdown.selectOption({ index: 1 });
+        await this.mimeConfirmButton.click();
+      } else {
+        await this.mimeNotGuessedButton.click();
+      }
+    }
+    if (await this.backwriteModalTitle.isVisible()) {
+      await this.backwriteShowWordButton.click();
+      if (outcome === "positive") {
+        await this.backwriteGuessedButton.click();
+        await this.playerSelectDropdown.waitFor();
+        await this.playerSelectDropdown.selectOption({ index: 1 });
+        await this.backwriteConfirmButton.click();
+      } else {
+        await this.backwriteNotGuessedButton.click();
+      }
+    }
+    if (await this.dictationDrawModalTitle.isVisible()) {
+      await this.dictationDrawShowImageButton.click();
+      if (outcome === "positive") {
+        await this.dictationDrawDrawnButton.click();
+      } else {
+        await this.dictationDrawNotDrawnButton.click();
+      }
+      await this.playerSelectDropdown.waitFor();
+      await this.playerSelectDropdown.selectOption({ index: 1 });
+      await this.dictationDrawConfirmButton.click();
+    }
+    if (await this.faceEmotionModalTitle.isVisible()) {
+      await this.faceEmotionShowAnswerButton.click();
+      if (outcome === "positive") {
+        await this.faceEmotionCorrectButton.click();
+      } else {
+        await this.faceEmotionWrongButton.click();
+      }
+    }
+    if (await this.musicEmotionModalTitle.isVisible()) {
+      if (outcome === "positive") {
+        await this.musicEmotionGuessedButton.click();
+      } else {
+        await this.musicEmotionNotGuessedButton.click();
+      }
+    }
+    if (await this.physicalTestModalTitle.isVisible()) {
+      if (outcome === "positive") {
+        await this.physicalTestCompletedButton.click();
+      } else {
+        await this.physicalTestNotCompletedButton.click();
+      }
+    }
+    if (await this.whatWouldYouDoModalTitle.isVisible()) {
+      if (outcome === "positive") {
+        await this.whatWouldYouDoConvincingButton.click();
+      } else {
+        await this.whatWouldYouDoNotConvincingButton.click();
+      }
+    }
+    if (await this.battleModalTitle.isVisible()) {
+      const firstPlayerButton = this.battlePlayerButtons.first();
+      await firstPlayerButton.click();
+    }
+  }
+
   async getPlayerPosition(playerIndex: number): Promise<number> {
     const playerLocator = this.playersPositionsList.nth(playerIndex);
     const innerText = await playerLocator.innerText();
@@ -226,5 +319,14 @@ export class GamePage {
     const initialPositionText = await this.modalNewPositionText.innerText();
     const initialPosition = parseInt(initialPositionText);
     return initialPosition;
+  }
+
+  async getWinner() {
+    const winnerLocator = this.page.getByText("Vincitore:");
+    if (await winnerLocator.isVisible({ timeout: 200 })) {
+      const winner = (await winnerLocator.innerText()).split(": ")[1];
+      return winner.replace("!", "");
+    }
+    return undefined;
   }
 }

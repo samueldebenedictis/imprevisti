@@ -51,7 +51,7 @@ const SpecialEffect: React.FC<SpecialEffectProps> = ({
               {Math.abs(moveValue)}
             </span>
           </p>
-          <p className=" font-bold">
+          <p className="font-bold">
             {MODAL_TOTAL_MOVEMENT}{" "}
             <span
               className={`font-bold text-xl ${specialColor(newPosition - startPosition)}`}

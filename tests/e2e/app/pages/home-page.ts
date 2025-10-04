@@ -1,4 +1,4 @@
-import type { Page } from "@playwright/test";
+import { expect, type Page } from "@playwright/test";
 import {
   LABEL_BACKWRITE,
   LABEL_DICTATION_DRAW,
@@ -14,6 +14,7 @@ import {
   LABEL_SUBMIT,
   LABEL_WHAT_WOULD_YOU_DO,
 } from "@/app/texts";
+import { GamePage } from "./game-page";
 
 export class HomePage {
   constructor(readonly page: Page) {}
@@ -21,6 +22,13 @@ export class HomePage {
 
   async goto() {
     await this.page.goto(this.url);
+  }
+
+  async submitAndGotoGame() {
+    await this.submit.click();
+    const homePage = new GamePage(this.page);
+    await expect(homePage.page).toHaveURL(/game/);
+    return homePage;
   }
 
   playersNumber = this.page.getByRole("spinbutton", {

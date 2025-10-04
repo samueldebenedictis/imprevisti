@@ -2,8 +2,10 @@ import type { Meta, StoryObj } from "@storybook/react";
 import TurnResultModal from "../src/app/components/turn-result-modal";
 import { Battle } from "../src/model/battle";
 import {
+  BackWrite,
   Card,
   DictationDraw,
+  FaceEmotion,
   Mime,
   MusicEmotion,
   PhysicalTest,
@@ -22,6 +24,8 @@ class MockMusicEmotion extends MusicEmotion {}
 class MockPhysicalTest extends PhysicalTest {}
 class MockWhatWouldYouDo extends WhatWouldYouDo {}
 class MockDictationDraw extends DictationDraw {}
+class MockBackWrite extends BackWrite {}
+class MockFaceEmotion extends FaceEmotion {}
 
 const meta = {
   title: "Example/TurnResultModal",
@@ -37,6 +41,8 @@ const meta = {
         "battle",
         "quiz",
         "mime",
+        "backwrite",
+        "face-emotion",
         "music-emotion",
         "physical-test",
         "what-would-you-do",
@@ -140,6 +146,40 @@ export const PositionChangeWithSpecialEffect: Story = {
     newPosition: 12,
     diceResult: 4,
     boardSize: 20,
+  },
+};
+
+export const FaceEmotionScenario: Story = {
+  args: {
+    isOpen: true,
+    onClose: () => console.log("Close modal"),
+    diceResult: 2,
+    actionType: "face-emotion",
+    actionData: new MockFaceEmotion(
+      allPlayers[0],
+      new MockCard("felice", "felice"),
+      "/images/face-emotion/uomo-1-felice.png",
+    ),
+    onResolveFaceEmotion: (success) =>
+      console.log(`Face emotion success: ${success}`),
+    allPlayers: allPlayers,
+    currentPlayerName: allPlayers[0].getName(),
+  },
+};
+
+export const BackWriteScenario: Story = {
+  args: {
+    isOpen: true,
+    onClose: () => console.log("Close modal"),
+    diceResult: 3,
+    actionType: "backwrite",
+    actionData: new MockBackWrite(allPlayers[0], new MockCard("Gatto", "")),
+    onResolveBackWrite: (success, guessPlayerId) =>
+      console.log(
+        `Back write success: ${success}, Guess player: ${guessPlayerId}`,
+      ),
+    allPlayers: allPlayers,
+    currentPlayerName: allPlayers[0].getName(),
   },
 };
 

@@ -6,7 +6,7 @@ import type { Player } from "@/model/player";
 import { URL_RESTORE_GAME } from "../../vars";
 import {
   LABEL_DELETE_GAME_BUTTON,
-  LABEL_RESTORE_GAME_BUTTON,
+  LABEL_RESTORE_GAME,
   LABEL_SAVE_GAME_BUTTON,
   LEFT_BAR_CURRENT_TURN,
   LEFT_BAR_GAME_SAVED,
@@ -58,7 +58,7 @@ export default function LeftBar({
     <div
       className={`ui-text-dark ui-border-dark mr-8 flex h-full max-w-xl flex-col items-center justify-between bg-gray-100 p-8`}
     >
-      <div className=" ui-text-title mb-4">
+      <div className="ui-text-title mb-4">
         <p>{LEFT_BAR_GAME_STATUS}</p>
       </div>
 
@@ -84,12 +84,12 @@ export default function LeftBar({
           </Button>
         )}
         {gameEnded && winnerName && (
-          <div className=" ui-text-subtitle mb-4 ml-4 text-green-600">
+          <div className="ui-text-subtitle mb-4 ml-4 text-green-600">
             {LEFT_BAR_WINNER(winnerName)}
           </div>
         )}
       </div>
-      <div className=" ui-text-normal mb-4 w-full px-2">
+      <div className="ui-text-subtitle mb-4 w-full px-2">
         <p>
           {LEFT_BAR_CURRENT_TURN}{" "}
           <span className="text-blue-500">{currentPlayer.getName()}</span>
@@ -116,8 +116,8 @@ export default function LeftBar({
         </Button>
       </div>
       <div className="mr-4 mb-4 w-full">
-        <Button color="black" className="w-full">
-          <Link href={URL_RESTORE_GAME}>{LABEL_RESTORE_GAME_BUTTON}</Link>
+        <Button color="blue" className="w-full">
+          <Link href={URL_RESTORE_GAME}>{LABEL_RESTORE_GAME}</Link>
         </Button>
       </div>
     </div>

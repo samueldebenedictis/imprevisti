@@ -19,12 +19,12 @@ import Button from "./ui/button";
 import { Divider } from "./ui/divider";
 import { LabelCheckbox } from "./ui/label";
 
-interface DropdownMenuItem {
+interface MenuItem {
   text: string;
   url: string;
 }
 
-const menuItems: DropdownMenuItem[] = [
+const menuItems: MenuItem[] = [
   { text: LABEL_CONTINUE_GAME, url: URL_GAME },
   { text: LABEL_NEW_GAME, url: URL_HOME },
   { text: LABEL_LOAD_GAME, url: URL_RESTORE_GAME },
@@ -79,7 +79,7 @@ export default function Menu() {
             role="dialog"
             aria-modal="true"
           >
-            <h2 className=" ui-text-title mb-4">{LABEL_MENU}</h2>
+            <h2 className="ui-text-title mb-4">{LABEL_MENU}</h2>
             <div className="mt-6">
               {menuItems.map((item) => (
                 <Link key={item.url} href={item.url} prefetch={false}>
@@ -94,7 +94,7 @@ export default function Menu() {
 
             {/* Sound Settings */}
             <div className="ui-text-dark mt-6 border-gray-200">
-              <h3 className=" ui-text-subtitle mb-4">{LABEL_AUDIO_SETTINGS}</h3>
+              <h3 className="ui-text-subtitle mb-4">{LABEL_AUDIO_SETTINGS}</h3>
               <div className="flex items-center justify-center space-x-3">
                 <input
                   type="checkbox"
