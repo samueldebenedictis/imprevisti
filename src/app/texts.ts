@@ -10,7 +10,7 @@ export const LABEL_SPECIAL_PERCENTAGE = (n: number) =>
   `Percentuale di caselle speciali: ${n}%`;
 export const LABEL_MIME = "Mimo";
 export const LABEL_QUIZ = "Quiz";
-export const LABEL_BACKWRITE = "Parola sulla schiena";
+export const LABEL_BACKWRITE = "Parole alle spalle";
 export const LABEL_FACE_EMOTION = "Indovina l'emozione";
 export const LABEL_MOVE = "Caselle movimento";
 export const LABEL_MUSIC_EMOTION = "Emozioni in musica";
@@ -76,7 +76,7 @@ export const MODAL_WHAT_WOULD_YOU_DO_QUESTION = "Domanda:";
 export const MODAL_WHAT_WOULD_YOU_DO_CONVINCING_ANSWER = "Convincente";
 export const MODAL_WHAT_WOULD_YOU_DO_NOT_CONVINCING_ANSWER = "Non convincente";
 // Parole sulla schiena
-export const MODAL_BACKWRITE_TITLE = "Parola sulla schiena!";
+export const MODAL_BACKWRITE_TITLE = "Parole alle spalle!";
 export const MODAL_BACKWRITE_SHOW_WORD = "Mostra parola da scrivere";
 export const MODAL_BACKWRITE_WORD_TO_WRITE = "Parola da scrivere:";
 export const MODAL_BACKWRITE_HIDE_WORD = "Nascondi parola";
@@ -153,8 +153,8 @@ export const SQUARE_MIME = "MIMO";
 export const SQUARE_DICTATION_DRAW_TOP = "DISEGNO";
 export const SQUARE_DICTATION_DRAW_BOTTOM = "DETTATO";
 // Back write
-export const SQUARE_BACKWRITE_TOP = "PAROLA";
-export const SQUARE_BACKWRITE_BOTTOM = "SULLA SCHIENA";
+export const SQUARE_BACKWRITE_TOP = "PAROLE";
+export const SQUARE_BACKWRITE_BOTTOM = "ALLE SPALLE";
 // Music emotion
 export const SQUARE_MUSIC_EMOTION_TOP = "EMOZIONI";
 export const SQUARE_MUSIC_EMOTION_BOTTOM = "IN MUSICA";
