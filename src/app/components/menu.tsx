@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useSoundSettings } from "../../store/sound-store";
-import { URL_GAME, URL_HOME, URL_RESTORE_GAME } from "../../vars";
+import { URL_FEEDBACK, URL_GAME, URL_HOME, URL_RESTORE_GAME } from "../../vars";
 import {
   LABEL_AUDIO_SETTINGS,
   LABEL_CONTINUE_GAME,
@@ -89,6 +89,14 @@ export default function Menu() {
                 </Link>
               ))}
             </div>
+
+            <Divider />
+
+            <Link key={URL_FEEDBACK} href={URL_FEEDBACK} prefetch={false}>
+              <Button color="yellow" className="w-full" onClick={closeMenu}>
+                Dai un feedback!
+              </Button>
+            </Link>
 
             <Divider />
 
