@@ -16,7 +16,8 @@
     "e2e": "playwright test",
     "e2e:u": "playwright test -g @snapshot -u",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "doc-model": "npx typedoc --entryPointStrategy Expand src/model/"
   },
   "dependencies": {
     "@commitlint/cli": "^19.8.1",
@@ -44,6 +45,7 @@
     "jsdom": "^26.1.0",
     "storybook": "^8.6.12",
     "tailwindcss": "^4",
+    "typedoc": "^0.28.15",
     "typescript": "^5",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
