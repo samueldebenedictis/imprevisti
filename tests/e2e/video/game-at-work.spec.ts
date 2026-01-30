@@ -1,8 +1,12 @@
 import { expect, test } from "../app/fixtures";
+import { HomePage } from "../app/pages/home-page";
 
 const TIMEOUT = 500;
 
-test("App at work - Setup", async ({ homePage }) => {
+test("setup", async ({ page }) => {
+  await page.goto("/tesi");
+  const homePage = new HomePage(page);
+
   await homePage.page.waitForTimeout(TIMEOUT);
   await homePage.playersNumber.fill("3");
   await homePage.page.waitForTimeout(TIMEOUT);
