@@ -6,9 +6,10 @@ services:
     volumes:
       - .:/app
     working_dir: /app
-    command: npm run dev
+    command: sh -c "npm run build && npm run start"
 
   playwright:
+    user: ubuntu
     image: mcr.microsoft.com/playwright:v1.58.0-noble
     volumes:
       - .:/app
