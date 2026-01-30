@@ -1,0 +1,17 @@
+services:
+  app:
+    image: node:lts-alpine3.23
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: npm run dev
+
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.58.0-noble
+    volumes:
+      - .:/app
+    command: npx playwright test
+    network_mode: host
+    working_dir: /app
