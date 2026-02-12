@@ -1,5 +1,11 @@
+import { Board } from "@/model/board";
+import { Game } from "@/model/game";
+import { Player } from "@/model/player";
+import { Square } from "@/model/square";
 import { expect, test } from "../app/fixtures";
+import { GamePage } from "../app/pages/game-page";
 import { HomePage } from "../app/pages/home-page";
+import { addZustandInitScript } from "../app/zustand";
 
 const TIMEOUT = 1000;
 
@@ -62,4 +68,36 @@ test("setup with special squares", async ({ page }) => {
 
   await expect(homePage.page).toHaveURL(/game/);
   await homePage.page.waitForTimeout(TIMEOUT);
+});
+
+test("end game", async ({ page }) => {
+  const squares = Array.from({ length: 10 }, (_, i) => new Square(i));
+  const players = ["Alice", "Bob"].map((name, i) => new Player(i, name));
+  const board = new Board(squares, players);
+  const game = new Game(board);
+
+  const gameData = game.toJSON();
+  gameData.board.playersPosition[0].position = 8;
+  gameData.board.playersPosition[1].position = 8;
+
+  const gamePage = new GamePage(page);
+  await addZustandInitScript(gamePage.page, gameData);
+  await page.goto("/tesi/game");
+  await gamePage.page.waitForTimeout(2000);
+
+  await gamePage.playTurnButton.click();
+  await gamePage.page.waitForTimeout(1000);
+
+  await gamePage.rollDiceButton.waitFor();
+
+  await gamePage.rollDiceButton.click();
+  await gamePage.page.waitForTimeout(1000);
+
+  expect(await gamePage.getWinner()).toMatch(/Alice|Bob/);
+  await expect(gamePage.playTurnButton).toBeHidden();
+
+  await gamePage.page.waitForTimeout(1000);
+
+  await gamePage.continueButton.click();
+  await gamePage.page.waitForTimeout(2000);
 });
