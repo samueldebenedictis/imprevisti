@@ -1,6 +1,7 @@
 services:
   app:
     image: node:lts-alpine3.23
+    user: node
     ports:
       - 3000:3000
     volumes:
