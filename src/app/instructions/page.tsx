@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { MAX_PLAYERS, MIN_PLAYERS, URL_HOME } from "../../vars";
 import Button from "../components/ui/button";
+import { imagePrefix } from "../image-prefix";
 import {
   LABEL_BACKWRITE,
   LABEL_BATTLE,
@@ -129,6 +130,12 @@ export default function InstructionsPage() {
             Una volta configurato, cliccate su "Inizia Gioco" per avviare la
             partita.
           </p>
+          <video controls muted preload="auto">
+            <source
+              src={`${imagePrefix}/videos/game-at-work-setup-chromium.webm`}
+              type="video/webm"
+            />
+          </video>
         </section>
 
         <section className="mb-6">
