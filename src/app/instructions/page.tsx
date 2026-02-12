@@ -230,6 +230,10 @@ export default function InstructionsPage() {
             La partita termina quando un giocatore raggiunge l'ultima casella
             del tabellone. Quel giocatore sarà dichiarato il vincitore!
           </p>
+          <Video
+            src={`${imagePrefix}/videos/game-at-work-end-game-chromium.webm`}
+            text="Un video che mostra l'applicativo a termine partita"
+          />
         </section>
         <section id="altro" className="mb-6">
           <h2 className="mb-2 font-semibold text-xl">6. Altro</h2>
