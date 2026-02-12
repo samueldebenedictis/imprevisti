@@ -79,7 +79,55 @@ export default function InstructionsPage() {
       <h1 className="ui-text-title m-2">Istruzioni di gioco</h1>
 
       <div className="m-2 w-full max-w-4xl p-6">
-        <section className="mb-6">
+        <nav className="mb-6 pb-4">
+          <h2 className="mb-2 font-semibold text-xl">Indice</h2>
+          <ul className="mb-2 list-inside list-disc">
+            <li>
+              <a
+                href="#introduzione"
+                className="ui-text-dark hover:text-sky-600"
+              >
+                Introduzione al gioco
+              </a>
+            </li>
+            <li>
+              <a
+                href="#configurazione"
+                className="ui-text-dark hover:text-sky-600"
+              >
+                Configurazione della Partita
+              </a>
+            </li>
+            <li>
+              <a href="#turno" className="ui-text-dark hover:text-sky-600">
+                Svolgimento del turno
+              </a>
+            </li>
+            <li>
+              <a
+                href="#caselle-speciali"
+                className="ui-text-dark hover:text-sky-600"
+              >
+                Caselle speciali
+              </a>
+            </li>
+            <li>
+              <a
+                href="#fine-partita"
+                className="ui-text-dark hover:text-sky-600"
+              >
+                Fine della partita
+              </a>
+            </li>
+            <li>
+              <a href="#altro" className="ui-text-dark hover:text-sky-600">
+                Altro
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <section id="introduzione" className="mb-6">
           <h2 className="mb-2 font-semibold text-xl">
             1. Introduzione al gioco
           </h2>
@@ -101,7 +149,7 @@ export default function InstructionsPage() {
           </p>
         </section>
 
-        <section className="mb-6">
+        <section id="configurazione" className="mb-6">
           <h2 className="mb-2 font-semibold text-xl">
             2. Configurazione della Partita
           </h2>
@@ -141,7 +189,7 @@ export default function InstructionsPage() {
           />
         </section>
 
-        <section className="mb-6">
+        <section id="turno" className="mb-6">
           <h2 className="mb-2 font-semibold text-xl">
             3. Svolgimento del turno
           </h2>
@@ -162,7 +210,7 @@ export default function InstructionsPage() {
           </ul>
         </section>
 
-        <section className="mb-6">
+        <section id="caselle-speciali" className="mb-6">
           <h2 className="mb-2 font-semibold text-xl">4. Caselle speciali</h2>
           <p className="mb-2">
             Il tabellone può contenere diverse tipologie di caselle speciali:
@@ -176,14 +224,14 @@ export default function InstructionsPage() {
           ))}
         </section>
 
-        <section className="mb-6">
+        <section id="fine-partita" className="mb-6">
           <h2 className="mb-2 font-semibold text-xl">5. Fine della partita</h2>
           <p className="mb-2">
             La partita termina quando un giocatore raggiunge l'ultima casella
             del tabellone. Quel giocatore sarà dichiarato il vincitore!
           </p>
         </section>
-        <section className="mb-6">
+        <section id="altro" className="mb-6">
           <h2 className="mb-2 font-semibold text-xl">6. Altro</h2>
           <p className="mb-2">
             Tutto il codice sorgente del sito è disponile su{" "}
