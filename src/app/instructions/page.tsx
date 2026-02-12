@@ -133,6 +133,11 @@ export default function InstructionsPage() {
           </p>
           <Video
             src={`${imagePrefix}/videos/game-at-work-setup-chromium.webm`}
+            text="Un video che mostra l'applicativo durante la configurazione senza caselle speciali"
+          />
+          <Video
+            src={`${imagePrefix}/videos/game-at-work-setup-with-special-squares-chromium.webm`}
+            text="Un video che mostra l'applicativo durante la configurazione con l'aggiunta di caselle speciali"
           />
         </section>
 
