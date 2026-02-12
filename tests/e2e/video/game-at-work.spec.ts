@@ -9,6 +9,14 @@ import { addZustandInitScript } from "../app/zustand";
 
 const TIMEOUT = 1000;
 
+test("poster", async ({ page }) => {
+  await page.goto("/tesi");
+  const homePage = new HomePage(page);
+  await homePage.page.waitForTimeout(TIMEOUT);
+
+  await expect(homePage.page).toHaveScreenshot("poster.png");
+});
+
 test("setup", async ({ page }) => {
   await page.goto("/tesi");
   const homePage = new HomePage(page);
@@ -86,18 +94,18 @@ test("end game", async ({ page }) => {
   await gamePage.page.waitForTimeout(2000);
 
   await gamePage.playTurnButton.click();
-  await gamePage.page.waitForTimeout(1000);
+  await gamePage.page.waitForTimeout(TIMEOUT);
 
   await gamePage.rollDiceButton.waitFor();
 
   await gamePage.rollDiceButton.click();
-  await gamePage.page.waitForTimeout(1000);
+  await gamePage.page.waitForTimeout(TIMEOUT);
 
   expect(await gamePage.getWinner()).toMatch(/Alice|Bob/);
   await expect(gamePage.playTurnButton).toBeHidden();
 
-  await gamePage.page.waitForTimeout(1000);
+  await gamePage.page.waitForTimeout(TIMEOUT);
 
   await gamePage.continueButton.click();
-  await gamePage.page.waitForTimeout(2000);
+  await gamePage.page.waitForTimeout(TIMEOUT);
 });
