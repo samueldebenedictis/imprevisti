@@ -68,3 +68,25 @@ if [ $copied_count -eq 0 ] && [ $error_count -eq 0 ]; then
     echo "No video files found to copy."
     exit 1
 fi
+
+echo "Copying poster image..."
+POSTER_SOURCE="$PWD/tests/e2e/snapshots/game-at-work.spec.ts-snapshots/poster-chromium-linux.png"
+POSTER_DEST="$DEST_DIR/poster.png"
+
+if [ -f "$POSTER_SOURCE" ]; then
+    echo "Found poster image: $POSTER_SOURCE"
+    echo "Copying to: $POSTER_DEST"
+    
+    cp "$POSTER_SOURCE" "$POSTER_DEST"
+    
+    if [ $? -eq 0 ]; then
+        echo "Successfully copied poster image"
+    else
+        echo "Error copying poster image"
+        exit 1
+    fi
+else
+    echo "Poster image not found at: $POSTER_SOURCE"
+    exit 1
+fi
+
