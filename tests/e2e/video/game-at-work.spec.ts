@@ -129,12 +129,44 @@ test("play turn", async ({ page }) => {
   await gamePage.page.waitForTimeout(TIMEOUT);
 
   await gamePage.rollDiceButton.waitFor();
-
+  await gamePage.page.waitForTimeout(TIMEOUT);
   await gamePage.rollDiceButton.click();
   await gamePage.page.waitForTimeout(TIMEOUT);
 
   await gamePage.continueButton.waitFor();
   await gamePage.page.waitForTimeout(TIMEOUT);
   await gamePage.continueButton.click();
+  await gamePage.page.waitForTimeout(TIMEOUT);
+});
+
+test("skip turn", async ({ page }) => {
+  const squares = Array.from({ length: 30 }, (_, i) => new Square(i));
+  const players = ["Alice", "Bob"].map((name, i) => new Player(i, name));
+  const board = new Board(squares, players);
+  const game = new Game(board);
+  players[0].skipNextTurn();
+
+  const gameData = game.toJSON();
+  gameData.board.playersPosition[0].position = 8;
+  gameData.board.playersPosition[1].position = 1;
+
+  const gamePage = new GamePage(page);
+  await addZustandInitScript(gamePage.page, gameData);
+  await page.goto("/tesi/game");
+  await gamePage.page.waitForTimeout(2 * TIMEOUT);
+
+  await gamePage.playTurnButton.click();
+  await gamePage.page.waitForTimeout(TIMEOUT);
+
+  await gamePage.skipTurnButton.waitFor();
+  await gamePage.page.waitForTimeout(TIMEOUT);
+  await gamePage.skipTurnButton.click();
+  await gamePage.page.waitForTimeout(TIMEOUT);
+
+  await gamePage.continueButton.waitFor();
+  await gamePage.page.waitForTimeout(TIMEOUT);
+  await gamePage.continueButton.click();
+  await gamePage.page.waitForTimeout(TIMEOUT);
+
   await gamePage.page.waitForTimeout(TIMEOUT);
 });
