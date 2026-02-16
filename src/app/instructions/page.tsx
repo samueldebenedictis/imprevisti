@@ -208,6 +208,14 @@ export default function InstructionsPage() {
               una casella speciale), il suo turno verrà automaticamente saltato.
             </li>
           </ul>
+          <Video
+            src={`${imagePrefix}/videos/game-at-work-play-turn-chromium.webm`}
+            text="Un video che mostra un giocatore giocare il proprio turno"
+          />
+          <Video
+            src={`${imagePrefix}/videos/game-at-work-skip-turn-chromium.webm`}
+            text="Un video che mostra un giocatore saltare il proprio turno"
+          />
         </section>
 
         <section id="caselle-speciali" className="mb-6">
