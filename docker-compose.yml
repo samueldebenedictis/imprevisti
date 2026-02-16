@@ -1,0 +1,19 @@
+services:
+  app:
+    image: node:lts-alpine3.23
+    user: node
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: sh -c "npm run build && npm run start"
+
+  playwright:
+    user: ubuntu
+    image: mcr.microsoft.com/playwright:v1.58.0-noble
+    volumes:
+      - .:/app
+    command: npx playwright test
+    network_mode: host
+    working_dir: /app
