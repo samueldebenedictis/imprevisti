@@ -3,6 +3,7 @@ export const URL_GAME = "/game";
 export const URL_INSTRUCTION = "/instructions";
 export const URL_RESTORE_GAME = "/restore-game";
 export const URL_FEEDBACK = "/feedback";
+export const URL_ADVANCED_MODE = "/advanced-mode";
 
 export const formspreeId = "xvgwlkrp";
 export const formVersion = 1;

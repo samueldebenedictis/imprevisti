@@ -4,6 +4,7 @@ import { generateSquares } from "@/app/utils/generate-squares";
 import { Board } from "@/model/board";
 import { Game as GameModel } from "@/model/game";
 import { Player } from "@/model/player";
+import type { SquareJSON } from "@/model/square/square";
 import {
   DEFAULT_PLAYERS,
   DEFAULT_SPECIAL_PERCENTAGE_SQUARES,
@@ -31,6 +32,7 @@ export interface GameConfig {
     "dictation-draw": boolean;
   };
   specialPercentage: number;
+  customSquares: SquareJSON[] | null;
 }
 
 export interface ConfigActions {
@@ -51,6 +53,10 @@ export interface ConfigActions {
   // Form
   resetConfig: () => void;
   validateConfig: () => boolean;
+
+  // Configurazione avanzata
+  setCustomSquares: (squares: SquareJSON[]) => void;
+  clearCustomSquares: () => void;
 
   // Creazione partita
   createGame: () => void;
@@ -74,6 +80,7 @@ const defaultConfig: GameConfig = {
     "dictation-draw": true,
   },
   specialPercentage: DEFAULT_SPECIAL_PERCENTAGE_SQUARES,
+  customSquares: null,
 };
 
 export const useConfigStore = create<ConfigStore>()(
@@ -136,6 +143,10 @@ export const useConfigStore = create<ConfigStore>()(
         setSpecialPercentage: (percentage) =>
           set({ specialPercentage: percentage }),
 
+        setCustomSquares: (squares) => set({ customSquares: squares }),
+
+        clearCustomSquares: () => set({ customSquares: null }),
+
         resetConfig: () => set(defaultConfig),
 
         validateConfig: () => {
@@ -176,12 +187,16 @@ export const useConfigStore = create<ConfigStore>()(
             .slice(0, config.numPlayers)
             .map((name, id) => new Player(id, name.trim()));
 
-          // Generate le caselle
-          const squareJSON = generateSquares(
-            config.numSquares,
-            config.squareTypes,
-            config.specialPercentage / 100,
-          );
+          // Generate le caselle (personalizzate o automatiche)
+          const squareJSON =
+            config.customSquares &&
+            config.customSquares.length === config.numSquares
+              ? config.customSquares
+              : generateSquares(
+                  config.numSquares,
+                  config.squareTypes,
+                  config.specialPercentage / 100,
+                );
 
           // Creo il tabellone
           const board = Board.fromJSON(
@@ -211,6 +226,7 @@ export const useConfigStore = create<ConfigStore>()(
         numSquares: state.numSquares,
         squareTypes: state.squareTypes,
         specialPercentage: state.specialPercentage,
+        customSquares: state.customSquares,
       }),
     },
   ),

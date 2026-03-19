@@ -167,6 +167,19 @@ export const SQUARE_WHAT_WOULD_YOU_DO_BOTTOM = "FARESTI SE...";
 export const SQUARE_FACE_EMOTION_TOP = "INDOVINA";
 export const SQUARE_FACE_EMOTION_BOTTOM = "L'EMOZIONE";
 
+// Advanced mode
+export const LABEL_ADVANCED_MODE = "Modalità avanzata";
+export const LABEL_ADVANCED_MODE_DESCRIPTION =
+  "Configura manualmente il tipo di ogni casella del tabellone.";
+export const LABEL_ADVANCED_MODE_ACTIVE = "Configurazione avanzata attiva";
+export const LABEL_ADVANCED_MODE_REMOVE = "Rimuovi configurazione";
+export const LABEL_ADVANCED_MODE_APPLY = "Applica e torna";
+export const LABEL_ADVANCED_MODE_CANCEL = "Annulla";
+export const LABEL_ADVANCED_MODE_RESET = "Reimposta tutto";
+export const LABEL_MOVE_VALUE = "Valore";
+export const LABEL_SQUARE_NORMAL = "Normale";
+export const LABEL_SQUARE_MOVE = "Movimento";
+
 // Homepage additional
 export const LABEL_NO_GAME_FOUND = "Nessuna partita trovata.";
 export const LABEL_BACK_TO_HOME = "Torna alla Home";
