@@ -170,7 +170,8 @@
           "what-would-you-do": false,
           "dictation-draw": false
         },
-        "specialPercentage": 20
+        "specialPercentage": 20,
+        "customSquares": null
       },
       "version": 0
     }

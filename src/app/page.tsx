@@ -2,11 +2,20 @@
 
 import { useRouter } from "next/navigation";
 import { useConfigStore } from "../store/config-store";
-import { MAX_PLAYERS, MAX_SQUARES, MIN_PLAYERS, MIN_SQUARES } from "../vars";
+import {
+  MAX_PLAYERS,
+  MAX_SQUARES,
+  MIN_PLAYERS,
+  MIN_SQUARES,
+  URL_ADVANCED_MODE,
+} from "../vars";
 import Button from "./components/ui/button";
 import Input from "./components/ui/input";
 import { Label, LabelCheckbox } from "./components/ui/label";
 import {
+  LABEL_ADVANCED_MODE,
+  LABEL_ADVANCED_MODE_ACTIVE,
+  LABEL_ADVANCED_MODE_REMOVE,
   LABEL_BACKWRITE,
   LABEL_DICTATION_DRAW,
   LABEL_FACE_EMOTION,
@@ -34,7 +43,11 @@ export default function Home() {
   const numSquares = useConfigStore((state) => state.numSquares);
   const squareTypes = useConfigStore((state) => state.squareTypes);
   const specialPercentage = useConfigStore((state) => state.specialPercentage);
+  const customSquares = useConfigStore((state) => state.customSquares);
   const actions = useConfigStore((state) => state.actions);
+
+  const hasCustomSquares =
+    customSquares !== null && customSquares.length === numSquares;
 
   const squareTypeOptions = [
     { key: "move", label: LABEL_MOVE },
@@ -108,49 +121,91 @@ export default function Home() {
           />
         </div>
 
-        <div className="mb-4">
-          <Label htmlFor="squareTypes">{LABEL_SPECIAL_SQUARES}</Label>
-          {squareTypeOptions.map(({ key, label }) => (
-            <div key={key} className="flex items-center">
-              <input
-                type="checkbox"
-                id={key}
-                name={key}
-                checked={squareTypes[key as keyof typeof squareTypes]}
-                onChange={(e) =>
-                  actions.setSquareType(
-                    key as keyof typeof squareTypes,
-                    e.target.checked,
-                  )
-                }
-                className="ui-custom-checkbox mr-2"
-              />
-              <LabelCheckbox htmlFor={key}>{label}</LabelCheckbox>
+        {!hasCustomSquares && (
+          <>
+            <div className="mb-4">
+              <Label htmlFor="squareTypes">{LABEL_SPECIAL_SQUARES}</Label>
+              <div className="grid grid-cols-2 gap-x-4">
+                {squareTypeOptions.map(({ key, label }) => (
+                  <div key={key} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id={key}
+                      name={key}
+                      checked={squareTypes[key as keyof typeof squareTypes]}
+                      onChange={(e) =>
+                        actions.setSquareType(
+                          key as keyof typeof squareTypes,
+                          e.target.checked,
+                        )
+                      }
+                      className="ui-custom-checkbox mr-2"
+                    />
+                    <LabelCheckbox htmlFor={key}>{label}</LabelCheckbox>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
 
-        <div className="mb-6">
-          <Label htmlFor="specialPercentage">
-            {LABEL_SPECIAL_PERCENTAGE(specialPercentage)}
-          </Label>
-          <input
-            type="range"
-            id="specialPercentage"
-            name="specialPercentage"
-            min="0"
-            max="100"
-            value={specialPercentage}
-            onChange={(e) =>
-              actions.setSpecialPercentage(parseInt(e.target.value))
-            }
-            className="w-full"
-          />
-        </div>
+            <div className="mb-4">
+              <Label htmlFor="specialPercentage">
+                {LABEL_SPECIAL_PERCENTAGE(specialPercentage)}
+              </Label>
+              <input
+                type="range"
+                id="specialPercentage"
+                name="specialPercentage"
+                min="0"
+                max="100"
+                value={specialPercentage}
+                onChange={(e) =>
+                  actions.setSpecialPercentage(parseInt(e.target.value))
+                }
+                className="mx-0 w-full"
+              />
+            </div>
+          </>
+        )}
 
-        <Button color="blue" type="submit" className="mx-auto">
-          {LABEL_SUBMIT}
-        </Button>
+        {/* Modalità avanzata */}
+        <div className="mb-2 border-gray-200 border-b pb-2">
+          {hasCustomSquares ? (
+            <div className="flex flex-col items-center gap-2">
+              <span className="ui-text-normal font-bold text-green-700">
+                ✓ {LABEL_ADVANCED_MODE_ACTIVE}
+              </span>
+              <div className="flex w-full flex-col">
+                <Button
+                  color="blue"
+                  onClick={() => router.push(URL_ADVANCED_MODE)}
+                  className="mx-0 w-full"
+                >
+                  {LABEL_ADVANCED_MODE}
+                </Button>
+                <Button
+                  color="red"
+                  onClick={() => actions.clearCustomSquares()}
+                  className="mx-0 w-full"
+                >
+                  {LABEL_ADVANCED_MODE_REMOVE}
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <Button
+              color="blue"
+              onClick={() => router.push(URL_ADVANCED_MODE)}
+              className="mx-0 w-full"
+            >
+              {LABEL_ADVANCED_MODE}
+            </Button>
+          )}
+        </div>
+        <div className="mt-4">
+          <Button color="green" type="submit" className="mx-0 w-full">
+            {LABEL_SUBMIT}
+          </Button>
+        </div>
       </form>
     </div>
   );

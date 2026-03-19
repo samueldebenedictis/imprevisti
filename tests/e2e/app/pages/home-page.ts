@@ -1,5 +1,8 @@
 import { expect, type Page } from "@playwright/test";
 import {
+  LABEL_ADVANCED_MODE,
+  LABEL_ADVANCED_MODE_ACTIVE,
+  LABEL_ADVANCED_MODE_REMOVE,
   LABEL_BACKWRITE,
   LABEL_DICTATION_DRAW,
   LABEL_FACE_EMOTION,
@@ -63,4 +66,13 @@ export class HomePage {
   faceEmotionsCheckbox = this.page.getByRole("checkbox", {
     name: LABEL_FACE_EMOTION,
   });
+
+  // Advanced mode
+  advancedModeButton = this.page.getByRole("button", {
+    name: LABEL_ADVANCED_MODE,
+  });
+  removeCustomSquaresButton = this.page.getByRole("button", {
+    name: LABEL_ADVANCED_MODE_REMOVE,
+  });
+  advancedModeActiveText = this.page.getByText(LABEL_ADVANCED_MODE_ACTIVE);
 }
