@@ -6,3 +6,10 @@ app:
 
 e2e-video:
 	docker compose run --rm playwright sh -c "npx playwright test -c playwright-video.config.ts"
+
+screenshots:
+	docker compose run --rm playwright sh -c "npx playwright test -c playwright-video.config.ts screenshots.spec.ts --update-snapshots"
+
+copy:
+	bash scripts/copy-screenshots.sh
+	bash scripts/copy-videos.sh
