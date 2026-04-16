@@ -21,7 +21,7 @@ for src in "$SNAPSHOTS_DIR"/**/*.png "$SNAPSHOTS_DIR"/*.png; do
   dest_name="${filename/-chromium-linux/}"
   cp "$src" "$DEST_DIR/$dest_name"
   echo "  $filename → $DEST_DIR/$dest_name"
-  ((count++))
+  ((++count))
 done
 
 echo ""
