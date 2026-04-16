@@ -79,7 +79,7 @@ export class GamePage {
     name: MODAL_TITLE_TURN_RESULT,
   });
 
-  turnResultFullModal = this.page.locator('div.z-50 > div')
+  turnResultFullModal = this.page.locator("div.z-50 > div");
 
   // Reusable locators for modal interactions
   playerSelectDropdown = this.page.locator("select");
