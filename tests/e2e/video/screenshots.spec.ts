@@ -424,3 +424,10 @@ test("screenshot-end-game", async ({ page }) => {
 
   await expect(page).toHaveScreenshot("end-game.png");
 });
+
+test("screenshot-feedback", async ({ page }) => {
+  await page.setViewportSize(VIEWPORT);
+  await page.goto("/tesi/feedback");
+
+  await expect(page).toHaveScreenshot("feedback.png");
+});
