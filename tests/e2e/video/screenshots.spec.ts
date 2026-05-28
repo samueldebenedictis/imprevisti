@@ -431,3 +431,20 @@ test("screenshot-feedback", async ({ page }) => {
 
   await expect(page).toHaveScreenshot("feedback.png");
 });
+
+test("screenshot-menu", async ({ page }) => {
+  await page.setViewportSize(VIEWPORT);
+  const squares = Array.from({ length: 25 }, (_, i) => new Square(i));
+  const players = ["Alice", "Bob"].map((name, i) => new Player(i, name));
+  const board = new Board(squares, players);
+  const game = new Game(board);
+
+  const gamePage = new GamePage(page);
+  await addZustandInitScript(gamePage.page, game.toJSON());
+  await page.goto("/tesi/game");
+
+  await page.getByRole("button", { name: "MENU", exact: true }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(2);
+
+  await expect(page.getByRole("dialog").last()).toHaveScreenshot("menu.png");
+});
