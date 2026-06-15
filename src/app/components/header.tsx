@@ -36,7 +36,7 @@ export default function Header() {
 
   return (
     <header className={`sticky top-0 z-10 ${colorToCss("blue")}`}>
-      <nav className="mx-auto flex max-h-20 max-w-sm items-center justify-between p-8">
+      <nav className="mx-auto flex max-h-20 max-w-sm items-center justify-between p-4 sm:p-8">
         <Menu />
         {pathname === "/instructions" ? (
           <button

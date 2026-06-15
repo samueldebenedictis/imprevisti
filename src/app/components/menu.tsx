@@ -73,7 +73,7 @@ export default function Menu() {
           aria-label="Close menu"
         >
           <div
-            className="ui-text-dark ui-border-dark min-w-[600px] bg-white p-6 text-center shadow-lg"
+            className="ui-text-dark ui-border-dark w-[90vw] max-w-[600px] bg-white p-6 text-center shadow-lg"
             onClick={(e) => e.stopPropagation()}
             onKeyDown={closeFunction}
             role="dialog"
