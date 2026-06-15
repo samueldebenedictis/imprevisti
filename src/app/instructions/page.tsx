@@ -99,6 +99,14 @@ export default function InstructionsPage() {
               </a>
             </li>
             <li>
+              <a
+                href="#configurazione-avanzata"
+                className="ui-text-dark hover:text-sky-600"
+              >
+                Configurazione avanzata
+              </a>
+            </li>
+            <li>
               <a href="#turno" className="ui-text-dark hover:text-sky-600">
                 Svolgimento del turno
               </a>
@@ -189,9 +197,43 @@ export default function InstructionsPage() {
           />
         </section>
 
+        <section id="configurazione-avanzata" className="mb-6">
+          <h2 className="mb-2 font-semibold text-xl">
+            3. Configurazione avanzata
+          </h2>
+          <p className="mb-2">
+            La modalità avanzata permette di definire manualmente il tipo di
+            ogni casella del tabellone, invece di affidarsi alla distribuzione
+            casuale.
+          </p>
+          <p className="mb-2">
+            Per attivarla, clicca sul pulsante{" "}
+            <strong>Modalità avanzata</strong> nella schermata di
+            configurazione. Si aprirà una schermata con l&apos;elenco di tutte
+            le caselle: per ciascuna puoi scegliere il tipo tramite il menu a
+            tendina.
+          </p>
+          <ul className="mb-2 list-inside list-disc">
+            <li>
+              <strong>Casella movimento:</strong> richiede anche un valore
+              numerico da -5 a +5.
+            </li>
+            <li>
+              <strong>Prima e ultima casella (start e fine)</strong> non possono
+              essere modificate.
+            </li>
+          </ul>
+          <p className="mb-2">
+            Clicca su <strong>Applica</strong> per tornare alla configurazione
+            con il tabellone personalizzato attivo. I controlli di tipologia e
+            percentuale verranno nascosti. Per tornare alla modalità standard,
+            usa il pulsante <strong>Rimuovi configurazione avanzata</strong>.
+          </p>
+        </section>
+
         <section id="turno" className="mb-6">
           <h2 className="mb-2 font-semibold text-xl">
-            3. Svolgimento del turno
+            4. Svolgimento del turno
           </h2>
           <p className="mb-2">
             Il gioco procede a turni. Ogni giocatore, quando è il suo turno,
@@ -219,7 +261,7 @@ export default function InstructionsPage() {
         </section>
 
         <section id="caselle-speciali" className="mb-6">
-          <h2 className="mb-2 font-semibold text-xl">4. Caselle speciali</h2>
+          <h2 className="mb-2 font-semibold text-xl">5. Caselle speciali</h2>
           <p className="mb-2">
             Il tabellone può contenere diverse tipologie di caselle speciali:
           </p>
@@ -233,7 +275,7 @@ export default function InstructionsPage() {
         </section>
 
         <section id="fine-partita" className="mb-6">
-          <h2 className="mb-2 font-semibold text-xl">5. Fine della partita</h2>
+          <h2 className="mb-2 font-semibold text-xl">6. Fine della partita</h2>
           <p className="mb-2">
             La partita termina quando un giocatore raggiunge l'ultima casella
             del tabellone. Quel giocatore sarà dichiarato il vincitore!
@@ -244,7 +286,7 @@ export default function InstructionsPage() {
           />
         </section>
         <section id="altro" className="mb-6">
-          <h2 className="mb-2 font-semibold text-xl">6. Altro</h2>
+          <h2 className="mb-2 font-semibold text-xl">7. Altro</h2>
           <p className="mb-2">
             Tutto il codice sorgente del sito è disponile su{" "}
             <a
