@@ -1,4 +1,9 @@
 services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - 6379:6379
+
   app:
     image: node:lts-alpine3.23
     user: node
@@ -7,6 +12,10 @@ services:
     volumes:
       - .:/app
     working_dir: /app
+    environment:
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
     command: sh -c "npm run build && npm run start"
 
   playwright:
