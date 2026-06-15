@@ -25,7 +25,7 @@
   }
 
   .ui-text-title {
-    @apply font-bold font-londrina-solid text-4xl;
+    @apply font-londrina-solid text-4xl;
   }
 
   .ui-text-subtitle {
