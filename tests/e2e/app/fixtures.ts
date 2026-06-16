@@ -8,14 +8,10 @@ type Fixtures = {
 };
 
 export const test = base.extend<Fixtures>({
-  page: async ({ page }, use) => {
-    await page.route("**/formspree.io/f/**", (r) => r.abort());
-    await use(page);
-  },
-
   homePage: async ({ page }, use) => {
     const homePage = new HomePage(page);
     await homePage.goto();
+    await homePage.selectSingleMode();
     await use(homePage);
   },
 

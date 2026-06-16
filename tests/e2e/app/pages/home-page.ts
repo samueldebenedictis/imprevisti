@@ -27,6 +27,12 @@ export class HomePage {
     await this.page.goto(this.url);
   }
 
+  singleModeButton = this.page.getByRole("button", { name: /Schermo singolo/ });
+
+  async selectSingleMode() {
+    await this.singleModeButton.click();
+  }
+
   async submitAndGotoGame() {
     await this.submit.click();
     const homePage = new GamePage(this.page);

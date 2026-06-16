@@ -1,13 +1,12 @@
 import { expect, test } from "./fixtures";
 
 test("Feedback form submission", async ({ page }) => {
-  await page.route("**/formspree.io/f/**", async (route, request) => {
+  await page.route("**/api/feedback", async (route, request) => {
     if (request.method() === "POST") {
-      // Fulfill with a success response
       await route.fulfill({
         status: 200,
         contentType: "application/json",
-        body: JSON.stringify({ success: true, mocked: true }),
+        body: JSON.stringify({ ok: true, mocked: true }),
       });
     } else {
       await route.continue();
@@ -41,7 +40,7 @@ test("Feedback form submission", async ({ page }) => {
 
   // Submit form
   const responsePromise = page.waitForResponse((r) =>
-    r.url().includes("formspree"),
+    r.url().includes("/api/feedback"),
   );
   await page.getByRole("button", { name: "Invia" }).click();
   const response = await responsePromise;
@@ -58,7 +57,7 @@ test("Feedback form submission", async ({ page }) => {
 
   expect(requestData).not.toBeNull();
   expect(response.request().method()).toBe("POST");
-  expect(responseData.success).toBe(true);
+  expect(responseData.ok).toBe(true);
   expect(responseData.mocked).toBe(true);
 
   expect(requestData).toEqual({
@@ -72,6 +71,5 @@ test("Feedback form submission", async ({ page }) => {
     whatWorkedWell: "The game mechanics were great!",
     challenges: "Sometimes the interface was confusing.",
     suggestions: "Add more themes.",
-    formVersion: 1,
   });
 });
