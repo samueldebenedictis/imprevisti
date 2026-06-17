@@ -10,8 +10,10 @@ Supporta due modalità di gioco:
 - **Schermo singolo**: tutti i giocatori attorno allo stesso dispositivo
 - **Multi-dispositivo**: ogni giocatore usa il proprio smartphone, un host coordina la partita
 
-Il gioco è disponibile all'indirizzo
-https://samueldebenedictis.github.io/tesi/
+Il gioco è disponibile ai seguenti indirizzi:
+
+- **v1.4.6** (schermo singolo): https://samueldebenedictis.github.io/tesi/
+- **v2+** (schermo singolo + multi-dispositivo): https://tesi-nine.vercel.app/
 
 ## Caratteristiche Principali
 
@@ -26,7 +28,7 @@ https://samueldebenedictis.github.io/tesi/
 
 ## Tecnologie Utilizzate
 
-- **Next.js 15**: Framework React
+- **Next.js 16**: Framework React
 - **TypeScript**: Tipizzazione per JavaScript
 - **Zustand**: State management library
 - **Tailwind CSS**: Framework CSS
