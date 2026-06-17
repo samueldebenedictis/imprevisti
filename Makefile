@@ -10,6 +10,9 @@ e2e-video:
 e2e-screenshots:
 	docker compose run --rm playwright sh -c "npx playwright test -c playwright-video.config.ts screenshots.spec.ts --update-snapshots"
 
+e2e-screenshots-multi:
+	docker compose run --rm playwright sh -c "npx playwright test -c playwright-video.config.ts screenshots-multiplayer.spec.ts --update-snapshots"
+
 copy-video:
 	bash scripts/copy-videos.sh
 

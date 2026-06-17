@@ -1,3 +1,4 @@
+import type { Page } from "@playwright/test";
 import { Board } from "@/model/board";
 import { Game } from "@/model/game";
 import { Player } from "@/model/player";
@@ -17,17 +18,38 @@ import { addZustandInitScript } from "../app/zustand";
 
 const VIEWPORT = { width: 1920, height: 1080 };
 
+/**
+ * Replaces Math.random with a seeded LCG so that deck shuffles and dice rolls
+ * always produce the same sequence, making screenshots deterministic.
+ */
+async function seedRandom(page: Page, seed = 42) {
+  await page.addInitScript((s: number) => {
+    let state = s;
+    Math.random = () => {
+      state = (state * 1664525 + 1013904223) >>> 0;
+      return state / 4294967296;
+    };
+  }, seed);
+}
+
 test("screenshot-home", async ({ page }) => {
   await page.setViewportSize(VIEWPORT);
-  await page.goto("/tesi");
+  await page.addInitScript(() => sessionStorage.removeItem("gameMode"));
+  await page.goto("/");
 
-  await expect(page).toHaveScreenshot("home.png");
+  await expect(
+    page.getByRole("button", { name: /Schermo singolo/ }),
+  ).toBeVisible();
+  await expect(page).toHaveScreenshot("home.png", { fullPage: true });
 });
 
 test("screenshot-home-filled", async ({ page }) => {
   await page.setViewportSize(VIEWPORT);
-  await page.goto("/tesi");
+  await page.addInitScript(() => sessionStorage.removeItem("gameMode"));
+  await page.goto("/");
   const homePage = new HomePage(page);
+
+  await homePage.selectSingleMode();
 
   await homePage.playersNumber.clear();
   await homePage.playersNumber.pressSequentially("3");
@@ -37,17 +59,19 @@ test("screenshot-home-filled", async ({ page }) => {
   await homePage.squaresNumber.clear();
   await homePage.squaresNumber.pressSequentially("20");
 
-  await expect(page).toHaveScreenshot("home-filled.png");
+  await expect(page).toHaveScreenshot("home-filled.png", { fullPage: true });
 });
 
 test("screenshot-advanced-mode", async ({ page }) => {
   await page.setViewportSize(VIEWPORT);
-  await page.goto("/tesi");
+  await page.addInitScript(() => sessionStorage.removeItem("gameMode"));
+  await page.goto("/");
   const homePage = new HomePage(page);
 
+  await homePage.selectSingleMode();
   await homePage.advancedModeButton.click();
 
-  await expect(page).toHaveScreenshot("advanced-mode.png");
+  await expect(page).toHaveScreenshot("advanced-mode.png", { fullPage: true });
 });
 
 test("screenshot-game-board", async ({ page }) => {
@@ -65,10 +89,11 @@ test("screenshot-game-board", async ({ page }) => {
   gameData.board.playersPosition[2].position = 7;
 
   const gamePage = new GamePage(page);
+  await seedRandom(page);
   await addZustandInitScript(gamePage.page, gameData);
-  await page.goto("/tesi/game");
+  await page.goto("/game");
 
-  await expect(page).toHaveScreenshot("game-board.png");
+  await expect(page).toHaveScreenshot("game-board.png", { fullPage: true });
 });
 
 test("screenshot-dice-roll", async ({ page }) => {
@@ -83,31 +108,14 @@ test("screenshot-dice-roll", async ({ page }) => {
   gameData.board.playersPosition[1].position = 1;
 
   const gamePage = new GamePage(page);
+  await seedRandom(page);
   await addZustandInitScript(gamePage.page, gameData);
-  await page.goto("/tesi/game");
+  await page.goto("/game");
 
   await gamePage.playTurnButton.click();
   await gamePage.rollDiceButton.waitFor();
 
-  await expect(page).toHaveScreenshot("dice-roll.png");
-});
-
-test("screenshot-quiz-modal", async ({ page }) => {
-  await page.setViewportSize(VIEWPORT);
-  const squares = Array.from({ length: 10 }, (_, i) => new QuizSquare(i));
-  const players = ["Alice", "Bob"].map((name, i) => new Player(i, name));
-  const board = new Board(squares, players);
-  const game = new Game(board);
-
-  const gamePage = new GamePage(page);
-  await addZustandInitScript(gamePage.page, game.toJSON());
-  await page.goto("/tesi/game");
-
-  await gamePage.playTurnButton.click();
-  await gamePage.rollDiceButton.click();
-
-  await expect(gamePage.turnResultFullModal).toBeVisible();
-  await expect(gamePage.turnResultFullModal).toHaveScreenshot("quiz-modal.png");
+  await expect(page).toHaveScreenshot("dice-roll.png", { fullPage: true });
 });
 
 test("screenshot-quiz-modal-answer", async ({ page }) => {
@@ -118,36 +126,21 @@ test("screenshot-quiz-modal-answer", async ({ page }) => {
   const game = new Game(board);
 
   const gamePage = new GamePage(page);
+  await seedRandom(page);
   await addZustandInitScript(gamePage.page, game.toJSON());
-  await page.goto("/tesi/game");
+  await page.goto("/game");
 
   await gamePage.playTurnButton.click();
   await gamePage.rollDiceButton.click();
 
   await expect(gamePage.turnResultFullModal).toBeVisible();
+  await expect(gamePage.turnResultFullModal).toHaveScreenshot("quiz-modal.png");
+
   await gamePage.quizShowAnswerButton.click();
 
   await expect(gamePage.turnResultFullModal).toHaveScreenshot(
     "quiz-modal-answer.png",
   );
-});
-
-test("screenshot-mime-modal", async ({ page }) => {
-  await page.setViewportSize(VIEWPORT);
-  const squares = Array.from({ length: 10 }, (_, i) => new MimeSquare(i));
-  const players = ["Alice", "Bob"].map((name, i) => new Player(i, name));
-  const board = new Board(squares, players);
-  const game = new Game(board);
-
-  const gamePage = new GamePage(page);
-  await addZustandInitScript(gamePage.page, game.toJSON());
-  await page.goto("/tesi/game");
-
-  await gamePage.playTurnButton.click();
-  await gamePage.rollDiceButton.click();
-
-  await expect(gamePage.turnResultFullModal).toBeVisible();
-  await expect(gamePage.turnResultFullModal).toHaveScreenshot("mime-modal.png");
 });
 
 test("screenshot-mime-modal-topic", async ({ page }) => {
@@ -158,13 +151,16 @@ test("screenshot-mime-modal-topic", async ({ page }) => {
   const game = new Game(board);
 
   const gamePage = new GamePage(page);
+  await seedRandom(page);
   await addZustandInitScript(gamePage.page, game.toJSON());
-  await page.goto("/tesi/game");
+  await page.goto("/game");
 
   await gamePage.playTurnButton.click();
   await gamePage.rollDiceButton.click();
 
   await expect(gamePage.turnResultFullModal).toBeVisible();
+  await expect(gamePage.turnResultFullModal).toHaveScreenshot("mime-modal.png");
+
   await gamePage.mimeShowTopicButton.click();
 
   await expect(gamePage.turnResultFullModal).toHaveScreenshot(
@@ -180,8 +176,9 @@ test("screenshot-backwrite-modal", async ({ page }) => {
   const game = new Game(board);
 
   const gamePage = new GamePage(page);
+  await seedRandom(page);
   await addZustandInitScript(gamePage.page, game.toJSON());
-  await page.goto("/tesi/game");
+  await page.goto("/game");
 
   await gamePage.playTurnButton.click();
   await gamePage.rollDiceButton.click();
@@ -200,8 +197,9 @@ test("screenshot-backwrite-modal-word", async ({ page }) => {
   const game = new Game(board);
 
   const gamePage = new GamePage(page);
+  await seedRandom(page);
   await addZustandInitScript(gamePage.page, game.toJSON());
-  await page.goto("/tesi/game");
+  await page.goto("/game");
 
   await gamePage.playTurnButton.click();
   await gamePage.rollDiceButton.click();
@@ -225,8 +223,9 @@ test("screenshot-dictation-draw-modal", async ({ page }) => {
   const game = new Game(board);
 
   const gamePage = new GamePage(page);
+  await seedRandom(page);
   await addZustandInitScript(gamePage.page, game.toJSON());
-  await page.goto("/tesi/game");
+  await page.goto("/game");
 
   await gamePage.playTurnButton.click();
   await gamePage.rollDiceButton.click();
@@ -248,8 +247,9 @@ test("screenshot-dictation-draw-modal-image", async ({ page }) => {
   const game = new Game(board);
 
   const gamePage = new GamePage(page);
+  await seedRandom(page);
   await addZustandInitScript(gamePage.page, game.toJSON());
-  await page.goto("/tesi/game");
+  await page.goto("/game");
 
   await gamePage.playTurnButton.click();
   await gamePage.rollDiceButton.click();
@@ -259,29 +259,6 @@ test("screenshot-dictation-draw-modal-image", async ({ page }) => {
 
   await expect(gamePage.turnResultFullModal).toHaveScreenshot(
     "dictation-draw-modal-image.png",
-  );
-});
-
-test("screenshot-face-emotion-modal", async ({ page }) => {
-  await page.setViewportSize(VIEWPORT);
-  const squares = Array.from(
-    { length: 10 },
-    (_, i) => new FaceEmotionSquare(i),
-  );
-  const players = ["Alice", "Bob"].map((name, i) => new Player(i, name));
-  const board = new Board(squares, players);
-  const game = new Game(board);
-
-  const gamePage = new GamePage(page);
-  await addZustandInitScript(gamePage.page, game.toJSON());
-  await page.goto("/tesi/game");
-
-  await gamePage.playTurnButton.click();
-  await gamePage.rollDiceButton.click();
-
-  await expect(gamePage.turnResultFullModal).toBeVisible();
-  await expect(gamePage.turnResultFullModal).toHaveScreenshot(
-    "face-emotion-modal.png",
   );
 });
 
@@ -296,13 +273,18 @@ test("screenshot-face-emotion-modal-answer", async ({ page }) => {
   const game = new Game(board);
 
   const gamePage = new GamePage(page);
+  await seedRandom(page, 42 * 42 * 42 * 42);
   await addZustandInitScript(gamePage.page, game.toJSON());
-  await page.goto("/tesi/game");
+  await page.goto("/game");
 
   await gamePage.playTurnButton.click();
   await gamePage.rollDiceButton.click();
 
   await expect(gamePage.turnResultFullModal).toBeVisible();
+  await expect(gamePage.turnResultFullModal).toHaveScreenshot(
+    "face-emotion-modal.png",
+  );
+
   await gamePage.faceEmotionShowAnswerButton.click();
 
   await expect(gamePage.turnResultFullModal).toHaveScreenshot(
@@ -321,8 +303,9 @@ test("screenshot-music-emotion-modal", async ({ page }) => {
   const game = new Game(board);
 
   const gamePage = new GamePage(page);
+  await seedRandom(page);
   await addZustandInitScript(gamePage.page, game.toJSON());
-  await page.goto("/tesi/game");
+  await page.goto("/game");
 
   await gamePage.playTurnButton.click();
   await gamePage.rollDiceButton.click();
@@ -344,8 +327,9 @@ test("screenshot-physical-test-modal", async ({ page }) => {
   const game = new Game(board);
 
   const gamePage = new GamePage(page);
+  await seedRandom(page);
   await addZustandInitScript(gamePage.page, game.toJSON());
-  await page.goto("/tesi/game");
+  await page.goto("/game");
 
   await gamePage.playTurnButton.click();
   await gamePage.rollDiceButton.click();
@@ -367,8 +351,9 @@ test("screenshot-what-would-you-do-modal", async ({ page }) => {
   const game = new Game(board);
 
   const gamePage = new GamePage(page);
+  await seedRandom(page);
   await addZustandInitScript(gamePage.page, game.toJSON());
-  await page.goto("/tesi/game");
+  await page.goto("/game");
 
   await gamePage.playTurnButton.click();
   await gamePage.rollDiceButton.click();
@@ -392,13 +377,16 @@ test("screenshot-skip-turn-modal", async ({ page }) => {
   gameData.board.playersPosition[1].position = 1;
 
   const gamePage = new GamePage(page);
+  await seedRandom(page);
   await addZustandInitScript(gamePage.page, gameData);
-  await page.goto("/tesi/game");
+  await page.goto("/game");
 
   await gamePage.playTurnButton.click();
   await gamePage.skipTurnButton.waitFor();
 
-  await expect(page).toHaveScreenshot("skip-turn-modal.png");
+  await expect(page).toHaveScreenshot("skip-turn-modal.png", {
+    fullPage: true,
+  });
 });
 
 test("screenshot-end-game", async ({ page }) => {
@@ -413,8 +401,9 @@ test("screenshot-end-game", async ({ page }) => {
   gameData.board.playersPosition[1].position = 8;
 
   const gamePage = new GamePage(page);
+  await seedRandom(page);
   await addZustandInitScript(gamePage.page, gameData);
-  await page.goto("/tesi/game");
+  await page.goto("/game");
 
   await gamePage.playTurnButton.click();
   await gamePage.rollDiceButton.waitFor();
@@ -422,14 +411,14 @@ test("screenshot-end-game", async ({ page }) => {
 
   expect(await gamePage.getWinner()).toMatch(/Alice|Bob/);
 
-  await expect(page).toHaveScreenshot("end-game.png");
+  await expect(page).toHaveScreenshot("end-game.png", { fullPage: true });
 });
 
 test("screenshot-feedback", async ({ page }) => {
   await page.setViewportSize(VIEWPORT);
-  await page.goto("/tesi/feedback");
+  await page.goto("/feedback");
 
-  await expect(page).toHaveScreenshot("feedback.png");
+  await expect(page).toHaveScreenshot("feedback.png", { fullPage: true });
 });
 
 test("screenshot-menu", async ({ page }) => {
@@ -440,8 +429,9 @@ test("screenshot-menu", async ({ page }) => {
   const game = new Game(board);
 
   const gamePage = new GamePage(page);
+  await seedRandom(page);
   await addZustandInitScript(gamePage.page, game.toJSON());
-  await page.goto("/tesi/game");
+  await page.goto("/game");
 
   await page.getByRole("button", { name: "MENU", exact: true }).click();
   await expect(page.getByRole("dialog")).toHaveCount(2);

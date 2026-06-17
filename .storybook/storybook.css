@@ -7,6 +7,13 @@ body,
   margin: 0;
 } */
 
+:root {
+  --font-geist-sans: "Geist", sans-serif;
+  --font-geist-mono: "Geist Mono", monospace;
+  --font-londrina-shadow: "Londrina Shadow", cursive;
+  --font-londrina-solid: "Londrina Solid", cursive;
+}
+
 body {
   background-color: white;
 }

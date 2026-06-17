@@ -6,14 +6,21 @@ Il gioco è stato creato e sviluppato dagli alunni dell'istituto CFPIL di Varese
 La versione digitale è stata sviluppata in React con Next.js e TypeScript.
 Questa versione permette ai giocatori di configurare la partita in maniera personalizzata, con diversi tipi di caselle speciali (quiz, mimo, caselle di movimento) e meccaniche di gioco automatiche.
 
-Il gioco è disponibile all'indirizzo
-https://samueldebenedictis.github.io/tesi/
+Supporta due modalità di gioco:
+- **Schermo singolo**: tutti i giocatori attorno allo stesso dispositivo
+- **Multi-dispositivo**: ogni giocatore usa il proprio smartphone, un host coordina la partita
+
+Il gioco è disponibile ai seguenti indirizzi:
+
+- **v1.4.6** (schermo singolo): https://samueldebenedictis.github.io/tesi/
+- **v2+** (schermo singolo + multi-dispositivo): https://tesi-nine.vercel.app/
 
 ## Caratteristiche Principali
 
 - **Configurazione partita**: Home per impostare i parametri del gioco; numero di giocatori, nomi, caselle ammesse, eccetera.
-
 - **Gioco interattivo**: Pagina del gioco con tabellone, pedine e stato del gioco
+- **Modalità multi-dispositivo**: ogni giocatore usa il proprio smartphone; l'host coordina sul tabellone principale. Accesso tramite QR code. Sessioni server-side con long polling (riduce le invocazioni serverless di ~5×). Identità giocatore persistita nell'URL (`/player/[sessionId]/[playerId]`), sopravvive alla chiusura del tab.
+- **Azioni di gioco**: quiz, mimo, scrivi sulla schiena, emozione facciale, emozione musicale, test fisico, cosa faresti se, disegno dettato, battaglia
 - **Istruzioni**: Regole del gioco
 - **Salvataggio partite**: Sistema di salvataggio e caricamento della partita (la partita viene salvata in formato JSON). Lo stato della partita è conservato nello StorageState del browser.
 - **Effetti sonori**: Suoni di feedback per azioni dei giocatori (lancio dado, caselle speciali, combattimenti)
@@ -21,7 +28,7 @@ https://samueldebenedictis.github.io/tesi/
 
 ## Tecnologie Utilizzate
 
-- **Next.js 15**: Framework React
+- **Next.js 16**: Framework React
 - **TypeScript**: Tipizzazione per JavaScript
 - **Zustand**: State management library
 - **Tailwind CSS**: Framework CSS
@@ -30,6 +37,8 @@ https://samueldebenedictis.github.io/tesi/
 - **Playwright**: Framework per test end-to-end
 - **Storybook**: Sviluppo dei componenti UI
 - **Husky**: Git hooks
+- **Vercel KV** (produzione) / **Redis + ioredis** (sviluppo locale): storage sessioni multiplayer con TTL 4 ore
+- **Docker Compose**: Redis locale per sviluppo
 
 ## Comandi
 
@@ -109,22 +118,35 @@ Compila Storybook per la produzione.
 ```
 src/
 ├── app/                   # Pagine e componenti Next.js
-│   ├── components/        # Componenti React
-│   ├── game/              # Pagina principale del gioco
+│   ├── api/               # API routes (multiplayer)
+│   │   ├── sessions/      # Crea sessione, long polling, azioni
+│   │   └── feedback/      # Raccolta feedback
+│   ├── components/        # Componenti React condivisi
+│   ├── game/              # Pagina principale (schermo singolo)
+│   ├── multiplayer/       # Host: lobby e tabellone multi-dispositivo
+│   ├── player/            # Player: schermata per ogni giocatore
+│   ├── join/              # Redirect join tramite QR code
 │   ├── instructions/      # Pagina delle istruzioni
 │   └── restore-game/      # Pagina per caricare partite salvate
+├── lib/                   # Librerie condivise
+│   ├── session-store.ts   # Storage sessioni (Vercel KV / Redis / memory)
+│   ├── use-session-polling.ts  # Hook long polling + idle detection
+│   └── card-utils.ts      # Estrazione dati carta da pending action
 ├── model/                 # Logica e modelli di dati
-│   ├── deck/              # Sistema di carte (mimo, quiz)
+│   ├── deck/              # Sistema di carte (mimo, quiz, eccetera)
 │   ├── managers/          # Gestori di gioco (turni, battaglie, eccetera)
 │   └── square/            # Tipi di caselle della plancia
 ├── store/                 # Zustand
 │   ├── config-store.ts    # Game configuration state
 │   └── game-store.ts      # Game state management
-├── utils/                 # Funzioni di utility
-│   └── sound-manager.ts   # Audio effects manager
-└── tests/                 # Test automatici
-    ├── e2e/               # Test end-to-end
-    └── vitest/            # Test unitari
+├── types/
+│   └── session.ts         # Tipi SessionState, PendingAction, eccetera
+└── utils/                 # Funzioni di utility
+    └── sound-manager.ts   # Audio effects manager
+tests/
+├── e2e/                   # Test end-to-end (Playwright)
+└── vitest/                # Test unitari (Vitest)
+    └── multiplayer/       # Test API routes e session store
 ```
 
 ## Installazione
@@ -140,13 +162,28 @@ src/
    npm install
    ```
 
-3. **Dev server**:
+3. **Dev server** (schermo singolo, senza Redis):
    ```bash
    npm run dev
    ```
-   goto `http://localhost:3000`
+   Apri `http://localhost:3000`
 
-4. **Build**
+4. **Dev server con multiplayer** (richiede Docker):
+   ```bash
+   docker compose up -d   # avvia Redis locale
+   # crea .env.local con: REDIS_URL=redis://localhost:6379
+   npm run dev
+   ```
+
+5. **Build**:
    ```bash
    npm run build
    ```
+
+### Variabili d'ambiente
+
+| Variabile | Descrizione | Default |
+|-----------|-------------|---------|
+| `REDIS_URL` | URL Redis locale (sviluppo) | — (fallback in-memory) |
+| `KV_REST_API_URL` | Vercel KV REST URL (produzione) | — |
+| `KV_REST_API_TOKEN` | Vercel KV token (produzione) | — |
