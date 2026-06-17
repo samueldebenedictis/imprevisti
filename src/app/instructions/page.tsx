@@ -100,6 +100,14 @@ export default function InstructionsPage() {
             </li>
             <li>
               <a
+                href="#multi-dispositivo"
+                className="ui-text-dark hover:text-sky-600"
+              >
+                Modalità multi-dispositivo
+              </a>
+            </li>
+            <li>
+              <a
                 href="#configurazione-avanzata"
                 className="ui-text-dark hover:text-sky-600"
               >
@@ -197,9 +205,57 @@ export default function InstructionsPage() {
           />
         </section>
 
+        <section id="multi-dispositivo" className="mb-6">
+          <h2 className="mb-2 font-semibold text-xl">
+            3. Modalità multi-dispositivo
+          </h2>
+          <p className="mb-2">
+            La modalità <strong>multi-dispositivo</strong> consente a ogni
+            giocatore di partecipare usando il proprio smartphone come
+            controller personale, mentre il tabellone rimane visibile su un
+            dispositivo separato gestito dall&apos;educatore.
+          </p>
+          <p className="mb-2">
+            Per avviarla, seleziona <strong>Multi-dispositivo</strong> dalla
+            schermata iniziale. L&apos;educatore configura la partita e avvia la
+            lobby: sullo schermo comparirà un codice QR che ogni giocatore deve
+            scansionare con il proprio telefono per unirsi alla sessione.
+          </p>
+          <ul className="mb-2 list-inside list-disc">
+            <li>
+              <strong>Lancio del dado:</strong> ogni giocatore lancia il dado
+              dal proprio schermo quando è il suo turno.
+            </li>
+            <li>
+              <strong>Sfide private:</strong> per alcune sfide (Mimo, Disegno
+              dettato) il tema compare solo sul dispositivo del giocatore
+              attivo, mantenendo l&apos;elemento di segretezza.
+            </li>
+            <li>
+              <strong>Sfide condivise:</strong> per Quiz, Test fisico e altre
+              sfide il contenuto è visibile su tutti i dispositivi.
+            </li>
+            <li>
+              <strong>Battaglia:</strong> i due giocatori coinvolti effettuano
+              la sfida sui rispettivi telefoni; il server determina
+              automaticamente l&apos;esito.
+            </li>
+            <li>
+              <strong>Identità persistente:</strong> l&apos;URL del giocatore
+              include il suo identificativo — riaprendo lo stesso link si
+              recupera la sessione anche dopo aver chiuso il browser.
+            </li>
+          </ul>
+          <p className="mb-2">
+            L&apos;educatore avvia la partita una volta che tutti i giocatori si
+            sono uniti, e conferma l&apos;esito di ogni sfida
+            dall&apos;interfaccia del tabellone.
+          </p>
+        </section>
+
         <section id="configurazione-avanzata" className="mb-6">
           <h2 className="mb-2 font-semibold text-xl">
-            3. Configurazione avanzata
+            4. Configurazione avanzata
           </h2>
           <p className="mb-2">
             La modalità avanzata permette di definire manualmente il tipo di
@@ -233,7 +289,7 @@ export default function InstructionsPage() {
 
         <section id="turno" className="mb-6">
           <h2 className="mb-2 font-semibold text-xl">
-            4. Svolgimento del turno
+            5. Svolgimento del turno
           </h2>
           <p className="mb-2">
             Il gioco procede a turni. Ogni giocatore, quando è il suo turno,
@@ -261,7 +317,7 @@ export default function InstructionsPage() {
         </section>
 
         <section id="caselle-speciali" className="mb-6">
-          <h2 className="mb-2 font-semibold text-xl">5. Caselle speciali</h2>
+          <h2 className="mb-2 font-semibold text-xl">6. Caselle speciali</h2>
           <p className="mb-2">
             Il tabellone può contenere diverse tipologie di caselle speciali:
           </p>
@@ -275,7 +331,7 @@ export default function InstructionsPage() {
         </section>
 
         <section id="fine-partita" className="mb-6">
-          <h2 className="mb-2 font-semibold text-xl">6. Fine della partita</h2>
+          <h2 className="mb-2 font-semibold text-xl">7. Fine della partita</h2>
           <p className="mb-2">
             La partita termina quando un giocatore raggiunge l'ultima casella
             del tabellone. Quel giocatore sarà dichiarato il vincitore!
@@ -286,7 +342,7 @@ export default function InstructionsPage() {
           />
         </section>
         <section id="altro" className="mb-6">
-          <h2 className="mb-2 font-semibold text-xl">7. Altro</h2>
+          <h2 className="mb-2 font-semibold text-xl">8. Altro</h2>
           <p className="mb-2">
             Tutto il codice sorgente del sito è disponile su{" "}
             <a
