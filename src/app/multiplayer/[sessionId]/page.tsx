@@ -348,8 +348,8 @@ export default function MultiplayerSessionPage() {
                     {targetName && <> → {targetName}</>}
                   </p>
 
-                  {/* Immagine (face-emotion, dictation-draw) */}
-                  {cardImageUrl && (
+                  {/* Immagine (face-emotion only — dictation-draw: solo sul dispositivo attore) */}
+                  {cardImageUrl && pendingAction.type !== "dictation-draw" && (
                     <Image
                       width={200}
                       height={200}
