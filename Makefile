@@ -4,6 +4,9 @@ install:
 app:
 	docker compose up app
 
+storybook:
+	docker compose up storybook
+
 e2e-video:
 	docker compose run --rm playwright sh -c "npx playwright test -c playwright-video.config.ts game-at-work.spec.ts --update-snapshots"
 
