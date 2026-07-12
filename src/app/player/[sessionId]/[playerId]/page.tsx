@@ -1,45 +1,16 @@
 "use client";
-import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { ACTION_LABELS } from "@/app/components/action-labels";
 import Dice from "@/app/components/dice";
 import { IdleOverlay } from "@/app/components/idle-overlay";
+import PlayerActionView from "@/app/components/player-action-view";
+import PlayersPanel from "@/app/components/players-panel";
 import Button from "@/app/components/ui/button";
 // playerId viene dall'URL — persiste alla chiusura del tab
-import { imagePrefix } from "@/app/image-prefix";
-import {
-  LABEL_BACKWRITE,
-  LABEL_BATTLE,
-  LABEL_DICTATION_DRAW,
-  LABEL_FACE_EMOTION,
-  LABEL_MIME,
-  LABEL_MUSIC_EMOTION,
-  LABEL_PHYSICAL_TEST,
-  LABEL_QUIZ,
-  LABEL_WHAT_WOULD_YOU_DO,
-} from "@/app/texts";
-import { getCardDisplay } from "@/lib/card-utils";
 import { useSessionPolling } from "@/lib/use-session-polling";
 import { Game } from "@/model/game";
 import type { LastMoveInfo, PublicSessionState } from "@/types/session";
-
-const ACTION_LABELS: Record<string, string> = {
-  quiz: LABEL_QUIZ,
-  mime: LABEL_MIME,
-  backwrite: LABEL_BACKWRITE,
-  "face-emotion": LABEL_FACE_EMOTION,
-  "music-emotion": LABEL_MUSIC_EMOTION,
-  "physical-test": LABEL_PHYSICAL_TEST,
-  "what-would-you-do": LABEL_WHAT_WOULD_YOU_DO,
-  "dictation-draw": LABEL_DICTATION_DRAW,
-  battle: LABEL_BATTLE,
-};
-
-const TARGET_INSTRUCTIONS: Record<string, string> = {
-  mime: "Guarda e indovina cosa sta mimando!",
-  backwrite: "Senti cosa ti scrivono sulla schiena e indovina la parola!",
-  "dictation-draw": "Disegna quello che ti descrivono!",
-};
 
 function LandingBanner({ info }: { info: LastMoveInfo }) {
   if (info.diceResult === 0) {
@@ -158,19 +129,14 @@ export default function PlayerPage() {
     );
   }
 
-  // Backwrite/DictationDraw senza target: l'attore sceglie il bersaglio
+  // Backwrite senza target: l'attore sceglie il bersaglio.
+  // Dictation-draw non passa mai di qui: il server assegna il target
+  // automaticamente al roll (TWO_ACTOR_TYPES in roll/route.ts).
   const needsTargetSelection =
-    isActor &&
-    action &&
-    (action.type === "backwrite" || action.type === "dictation-draw") &&
-    !action.targetPlayerId;
+    isActor && action && action.type === "backwrite" && !action.targetPlayerId;
 
   if (needsTargetSelection) {
     const otherPlayers = session.players.filter((p) => p.id !== playerId);
-    const label =
-      action.type === "backwrite"
-        ? "A chi vuoi scrivere?"
-        : "A chi vuoi dettare?";
     const selectTarget = async (targetId: string) => {
       await fetch(`/api/sessions/${sessionId}/select-target`, {
         method: "POST",
@@ -180,24 +146,13 @@ export default function PlayerPage() {
     };
     return (
       <>
-        <div className="ui-text-dark my-8 flex min-h-screen flex-col items-center justify-center gap-6 p-8 text-center">
-          <h2 className="ui-text-title">
-            {ACTION_LABELS[action?.type] ?? action?.type}
-          </h2>
-          <p className="ui-text-subtitle">{label}</p>
-          <div className="flex w-full max-w-sm flex-col gap-3">
-            {otherPlayers.map((p) => (
-              <Button
-                key={p.id}
-                color="blue"
-                onClick={() => void selectTarget(p.id)}
-                className="mx-0"
-              >
-                {p.name}
-              </Button>
-            ))}
-          </div>
-        </div>
+        <PlayerActionView
+          phase="target-selection"
+          otherPlayers={otherPlayers}
+          onSelectTarget={(targetId) => void selectTarget(targetId)}
+          positions={playersPositions}
+          selfId={playerId}
+        />
         <IdleOverlay idleState={idleState} onResume={resume} />
       </>
     );
@@ -209,18 +164,12 @@ export default function PlayerPage() {
     const quizQuestion = quizCard?.cardTitle ?? "";
     return (
       <>
-        <div className="ui-text-dark my-8 flex min-h-screen flex-col items-center justify-center gap-6 p-8 text-center">
-          <h2 className="ui-text-title">Quiz!</h2>
-          {quizQuestion && (
-            <div className="ui-border-dark w-full max-w-sm bg-gray-100 p-6 text-center">
-              <p className="ui-text-subtitle">{quizQuestion}</p>
-            </div>
-          )}
-          <p className="ui-text-normal text-gray-500">
-            Il coordinatore giudicherà la risposta.
-          </p>
-          <PlayersPanel positions={playersPositions} selfId={playerId} />
-        </div>
+        <PlayerActionView
+          phase="quiz-actor"
+          quizQuestion={quizQuestion}
+          positions={playersPositions}
+          selfId={playerId}
+        />
         <IdleOverlay idleState={idleState} onResume={resume} />
       </>
     );
@@ -228,34 +177,15 @@ export default function PlayerPage() {
 
   // Actor: vede la cosa segreta (parola da mimare, parola da scrivere, immagine)
   if (isActor && action) {
-    const { text: cardText, imageUrl } = getCardDisplay(action.card);
-    const showCardText = action.type !== "face-emotion";
-
     return (
       <>
-        <div className="ui-text-dark my-8 flex min-h-screen flex-col items-center justify-center gap-6 p-8">
-          <h2 className="ui-text-title">
-            {ACTION_LABELS[action.type] ?? action.type}
-          </h2>
-          {imageUrl && (
-            <Image
-              width={200}
-              height={200}
-              src={`${imagePrefix}${imageUrl}`}
-              alt="emotion"
-              className="ui-border-dark w-full max-w-xs rounded"
-            />
-          )}
-          {showCardText && cardText && (
-            <div className="ui-border-dark w-full max-w-sm bg-gray-100 p-6 text-center">
-              <p className="ui-text-subtitle">{String(cardText)}</p>
-            </div>
-          )}
-          <p className="ui-text-normal text-center text-gray-500">
-            Il coordinatore giudica sul tabellone.
-          </p>
-          <PlayersPanel positions={playersPositions} selfId={playerId} />
-        </div>
+        <PlayerActionView
+          phase="actor"
+          actionType={action.type}
+          card={action.card}
+          positions={playersPositions}
+          selfId={playerId}
+        />
         <IdleOverlay idleState={idleState} onResume={resume} />
       </>
     );
@@ -265,15 +195,12 @@ export default function PlayerPage() {
   if (isTarget && action) {
     return (
       <>
-        <div className="ui-text-dark my-8 flex min-h-screen flex-col items-center justify-center gap-4 p-8 text-center">
-          <p className="ui-text-subtitle">
-            {TARGET_INSTRUCTIONS[action.type] ?? "Partecipa all'azione!"}
-          </p>
-          <p className="ui-text-normal">
-            L&apos;altro giocatore deciderà il risultato.
-          </p>
-          <PlayersPanel positions={playersPositions} selfId={playerId} />
-        </div>
+        <PlayerActionView
+          phase="target"
+          actionType={action.type}
+          positions={playersPositions}
+          selfId={playerId}
+        />
         <IdleOverlay idleState={idleState} onResume={resume} />
       </>
     );
@@ -286,12 +213,12 @@ export default function PlayerPage() {
     )?.name;
     return (
       <>
-        <div className="ui-text-dark my-8 flex min-h-screen flex-col items-center justify-center gap-4 p-8 text-center">
-          <p className="ui-text-normal">
-            <strong>{actorName}</strong> sta eseguendo un&apos;azione...
-          </p>
-          <PlayersPanel positions={playersPositions} selfId={playerId} />
-        </div>
+        <PlayerActionView
+          phase="spectator"
+          actorName={actorName}
+          positions={playersPositions}
+          selfId={playerId}
+        />
         <IdleOverlay idleState={idleState} onResume={resume} />
       </>
     );
@@ -350,33 +277,5 @@ export default function PlayerPage() {
       </div>
       <IdleOverlay idleState={idleState} onResume={resume} />
     </>
-  );
-}
-
-function PlayersPanel({
-  positions,
-  selfId,
-}: {
-  positions: Array<{ id: string; name: string; position: number }>;
-  selfId: string | null;
-}) {
-  if (positions.length === 0) return null;
-  const self = positions.find((p) => p.id === selfId);
-  const others = positions.filter((p) => p.id !== selfId);
-  const ordered = self ? [self, ...others] : positions;
-  return (
-    <div className="ui-border-dark mt-4 w-full max-w-sm bg-gray-100 p-4 text-left">
-      <p className="ui-text-normal mb-2 font-semibold">Posizione giocatori</p>
-      <ul className="ui-text-normal">
-        {ordered.map((p) => (
-          <li key={p.id} className={p.id === selfId ? "font-bold" : ""}>
-            <span className={p.id === selfId ? "text-blue-500" : ""}>
-              {p.name}
-            </span>
-            : {p.position}
-          </li>
-        ))}
-      </ul>
-    </div>
   );
 }
