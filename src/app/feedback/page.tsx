@@ -51,19 +51,140 @@ function RatingScale({
   );
 }
 
+// Componente riutilizzabile per le domande a risposta libera
+function TextAreaField({
+  label,
+  htmlFor,
+  name,
+  value,
+  onChange,
+  placeholder,
+}: {
+  label: string;
+  htmlFor: string;
+  name: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+}) {
+  return (
+    <div className="mb-4">
+      <Label htmlFor={htmlFor}>{label}</Label>
+      <textarea
+        id={htmlFor}
+        name={name}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="ui-text-dark ui-border-focus w-full p-2"
+        rows={3}
+        placeholder={placeholder}
+      />
+    </div>
+  );
+}
+
+const RATING_QUESTIONS = [
+  {
+    key: "accessibility",
+    label: "Valutazione accessibilità *",
+    description: "È facile utilizzare l'app per persone con bisogni speciali?",
+    errorLabel: "l'accessibilità",
+  },
+  {
+    key: "digitalVsPhysical",
+    label: "Versione digitale vs fisica *",
+    description: "La versione digitale mantiene l'esperienza del gioco fisico?",
+    errorLabel: "la versione digitale vs fisica",
+  },
+  {
+    key: "visualClarity",
+    label: "Chiarezza visiva *",
+    description: "Gli elementi visivi dell'app sono chiari e distinti?",
+    errorLabel: "la chiarezza visiva",
+  },
+  {
+    key: "soundComfort",
+    label: "Comfort sonoro *",
+    description: "I suoni e gli effetti audio sono appropriati?",
+    errorLabel: "il comfort sonoro",
+  },
+] as const;
+
+type RatingKey = (typeof RATING_QUESTIONS)[number]["key"];
+
+const initialRatings = (): Record<RatingKey, number> =>
+  Object.fromEntries(RATING_QUESTIONS.map((q) => [q.key, 0])) as Record<
+    RatingKey,
+    number
+  >;
+
+// 10 domande standard della System Usability Scale (SUS)
+// https://en.wikipedia.org/wiki/System_usability_scale
+const SUS_QUESTIONS = [
+  "Penso che potrei usare questo sistema frequentemente.",
+  "Ho trovato il sistema inutilmente complesso.",
+  "Ho ritenuto il sistema facile da usare.",
+  "Penso avrei bisogno del supporto di un tecnico per usare il sistema.",
+  "Le varie funzioni del sistema mi sono sembrate ben integrate.",
+  "Ho trovato troppe incongruenze nel sistema.",
+  "La maggior parte delle persone imparerebbe a usare il sistema molto rapidamente.",
+  "Ho trovato il sistema macchinoso da usare.",
+  "Mi sono sentito molto sicuro nell'usare il sistema.",
+  "Ho dovuto imparare molte cose prima di poter usare il sistema.",
+];
+
+const TEXT_QUESTIONS = [
+  {
+    key: "whatWorkedWell",
+    label: "Cosa ha funzionato bene?",
+    placeholder: "Descrivi gli aspetti positivi...",
+  },
+  {
+    key: "challenges",
+    label: "Cosa è stato difficile?",
+    placeholder: "Descrivi le difficoltà incontrate...",
+  },
+  {
+    key: "suggestions",
+    label: "Suggerimenti per miglioramenti",
+    placeholder: "Idee per migliorare l'app...",
+  },
+] as const;
+
+type TextKey = (typeof TEXT_QUESTIONS)[number]["key"];
+
+const initialTexts = (): Record<TextKey, string> =>
+  Object.fromEntries(TEXT_QUESTIONS.map((q) => [q.key, ""])) as Record<
+    TextKey,
+    string
+  >;
+
 export default function FeedbackPage() {
   const [name, setName] = useState("");
   const [ageGroup, setGroup] = useState("");
   const [gameExperience, setGameExperience] = useState("");
-  const [accessibility, setAccessibility] = useState<number>(0);
-  const [digitalVsPhysical, setDigitalVsPhysical] = useState<number>(0);
-  const [visualClarity, setVisualClarity] = useState<number>(0);
-  const [soundComfort, setSoundComfort] = useState<number>(0);
-  const [whatWorkedWell, setWhatWorkedWell] = useState("");
-  const [challenges, setChallenges] = useState("");
-  const [suggestions, setSuggestions] = useState("");
+  const [ratings, setRatings] = useState<Record<RatingKey, number>>(
+    initialRatings(),
+  );
+  const [susScores, setSusScores] = useState<number[]>(
+    Array(SUS_QUESTIONS.length).fill(0),
+  );
+  const [texts, setTexts] = useState<Record<TextKey, string>>(initialTexts());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const setRating = (key: RatingKey, value: number) =>
+    setRatings((prev) => ({ ...prev, [key]: value }));
+
+  const setSusScore = (index: number, value: number) =>
+    setSusScores((prev) => {
+      const next = [...prev];
+      next[index] = value;
+      return next;
+    });
+
+  const setText = (key: TextKey, value: string) =>
+    setTexts((prev) => ({ ...prev, [key]: value }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,25 +195,17 @@ export default function FeedbackPage() {
       return;
     }
 
-    if (accessibility === 0) {
-      alert("Valuta l'accessibilità selezionando un punteggio da 1 a 5.");
-      return;
+    for (const q of RATING_QUESTIONS) {
+      if (ratings[q.key] === 0) {
+        alert(`Valuta ${q.errorLabel} selezionando un punteggio da 1 a 5.`);
+        return;
+      }
     }
 
-    if (digitalVsPhysical === 0) {
+    if (susScores.some((score) => score === 0)) {
       alert(
-        "Valuta la versione digitale vs fisica selezionando un punteggio da 1 a 5.",
+        "Rispondi a tutte le domande del questionario SUS selezionando un punteggio da 1 a 5.",
       );
-      return;
-    }
-
-    if (visualClarity === 0) {
-      alert("Valuta la chiarezza visiva selezionando un punteggio da 1 a 5.");
-      return;
-    }
-
-    if (soundComfort === 0) {
-      alert("Valuta il comfort sonoro selezionando un punteggio da 1 a 5.");
       return;
     }
 
@@ -108,13 +221,11 @@ export default function FeedbackPage() {
           name,
           ageGroup,
           gameExperience,
-          accessibility,
-          digitalVsPhysical,
-          visualClarity,
-          soundComfort,
-          whatWorkedWell,
-          challenges,
-          suggestions,
+          ...ratings,
+          ...Object.fromEntries(
+            susScores.map((score, i) => [`sus${i + 1}`, score]),
+          ),
+          ...texts,
         }),
       });
 
@@ -123,13 +234,9 @@ export default function FeedbackPage() {
         setName("");
         setGroup("");
         setGameExperience("");
-        setAccessibility(0);
-        setDigitalVsPhysical(0);
-        setVisualClarity(0);
-        setSoundComfort(0);
-        setWhatWorkedWell("");
-        setChallenges("");
-        setSuggestions("");
+        setRatings(initialRatings());
+        setSusScores(Array(SUS_QUESTIONS.length).fill(0));
+        setTexts(initialTexts());
       } else {
         alert("Errore nell'invio del messaggio. Riprova più tardi.");
       }
@@ -205,86 +312,52 @@ export default function FeedbackPage() {
 
         <div className="my-8 border-gray-300 border-b-2"></div>
 
-        <RatingScale
-          label="Valutazione accessibilità *"
-          htmlFor="accessibility"
-          value={accessibility}
-          onChange={setAccessibility}
-          name="accessibility"
-          description="È facile utilizzare l'app per persone con bisogni speciali?"
-          required
-        />
-
-        <RatingScale
-          label="Versione digitale vs fisica *"
-          htmlFor="digitalVsPhysical"
-          value={digitalVsPhysical}
-          onChange={setDigitalVsPhysical}
-          name="digitalVsPhysical"
-          description="La versione digitale mantiene l'esperienza del gioco fisico?"
-          required
-        />
-
-        <RatingScale
-          label="Chiarezza visiva *"
-          htmlFor="visualClarity"
-          value={visualClarity}
-          onChange={setVisualClarity}
-          name="visualClarity"
-          description="Gli elementi visivi dell'app sono chiari e distinti ?"
-          required
-        />
-
-        <RatingScale
-          label="Comfort sonoro *"
-          htmlFor="soundComfort"
-          value={soundComfort}
-          onChange={setSoundComfort}
-          name="soundComfort"
-          description="I suoni e gli effetti audio sono appropriati?"
-          required
-        />
+        {RATING_QUESTIONS.map((q) => (
+          <RatingScale
+            key={q.key}
+            label={q.label}
+            htmlFor={q.key}
+            name={q.key}
+            description={q.description}
+            value={ratings[q.key]}
+            onChange={(value) => setRating(q.key, value)}
+            required
+          />
+        ))}
 
         <div className="my-8 border-gray-300 border-b-2"></div>
 
-        <div className="mb-4">
-          <Label htmlFor="whatWorkedWell">Cosa ha funzionato bene?</Label>
-          <textarea
-            id="whatWorkedWell"
-            name="whatWorkedWell"
-            value={whatWorkedWell}
-            onChange={(e) => setWhatWorkedWell(e.target.value)}
-            className="ui-text-dark ui-border-focus w-full p-2"
-            rows={3}
-            placeholder="Descrivi gli aspetti positivi..."
-          />
-        </div>
+        <h2 className="ui-text-title mb-2">Questionario SUS *</h2>
+        <p className="ui-text-normal mb-4 text-sm">
+          Per ogni affermazione, indica il tuo grado di accordo: 1 = Fortemente
+          in disaccordo, 5 = Fortemente d'accordo.
+        </p>
 
-        <div className="mb-4">
-          <Label htmlFor="challenges">Cosa è stato difficile?</Label>
-          <textarea
-            id="challenges"
-            name="challenges"
-            value={challenges}
-            onChange={(e) => setChallenges(e.target.value)}
-            className="ui-text-dark ui-border-focus w-full p-2"
-            rows={3}
-            placeholder="Descrivi le difficoltà incontrate..."
+        {SUS_QUESTIONS.map((question, i) => (
+          <RatingScale
+            key={`sus${i + 1}`}
+            label={`${i + 1}. ${question}`}
+            htmlFor={`sus${i + 1}`}
+            value={susScores[i]}
+            onChange={(value) => setSusScore(i, value)}
+            name={`sus${i + 1}`}
+            required
           />
-        </div>
+        ))}
 
-        <div className="mb-4">
-          <Label htmlFor="suggestions">Suggerimenti per miglioramenti</Label>
-          <textarea
-            id="suggestions"
-            name="suggestions"
-            value={suggestions}
-            onChange={(e) => setSuggestions(e.target.value)}
-            className="ui-text-dark ui-border-focus w-full p-2"
-            rows={3}
-            placeholder="Idee per migliorare l'app..."
+        <div className="my-8 border-gray-300 border-b-2"></div>
+
+        {TEXT_QUESTIONS.map((q) => (
+          <TextAreaField
+            key={q.key}
+            label={q.label}
+            htmlFor={q.key}
+            name={q.key}
+            value={texts[q.key]}
+            onChange={(value) => setText(q.key, value)}
+            placeholder={q.placeholder}
           />
-        </div>
+        ))}
 
         <Button
           color="blue"
