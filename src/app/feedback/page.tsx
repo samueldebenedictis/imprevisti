@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { version as appVersion } from "../../../package.json";
 import Button from "../components/ui/button";
 import Input from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -83,30 +84,44 @@ function TextAreaField({
   );
 }
 
+// Componente riutilizzabile per la legenda della scala di accordo 1-5
+function RatingScaleLegend() {
+  return (
+    <p className="ui-text-normal mb-4 text-sm">
+      Per ogni affermazione, indica il tuo grado di accordo:
+      <br />1 = Fortemente in disaccordo, 5 = Fortemente d'accordo.
+    </p>
+  );
+}
+
 const RATING_QUESTIONS = [
   {
-    key: "accessibility",
-    label: "Valutazione accessibilità *",
-    description: "È facile utilizzare l'app per persone con bisogni speciali?",
-    errorLabel: "l'accessibilità",
-  },
-  {
     key: "digitalVsPhysical",
-    label: "Versione digitale vs fisica *",
+    label: "Versione digitale vs fisica",
     description: "La versione digitale mantiene l'esperienza del gioco fisico?",
     errorLabel: "la versione digitale vs fisica",
+    required: false,
   },
   {
-    key: "visualClarity",
-    label: "Chiarezza visiva *",
-    description: "Gli elementi visivi dell'app sono chiari e distinti?",
-    errorLabel: "la chiarezza visiva",
+    key: "gameplayClarity",
+    label: "Chiarezza dei meccanismi di gioco *",
+    description: "Le regole e i meccanismi di gioco sono chiari?",
+    errorLabel: "la chiarezza dei meccanismi di gioco",
+    required: true,
   },
   {
-    key: "soundComfort",
-    label: "Comfort sonoro *",
-    description: "I suoni e gli effetti audio sono appropriati?",
-    errorLabel: "il comfort sonoro",
+    key: "enjoyment",
+    label: "Mi è piaciuto *",
+    description: "Quanto ti è piaciuta l'esperienza complessiva del gioco?",
+    errorLabel: "quanto ti è piaciuto il gioco",
+    required: true,
+  },
+  {
+    key: "funLevel",
+    label: "Mi sono divertito *",
+    description: "Quanto ti sei divertito giocando?",
+    errorLabel: "quanto ti sei divertito",
+    required: true,
   },
 ] as const;
 
@@ -121,16 +136,16 @@ const initialRatings = (): Record<RatingKey, number> =>
 // 10 domande standard della System Usability Scale (SUS)
 // https://en.wikipedia.org/wiki/System_usability_scale
 const SUS_QUESTIONS = [
-  "Penso che potrei usare questo sistema frequentemente.",
-  "Ho trovato il sistema inutilmente complesso.",
-  "Ho ritenuto il sistema facile da usare.",
-  "Penso avrei bisogno del supporto di un tecnico per usare il sistema.",
-  "Le varie funzioni del sistema mi sono sembrate ben integrate.",
-  "Ho trovato troppe incongruenze nel sistema.",
-  "La maggior parte delle persone imparerebbe a usare il sistema molto rapidamente.",
-  "Ho trovato il sistema macchinoso da usare.",
-  "Mi sono sentito molto sicuro nell'usare il sistema.",
-  "Ho dovuto imparare molte cose prima di poter usare il sistema.",
+  "Penso che potrei usare questo applicativo frequentemente.",
+  "Ho trovato l'applicativo inutilmente complesso.",
+  "Ho ritenuto l'applicativo facile da usare.",
+  "Penso avrei bisogno del supporto di un tecnico per usare l'applicativo.",
+  "Le varie funzioni dell'applicativo mi sono sembrate ben integrate.",
+  "Ho trovato troppe incongruenze nell'applicativo.",
+  "La maggior parte delle persone imparerebbe a usare l'applicativo molto rapidamente.",
+  "Ho trovato l'applicativo macchinoso da usare.",
+  "Mi sono sentito molto sicuro nell'usare l'applicativo.",
+  "Ho dovuto imparare molte cose prima di poter usare l'applicativo.",
 ];
 
 const TEXT_QUESTIONS = [
@@ -141,7 +156,7 @@ const TEXT_QUESTIONS = [
   },
   {
     key: "challenges",
-    label: "Cosa è stato difficile?",
+    label: "Cosa ha funzionato male?",
     placeholder: "Descrivi le difficoltà incontrate...",
   },
   {
@@ -196,7 +211,7 @@ export default function FeedbackPage() {
     }
 
     for (const q of RATING_QUESTIONS) {
-      if (ratings[q.key] === 0) {
+      if (q.required && ratings[q.key] === 0) {
         alert(`Valuta ${q.errorLabel} selezionando un punteggio da 1 a 5.`);
         return;
       }
@@ -221,7 +236,10 @@ export default function FeedbackPage() {
           name,
           ageGroup,
           gameExperience,
-          ...ratings,
+          appVersion,
+          ...Object.fromEntries(
+            Object.entries(ratings).filter(([, value]) => value !== 0),
+          ),
           ...Object.fromEntries(
             susScores.map((score, i) => [`sus${i + 1}`, score]),
           ),
@@ -312,26 +330,8 @@ export default function FeedbackPage() {
 
         <div className="my-8 border-gray-300 border-b-2"></div>
 
-        {RATING_QUESTIONS.map((q) => (
-          <RatingScale
-            key={q.key}
-            label={q.label}
-            htmlFor={q.key}
-            name={q.key}
-            description={q.description}
-            value={ratings[q.key]}
-            onChange={(value) => setRating(q.key, value)}
-            required
-          />
-        ))}
-
-        <div className="my-8 border-gray-300 border-b-2"></div>
-
         <h2 className="ui-text-title mb-2">Questionario SUS *</h2>
-        <p className="ui-text-normal mb-4 text-sm">
-          Per ogni affermazione, indica il tuo grado di accordo: 1 = Fortemente
-          in disaccordo, 5 = Fortemente d'accordo.
-        </p>
+        <RatingScaleLegend />
 
         {SUS_QUESTIONS.map((question, i) => (
           <RatingScale
@@ -342,6 +342,23 @@ export default function FeedbackPage() {
             onChange={(value) => setSusScore(i, value)}
             name={`sus${i + 1}`}
             required
+          />
+        ))}
+
+        <div className="my-8 border-gray-300 border-b-2"></div>
+
+        <RatingScaleLegend />
+
+        {RATING_QUESTIONS.map((q) => (
+          <RatingScale
+            key={q.key}
+            label={q.label}
+            htmlFor={q.key}
+            name={q.key}
+            description={q.description}
+            value={ratings[q.key]}
+            onChange={(value) => setRating(q.key, value)}
+            required={q.required}
           />
         ))}
 
