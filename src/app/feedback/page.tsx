@@ -110,6 +110,13 @@ const RATING_QUESTIONS = [
     required: true,
   },
   {
+    key: "graphics",
+    label: "Grafica *",
+    description: "Come valuti la qualità della grafica dell'applicativo?",
+    errorLabel: "la grafica",
+    required: true,
+  },
+  {
     key: "enjoyment",
     label: "Mi è piaciuto *",
     description: "Quanto ti è piaciuta l'esperienza complessiva del gioco?",
