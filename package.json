@@ -17,6 +17,7 @@
     "e2e:u": "playwright test -g @snapshot -u",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
+    "vercel-build": "storybook build -o storybook-static && rm -rf public/storybook && mv storybook-static public/storybook && next build",
     "doc-model": "npx typedoc --entryPointStrategy Expand src/model/"
   },
   "dependencies": {

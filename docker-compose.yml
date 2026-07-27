@@ -16,7 +16,7 @@ services:
       - REDIS_URL=redis://redis:6379
     depends_on:
       - redis
-    command: sh -c "npm run build && npm run start"
+    command: sh -c "npm run vercel-build && npm run start"
 
   playwright:
     user: ubuntu
@@ -26,3 +26,13 @@ services:
     command: npx playwright test
     network_mode: host
     working_dir: /app
+
+  storybook:
+    image: node:lts-alpine3.23
+    user: node
+    ports:
+      - 6006:6006
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: sh -c "npm run storybook -- --ci"
