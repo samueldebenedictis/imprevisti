@@ -16,7 +16,7 @@ services:
       - REDIS_URL=redis://redis:6379
     depends_on:
       - redis
-    command: sh -c "npm run build && npm run start"
+    command: sh -c "npm run vercel-build && npm run start"
 
   playwright:
     user: ubuntu
