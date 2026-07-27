@@ -14,7 +14,8 @@
       "!coverage",
       "!tests/e2e/snapshots",
       "!test-results",
-      "!playwright-report"
+      "!playwright-report",
+      "!public/storybook"
     ]
   },
   "formatter": {
