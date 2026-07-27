@@ -4,6 +4,9 @@ install:
 app:
 	docker compose up app
 
+down:
+	docker compose down --remove-orphans --volumes
+
 storybook:
 	docker compose up storybook
 
