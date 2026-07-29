@@ -9,17 +9,11 @@ import { addZustandInitScript } from "../app/zustand";
 
 const TIMEOUT = 1000;
 
-test("poster", async ({ page }) => {
-  await page.goto("/tesi");
-  const homePage = new HomePage(page);
-  await homePage.page.waitForTimeout(TIMEOUT);
-
-  await expect(homePage.page).toHaveScreenshot("poster.png");
-});
-
 test("setup", async ({ page }) => {
-  await page.goto("/tesi");
+  await page.goto("");
+
   const homePage = new HomePage(page);
+  await homePage.selectSingleMode();
 
   await homePage.page.waitForTimeout(TIMEOUT);
   await homePage.playersNumber.clear();
@@ -54,8 +48,10 @@ test("setup", async ({ page }) => {
 });
 
 test("setup with special squares", async ({ page }) => {
-  await page.goto("/tesi");
+  await page.goto("");
+
   const homePage = new HomePage(page);
+  await homePage.selectSingleMode();
 
   await homePage.page.waitForTimeout(TIMEOUT);
   await homePage.playersNumber.clear();
@@ -90,7 +86,7 @@ test("end game", async ({ page }) => {
 
   const gamePage = new GamePage(page);
   await addZustandInitScript(gamePage.page, gameData);
-  await page.goto("/tesi/game");
+  await page.goto("/game");
   await gamePage.page.waitForTimeout(2 * TIMEOUT);
 
   await gamePage.playTurnButton.click();
@@ -122,7 +118,7 @@ test("play turn", async ({ page }) => {
 
   const gamePage = new GamePage(page);
   await addZustandInitScript(gamePage.page, gameData);
-  await page.goto("/tesi/game");
+  await page.goto("/game");
   await gamePage.page.waitForTimeout(2 * TIMEOUT);
 
   await gamePage.playTurnButton.click();
@@ -152,7 +148,7 @@ test("skip turn", async ({ page }) => {
 
   const gamePage = new GamePage(page);
   await addZustandInitScript(gamePage.page, gameData);
-  await page.goto("/tesi/game");
+  await page.goto("/game");
   await gamePage.page.waitForTimeout(2 * TIMEOUT);
 
   await gamePage.playTurnButton.click();
