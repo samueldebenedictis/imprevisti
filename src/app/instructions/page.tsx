@@ -251,6 +251,10 @@ export default function InstructionsPage() {
             sono uniti, e conferma l&apos;esito di ogni sfida
             dall&apos;interfaccia del tabellone.
           </p>
+          <Video
+            src={`${imagePrefix}/videos/game-at-work-dual-screen-management-chromium.webm`}
+            text="Un video che mostra affiancati lo schermo dell'educatore e lo schermo del giocatore: il lancio del dado, la comparsa sincronizzata della sfida su entrambi i dispositivi e la risoluzione da parte dell'educatore."
+          />
         </section>
 
         <section id="configurazione-avanzata" className="mb-6">

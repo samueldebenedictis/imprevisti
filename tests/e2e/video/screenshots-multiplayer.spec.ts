@@ -378,6 +378,229 @@ test("screenshot-multiplayer-mime-host", async ({ page }) => {
   });
 });
 
+test("screenshot-multiplayer-mime-player", async ({ page }) => {
+  await page.setViewportSize(VIEWPORT_MOBILE);
+
+  const gameState = makeGameState(
+    [
+      { id: 0, name: "Alice" },
+      { id: 1, name: "Bob" },
+    ],
+    [2, 5],
+  );
+
+  await seedRandom(page);
+  await mockSession(
+    page,
+    "MIME02",
+    baseSession("MIME02", {
+      players: [
+        { id: "0", name: "Alice" },
+        { id: "1", name: "Bob" },
+      ],
+      started: true,
+      gameState,
+      currentPlayerId: "0",
+      pendingAction: {
+        type: "mime",
+        card: {
+          cardTitle: "Fare una passeggiata sotto la pioggia",
+          cardText: "Fare una passeggiata sotto la pioggia",
+        },
+        actorPlayerId: "0",
+        targetPlayerId: null,
+      },
+    }),
+  );
+
+  await page.goto("/player/MIME02/0");
+  await expect(
+    page.getByText("Fare una passeggiata sotto la pioggia"),
+  ).toBeVisible();
+  await expect(page).toHaveScreenshot("multiplayer-mime-player.png", {
+    fullPage: true,
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Multiplayer — azione Test fisico in corso (sfida condivisa: visibile a tutti)
+// ---------------------------------------------------------------------------
+
+test("screenshot-multiplayer-physical-test-host", async ({ page }) => {
+  await page.setViewportSize(VIEWPORT_DESKTOP);
+  await page.addInitScript(() => localStorage.setItem("hostToken", "host-tok"));
+
+  const gameState = makeGameState(
+    [
+      { id: 0, name: "Alice" },
+      { id: 1, name: "Bob" },
+    ],
+    [4, 6],
+  );
+
+  await seedRandom(page);
+  await mockSession(
+    page,
+    "PHYS01",
+    baseSession("PHYS01", {
+      players: [
+        { id: "0", name: "Alice" },
+        { id: "1", name: "Bob" },
+      ],
+      started: true,
+      gameState,
+      currentPlayerId: "0",
+      pendingAction: {
+        type: "physical-test",
+        card: { cardTitle: "Fai 10 jumping jacks", cardText: "" },
+        actorPlayerId: "0",
+        targetPlayerId: null,
+      },
+    }),
+  );
+
+  await page.goto("/multiplayer/PHYS01");
+  await expect(page.getByText("Fai 10 jumping jacks")).toBeVisible();
+  await expect(page).toHaveScreenshot("multiplayer-physical-test-host.png", {
+    fullPage: true,
+  });
+});
+
+test("screenshot-multiplayer-physical-test-player", async ({ page }) => {
+  await page.setViewportSize(VIEWPORT_MOBILE);
+
+  const gameState = makeGameState(
+    [
+      { id: 0, name: "Alice" },
+      { id: 1, name: "Bob" },
+    ],
+    [4, 6],
+  );
+
+  await seedRandom(page);
+  await mockSession(
+    page,
+    "PHYS02",
+    baseSession("PHYS02", {
+      players: [
+        { id: "0", name: "Alice" },
+        { id: "1", name: "Bob" },
+      ],
+      started: true,
+      gameState,
+      currentPlayerId: "0",
+      pendingAction: {
+        type: "physical-test",
+        card: { cardTitle: "Fai 10 jumping jacks", cardText: "" },
+        actorPlayerId: "0",
+        targetPlayerId: null,
+      },
+    }),
+  );
+
+  await page.goto("/player/PHYS02/0");
+  await expect(page.getByText("Fai 10 jumping jacks")).toBeVisible();
+  await expect(page).toHaveScreenshot("multiplayer-physical-test-player.png", {
+    fullPage: true,
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Multiplayer — azione Disegno dettato in corso (sfida privata: il tema e
+// l'immagine compaiono solo sul dispositivo di chi descrive; l'host non li vede)
+// ---------------------------------------------------------------------------
+
+test("screenshot-multiplayer-dictation-draw-host", async ({ page }) => {
+  await page.setViewportSize(VIEWPORT_DESKTOP);
+  await page.addInitScript(() => localStorage.setItem("hostToken", "host-tok"));
+
+  const gameState = makeGameState(
+    [
+      { id: 0, name: "Alice" },
+      { id: 1, name: "Bob" },
+    ],
+    [8, 2],
+  );
+
+  await seedRandom(page);
+  await mockSession(
+    page,
+    "DRAW01",
+    baseSession("DRAW01", {
+      players: [
+        { id: "0", name: "Alice" },
+        { id: "1", name: "Bob" },
+      ],
+      started: true,
+      gameState,
+      currentPlayerId: "0",
+      pendingAction: {
+        type: "dictation-draw",
+        card: {
+          topic: {
+            cardTitle: "Casa",
+            cardText: "Una semplice casa con tetto e porta",
+          },
+          imageUrl: "/images/dictation-draw/house.svg",
+        },
+        actorPlayerId: "0",
+        targetPlayerId: "1",
+      },
+    }),
+  );
+
+  await page.goto("/multiplayer/DRAW01");
+  await expect(page.getByText("Alice").first()).toBeVisible();
+  await expect(page).toHaveScreenshot("multiplayer-dictation-draw-host.png", {
+    fullPage: true,
+  });
+});
+
+test("screenshot-multiplayer-dictation-draw-player", async ({ page }) => {
+  await page.setViewportSize(VIEWPORT_MOBILE);
+
+  const gameState = makeGameState(
+    [
+      { id: 0, name: "Alice" },
+      { id: 1, name: "Bob" },
+    ],
+    [8, 2],
+  );
+
+  await seedRandom(page);
+  await mockSession(
+    page,
+    "DRAW02",
+    baseSession("DRAW02", {
+      players: [
+        { id: "0", name: "Alice" },
+        { id: "1", name: "Bob" },
+      ],
+      started: true,
+      gameState,
+      currentPlayerId: "0",
+      pendingAction: {
+        type: "dictation-draw",
+        card: {
+          topic: {
+            cardTitle: "Casa",
+            cardText: "Una semplice casa con tetto e porta",
+          },
+          imageUrl: "/images/dictation-draw/house.svg",
+        },
+        actorPlayerId: "0",
+        targetPlayerId: "1",
+      },
+    }),
+  );
+
+  await page.goto("/player/DRAW02/0");
+  await expect(page.getByText("Casa")).toBeVisible();
+  await expect(page).toHaveScreenshot("multiplayer-dictation-draw-player.png", {
+    fullPage: true,
+  });
+});
+
 // ---------------------------------------------------------------------------
 // Join page
 // ---------------------------------------------------------------------------

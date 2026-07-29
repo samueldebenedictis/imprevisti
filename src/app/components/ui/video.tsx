@@ -1,8 +1,7 @@
 "use client";
 
-import { imagePrefix } from "@/app/image-prefix";
-
 export function Video(props: { src: string; text: string }) {
+  const poster = `${props.src.replace(/\.webm$/, "")}-poster.png`;
   return (
     <div className="my-4">
       <div className="flex flex-col items-center border-2 border-sky-600 border-solid">
@@ -11,7 +10,7 @@ export function Video(props: { src: string; text: string }) {
           muted
           preload="metadata"
           className="h-auto w-full"
-          poster={`${imagePrefix}/videos/poster.png`}
+          poster={poster}
         >
           <source src={`${props.src}`} type="video/webm" />
         </video>
