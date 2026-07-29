@@ -331,6 +331,49 @@ test("screenshot-multiplayer-quiz-host-answer", async ({ page }) => {
   });
 });
 
+test("screenshot-multiplayer-quiz-player", async ({ page }) => {
+  await page.setViewportSize(VIEWPORT_MOBILE);
+
+  const gameState = makeGameState(
+    [
+      { id: 0, name: "Alice" },
+      { id: 1, name: "Bob" },
+    ],
+    [3, 1],
+  );
+
+  await seedRandom(page);
+  await mockSession(
+    page,
+    "QUIZ03",
+    baseSession("QUIZ03", {
+      players: [
+        { id: "0", name: "Alice" },
+        { id: "1", name: "Bob" },
+      ],
+      started: true,
+      gameState,
+      currentPlayerId: "0",
+      pendingAction: {
+        type: "quiz",
+        card: {
+          cardTitle: "Cosa si intende per empatia?",
+          cardText:
+            "La capacità di comprendere e condividere i sentimenti altrui.",
+        },
+        actorPlayerId: "0",
+        targetPlayerId: null,
+      },
+    }),
+  );
+
+  await page.goto("/player/QUIZ03/0");
+  await expect(page.getByText("Cosa si intende per empatia?")).toBeVisible();
+  await expect(page).toHaveScreenshot("multiplayer-quiz-player.png", {
+    fullPage: true,
+  });
+});
+
 // ---------------------------------------------------------------------------
 // Multiplayer host — azione mimo in corso
 // ---------------------------------------------------------------------------
