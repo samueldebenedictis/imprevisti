@@ -7,6 +7,7 @@ import { useCurrentPlayer, useGameStore } from "../../store/game-store";
 import { URL_HOME } from "../../vars";
 import BoardComponent from "../components/board";
 import LeftBar from "../components/left-bar";
+import PawnsLayer from "../components/pawns-layer";
 import SquareC from "../components/square";
 import DiceResultModal from "../components/turn-result-modal";
 import Button from "../components/ui/button";
@@ -49,6 +50,7 @@ export default function Page() {
     () =>
       game
         ? game.getPlayers().map((player) => ({
+            id: String(player.getId()),
             name: player.getName(),
             position: game.getPlayerPosition(player),
           }))
@@ -73,19 +75,10 @@ export default function Page() {
                       ? "last"
                       : el.getType(),
                 moveValue: el instanceof MoveSquare ? el.moveValue : undefined,
-                playersOn: game
-                  .getBoard()
-                  .getPlayersOnSquare(index)
-                  .map((player) => ({
-                    name: player.getName(),
-                    isCurrentPlayerTurn:
-                      player.getName() === currentPlayer?.getName(),
-                  })),
-                isMoving: isRolling,
               }),
             )
         : [],
-    [game, isRolling, currentPlayer?.getName, size],
+    [game, size],
   );
 
   // Render del gioco
@@ -123,11 +116,17 @@ export default function Page() {
           />
         )}
       </div>
-      <div className="flex flex-shrink-0 flex-col items-center justify-center">
+      <div className="relative flex flex-shrink-0 flex-col items-center justify-center">
         {BoardComponent({
           squares: squaresC,
           cols: 5,
         })}
+        <PawnsLayer
+          players={playersPositions}
+          currentPlayerId={currentPlayer ? String(currentPlayer.getId()) : null}
+          cols={5}
+          totalSquares={size}
+        />
       </div>
       <DiceResultModal
         isOpen={isModalOpen}

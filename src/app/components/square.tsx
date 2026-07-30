@@ -2,7 +2,6 @@
 
 import type { SquareType } from "@/model/square/square";
 import {
-  LABEL_OTHER_PLAYERS,
   SQUARE_BACKWRITE_BOTTOM,
   SQUARE_BACKWRITE_TOP,
   SQUARE_DICTATION_DRAW_BOTTOM,
@@ -22,7 +21,6 @@ import {
   SQUARE_WHAT_WOULD_YOU_DO_TOP,
   SQUARE_WIN,
 } from "../texts";
-import Pawn from "./pawn";
 import { type Color, colorToCss } from "./ui/color";
 
 type ExtendedSquareType = SquareType | "first" | "last";
@@ -30,8 +28,6 @@ type SquareProps = {
   number: number;
   squareType: ExtendedSquareType;
   moveValue?: number;
-  playersOn?: { name: string; isCurrentPlayerTurn: boolean }[];
-  isMoving?: boolean;
 };
 
 const typeToColor = (type: ExtendedSquareType, moveValue?: number): Color => {
@@ -125,63 +121,6 @@ const typeText = (type: ExtendedSquareType, moveValue: number | undefined) => {
   );
 };
 
-const playersOn = (
-  players: { name: string; isCurrentPlayerTurn: boolean }[] | undefined,
-  isMoving?: boolean,
-) => {
-  if (!players || players.length === 0) {
-    return null;
-  }
-
-  const currentPlayer = players.find((p) => p.isCurrentPlayerTurn);
-  const otherPlayers = players.filter((p) => !p.isCurrentPlayerTurn);
-
-  const pawns = [];
-
-  // Pedina del giocatore corrente
-  // Viene sempre mostrata con animazione
-  if (currentPlayer) {
-    pawns.push(
-      Pawn({
-        name: currentPlayer.name,
-        color: "green",
-        isCurrentPlayerTurn: true,
-        isMoving, // Solo il giocatore corrente si anima
-      }),
-    );
-  }
-
-  // Se ci sono altri giocatori
-  if (otherPlayers.length > 0) {
-    if (otherPlayers.length === 1) {
-      // Solo un altro giocatore
-      // Viene mostrato il nome
-      const el = otherPlayers[0];
-      pawns.push(
-        Pawn({
-          name: el.name,
-          color: "amber",
-          isCurrentPlayerTurn: false,
-          isMoving: false, // Gli altri giocatori non si animano
-        }),
-      );
-    } else {
-      // Due o più giocatori
-      // Viene mostrati il count
-      pawns.push(
-        Pawn({
-          name: `${otherPlayers.length.toString()} ${LABEL_OTHER_PLAYERS}`,
-          color: "amber",
-          isCurrentPlayerTurn: false,
-          isMoving: false, // Gli altri giocatori non si animano
-        }),
-      );
-    }
-  }
-
-  return pawns;
-};
-
 const background = (number: number) => {
   return `square-background-${number % 13}`;
 };
@@ -200,9 +139,6 @@ export default function Square(props: SquareProps) {
         {text(props.number, props.squareType)}
       </div>
       {typeText(props.squareType, props.moveValue)}
-      <div className="absolute bottom-0 w-full pr-1 pl-1">
-        {playersOn(props.playersOn, props.isMoving)}
-      </div>
     </div>
   );
 }
