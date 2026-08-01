@@ -3,6 +3,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { IdleOverlay } from "@/app/components/idle-overlay";
 import PlayerActionView from "@/app/components/player-action-view";
+import PlayerGameOverView from "@/app/components/player-game-over-view";
 import PlayerRollResultView from "@/app/components/player-roll-result-view";
 import PlayerRollView from "@/app/components/player-roll-view";
 // playerId viene dall'URL — persiste alla chiusura del tab
@@ -66,14 +67,7 @@ export default function PlayerPage() {
   }
 
   if (session.gameOver) {
-    return (
-      <div className="ui-text-dark my-8 flex min-h-screen flex-col items-center justify-center gap-4 p-8">
-        <h2 className="ui-text-title">Fine partita!</h2>
-        <p className="ui-text-subtitle">
-          Vince: <strong>{session.gameOver.winnerName}</strong>
-        </p>
-      </div>
-    );
+    return <PlayerGameOverView winnerName={session.gameOver.winnerName} />;
   }
 
   if (!session.started) {

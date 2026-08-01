@@ -623,4 +623,43 @@ test.describe("Player page — game over", () => {
     // "Vince: Alice" — the name appears inside a <strong> within the paragraph
     await expect(page.getByText("Alice")).toBeVisible();
   });
+
+  test("shows a feedback link that navigates to the feedback form", async ({
+    page,
+  }) => {
+    const SESSION_ID = "OVER03";
+    const PLAYER_ID = "0";
+
+    await page.route(`**/api/sessions/${SESSION_ID}**`, async (route) => {
+      if (route.request().method() === "GET") {
+        await route.fulfill({
+          json: {
+            sessionId: SESSION_ID,
+            players: [
+              { id: "0", name: "Alice" },
+              { id: "1", name: "Bob" },
+            ],
+            started: true,
+            gameState: null,
+            currentPlayerId: null,
+            pendingAction: null,
+            diceResult: null,
+            lastMoveInfo: null,
+            gameOver: { winnerName: "Alice" },
+            updatedAt: Date.now(),
+            createdAt: Date.now(),
+          },
+        });
+      } else {
+        await route.continue();
+      }
+    });
+
+    const playerPage = new MultiplayerPlayerPage(page);
+    await playerPage.goto(SESSION_ID, PLAYER_ID);
+
+    await expect(playerPage.feedbackLink).toBeVisible();
+    await playerPage.feedbackLink.click();
+    await expect(page).toHaveURL(/\/feedback$/);
+  });
 });

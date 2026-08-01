@@ -54,6 +54,7 @@ export class MultiplayerPlayerPage {
   readonly waitingMessage: Locator;
   readonly myTurnMessage: Locator;
   readonly gameOverTitle: Locator;
+  readonly feedbackLink: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -63,6 +64,7 @@ export class MultiplayerPlayerPage {
     );
     this.myTurnMessage = page.getByText("È il tuo turno!");
     this.gameOverTitle = page.getByText("Fine partita!");
+    this.feedbackLink = page.getByRole("link", { name: "Dai un feedback!" });
   }
 
   async goto(sessionId: string, playerId: string) {
