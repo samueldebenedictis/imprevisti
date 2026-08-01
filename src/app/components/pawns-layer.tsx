@@ -17,6 +17,8 @@ type PawnsLayerProps = {
 // Durata di un singolo balzo da una casella alla successiva.
 const HOP_DURATION_MS = 260;
 
+const OTHER_PLAYER_COLOR: Color = "teal";
+
 function cellStyle(position: number, cols: number, rows: number) {
   const row = Math.floor(position / cols);
   const col = position % cols;
@@ -115,7 +117,6 @@ export default function PawnsLayer(props: PawnsLayerProps) {
           ? currentPlayer.position !== position
           : false;
 
-        const otherColor: Color = "teal";
         return (
           <div
             key={key}
@@ -143,14 +144,14 @@ export default function PawnsLayer(props: PawnsLayerProps) {
               {otherPlayers.length === 1 && (
                 <Pawn
                   name={otherPlayers[0].name}
-                  color={otherColor}
+                  color={OTHER_PLAYER_COLOR}
                   isCurrentPlayerTurn={false}
                 />
               )}
               {otherPlayers.length > 1 && (
                 <Pawn
                   name={`${otherPlayers.length.toString()} ${LABEL_OTHER_PLAYERS}`}
-                  color={otherColor}
+                  color={OTHER_PLAYER_COLOR}
                   isCurrentPlayerTurn={false}
                 />
               )}

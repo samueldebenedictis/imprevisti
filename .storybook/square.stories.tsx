@@ -20,17 +20,6 @@ export const Primary: Story = {
   },
 };
 
-export const WithPlayers: Story = {
-  args: {
-    number: 1,
-    squareType: "normal",
-    playersOn: [
-      { name: "Renzo", isCurrentPlayerTurn: true },
-      { name: "Lucia", isCurrentPlayerTurn: false },
-    ],
-  },
-};
-
 export const QuizSquare: Story = {
   args: {
     number: 5,
@@ -75,29 +64,6 @@ export const WinSquare: Story = {
   },
 };
 
-export const QuizWithPlayers: Story = {
-  args: {
-    number: 5,
-    squareType: "quiz",
-    playersOn: [
-      { name: "Mario", isCurrentPlayerTurn: true },
-      { name: "Giulia", isCurrentPlayerTurn: false },
-    ],
-  },
-};
-
-export const MimeWithMultiplePlayers: Story = {
-  args: {
-    number: 10,
-    squareType: "mime",
-    playersOn: [
-      { name: "Luca", isCurrentPlayerTurn: false },
-      { name: "Anna", isCurrentPlayerTurn: false },
-      { name: "Paolo", isCurrentPlayerTurn: true },
-    ],
-  },
-};
-
 export const MusicEmotionSquare: Story = {
   args: {
     number: 12,
@@ -119,55 +85,10 @@ export const WhatWouldYouDoSquare: Story = {
   },
 };
 
-export const MusicEmotionWithPlayers: Story = {
-  args: {
-    number: 12,
-    squareType: "music-emotion",
-    playersOn: [
-      { name: "Sofia", isCurrentPlayerTurn: true },
-      { name: "Marco", isCurrentPlayerTurn: false },
-    ],
-  },
-};
-
-export const PhysicalTestWithPlayers: Story = {
-  args: {
-    number: 14,
-    squareType: "physical-test",
-    playersOn: [
-      { name: "Elena", isCurrentPlayerTurn: false },
-      { name: "Davide", isCurrentPlayerTurn: true },
-    ],
-  },
-};
-
-export const WhatWouldYouDoWithPlayers: Story = {
-  args: {
-    number: 16,
-    squareType: "what-would-you-do",
-    playersOn: [
-      { name: "Chiara", isCurrentPlayerTurn: true },
-      { name: "Roberto", isCurrentPlayerTurn: false },
-      { name: "Francesca", isCurrentPlayerTurn: false },
-    ],
-  },
-};
-
 export const DictationDrawSquare: Story = {
   args: {
     number: 18,
     squareType: "dictation-draw",
-  },
-};
-
-export const DictationDrawWithPlayers: Story = {
-  args: {
-    number: 18,
-    squareType: "dictation-draw",
-    playersOn: [
-      { name: "Valentina", isCurrentPlayerTurn: true },
-      { name: "Andrea", isCurrentPlayerTurn: false },
-    ],
   },
 };
 
@@ -178,31 +99,9 @@ export const BackWriteSquare: Story = {
   },
 };
 
-export const BackWriteWithPlayers: Story = {
-  args: {
-    number: 20,
-    squareType: "backwrite",
-    playersOn: [
-      { name: "Giorgio", isCurrentPlayerTurn: true },
-      { name: "Sara", isCurrentPlayerTurn: false },
-    ],
-  },
-};
-
 export const FaceEmotionSquare: Story = {
   args: {
     number: 22,
     squareType: "face-emotion",
-  },
-};
-
-export const FaceEmotionWithPlayers: Story = {
-  args: {
-    number: 22,
-    squareType: "face-emotion",
-    playersOn: [
-      { name: "Lorenzo", isCurrentPlayerTurn: false },
-      { name: "Isabella", isCurrentPlayerTurn: true },
-    ],
   },
 };
