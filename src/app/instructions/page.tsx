@@ -356,6 +356,13 @@ export default function InstructionsPage() {
               GitHub
             </a>
           </p>
+          <p className="mb-2">
+            Il catalogo dei componenti dell&apos;interfaccia, con tutte le
+            varianti isolate e navigabili, è consultabile su{" "}
+            <a className="font-semibold" href="/storybook/index.html">
+              Storybook
+            </a>
+          </p>
         </section>
       </div>
 
