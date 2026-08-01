@@ -92,6 +92,22 @@ export default function PlayerPage() {
     );
   }
 
+  // Lancio in corso: il polling in background può già riflettere lo stato
+  // server post-lancio (es. pendingAction di un'azione speciale) prima che
+  // il client riceva la risposta della roll — non lasciare che l'azione
+  // interrompa l'animazione del dado.
+  if (isRolling) {
+    return (
+      <>
+        <PlayerRollView
+          isRolling={isRolling}
+          onRollDice={() => void rollDice()}
+        />
+        <IdleOverlay idleState={idleState} onResume={resume} />
+      </>
+    );
+  }
+
   // Risultato del lancio: pagina intermedia col bottone "Avanti" prima di
   // mostrare direttamente il turno successivo (attesa/azione/spectator).
   if (!isRolling && localDiceResult !== null) {
