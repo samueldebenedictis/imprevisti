@@ -401,7 +401,7 @@ test.describe("Player page — active turn", () => {
 
     // Should show whose turn it is
     await expect(page.getByText(/Turno di/)).toBeVisible();
-    await expect(page.getByText("Alice")).toHaveCount(2); // turno + lista posizioni
+    await expect(page.getByText("Alice")).toHaveCount(1);
     await expect(playerPage.rollDiceButton).not.toBeVisible();
   });
 });

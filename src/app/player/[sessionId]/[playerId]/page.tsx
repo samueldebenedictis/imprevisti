@@ -1,36 +1,13 @@
 "use client";
 import { useParams } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { ACTION_LABELS } from "@/app/components/action-labels";
-import Dice from "@/app/components/dice";
+import { useEffect, useRef, useState } from "react";
 import { IdleOverlay } from "@/app/components/idle-overlay";
 import PlayerActionView from "@/app/components/player-action-view";
-import PlayersPanel from "@/app/components/players-panel";
-import Button from "@/app/components/ui/button";
+import PlayerRollResultView from "@/app/components/player-roll-result-view";
+import PlayerRollView from "@/app/components/player-roll-view";
 // playerId viene dall'URL — persiste alla chiusura del tab
 import { useSessionPolling } from "@/lib/use-session-polling";
-import { Game } from "@/model/game";
 import type { LastMoveInfo, PublicSessionState } from "@/types/session";
-
-function LandingBanner({ info }: { info: LastMoveInfo }) {
-  if (info.diceResult === 0) {
-    return (
-      <div className="ui-border-dark w-full max-w-sm bg-gray-100 p-4 text-center">
-        <p className="ui-text-subtitle text-red-600">Turno saltato!</p>
-      </div>
-    );
-  }
-  return (
-    <div className="ui-border-dark w-full max-w-sm bg-gray-100 p-4 text-center">
-      <p className="ui-text-normal">
-        Casella <strong>{info.squareNumber}</strong>
-        {info.squareType !== "normal" && info.squareType !== "move" && (
-          <> · {ACTION_LABELS[info.squareType] ?? info.squareType}</>
-        )}
-      </p>
-    </div>
-  );
-}
 
 export default function PlayerPage() {
   const { sessionId, playerId } = useParams<{
@@ -53,20 +30,6 @@ export default function PlayerPage() {
     }
     prevPendingAction.current = session.pendingAction;
   }, [session, session?.pendingAction]);
-
-  const playersPositions = useMemo(() => {
-    if (!session?.gameState) return [];
-    try {
-      const game = Game.fromJSON(session.gameState);
-      return game.getPlayers().map((p) => ({
-        id: String(p.getId()),
-        name: p.getName(),
-        position: game.getPlayerPosition(p),
-      }));
-    } catch {
-      return [];
-    }
-  }, [session?.gameState]);
 
   const action = session?.pendingAction;
   const isMyTurn =
@@ -129,6 +92,24 @@ export default function PlayerPage() {
     );
   }
 
+  // Risultato del lancio: pagina intermedia col bottone "Avanti" prima di
+  // mostrare direttamente il turno successivo (attesa/azione/spectator).
+  if (!isRolling && localDiceResult !== null) {
+    return (
+      <>
+        <PlayerRollResultView
+          diceResult={localDiceResult}
+          moveInfo={localMoveInfo}
+          onContinue={() => {
+            setLocalDiceResult(null);
+            setLocalMoveInfo(null);
+          }}
+        />
+        <IdleOverlay idleState={idleState} onResume={resume} />
+      </>
+    );
+  }
+
   // Backwrite senza target: l'attore sceglie il bersaglio.
   // Dictation-draw non passa mai di qui: il server assegna il target
   // automaticamente al roll (TWO_ACTOR_TYPES in roll/route.ts).
@@ -150,8 +131,6 @@ export default function PlayerPage() {
           phase="target-selection"
           otherPlayers={otherPlayers}
           onSelectTarget={(targetId) => void selectTarget(targetId)}
-          positions={playersPositions}
-          selfId={playerId}
         />
         <IdleOverlay idleState={idleState} onResume={resume} />
       </>
@@ -164,12 +143,7 @@ export default function PlayerPage() {
     const quizQuestion = quizCard?.cardTitle ?? "";
     return (
       <>
-        <PlayerActionView
-          phase="quiz-actor"
-          quizQuestion={quizQuestion}
-          positions={playersPositions}
-          selfId={playerId}
-        />
+        <PlayerActionView phase="quiz-actor" quizQuestion={quizQuestion} />
         <IdleOverlay idleState={idleState} onResume={resume} />
       </>
     );
@@ -183,8 +157,6 @@ export default function PlayerPage() {
           phase="actor"
           actionType={action.type}
           card={action.card}
-          positions={playersPositions}
-          selfId={playerId}
         />
         <IdleOverlay idleState={idleState} onResume={resume} />
       </>
@@ -195,12 +167,7 @@ export default function PlayerPage() {
   if (isTarget && action) {
     return (
       <>
-        <PlayerActionView
-          phase="target"
-          actionType={action.type}
-          positions={playersPositions}
-          selfId={playerId}
-        />
+        <PlayerActionView phase="target" actionType={action.type} />
         <IdleOverlay idleState={idleState} onResume={resume} />
       </>
     );
@@ -213,12 +180,7 @@ export default function PlayerPage() {
     )?.name;
     return (
       <>
-        <PlayerActionView
-          phase="spectator"
-          actorName={actorName}
-          positions={playersPositions}
-          selfId={playerId}
-        />
+        <PlayerActionView phase="spectator" actorName={actorName} />
         <IdleOverlay idleState={idleState} onResume={resume} />
       </>
     );
@@ -226,38 +188,12 @@ export default function PlayerPage() {
 
   // Turno del giocatore: dado + risultato atterraggio
   if (isMyTurn) {
-    const showResult = !isRolling && localDiceResult !== null;
-    const skipTurn = localDiceResult === 0;
-
     return (
       <>
-        <div className="ui-text-dark my-8 flex min-h-screen flex-col items-center justify-center gap-6 p-8">
-          <p className="ui-text-subtitle">È il tuo turno!</p>
-          {!skipTurn && (
-            <button
-              type="button"
-              disabled={showResult || isRolling}
-              className="mt-4 flex items-center justify-center disabled:cursor-default"
-              onClick={!showResult && !isRolling ? rollDice : undefined}
-            >
-              <Dice isRolling={isRolling} result={localDiceResult} />
-            </button>
-          )}
-          {showResult && localMoveInfo && (
-            <LandingBanner info={localMoveInfo} />
-          )}
-          {!showResult && (
-            <Button
-              color="green"
-              onClick={rollDice}
-              disabled={isRolling}
-              className="mx-0 w-full max-w-sm"
-            >
-              {isRolling ? "Lancio..." : "Lancia il dado"}
-            </Button>
-          )}
-          <PlayersPanel positions={playersPositions} selfId={playerId} />
-        </div>
+        <PlayerRollView
+          isRolling={isRolling}
+          onRollDice={() => void rollDice()}
+        />
         <IdleOverlay idleState={idleState} onResume={resume} />
       </>
     );
@@ -273,7 +209,6 @@ export default function PlayerPage() {
         <p className="ui-text-normal">
           Turno di <strong>{currentPlayerName ?? "..."}</strong>
         </p>
-        <PlayersPanel positions={playersPositions} selfId={playerId} />
       </div>
       <IdleOverlay idleState={idleState} onResume={resume} />
     </>
