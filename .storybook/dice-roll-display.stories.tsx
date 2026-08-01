@@ -3,9 +3,6 @@ import DiceRollComponent from "../src/app/components/dice-roll-display";
 import LeftBar from "../src/app/components/left-bar";
 import { Player } from "../src/model/player";
 
-// Mock player for stories
-class MockPlayer extends Player {}
-
 const meta = {
   title: "Example/DiceRollDisplay",
   component: DiceRollComponent,
@@ -44,7 +41,7 @@ export const Initial: Story = {
     showResult: false,
   },
   render: () => {
-    const mockPlayer = new MockPlayer(1, "Alice");
+    const mockPlayer = new Player(1, "Alice");
     const playersPositions = [
       { name: "Alice", position: 5 },
       { name: "Bob", position: 3 },
@@ -82,7 +79,7 @@ export const Rolling: Story = {
     showResult: false,
   },
   render: () => {
-    const mockPlayer = new MockPlayer(1, "Alice");
+    const mockPlayer = new Player(1, "Alice");
     const playersPositions = [
       { name: "Alice", position: 5 },
       { name: "Bob", position: 3 },
@@ -121,7 +118,7 @@ export const ResultOne: Story = {
     showResult: true,
   },
   render: () => {
-    const mockPlayer = new MockPlayer(1, "Alice");
+    const mockPlayer = new Player(1, "Alice");
     const playersPositions = [
       { name: "Alice", position: 5 },
       { name: "Bob", position: 3 },
@@ -161,7 +158,7 @@ export const ResultTwo: Story = {
     showResult: true,
   },
   render: () => {
-    const mockPlayer = new MockPlayer(1, "Alice");
+    const mockPlayer = new Player(1, "Alice");
     const playersPositions = [
       { name: "Alice", position: 5 },
       { name: "Bob", position: 3 },
@@ -201,7 +198,7 @@ export const ResultThree: Story = {
     showResult: true,
   },
   render: () => {
-    const mockPlayer = new MockPlayer(1, "Alice");
+    const mockPlayer = new Player(1, "Alice");
     const playersPositions = [
       { name: "Alice", position: 5 },
       { name: "Bob", position: 3 },
@@ -241,7 +238,7 @@ export const ResultFour: Story = {
     showResult: true,
   },
   render: () => {
-    const mockPlayer = new MockPlayer(1, "Alice");
+    const mockPlayer = new Player(1, "Alice");
     const playersPositions = [
       { name: "Alice", position: 5 },
       { name: "Bob", position: 3 },
@@ -281,7 +278,7 @@ export const ResultFive: Story = {
     showResult: true,
   },
   render: () => {
-    const mockPlayer = new MockPlayer(1, "Alice");
+    const mockPlayer = new Player(1, "Alice");
     const playersPositions = [
       { name: "Alice", position: 5 },
       { name: "Bob", position: 3 },
@@ -321,7 +318,7 @@ export const ResultSix: Story = {
     showResult: true,
   },
   render: () => {
-    const mockPlayer = new MockPlayer(1, "Alice");
+    const mockPlayer = new Player(1, "Alice");
     const playersPositions = [
       { name: "Alice", position: 5 },
       { name: "Bob", position: 3 },
@@ -362,7 +359,7 @@ export const SkipTurn: Story = {
     currentPlayerName: "Alice",
   },
   render: () => {
-    const mockPlayer = new MockPlayer(1, "Alice");
+    const mockPlayer = new Player(1, "Alice");
     const playersPositions = [
       { name: "Alice", position: 5 },
       { name: "Bob", position: 3 },

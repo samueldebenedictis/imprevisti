@@ -2,6 +2,7 @@ import Image from "next/image";
 import { getCardDisplay } from "@/lib/card-utils";
 import { imagePrefix } from "../image-prefix";
 import { ACTION_LABELS } from "./action-labels";
+import SpectatorSpinner from "./spectator-spinner";
 import Button from "./ui/button";
 
 const TARGET_INSTRUCTIONS: Record<string, string> = {
@@ -118,6 +119,7 @@ export default function PlayerActionView(props: PlayerActionViewProps) {
   // spectator
   return (
     <div className="ui-text-dark my-8 flex min-h-screen flex-col items-center justify-center gap-4 p-8 text-center">
+      <SpectatorSpinner />
       <p className="ui-text-normal">
         <strong>{props.actorName}</strong> sta eseguendo un&apos;azione...
       </p>

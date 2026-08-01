@@ -54,9 +54,11 @@ export const FaceEmotionActor: Story = {
   args: {
     phase: "actor",
     actionType: "face-emotion",
+    // Forma reale inviata dal server (roll/route.ts): il campo immagine sta
+    // fuori, il testo della carta è annidato sotto "topic" — getCardDisplay
+    // (card-utils.ts) legge imageUrl solo in questa forma.
     card: {
-      cardTitle: "felice",
-      cardText: "felice",
+      topic: { cardTitle: "felice", cardText: "felice" },
       imageUrl: "/images/face-emotion/uomo-1-felice.png",
     },
   },
@@ -94,8 +96,10 @@ export const DictationDrawActor: Story = {
     phase: "actor",
     actionType: "dictation-draw",
     card: {
-      cardTitle: "Casa: Una semplice casa con tetto e porta 🏠",
-      cardText: "",
+      topic: {
+        cardTitle: "Casa: Una semplice casa con tetto e porta 🏠",
+        cardText: "",
+      },
       imageUrl: "/images/dictation-draw/house.svg",
     },
   },
@@ -120,13 +124,6 @@ export const DictationDrawTarget: Story = {
   args: {
     phase: "target",
     actionType: "dictation-draw",
-  },
-};
-
-export const QuizTarget: Story = {
-  args: {
-    phase: "target",
-    actionType: "quiz",
   },
 };
 

@@ -69,6 +69,7 @@ const config: StorybookConfig = {
       "@": path.resolve(__dirname, "../src"),
       "next/font/google": path.resolve(__dirname, "./next-font-mock.js"),
       "next/font/local": path.resolve(__dirname, "./next-font-mock.js"),
+      "next/image": path.resolve(__dirname, "./next-image-mock.js"),
     };
     return config;
   },
