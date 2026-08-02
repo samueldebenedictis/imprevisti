@@ -177,3 +177,22 @@ body {
     transform: rotateX(0deg) rotateY(0deg);
   }
 }
+
+/* Balzo della pedina da una casella alla successiva */
+.pawn-hop {
+  animation: pawnHop 260ms ease-out;
+}
+
+@keyframes pawnHop {
+  0% {
+    transform: translateY(0);
+  }
+
+  40% {
+    transform: translateY(-14px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}

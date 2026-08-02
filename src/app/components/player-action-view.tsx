@@ -2,7 +2,7 @@ import Image from "next/image";
 import { getCardDisplay } from "@/lib/card-utils";
 import { imagePrefix } from "../image-prefix";
 import { ACTION_LABELS } from "./action-labels";
-import PlayersPanel, { type PlayersPanelProps } from "./players-panel";
+import SpectatorSpinner from "./spectator-spinner";
 import Button from "./ui/button";
 
 const TARGET_INSTRUCTIONS: Record<string, string> = {
@@ -10,10 +10,7 @@ const TARGET_INSTRUCTIONS: Record<string, string> = {
   "dictation-draw": "Disegna quello che ti descrivono!",
 };
 
-type PlayerActionViewProps = {
-  positions: PlayersPanelProps["positions"];
-  selfId: string | null;
-} & (
+type PlayerActionViewProps =
   | {
       // dictation-draw non arriva mai qui: il server assegna il target
       // automaticamente al roll (vedi TWO_ACTOR_TYPES in roll/route.ts)
@@ -37,8 +34,7 @@ type PlayerActionViewProps = {
   | {
       phase: "spectator";
       actorName?: string;
-    }
-);
+    };
 
 export default function PlayerActionView(props: PlayerActionViewProps) {
   if (props.phase === "target-selection") {
@@ -74,7 +70,6 @@ export default function PlayerActionView(props: PlayerActionViewProps) {
         <p className="ui-text-normal text-gray-500">
           Il coordinatore giudicherà la risposta.
         </p>
-        <PlayersPanel positions={props.positions} selfId={props.selfId} />
       </div>
     );
   }
@@ -104,7 +99,6 @@ export default function PlayerActionView(props: PlayerActionViewProps) {
         <p className="ui-text-normal text-center text-gray-500">
           Il coordinatore giudica sul tabellone.
         </p>
-        <PlayersPanel positions={props.positions} selfId={props.selfId} />
       </div>
     );
   }
@@ -118,7 +112,6 @@ export default function PlayerActionView(props: PlayerActionViewProps) {
         <p className="ui-text-normal">
           L&apos;altro giocatore deciderà il risultato.
         </p>
-        <PlayersPanel positions={props.positions} selfId={props.selfId} />
       </div>
     );
   }
@@ -126,10 +119,10 @@ export default function PlayerActionView(props: PlayerActionViewProps) {
   // spectator
   return (
     <div className="ui-text-dark my-8 flex min-h-screen flex-col items-center justify-center gap-4 p-8 text-center">
+      <SpectatorSpinner />
       <p className="ui-text-normal">
         <strong>{props.actorName}</strong> sta eseguendo un&apos;azione...
       </p>
-      <PlayersPanel positions={props.positions} selfId={props.selfId} />
     </div>
   );
 }

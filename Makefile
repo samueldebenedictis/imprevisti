@@ -11,16 +11,10 @@ storybook:
 	docker compose up storybook
 
 e2e-video:
-	docker compose run --rm playwright sh -c "npx playwright test -c playwright-video.config.ts game-at-work.spec.ts game-at-work-dual-screen.spec.ts --update-snapshots"
-
-e2e-video-game-at-work-dual-screen:
-	docker compose run --rm playwright sh -c "npx playwright test -c playwright-video.config.ts game-at-work-dual-screen.spec.ts --update-snapshots"
+	docker compose run --rm playwright sh -c "npx playwright test -c playwright-video.config.ts game-at-work.spec.ts game-at-work-dual-screen.spec.ts"
 
 e2e-screenshots:
-	docker compose run --rm playwright sh -c "npx playwright test -c playwright-video.config.ts screenshots.spec.ts --update-snapshots"
-
-e2e-screenshots-multi:
-	docker compose run --rm playwright sh -c "npx playwright test -c playwright-video.config.ts screenshots-multiplayer.spec.ts --update-snapshots"
+	docker compose run --rm playwright sh -c "npx playwright test -c playwright-video.config.ts screenshots.spec.ts screenshots-multiplayer.spec.ts --update-snapshots"
 
 copy-video:
 	bash scripts/copy-videos.sh

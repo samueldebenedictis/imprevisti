@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-const TIMEOUT = 1000;
+const TIMEOUT = 2000;
 
 // Viewport dedicato, impostato a livello di file: il registratore video di
 // Playwright alloca il canvas della registrazione in base al viewport del
@@ -109,7 +109,7 @@ test("management", async ({ page, request }) => {
   await expect(
     player.getByRole("button", { name: "Lancia il dado" }),
   ).toBeVisible();
-  await page.waitForTimeout(2 * TIMEOUT);
+  await page.waitForTimeout(TIMEOUT);
 
   // Il giocatore lancia il dado dal proprio smartphone...
   await player.getByRole("button", { name: "Lancia il dado" }).click();
@@ -120,16 +120,22 @@ test("management", async ({ page, request }) => {
   await expect(player.getByText("Quiz").first()).toBeVisible({
     timeout: 5000,
   });
-  await page.waitForTimeout(2 * TIMEOUT);
+  await page.waitForTimeout(TIMEOUT);
+  // il player preme avanti
+  await player.getByText("Avanti").click();
+  await expect(player.getByText("Quiz").first()).toBeVisible({
+    timeout: 5000,
+  });
+  await page.waitForTimeout(TIMEOUT);
 
   // L'educatore rivela la risposta corretta solo sul proprio schermo...
   await host
     .getByRole("button", { name: /Mostra risposta|Mostra soluzione/ })
     .click();
-  await page.waitForTimeout(2 * TIMEOUT);
+  await page.waitForTimeout(TIMEOUT);
 
   // ...e giudica la prova dal tabellone: l'esito si propaga subito sullo
   // smartphone del giocatore.
   await host.getByRole("button", { name: "Riuscito", exact: true }).click();
-  await page.waitForTimeout(2 * TIMEOUT);
+  await page.waitForTimeout(TIMEOUT);
 });

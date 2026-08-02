@@ -2,9 +2,6 @@ import type { Meta, StoryObj } from "@storybook/react";
 import LeftBar from "../src/app/components/left-bar";
 import { Player } from "../src/model/player";
 
-// Mock Player class
-class MockPlayer extends Player {}
-
 // Mock GameJSON
 const mockGameJSON = {
   players: [],
@@ -33,9 +30,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const mockPlayers = [
-  new MockPlayer(1, "Giocatore 1"),
-  new MockPlayer(2, "Giocatore 2"),
-  new MockPlayer(3, "Giocatore 3"),
+  new Player(1, "Giocatore 1"),
+  new Player(2, "Giocatore 2"),
+  new Player(3, "Giocatore 3"),
 ];
 
 const playersPositions = [

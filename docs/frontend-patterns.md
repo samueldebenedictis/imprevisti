@@ -218,3 +218,118 @@ useEffect(() => {
 }, [session?.pendingAction?.type, session?.pendingAction?.actorPlayerId]);
 // biome-ignore lint/correctness/useExhaustiveDependencies: intentional reset on action change only
 ```
+
+---
+
+## Player device views
+
+Full-screen views rendered by `src/app/player/[sessionId]/[playerId]/page.tsx` depending on turn phase.
+
+### `PlayerRollView` (`src/app/components/player-roll-view.tsx`)
+
+```tsx
+import PlayerRollView from "@/app/components/player-roll-view";
+
+<PlayerRollView isRolling={isRolling} onRollDice={() => void rollDice()} />
+```
+
+Props:
+```ts
+{ isRolling: boolean; onRollDice: () => void }
+```
+
+"È il tuo turno!" screen with a clickable `Dice` (also disabled while rolling) and a `Button` that both trigger `onRollDice`. Button label switches to "Lancio..." while `isRolling` is true.
+
+---
+
+### `PlayerRollResultView` (`src/app/components/player-roll-result-view.tsx`)
+
+```tsx
+import PlayerRollResultView from "@/app/components/player-roll-result-view";
+
+<PlayerRollResultView
+  diceResult={localDiceResult}
+  moveInfo={localMoveInfo}
+  onContinue={() => {
+    setLocalDiceResult(null);
+    setLocalMoveInfo(null);
+  }}
+/>
+```
+
+Props:
+```ts
+{
+  diceResult: number;             // 0 = turn skipped
+  moveInfo: LastMoveInfo | null;  // from PublicSessionState.lastMoveInfo
+  onContinue: () => void;
+}
+```
+
+Intermediate "you rolled N" screen shown between the roll and the next phase (action/waiting/spectator). Shows "Turno saltato!" when `diceResult === 0`; otherwise shows the `Dice` result and, if `moveInfo` is present, the landed-on square number plus its label via `ACTION_LABELS` (skipped for `"normal"`/`"move"` types). The "Avanti" button lets the player dismiss the result at their own pace — see the note on the `isRolling` / `localDiceResult` guard order below.
+
+---
+
+### `PlayerGameOverView` (`src/app/components/player-game-over-view.tsx`)
+
+```tsx
+import PlayerGameOverView from "@/app/components/player-game-over-view";
+
+<PlayerGameOverView winnerName={session.gameOver.winnerName} />
+```
+
+Props:
+```ts
+{ winnerName: string }
+```
+
+End-of-game screen shown on a player's device: winner name plus a `Link` to `URL_FEEDBACK` (from `@/vars`) styled as a `Button`.
+
+---
+
+### Note: early-return guard order in the player page
+
+In `src/app/player/[sessionId]/[playerId]/page.tsx`, the `isRolling` and `localDiceResult !== null` checks are placed as early returns *before* the session-driven phase branches (target-selection/actor/target/spectator/waiting). This isn't arbitrary — a code comment right above the `isRolling` guard explains why:
+
+```ts
+// Lancio in corso: il polling in background può già riflettere lo stato
+// server post-lancio (es. pendingAction di un'azione speciale) prima che
+// il client riceva la risposta della roll — non lasciare che l'azione
+// interrompa l'animazione del dado.
+if (isRolling) { ... }
+
+// Risultato del lancio: pagina intermedia col bottone "Avanti" prima di
+// mostrare direttamente il turno successivo (attesa/azione/spectator).
+if (!isRolling && localDiceResult !== null) { ... }
+```
+
+Background polling keeps running during the roll `fetch`, so the session can already reflect the post-roll server state (e.g. a new `pendingAction`) before the roll response reaches the client. If the phase branches were checked first, that race would yank the player straight into the next phase's view mid dice-animation. Checking local roll state first guarantees the dice animation and the roll-result screen always run to completion, regardless of how fast the poller updates `session`.
+
+---
+
+### `PawnsLayer` (`src/app/components/pawns-layer.tsx`)
+
+```tsx
+import PawnsLayer from "@/app/components/pawns-layer";
+
+<PawnsLayer
+  players={playerPositions}
+  currentPlayerId={session.currentPlayerId}
+  cols={boardCols}
+  totalSquares={totalSquares}
+/>
+```
+
+Props:
+```ts
+{
+  players: { id: string; name: string; position: number }[];
+  currentPlayerId?: string | null;
+  cols: number;
+  totalSquares: number;
+}
+```
+
+Board overlay that positions a `Pawn` per player on top of the grid via `cellStyle` (percentage `translate` based on `position`/`cols`). Players sharing a square are grouped; the current player's pawn is rendered separately from an "others" pawn (which collapses to a `"N altri giocatori"` label when more than one other player shares the square).
+
+**`useSteppedPositions` hook**: rather than jumping a pawn straight to its new `position`, this internal hook keeps a `displayed` map of per-player positions and advances each stale entry by one square every `HOP_DURATION_MS` (260ms), re-triggering itself via its own `displayed` dependency until it catches up to the real position. New players (e.g. joining mid-game) are seeded directly at their current position with no hops. This makes multi-square moves visually hop tile-by-tile instead of teleporting, matching the physical board-game feel. The current player's pawn node is keyed by `player-${id}` (stable across hops, so the CSS `transition-transform` actually animates) while stationary pawns are keyed by `square-${position}`. Each hop also re-mounts a `.pawn-hop` wrapper (`src/app/globals.css`, a 260ms `translateY` keyframe bump) to give the pawn a little vertical bounce per step; `isCurrentPlayerTurn` on `Pawn` is suppressed (no `animate-bounce`) while a hop is in flight.

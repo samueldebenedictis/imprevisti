@@ -7,17 +7,14 @@ const meta = {
   parameters: {
     layout: "fullscreen",
   },
+  globals: {
+    viewport: { value: "mobile2", isRotated: false },
+  },
   tags: ["autodocs"],
 } satisfies Meta<typeof PlayerActionView>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
-
-const positions = [
-  { id: "1", name: "Giocatore 1", position: 5 },
-  { id: "2", name: "Giocatore 2", position: 3 },
-  { id: "3", name: "Giocatore 3", position: 7 },
-];
 
 export const TargetSelectionBackwrite: Story = {
   args: {
@@ -27,8 +24,6 @@ export const TargetSelectionBackwrite: Story = {
       { id: "3", name: "Giocatore 3" },
     ],
     onSelectTarget: (targetId) => console.log(`Target selected: ${targetId}`),
-    positions,
-    selfId: "1",
   },
 };
 
@@ -36,8 +31,6 @@ export const QuizActor: Story = {
   args: {
     phase: "quiz-actor",
     quizQuestion: "Qual è la capitale dell'Italia?",
-    positions,
-    selfId: "1",
   },
 };
 
@@ -46,8 +39,6 @@ export const MimeActor: Story = {
     phase: "actor",
     actionType: "mime",
     card: { cardTitle: "Elefante", cardText: "" },
-    positions,
-    selfId: "1",
   },
 };
 
@@ -56,8 +47,6 @@ export const BackWriteActor: Story = {
     phase: "actor",
     actionType: "backwrite",
     card: { cardTitle: "Gatto", cardText: "" },
-    positions,
-    selfId: "1",
   },
 };
 
@@ -65,13 +54,13 @@ export const FaceEmotionActor: Story = {
   args: {
     phase: "actor",
     actionType: "face-emotion",
+    // Forma reale inviata dal server (roll/route.ts): il campo immagine sta
+    // fuori, il testo della carta è annidato sotto "topic" — getCardDisplay
+    // (card-utils.ts) legge imageUrl solo in questa forma.
     card: {
-      cardTitle: "felice",
-      cardText: "felice",
+      topic: { cardTitle: "felice", cardText: "felice" },
       imageUrl: "/images/face-emotion/uomo-1-felice.png",
     },
-    positions,
-    selfId: "1",
   },
 };
 
@@ -80,8 +69,6 @@ export const MusicEmotionActor: Story = {
     phase: "actor",
     actionType: "music-emotion",
     card: { cardTitle: "Felicità", cardText: "Canta una canzone allegra" },
-    positions,
-    selfId: "1",
   },
 };
 
@@ -90,8 +77,6 @@ export const PhysicalTestActor: Story = {
     phase: "actor",
     actionType: "physical-test",
     card: { cardTitle: "Test fisico", cardText: "Fai 10 flessioni" },
-    positions,
-    selfId: "1",
   },
 };
 
@@ -103,8 +88,6 @@ export const WhatWouldYouDoActor: Story = {
       cardTitle: "Situazione ipotetica",
       cardText: "Se vincessi un viaggio intorno al mondo?",
     },
-    positions,
-    selfId: "1",
   },
 };
 
@@ -113,12 +96,12 @@ export const DictationDrawActor: Story = {
     phase: "actor",
     actionType: "dictation-draw",
     card: {
-      cardTitle: "Casa: Una semplice casa con tetto e porta 🏠",
-      cardText: "",
+      topic: {
+        cardTitle: "Casa: Una semplice casa con tetto e porta 🏠",
+        cardText: "",
+      },
       imageUrl: "/images/dictation-draw/house.svg",
     },
-    positions,
-    selfId: "1",
   },
 };
 
@@ -127,8 +110,6 @@ export const BattleActor: Story = {
     phase: "actor",
     actionType: "battle",
     card: null,
-    positions,
-    selfId: "1",
   },
 };
 
@@ -136,8 +117,6 @@ export const BackWriteTarget: Story = {
   args: {
     phase: "target",
     actionType: "backwrite",
-    positions,
-    selfId: "2",
   },
 };
 
@@ -145,17 +124,6 @@ export const DictationDrawTarget: Story = {
   args: {
     phase: "target",
     actionType: "dictation-draw",
-    positions,
-    selfId: "2",
-  },
-};
-
-export const QuizTarget: Story = {
-  args: {
-    phase: "target",
-    actionType: "quiz",
-    positions,
-    selfId: "2",
   },
 };
 
@@ -163,7 +131,5 @@ export const Spectator: Story = {
   args: {
     phase: "spectator",
     actorName: "Giocatore 1",
-    positions,
-    selfId: "3",
   },
 };

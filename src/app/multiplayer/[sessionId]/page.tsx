@@ -15,6 +15,7 @@ import BoardComponent from "../../components/board";
 import HostActionOverlay from "../../components/host-action-overlay";
 import HostBattleOverlay from "../../components/host-battle-overlay";
 import { IdleOverlay } from "../../components/idle-overlay";
+import PawnsLayer from "../../components/pawns-layer";
 import { QrCode } from "../../components/qr-code";
 import SquareC from "../../components/square";
 import Button from "../../components/ui/button";
@@ -30,7 +31,6 @@ export default function MultiplayerSessionPage() {
 
   const gameStore = useGameStore((state) => state.actions);
   const game = useGameStore((state) => state.game);
-  const isRolling = useGameStore((state) => state.isRolling);
   const currentPlayer = useCurrentPlayer();
 
   const config = useConfigStore((state) => state);
@@ -140,19 +140,10 @@ export default function MultiplayerSessionPage() {
                       ? "last"
                       : el.getType(),
                 moveValue: el instanceof MoveSquare ? el.moveValue : undefined,
-                playersOn: game
-                  .getBoard()
-                  .getPlayersOnSquare(index)
-                  .map((player) => ({
-                    name: player.getName(),
-                    isCurrentPlayerTurn:
-                      player.getName() === currentPlayer?.getName(),
-                  })),
-                isMoving: isRolling,
               }),
             )
         : [],
-    [game, isRolling, currentPlayer, size],
+    [game, size],
   );
 
   // LOBBY
@@ -210,8 +201,16 @@ export default function MultiplayerSessionPage() {
         </div>
 
         {/* Board */}
-        <div className="flex flex-shrink-0 flex-col items-center justify-center">
+        <div className="relative flex flex-shrink-0 flex-col items-center justify-center">
           {BoardComponent({ squares: squaresC, cols: 5 })}
+          <PawnsLayer
+            players={playersPositions}
+            currentPlayerId={
+              currentPlayer ? String(currentPlayer.getId()) : null
+            }
+            cols={5}
+            totalSquares={size}
+          />
         </div>
 
         {/* Game over overlay */}
