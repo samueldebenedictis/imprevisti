@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { LABEL_OTHER_PLAYERS } from "../texts";
+import { soundManager } from "../utils/sound-manager";
 import Pawn from "./pawn";
 import type { Color } from "./ui/color";
 
@@ -64,6 +65,7 @@ function useSteppedPositions(players: PlayerPosition[]) {
     if (!pending) return;
 
     const timer = setTimeout(() => {
+      soundManager.playPawnMove();
       setDisplayed((prev) => {
         const next = new Map(prev);
         for (const player of players) {

@@ -102,6 +102,14 @@ export class SoundManager {
   }
 
   /**
+   * Riproduce l'effetto sonoro del balzo della pedina tra due caselle.
+   */
+  async playPawnMove(): Promise<void> {
+    await this.ensureAudioContext();
+    this.playTone(500, 0.08, "triangle");
+  }
+
+  /**
    * Riproduce l'effetto sonoro del lancio del dado.
    */
   async playDiceRoll(): Promise<void> {
