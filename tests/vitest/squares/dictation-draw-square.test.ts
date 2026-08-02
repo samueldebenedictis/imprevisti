@@ -1,8 +1,11 @@
 import { describe, expect, test } from "vitest";
 import { Board } from "@/model/board";
+import { Card } from "@/model/deck/card";
+import { DictationDrawDeck } from "@/model/deck/dictation-draw-deck";
 import { Game } from "@/model/game";
 import { Player } from "@/model/player";
 import {
+  type CommandDependencies,
   DictationDraw,
   DictationDrawSquare,
   SpecialSquare,
@@ -140,6 +143,23 @@ describe("Dictation draw square", () => {
       expect(collision2).toBeNull();
       expect(game.getPlayerPosition(renzo)).toBe(2);
       expect(game.getPlayerPosition(lucia)).toBe(1);
+    }
+  });
+
+  test("Dictation draw falls back to empty imageUrl when card has no image data", () => {
+    const dictationDrawSquare = new DictationDrawSquare(0);
+    const player = new Player(0, "Renzo");
+    const deck = new DictationDrawDeck([new Card("Unknown", "")]);
+
+    const command = dictationDrawSquare.getCommand();
+    const result = command.execute({
+      player,
+      dictationDrawDeck: deck,
+    } as CommandDependencies);
+
+    expect(result).toBeInstanceOf(DictationDraw);
+    if (result instanceof DictationDraw) {
+      expect(result.imageUrl).toBe("");
     }
   });
 });

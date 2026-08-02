@@ -1,8 +1,11 @@
 import { describe, expect, test } from "vitest";
 import { Board } from "@/model/board";
+import { Card } from "@/model/deck/card";
+import { FaceEmotionDeck } from "@/model/deck/face-emotion-deck";
 import { Game } from "@/model/game";
 import { Player } from "@/model/player";
 import {
+  type CommandDependencies,
   FaceEmotion,
   FaceEmotionSquare,
   SpecialSquare,
@@ -89,6 +92,23 @@ describe("Face emotion square", () => {
       expect(typeof faceEmotion.data.cardEmotion.cardTitle).toBe("string");
       expect(faceEmotion.data.imageUrl).toBeDefined();
       expect(typeof faceEmotion.data.imageUrl).toBe("string");
+    }
+  });
+
+  test("Face emotion falls back to empty imageUrl when card has no image data", () => {
+    const faceEmotionSquare = new FaceEmotionSquare(0);
+    const player = new Player(0, "Renzo");
+    const deck = new FaceEmotionDeck([new Card("Unknown", "no-match-text")]);
+
+    const command = faceEmotionSquare.getCommand();
+    const result = command.execute({
+      player,
+      faceEmotionDeck: deck,
+    } as CommandDependencies);
+
+    expect(result).toBeInstanceOf(FaceEmotion);
+    if (result instanceof FaceEmotion) {
+      expect(result.imageUrl).toBe("");
     }
   });
 });
