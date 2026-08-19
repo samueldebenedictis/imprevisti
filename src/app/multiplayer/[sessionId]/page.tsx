@@ -221,8 +221,8 @@ export default function MultiplayerSessionPage() {
               <p className="ui-text-subtitle">
                 Vince: <strong>{session.gameOver.winnerName}</strong>
               </p>
-              <Link href={URL_HOME}>
-                <Button color="blue" className="mx-0">
+              <Link href={URL_HOME} className="block">
+                <Button color="blue" className="mx-0 w-full">
                   Torna alla home
                 </Button>
               </Link>
