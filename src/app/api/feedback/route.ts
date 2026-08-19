@@ -20,5 +20,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const items = await getFeedback(100);
-  return NextResponse.json(items.map((i) => JSON.parse(i)));
+  return NextResponse.json(
+    items.map((i) => (typeof i === "string" ? JSON.parse(i) : i)),
+  );
 }
