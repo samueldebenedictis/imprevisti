@@ -33,6 +33,7 @@ export interface GameConfig {
   };
   specialPercentage: number;
   customSquares: SquareJSON[] | null;
+  battlesEnabled: boolean;
 }
 
 export interface ConfigActions {
@@ -49,6 +50,7 @@ export interface ConfigActions {
     enabled: boolean,
   ) => void;
   setSpecialPercentage: (percentage: number) => void;
+  setBattlesEnabled: (enabled: boolean) => void;
 
   // Form
   resetConfig: () => void;
@@ -81,6 +83,7 @@ const defaultConfig: GameConfig = {
   },
   specialPercentage: DEFAULT_SPECIAL_PERCENTAGE_SQUARES,
   customSquares: null,
+  battlesEnabled: true,
 };
 
 export const useConfigStore = create<ConfigStore>()(
@@ -142,6 +145,8 @@ export const useConfigStore = create<ConfigStore>()(
 
         setSpecialPercentage: (percentage) =>
           set({ specialPercentage: percentage }),
+
+        setBattlesEnabled: (enabled) => set({ battlesEnabled: enabled }),
 
         setCustomSquares: (squares) => set({ customSquares: squares }),
 
@@ -211,7 +216,7 @@ export const useConfigStore = create<ConfigStore>()(
           );
 
           // Creo il Game
-          const game = new GameModel(board);
+          const game = new GameModel(board, 6, config.battlesEnabled);
 
           const gameStore = useGameStore.getState();
           gameStore.actions.setGame(game);
@@ -227,6 +232,7 @@ export const useConfigStore = create<ConfigStore>()(
         squareTypes: state.squareTypes,
         specialPercentage: state.specialPercentage,
         customSquares: state.customSquares,
+        battlesEnabled: state.battlesEnabled,
       }),
     },
   ),

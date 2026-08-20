@@ -47,6 +47,7 @@ export interface GameJSON {
   currentRound: number;
   gameEnded: boolean;
   winnerId?: number;
+  battlesEnabled: boolean;
 }
 
 /**
@@ -56,6 +57,7 @@ export interface GameJSON {
 export class Game {
   private board: Board;
   private dice: Dice;
+  private battlesEnabled: boolean;
   private mimeDeck: Deck;
   private quizDeck: Deck;
   private backWriteDeck: Deck;
@@ -85,11 +87,13 @@ export class Game {
    * @param board - L'istanza del tabellone di gioco
    * @param players - Array delle istanze dei giocatori
    * @param diceFaces - Numero di facce del dado (opzionale, default 6)
+   * @param battlesEnabled - Se false, le collisioni tra giocatori non generano battaglie (opzionale, default true)
    */
-  constructor(board: Board, diceFaces = 6) {
+  constructor(board: Board, diceFaces = 6, battlesEnabled = true) {
     // Inizializzazione componenti base
     this.board = board;
     this.dice = new Dice(diceFaces);
+    this.battlesEnabled = battlesEnabled;
     this.mimeDeck = new MimeDeck();
     this.quizDeck = new QuizDeck();
     this.backWriteDeck = new BackWriteDeck();
@@ -105,6 +109,7 @@ export class Game {
     this.movementManager = new MovementManager(
       this.board,
       this.gameStateManager,
+      this.battlesEnabled,
     );
     this.specialSquareProcessor = new SpecialSquareProcessor(
       this.board,
@@ -153,6 +158,7 @@ export class Game {
       currentRound: this.turnManager.getCurrentRound(),
       gameEnded: this.gameStateManager.isGameEnded(),
       winnerId: this.gameStateManager.getWinner()?.getId(),
+      battlesEnabled: this.battlesEnabled,
     };
   }
 
@@ -172,7 +178,7 @@ export class Game {
 
     const board = Board.fromJSON(json.board, players);
 
-    const game = new Game(board);
+    const game = new Game(board, 6, json.battlesEnabled ?? true);
 
     game.turnManager = TurnManager.fromJSON(
       json.currentTurn,
@@ -192,6 +198,7 @@ export class Game {
     game.movementManager = new MovementManager(
       game.board,
       reconstructedGameStateManager,
+      game.battlesEnabled,
     );
     game.specialSquareProcessor = new SpecialSquareProcessor(
       game.board,
