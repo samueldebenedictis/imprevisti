@@ -10,24 +10,33 @@ import Select from "../components/ui/select";
 // Componente riutilizzabile per i rating scales
 function RatingScale({
   label,
+  labelClassName,
   htmlFor,
   value,
   onChange,
   name,
   description,
   required = false,
+  invalid = false,
 }: {
   label: string;
+  labelClassName?: string;
   htmlFor: string;
   value: number;
   onChange: (value: number) => void;
   name: string;
   description?: string;
   required?: boolean;
+  invalid?: boolean;
 }) {
   return (
-    <div className="mb-4">
-      <Label htmlFor={htmlFor}>{label}</Label>
+    <div id={htmlFor} className="mb-4">
+      <Label
+        htmlFor={htmlFor}
+        className={`${labelClassName ?? ""} ${invalid ? "text-red-600" : ""}`}
+      >
+        {label}
+      </Label>
       {description && <div className="mt-1 text-sm">{description}</div>}
       <div className="mt-2 flex justify-between">
         {[1, 2, 3, 4, 5].map((ratingValue) => (
@@ -44,7 +53,7 @@ function RatingScale({
               className="ui-custom-checkbox mr-2"
               required={required}
             />
-            <span>{ratingValue}</span>
+            <span className="font-light">{ratingValue}</span>
           </label>
         ))}
       </div>
@@ -70,13 +79,15 @@ function TextAreaField({
 }) {
   return (
     <div className="mb-4">
-      <Label htmlFor={htmlFor}>{label}</Label>
+      <Label htmlFor={htmlFor} className="font-light">
+        {label}
+      </Label>
       <textarea
         id={htmlFor}
         name={name}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="ui-text-dark ui-border-focus w-full p-2"
+        className="ui-text-dark ui-border-focus mt-2 w-full p-2"
         rows={3}
         placeholder={placeholder}
       />
@@ -181,10 +192,15 @@ const initialTexts = (): Record<TextKey, string> =>
     string
   >;
 
+const STEP_LABELS = ["Info base", "Questionario SUS", "Valutazioni", "Altro"];
+const TOTAL_STEPS = STEP_LABELS.length;
+
 export default function FeedbackPage() {
   const [name, setName] = useState("");
   const [ageGroup, setGroup] = useState("");
   const [gameExperience, setGameExperience] = useState("");
+  const [screenMode, setScreenMode] = useState("");
+  const [autismIdentification, setAutismIdentification] = useState("");
   const [ratings, setRatings] = useState<Record<RatingKey, number>>(
     initialRatings(),
   );
@@ -194,42 +210,91 @@ export default function FeedbackPage() {
   const [texts, setTexts] = useState<Record<TextKey, string>>(initialTexts());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [step, setStep] = useState(0);
+  const [invalidFields, setInvalidFields] = useState<Set<string>>(new Set());
 
-  const setRating = (key: RatingKey, value: number) =>
+  const clearInvalid = (key: string) =>
+    setInvalidFields((prev) => {
+      if (!prev.has(key)) return prev;
+      const next = new Set(prev);
+      next.delete(key);
+      return next;
+    });
+
+  const setRating = (key: RatingKey, value: number) => {
     setRatings((prev) => ({ ...prev, [key]: value }));
+    clearInvalid(key);
+  };
 
-  const setSusScore = (index: number, value: number) =>
+  const setSusScore = (index: number, value: number) => {
     setSusScores((prev) => {
       const next = [...prev];
       next[index] = value;
       return next;
     });
+    clearInvalid(`sus${index + 1}`);
+  };
 
   const setText = (key: TextKey, value: string) =>
     setTexts((prev) => ({ ...prev, [key]: value }));
 
+  const getStepInvalidFields = (s: number): string[] => {
+    if (s === 0) {
+      const fields: string[] = [];
+      if (!name.trim()) fields.push("name");
+      if (!ageGroup.trim()) fields.push("ageGroup");
+      if (!gameExperience.trim()) fields.push("gameExperience");
+      if (!screenMode.trim()) fields.push("screenMode");
+      return fields;
+    }
+
+    if (s === 1) {
+      return susScores
+        .map((score, i) => (score === 0 ? `sus${i + 1}` : null))
+        .filter((f): f is string => f !== null);
+    }
+
+    if (s === 2) {
+      return RATING_QUESTIONS.filter(
+        (q) => q.required && ratings[q.key] === 0,
+      ).map((q) => q.key);
+    }
+
+    return [];
+  };
+
+  const scrollToField = (id: string) => {
+    setTimeout(() => {
+      document
+        .getElementById(id)
+        ?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 0);
+  };
+
+  const goToNextStep = () => {
+    const fields = getStepInvalidFields(step);
+    if (fields.length > 0) {
+      setInvalidFields(new Set(fields));
+      scrollToField(fields[0]);
+      return;
+    }
+    setInvalidFields(new Set());
+    setStep((s) => s + 1);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validazione campi obbligatori
-    if (!ageGroup.trim()) {
-      alert("Seleziona se sei un docente o un alunno.");
-      return;
-    }
-
-    for (const q of RATING_QUESTIONS) {
-      if (q.required && ratings[q.key] === 0) {
-        alert(`Valuta ${q.errorLabel} selezionando un punteggio da 1 a 5.`);
+    for (let s = 0; s < TOTAL_STEPS; s++) {
+      const fields = getStepInvalidFields(s);
+      if (fields.length > 0) {
+        setStep(s);
+        setInvalidFields(new Set(fields));
+        scrollToField(fields[0]);
         return;
       }
     }
-
-    if (susScores.some((score) => score === 0)) {
-      alert(
-        "Rispondi a tutte le domande del questionario SUS selezionando un punteggio da 1 a 5.",
-      );
-      return;
-    }
+    setInvalidFields(new Set());
 
     setIsSubmitting(true);
 
@@ -243,6 +308,8 @@ export default function FeedbackPage() {
           name,
           ageGroup,
           gameExperience,
+          screenMode,
+          autismIdentification,
           appVersion,
           ...Object.fromEntries(
             Object.entries(ratings).filter(([, value]) => value !== 0),
@@ -259,9 +326,13 @@ export default function FeedbackPage() {
         setName("");
         setGroup("");
         setGameExperience("");
+        setScreenMode("");
+        setAutismIdentification("");
         setRatings(initialRatings());
         setSusScores(Array(SUS_QUESTIONS.length).fill(0));
         setTexts(initialTexts());
+        setStep(0);
+        setInvalidFields(new Set());
       } else {
         alert("Errore nell'invio del messaggio. Riprova più tardi.");
       }
@@ -282,6 +353,7 @@ export default function FeedbackPage() {
         <Button
           onClick={() => {
             setIsSubmitted(false);
+            setStep(0);
           }}
         >
           Invia un altro messaggio
@@ -291,106 +363,252 @@ export default function FeedbackPage() {
   }
 
   return (
-    <div className="ui-text-dark my-8 flex flex-col items-center justify-center p-2">
+    <div className="ui-text-dark my-8 flex flex-col items-center justify-center p-4">
       <h1 className="ui-text-title m-2">Feedback</h1>
       <p className="ui-text-normal mb-4">Aiutami a migliorare l'app!</p>
-      <form onSubmit={handleSubmit} className="m-2 w-full max-w-md bg-white">
-        <div className="mb-4">
-          <Label htmlFor="name">Nome *</Label>
-          <Input
-            type="text"
-            id="name"
-            name="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
+      <form
+        onSubmit={handleSubmit}
+        className="m-2 w-full max-w-md bg-white px-2"
+      >
+        <div className="mb-6">
+          <p className="ui-text-normal mb-1 text-sm">
+            Passo {step + 1} di {TOTAL_STEPS}: {STEP_LABELS[step]}
+          </p>
+          <div className="h-2 w-full bg-gray-200">
+            <div
+              className="h-2 bg-sky-500 transition-all"
+              style={{ width: `${((step + 1) / TOTAL_STEPS) * 100}%` }}
+            />
+          </div>
         </div>
 
-        <div className="mb-4">
-          <Label htmlFor="ageGroup">Sei un docente o un alunno? *</Label>
-          <Select
-            value={ageGroup}
-            onChange={(e) => setGroup(e.target.value)}
-            options={[
-              { value: "docente", label: "Docente" },
-              { value: "alunno", label: "Alunno" },
-              { value: "none", label: "Altro" },
-            ]}
-            placeholder="Seleziona..."
-          />
+        {step === 0 && (
+          <>
+            <h2 className="ui-text-title mb-2">Info base</h2>
+            <div className="mb-4">
+              <Label
+                htmlFor="name"
+                className={`font-light ${invalidFields.has("name") ? "text-red-600" : ""}`}
+              >
+                Nome *
+              </Label>
+              <Input
+                type="text"
+                id="name"
+                name="name"
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  clearInvalid("name");
+                }}
+                required
+                className={`mt-2 ${invalidFields.has("name") ? "border-red-600" : ""}`}
+              />
+            </div>
+
+            <div className="mb-4">
+              <Label
+                htmlFor="ageGroup"
+                className={`font-light ${invalidFields.has("ageGroup") ? "text-red-600" : ""}`}
+              >
+                Sei un docente o un alunno? *
+              </Label>
+              <Select
+                id="ageGroup"
+                value={ageGroup}
+                onChange={(e) => {
+                  setGroup(e.target.value);
+                  clearInvalid("ageGroup");
+                }}
+                options={[
+                  { value: "docente", label: "Docente" },
+                  { value: "alunno", label: "Alunno" },
+                  { value: "none", label: "Altro" },
+                ]}
+                placeholder="Seleziona..."
+                className={`mt-2 ${invalidFields.has("ageGroup") ? "border-red-600" : ""}`}
+              />
+            </div>
+
+            <div className="mb-4">
+              <Label
+                htmlFor="gameExperience"
+                className={`font-light ${invalidFields.has("gameExperience") ? "text-red-600" : ""}`}
+              >
+                Esperienza con il gioco *
+              </Label>
+              <Select
+                id="gameExperience"
+                value={gameExperience}
+                onChange={(e) => {
+                  setGameExperience(e.target.value);
+                  clearInvalid("gameExperience");
+                }}
+                options={[
+                  { value: "fisico", label: "Ho giocato la versione fisica" },
+                  {
+                    value: "digitale",
+                    label: "Ho giocato la versione digitale",
+                  },
+                  {
+                    value: "esperto",
+                    label: "Ho giocato entrambe le versioni",
+                  },
+                ]}
+                placeholder="Seleziona..."
+                className={`mt-2 ${invalidFields.has("gameExperience") ? "border-red-600" : ""}`}
+              />
+            </div>
+
+            <div className="mb-4">
+              <Label
+                htmlFor="screenMode"
+                className={`font-light ${invalidFields.has("screenMode") ? "text-red-600" : ""}`}
+              >
+                Ho giocato alla versione schermo singolo o multischermo *
+              </Label>
+              <Select
+                id="screenMode"
+                value={screenMode}
+                onChange={(e) => {
+                  setScreenMode(e.target.value);
+                  clearInvalid("screenMode");
+                }}
+                options={[
+                  { value: "singolo", label: "Schermo singolo" },
+                  { value: "multi", label: "Multischermo" },
+                ]}
+                placeholder="Seleziona..."
+                className={`mt-2 ${invalidFields.has("screenMode") ? "border-red-600" : ""}`}
+              />
+            </div>
+          </>
+        )}
+
+        {step === 1 && (
+          <>
+            <h2 className="ui-text-title mb-2">Questionario SUS</h2>
+            <RatingScaleLegend />
+
+            {SUS_QUESTIONS.map((question, i) => (
+              <RatingScale
+                key={`sus${i + 1}`}
+                label={`${i + 1}. ${question}`}
+                labelClassName="font-light"
+                htmlFor={`sus${i + 1}`}
+                value={susScores[i]}
+                onChange={(value) => setSusScore(i, value)}
+                name={`sus${i + 1}`}
+                required
+                invalid={invalidFields.has(`sus${i + 1}`)}
+              />
+            ))}
+          </>
+        )}
+
+        {step === 2 && (
+          <>
+            <h2 className="ui-text-title mb-2">Valutazioni</h2>
+            <RatingScaleLegend />
+
+            {RATING_QUESTIONS.map((q) => (
+              <RatingScale
+                key={q.key}
+                label={q.label}
+                labelClassName="font-light"
+                htmlFor={q.key}
+                name={q.key}
+                description={q.description}
+                value={ratings[q.key]}
+                onChange={(value) => setRating(q.key, value)}
+                required={q.required}
+                invalid={invalidFields.has(q.key)}
+              />
+            ))}
+          </>
+        )}
+
+        {step === 3 && (
+          <>
+            <h2 className="ui-text-title mb-2">Altro</h2>
+            {TEXT_QUESTIONS.map((q) => (
+              <TextAreaField
+                key={q.key}
+                label={q.label}
+                htmlFor={q.key}
+                name={q.key}
+                value={texts[q.key]}
+                onChange={(value) => setText(q.key, value)}
+                placeholder={q.placeholder}
+              />
+            ))}
+
+            <div className="mb-4">
+              <Label htmlFor="autismIdentification" className="font-light">
+                Hai una diagnosi (o ti riconosci) nello spettro autistico?
+              </Label>
+              <div className="mt-1 text-sm">
+                Questa informazione è opzionale, ci aiuta a leggere meglio i
+                feedback legati a bisogni specifici.
+              </div>
+              <Select
+                id="autismIdentification"
+                value={autismIdentification}
+                onChange={(e) => setAutismIdentification(e.target.value)}
+                options={[
+                  { value: "si_diagnosi", label: "Sì, diagnosi confermata" },
+                  {
+                    value: "si_non_diagnosticato",
+                    label: "Sì, ma senza diagnosi formale",
+                  },
+                  { value: "no", label: "No" },
+                  {
+                    value: "preferisco_non_rispondere",
+                    label: "Preferisco non rispondere",
+                  },
+                ]}
+                placeholder="Seleziona..."
+                className="mt-2"
+              />
+            </div>
+          </>
+        )}
+
+        <div className="mt-6 flex justify-between gap-2">
+          {step > 0 ? (
+            <Button
+              type="button"
+              className="mx-0"
+              onClick={() => setStep((s) => s - 1)}
+            >
+              Indietro
+            </Button>
+          ) : (
+            <div />
+          )}
+
+          {step < TOTAL_STEPS - 1 ? (
+            <Button
+              key="next"
+              color="blue"
+              type="button"
+              className="mx-0"
+              onClick={goToNextStep}
+            >
+              Avanti
+            </Button>
+          ) : (
+            <Button
+              key="submit"
+              color="blue"
+              type="submit"
+              className="mx-0"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Invio in corso..." : "Invia"}
+            </Button>
+          )}
         </div>
-
-        <div className="mb-4">
-          <Label htmlFor="gameExperience">Esperienza con il gioco *</Label>
-          <Select
-            value={gameExperience}
-            onChange={(e) => setGameExperience(e.target.value)}
-            options={[
-              { value: "fisico", label: "Ho giocato la versione fisica" },
-              { value: "digitale", label: "Ho giocato la versione digitale" },
-              { value: "esperto", label: "Ho giocato entrambe le versioni" },
-            ]}
-            placeholder="Seleziona..."
-          />
-        </div>
-
-        <div className="my-8 border-gray-300 border-b-2"></div>
-
-        <h2 className="ui-text-title mb-2">Questionario SUS *</h2>
-        <RatingScaleLegend />
-
-        {SUS_QUESTIONS.map((question, i) => (
-          <RatingScale
-            key={`sus${i + 1}`}
-            label={`${i + 1}. ${question}`}
-            htmlFor={`sus${i + 1}`}
-            value={susScores[i]}
-            onChange={(value) => setSusScore(i, value)}
-            name={`sus${i + 1}`}
-            required
-          />
-        ))}
-
-        <div className="my-8 border-gray-300 border-b-2"></div>
-
-        <RatingScaleLegend />
-
-        {RATING_QUESTIONS.map((q) => (
-          <RatingScale
-            key={q.key}
-            label={q.label}
-            htmlFor={q.key}
-            name={q.key}
-            description={q.description}
-            value={ratings[q.key]}
-            onChange={(value) => setRating(q.key, value)}
-            required={q.required}
-          />
-        ))}
-
-        <div className="my-8 border-gray-300 border-b-2"></div>
-
-        {TEXT_QUESTIONS.map((q) => (
-          <TextAreaField
-            key={q.key}
-            label={q.label}
-            htmlFor={q.key}
-            name={q.key}
-            value={texts[q.key]}
-            onChange={(value) => setText(q.key, value)}
-            placeholder={q.placeholder}
-          />
-        ))}
-
-        <Button
-          color="blue"
-          type="submit"
-          className="mx-auto"
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "Invio in corso..." : "Invia"}
-        </Button>
       </form>
     </div>
   );

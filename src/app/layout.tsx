@@ -26,7 +26,7 @@ const londrinaShadow = Londrina_Shadow({
 });
 
 const londrinaSolid = Londrina_Solid({
-  weight: "400",
+  weight: ["300", "400"],
   variable: "--font-londrina-solid",
   subsets: ["latin"],
 });
