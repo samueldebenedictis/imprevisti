@@ -25,3 +25,4 @@ copy-screenshots:
 
 tesi:
 	cd elaborato && latexmk -pdf -interaction=nonstopmode -halt-on-error tesi.tex
+	cd elaborato && latexmk -c tesi.tex
