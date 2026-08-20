@@ -15,9 +15,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const players = [
-  { id: "1", name: "Giocatore 1" },
-  { id: "2", name: "Giocatore 2" },
-  { id: "3", name: "Giocatore 3" },
+  { id: "1", name: "Alice" },
+  { id: "2", name: "Bob" },
+  { id: "3", name: "Carol" },
 ];
 
 const baseArgs = {
@@ -115,7 +115,7 @@ export const FaceEmotion: Story = {
       card: {
         cardTitle: "felice",
         cardText: "felice",
-        imageUrl: "/images/face-emotion/uomo-1-felice.png",
+        imageUrl: "/images/faces/140_y_f_h_a.jpg",
       },
     },
   },
@@ -138,7 +138,7 @@ export const PhysicalTest: Story = {
     pendingAction: {
       type: "physical-test",
       actorPlayerId: "1",
-      card: { cardTitle: "Test fisico", cardText: "Fai 10 flessioni" },
+      card: { cardTitle: "Fai una flessione", cardText: "" },
     },
   },
 };
@@ -150,8 +150,8 @@ export const WhatWouldYouDo: Story = {
       type: "what-would-you-do",
       actorPlayerId: "1",
       card: {
-        cardTitle: "Situazione ipotetica",
-        cardText: "Se vincessi un viaggio intorno al mondo?",
+        cardTitle: "Se vincessi un viaggio intorno al mondo?",
+        cardText: "",
       },
     },
   },
