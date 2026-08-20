@@ -63,6 +63,7 @@ const defaultBoardConfig: GameConfig = {
   },
   specialPercentage: 20,
   customSquares: null,
+  battlesEnabled: true,
 };
 
 afterEach(() => {

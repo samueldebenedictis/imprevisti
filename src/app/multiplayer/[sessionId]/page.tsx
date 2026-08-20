@@ -60,6 +60,7 @@ export default function MultiplayerSessionPage() {
           squareTypes: config.squareTypes,
           specialPercentage: config.specialPercentage,
           customSquares: config.customSquares,
+          battlesEnabled: config.battlesEnabled,
         },
       }),
     });

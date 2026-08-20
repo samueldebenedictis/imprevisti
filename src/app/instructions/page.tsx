@@ -190,6 +190,11 @@ export default function InstructionsPage() {
               <strong>Caselle speciali:</strong> decidete quali tipi di caselle
               speciali includere per aggiungere varietà al gioco.
             </li>
+            <li>
+              <strong>Battaglie:</strong> con l'apposita casella di spunta
+              potete attivare o disattivare la meccanica di Battaglia, che si
+              attiva quando due pedine occupano la stessa casella.
+            </li>
           </ul>
           <p className="mb-2">
             Una volta configurato, cliccate su "Inizia Gioco" per avviare la
@@ -227,9 +232,17 @@ export default function InstructionsPage() {
               dal proprio schermo quando è il suo turno.
             </li>
             <li>
-              <strong>Sfide private:</strong> per alcune sfide (Mimo, Disegno
-              dettato) il tema compare solo sul dispositivo del giocatore
-              attivo, mantenendo l&apos;elemento di segretezza.
+              <strong>Sfide private:</strong> per il Mimo, il tema compare solo
+              sul dispositivo del giocatore attivo, mantenendo l&apos;elemento
+              di segretezza; al termine, l&apos;educatore seleziona chi ha
+              indovinato.
+            </li>
+            <li>
+              <strong>Sfide con destinatario:</strong> per Parole alle spalle e
+              Disegno dettato, il giocatore attivo sceglie sul proprio
+              dispositivo il compagno a cui è rivolta la sfida prima di
+              iniziare; il beneficio va automaticamente a lui, senza bisogno di
+              un&apos;ulteriore scelta da parte dell&apos;educatore.
             </li>
             <li>
               <strong>Sfide condivise:</strong> per Quiz, Test fisico e altre

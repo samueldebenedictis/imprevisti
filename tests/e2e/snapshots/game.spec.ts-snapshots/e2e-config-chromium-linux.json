@@ -141,7 +141,8 @@
           ],
           "currentTurn": 0,
           "currentRound": 1,
-          "gameEnded": false
+          "gameEnded": false,
+          "battlesEnabled": true
         },
         "hasSavedGame": true
       },
@@ -171,7 +172,8 @@
           "dictation-draw": false
         },
         "specialPercentage": 20,
-        "customSquares": null
+        "customSquares": null,
+        "battlesEnabled": true
       },
       "version": 0
     }

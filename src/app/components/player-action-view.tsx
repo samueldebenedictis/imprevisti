@@ -10,11 +10,15 @@ const TARGET_INSTRUCTIONS: Record<string, string> = {
   "dictation-draw": "Disegna quello che ti descrivono!",
 };
 
+const TARGET_SELECTION_PROMPTS: Record<string, string> = {
+  backwrite: "A chi vuoi scrivere?",
+  "dictation-draw": "A chi vuoi disegnare?",
+};
+
 type PlayerActionViewProps =
   | {
-      // dictation-draw non arriva mai qui: il server assegna il target
-      // automaticamente al roll (vedi TWO_ACTOR_TYPES in roll/route.ts)
       phase: "target-selection";
+      actionType: string;
       otherPlayers: { id: string; name: string }[];
       onSelectTarget: (targetId: string) => void;
     }
@@ -40,8 +44,12 @@ export default function PlayerActionView(props: PlayerActionViewProps) {
   if (props.phase === "target-selection") {
     return (
       <div className="ui-text-dark my-8 flex min-h-screen flex-col items-center justify-center gap-6 p-8 text-center">
-        <h2 className="ui-text-title">{ACTION_LABELS.backwrite}</h2>
-        <p className="ui-text-subtitle">A chi vuoi scrivere?</p>
+        <h2 className="ui-text-title">
+          {ACTION_LABELS[props.actionType] ?? props.actionType}
+        </h2>
+        <p className="ui-text-subtitle">
+          {TARGET_SELECTION_PROMPTS[props.actionType] ?? "Chi scegli?"}
+        </p>
         <div className="flex w-full max-w-sm flex-col gap-3">
           {props.otherPlayers.map((p) => (
             <Button

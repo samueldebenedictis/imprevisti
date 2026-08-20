@@ -20,9 +20,9 @@ import {
   LABEL_ADVANCED_MODE_ACTIVE,
   LABEL_ADVANCED_MODE_REMOVE,
   LABEL_BACKWRITE,
+  LABEL_BATTLES_ENABLED,
   LABEL_DICTATION_DRAW,
   LABEL_FACE_EMOTION,
-  LABEL_GAME_CONFIGURATION,
   LABEL_MIME,
   LABEL_MOVE,
   LABEL_MUSIC_EMOTION,
@@ -89,6 +89,7 @@ export default function Home() {
   const squareTypes = useConfigStore((state) => state.squareTypes);
   const specialPercentage = useConfigStore((state) => state.specialPercentage);
   const customSquares = useConfigStore((state) => state.customSquares);
+  const battlesEnabled = useConfigStore((state) => state.battlesEnabled);
   const actions = useConfigStore((state) => state.actions);
 
   const hasCustomSquares =
@@ -150,28 +151,29 @@ export default function Home() {
       {mobileWall}
       <div className="hidden md:block">
         <div className="ui-text-dark my-8 flex flex-col items-center justify-center p-2">
-          <div className="mb-2 flex flex-col items-center gap-1">
-            <span className="ui-text-normal">
-              {mode === "multi" ? "Multi-dispositivo" : "Schermo singolo"}
-            </span>
+          <div className="mb-2 flex w-full max-w-md flex-col items-center gap-1">
             <Button
               color="red"
               onClick={() => {
                 sessionStorage.removeItem("gameMode");
                 setMode(null);
               }}
-              className="mx-0"
+              className="mx-0 w-full"
             >
               Cambia modalità
             </Button>
           </div>
-          <h1 className="ui-text-title m-2">{LABEL_GAME_CONFIGURATION}</h1>
-          {mode === "multi" && (
-            <p className="ui-text-normal mb-4 max-w-md text-center">
-              Configura il tabellone. I giocatori si uniranno scansionando il QR
-              code.
-            </p>
-          )}
+          <hr className="mb-2 w-full max-w-md border-gray-200" />
+          <h1 className="ui-text-title m-2 text-center">
+            {mode === "multi"
+              ? "Gioco multi-dispositivo"
+              : "Gioco schermo singolo"}
+          </h1>
+          <p className="ui-text-normal mb-4 max-w-md text-center">
+            {mode === "multi"
+              ? "Configura il tabellone. I giocatori si uniranno scansionando il QR code."
+              : "Configura il tabellone. Tutti i giocatori giocheranno a turno sullo stesso schermo."}
+          </p>
           <form
             onSubmit={handleSubmit}
             className="m-2 w-full max-w-md bg-white"
@@ -228,6 +230,20 @@ export default function Home() {
                 }
                 required
               />
+            </div>
+
+            <div className="mb-4 flex items-center">
+              <input
+                type="checkbox"
+                id="battlesEnabled"
+                name="battlesEnabled"
+                checked={battlesEnabled}
+                onChange={(e) => actions.setBattlesEnabled(e.target.checked)}
+                className="ui-custom-checkbox mr-2"
+              />
+              <LabelCheckbox htmlFor="battlesEnabled">
+                {LABEL_BATTLES_ENABLED}
+              </LabelCheckbox>
             </div>
 
             {!hasCustomSquares && (

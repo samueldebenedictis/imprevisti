@@ -20,6 +20,8 @@ export const LABEL_DICTATION_DRAW = "Disegno dettato";
 export const LABEL_SUBMIT = "Inizia gioco";
 
 export const LABEL_BATTLE = "Battaglia";
+export const LABEL_BATTLES_ENABLED =
+  "Battaglie (caselle occupate contemporaneamente)";
 
 // Turn Result Modal Constants
 export const MODAL_TITLE_TURN_RESULT = "Risultato del turno";

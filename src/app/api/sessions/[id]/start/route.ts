@@ -50,7 +50,7 @@ export async function POST(
     players,
   );
 
-  const game = new Game(board);
+  const game = new Game(board, 6, boardConfig.battlesEnabled ?? true);
 
   session.started = true;
   session.gameState = game.toJSON();

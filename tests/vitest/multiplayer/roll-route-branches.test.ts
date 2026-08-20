@@ -139,7 +139,7 @@ describe("POST /api/sessions/[id]/roll — branch coverage", () => {
     expect(saved.pendingAction?.card).toBeDefined();
   });
 
-  test("special action (dictation-draw): pendingAction pre-selects the next player as target and keeps the imageUrl", async () => {
+  test("special action (dictation-draw): pendingAction has no targetPlayerId and keeps the imageUrl", async () => {
     const squares = makeSquares(4);
     squares[1] = new DictationDrawSquare(1);
     const board = new Board(squares, [
@@ -158,7 +158,7 @@ describe("POST /api/sessions/[id]/roll — branch coverage", () => {
 
     const saved = vi.mocked(sessionStore.saveSession).mock.calls[0][1];
     expect(saved.pendingAction?.type).toBe("dictation-draw");
-    expect(saved.pendingAction?.targetPlayerId).toBe("1");
+    expect(saved.pendingAction?.targetPlayerId).toBeUndefined();
     expect(saved.pendingAction?.card).toHaveProperty("imageUrl");
   });
 

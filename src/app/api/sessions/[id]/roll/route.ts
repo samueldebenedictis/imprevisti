@@ -14,10 +14,6 @@ import { Game } from "@/model/game";
 import type { GameActionResult } from "@/model/managers/types";
 import type { PendingAction } from "@/types/session";
 
-// dictation-draw auto-seleziona il prossimo giocatore come target
-// mime e backwrite NO: è l'attore a scegliere (via /select-target)
-const TWO_ACTOR_TYPES = ["dictation-draw"];
-
 function extractCard(result: GameActionResult): {
   card: Card;
   imageUrl?: string;
@@ -104,18 +100,12 @@ export async function POST(
     };
     // currentPlayerId rimane invariato — l'host risolve la battaglia
   } else if (result.type !== "none") {
-    const players = game.getPlayers();
-    const nextIndex = game.getTurn() % players.length;
-    const targetPlayerId = String(players[nextIndex].getId());
-
     const { card, imageUrl } = extractCard(result);
     const pendingAction: PendingAction = {
       type: result.type,
       card: imageUrl !== undefined ? { topic: card, imageUrl } : card,
       actorPlayerId: playerId,
-      targetPlayerId: TWO_ACTOR_TYPES.includes(result.type)
-        ? targetPlayerId
-        : undefined,
+      targetPlayerId: undefined,
     };
 
     session.pendingAction = pendingAction;

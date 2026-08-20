@@ -17,6 +17,7 @@ export class MovementManager {
   constructor(
     private board: Board,
     private gameStateManager: GameStateManager,
+    private battlesEnabled = true,
   ) {}
 
   /**
@@ -55,6 +56,8 @@ export class MovementManager {
    * @returns Un oggetto Battle se si verifica una collisione, null altrimenti
    */
   private checkCollision(currentPlayer: Player): Battle | null {
+    if (!this.battlesEnabled) return null;
+
     const position = this.board.getPlayerPosition(currentPlayer);
     const playersOnSquare = this.board.getPlayersOnSquare(position);
 
