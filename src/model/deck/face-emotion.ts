@@ -19,185 +19,36 @@ export class FaceEmotion {
   ) {}
 }
 
-export const faceEmotionCards = [
-  {
-    title: "uomo-1-felice",
-    imageUrl: "/images/face-emotion/uomo-1-felice.png",
-    emotion: "felicità",
-  },
-  {
-    title: "uomo-1-arrabbiato",
-    imageUrl: "/images/face-emotion/uomo-1-arrabbiato.png",
-    emotion: "rabbia",
-  },
-  {
-    title: "uomo-1-triste",
-    imageUrl: "/images/face-emotion/uomo-1-triste.png",
-    emotion: "tristezza",
-  },
-  {
-    title: "uomo-1-sorpreso",
-    imageUrl: "/images/face-emotion/uomo-1-sorpreso.png",
-    emotion: "sorpresa",
-  },
-  {
-    title: "uomo-1-spaventato",
-    imageUrl: "/images/face-emotion/uomo-1-spaventato.png",
-    emotion: "paura",
-  },
-  {
-    title: "uomo-1-stanco",
-    imageUrl: "/images/face-emotion/uomo-1-stanco.png",
-    emotion: "stanchezza",
-  },
-  {
-    title: "bambina-felice",
-    imageUrl: "/images/face-emotion/bambina-felice.png",
-    emotion: "felicità",
-  },
-  {
-    title: "bambina-arrabbiato",
-    imageUrl: "/images/face-emotion/bambina-arrabbiato.png",
-    emotion: "rabbia",
-  },
-  {
-    title: "bambina-triste",
-    imageUrl: "/images/face-emotion/bambina-triste.png",
-    emotion: "tristezza",
-  },
-  {
-    title: "bambina-sorpreso",
-    imageUrl: "/images/face-emotion/bambina-sorpreso.png",
-    emotion: "sorpresa",
-  },
-  {
-    title: "bambina-spaventato",
-    imageUrl: "/images/face-emotion/bambina-spaventato.png",
-    emotion: "paura",
-  },
-  {
-    title: "bambina-stanco",
-    imageUrl: "/images/face-emotion/bambina-stanco.png",
-    emotion: "stanchezza",
-  },
-  {
-    title: "anziano-felice",
-    imageUrl: "/images/face-emotion/anziano-felice.png",
-    emotion: "felicità",
-  },
-  {
-    title: "anziano-arrabbiato",
-    imageUrl: "/images/face-emotion/anziano-arrabbiato.png",
-    emotion: "rabbia",
-  },
-  {
-    title: "anziano-triste",
-    imageUrl: "/images/face-emotion/anziano-triste.png",
-    emotion: "tristezza",
-  },
-  {
-    title: "anziano-sorpreso",
-    imageUrl: "/images/face-emotion/anziano-sorpreso.png",
-    emotion: "sorpresa",
-  },
-  {
-    title: "anziano-spaventato",
-    imageUrl: "/images/face-emotion/anziano-spaventato.png",
-    emotion: "paura",
-  },
-  {
-    title: "anziano-stanco",
-    imageUrl: "/images/face-emotion/anziano-stanco.png",
-    emotion: "stanchezza",
-  },
-  {
-    title: "bambino-felice",
-    imageUrl: "/images/face-emotion/bambino-felice.png",
-    emotion: "felicità",
-  },
-  {
-    title: "bambino-arrabbiato",
-    imageUrl: "/images/face-emotion/bambino-arrabbiato.png",
-    emotion: "rabbia",
-  },
-  {
-    title: "bambino-triste",
-    imageUrl: "/images/face-emotion/bambino-triste.png",
-    emotion: "tristezza",
-  },
-  {
-    title: "bambino-sorpreso",
-    imageUrl: "/images/face-emotion/bambino-sorpreso.png",
-    emotion: "sorpresa",
-  },
-  {
-    title: "bambino-spaventato",
-    imageUrl: "/images/face-emotion/bambino-spaventato.png",
-    emotion: "paura",
-  },
-  {
-    title: "bambino-stanco",
-    imageUrl: "/images/face-emotion/bambino-stanco.png",
-    emotion: "stanchezza",
-  },
-  {
-    title: "donna-felice",
-    imageUrl: "/images/face-emotion/donna-felice.png",
-    emotion: "felicità",
-  },
-  {
-    title: "donna-arrabbiato",
-    imageUrl: "/images/face-emotion/donna-arrabbiato.png",
-    emotion: "rabbia",
-  },
-  {
-    title: "donna-triste",
-    imageUrl: "/images/face-emotion/donna-triste.png",
-    emotion: "tristezza",
-  },
-  {
-    title: "donna-sorpreso",
-    imageUrl: "/images/face-emotion/donna-sorpreso.png",
-    emotion: "sorpresa",
-  },
-  {
-    title: "donna-spaventato",
-    imageUrl: "/images/face-emotion/donna-spaventato.png",
-    emotion: "paura",
-  },
-  {
-    title: "donna-stanco",
-    imageUrl: "/images/face-emotion/donna-stanco.png",
-    emotion: "stanchezza",
-  },
-  {
-    title: "uomo-2-felice",
-    imageUrl: "/images/face-emotion/uomo-2-felice.png",
-    emotion: "felicità",
-  },
-  {
-    title: "uomo-2-arrabbiato",
-    imageUrl: "/images/face-emotion/uomo-2-arrabbiato.png",
-    emotion: "rabbia",
-  },
-  {
-    title: "uomo-2-triste",
-    imageUrl: "/images/face-emotion/uomo-2-triste.png",
-    emotion: "tristezza",
-  },
-  {
-    title: "uomo-2-sorpreso",
-    imageUrl: "/images/face-emotion/uomo-2-sorpreso.png",
-    emotion: "sorpresa",
-  },
-  {
-    title: "uomo-2-spaventato",
-    imageUrl: "/images/face-emotion/uomo-2-spaventato.png",
-    emotion: "paura",
-  },
-  {
-    title: "uomo-2-stanco",
-    imageUrl: "/images/face-emotion/uomo-2-stanco.png",
-    emotion: "stanchezza",
-  },
+/**
+ * Soggetti del dataset FACES (Ebner, Riediger & Lindenberger) usati per le carte.
+ * Codice file: {id}_{eta}_{genere}_{emozione}_{versione}.jpg
+ */
+const faceEmotionSubjects = [
+  { id: "004", code: "o_m", title: "uomo-anziano" },
+  { id: "066", code: "y_m", title: "uomo-giovane" },
+  { id: "079", code: "o_f", title: "donna-anziana" },
+  { id: "116", code: "m_m", title: "uomo-adulto" },
+  { id: "140", code: "y_f", title: "donna-giovane" },
+  { id: "168", code: "m_f", title: "donna-adulta" },
 ];
+
+const faceEmotionLabels = [
+  { code: "h", emotion: "felicità" },
+  { code: "a", emotion: "rabbia" },
+  { code: "s", emotion: "tristezza" },
+  { code: "d", emotion: "disgusto" },
+  { code: "f", emotion: "paura" },
+  { code: "n", emotion: "neutralità" },
+];
+
+const faceEmotionVersions = ["a", "b"];
+
+export const faceEmotionCards = faceEmotionSubjects.flatMap((subject) =>
+  faceEmotionLabels.flatMap(({ code: emotionCode, emotion }) =>
+    faceEmotionVersions.map((version) => ({
+      title: `${subject.title}-${emotion}-${version}`,
+      imageUrl: `/images/faces/${subject.id}_${subject.code}_${emotionCode}_${version}.jpg`,
+      emotion,
+    })),
+  ),
+);
