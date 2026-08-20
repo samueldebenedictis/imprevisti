@@ -3,14 +3,6 @@ import { Board } from "@/model/board";
 import { Game } from "@/model/game";
 import { Player } from "@/model/player";
 import { Square } from "@/model/square";
-import { BackWriteSquare } from "@/model/square/backwrite-square";
-import { DictationDrawSquare } from "@/model/square/dictation-draw-square";
-import { FaceEmotionSquare } from "@/model/square/face-emotion-square";
-import { MimeSquare } from "@/model/square/mime-square";
-import { MusicEmotionSquare } from "@/model/square/music-emotion-square";
-import { PhysicalTestSquare } from "@/model/square/physical-test-square";
-import { QuizSquare } from "@/model/square/quiz-square";
-import { WhatWouldYouDoSquare } from "@/model/square/what-would-you-do-square";
 import { expect, test } from "../app/fixtures";
 import { GamePage } from "../app/pages/game-page";
 import { HomePage } from "../app/pages/home-page";
@@ -120,18 +112,10 @@ test("screenshot-dice-roll", async ({ page }) => {
 
 test("screenshot-quiz-modal-answer", async ({ page }) => {
   await page.setViewportSize(VIEWPORT);
-  const squares = Array.from({ length: 10 }, (_, i) => new QuizSquare(i));
-  const players = ["Alice", "Bob"].map((name, i) => new Player(i, name));
-  const board = new Board(squares, players);
-  const game = new Game(board);
-
   const gamePage = new GamePage(page);
-  await seedRandom(page);
-  await addZustandInitScript(gamePage.page, game.toJSON());
-  await page.goto("/game");
-
-  await gamePage.playTurnButton.click();
-  await gamePage.rollDiceButton.click();
+  await page.goto(
+    "/storybook/iframe.html?id=example-turnresultmodal--quiz-scenario&viewMode=story",
+  );
 
   await expect(gamePage.turnResultFullModal).toBeVisible();
   await expect(gamePage.turnResultFullModal).toHaveScreenshot("quiz-modal.png");
@@ -145,18 +129,10 @@ test("screenshot-quiz-modal-answer", async ({ page }) => {
 
 test("screenshot-mime-modal-topic", async ({ page }) => {
   await page.setViewportSize(VIEWPORT);
-  const squares = Array.from({ length: 10 }, (_, i) => new MimeSquare(i));
-  const players = ["Alice", "Bob"].map((name, i) => new Player(i, name));
-  const board = new Board(squares, players);
-  const game = new Game(board);
-
   const gamePage = new GamePage(page);
-  await seedRandom(page);
-  await addZustandInitScript(gamePage.page, game.toJSON());
-  await page.goto("/game");
-
-  await gamePage.playTurnButton.click();
-  await gamePage.rollDiceButton.click();
+  await page.goto(
+    "/storybook/iframe.html?id=example-turnresultmodal--mime-scenario&viewMode=story",
+  );
 
   await expect(gamePage.turnResultFullModal).toBeVisible();
   await expect(gamePage.turnResultFullModal).toHaveScreenshot("mime-modal.png");
@@ -170,18 +146,10 @@ test("screenshot-mime-modal-topic", async ({ page }) => {
 
 test("screenshot-backwrite-modal", async ({ page }) => {
   await page.setViewportSize(VIEWPORT);
-  const squares = Array.from({ length: 10 }, (_, i) => new BackWriteSquare(i));
-  const players = ["Alice", "Bob"].map((name, i) => new Player(i, name));
-  const board = new Board(squares, players);
-  const game = new Game(board);
-
   const gamePage = new GamePage(page);
-  await seedRandom(page);
-  await addZustandInitScript(gamePage.page, game.toJSON());
-  await page.goto("/game");
-
-  await gamePage.playTurnButton.click();
-  await gamePage.rollDiceButton.click();
+  await page.goto(
+    "/storybook/iframe.html?id=example-turnresultmodal--back-write-scenario&viewMode=story",
+  );
 
   await expect(gamePage.turnResultFullModal).toBeVisible();
   await expect(gamePage.turnResultFullModal).toHaveScreenshot(
@@ -191,18 +159,10 @@ test("screenshot-backwrite-modal", async ({ page }) => {
 
 test("screenshot-backwrite-modal-word", async ({ page }) => {
   await page.setViewportSize(VIEWPORT);
-  const squares = Array.from({ length: 10 }, (_, i) => new BackWriteSquare(i));
-  const players = ["Alice", "Bob"].map((name, i) => new Player(i, name));
-  const board = new Board(squares, players);
-  const game = new Game(board);
-
   const gamePage = new GamePage(page);
-  await seedRandom(page);
-  await addZustandInitScript(gamePage.page, game.toJSON());
-  await page.goto("/game");
-
-  await gamePage.playTurnButton.click();
-  await gamePage.rollDiceButton.click();
+  await page.goto(
+    "/storybook/iframe.html?id=example-turnresultmodal--back-write-scenario&viewMode=story",
+  );
 
   await expect(gamePage.turnResultFullModal).toBeVisible();
   await gamePage.backwriteShowWordButton.click();
@@ -214,21 +174,10 @@ test("screenshot-backwrite-modal-word", async ({ page }) => {
 
 test("screenshot-dictation-draw-modal", async ({ page }) => {
   await page.setViewportSize(VIEWPORT);
-  const squares = Array.from(
-    { length: 10 },
-    (_, i) => new DictationDrawSquare(i),
-  );
-  const players = ["Alice", "Bob"].map((name, i) => new Player(i, name));
-  const board = new Board(squares, players);
-  const game = new Game(board);
-
   const gamePage = new GamePage(page);
-  await seedRandom(page);
-  await addZustandInitScript(gamePage.page, game.toJSON());
-  await page.goto("/game");
-
-  await gamePage.playTurnButton.click();
-  await gamePage.rollDiceButton.click();
+  await page.goto(
+    "/storybook/iframe.html?id=example-turnresultmodal--dictation-draw-scenario&viewMode=story",
+  );
 
   await expect(gamePage.turnResultFullModal).toBeVisible();
   await expect(gamePage.turnResultFullModal).toHaveScreenshot(
@@ -238,21 +187,10 @@ test("screenshot-dictation-draw-modal", async ({ page }) => {
 
 test("screenshot-dictation-draw-modal-image", async ({ page }) => {
   await page.setViewportSize(VIEWPORT);
-  const squares = Array.from(
-    { length: 10 },
-    (_, i) => new DictationDrawSquare(i),
-  );
-  const players = ["Alice", "Bob"].map((name, i) => new Player(i, name));
-  const board = new Board(squares, players);
-  const game = new Game(board);
-
   const gamePage = new GamePage(page);
-  await seedRandom(page);
-  await addZustandInitScript(gamePage.page, game.toJSON());
-  await page.goto("/game");
-
-  await gamePage.playTurnButton.click();
-  await gamePage.rollDiceButton.click();
+  await page.goto(
+    "/storybook/iframe.html?id=example-turnresultmodal--dictation-draw-scenario&viewMode=story",
+  );
 
   await expect(gamePage.turnResultFullModal).toBeVisible();
   await gamePage.dictationDrawShowImageButton.click();
@@ -264,21 +202,10 @@ test("screenshot-dictation-draw-modal-image", async ({ page }) => {
 
 test("screenshot-face-emotion-modal-answer", async ({ page }) => {
   await page.setViewportSize(VIEWPORT);
-  const squares = Array.from(
-    { length: 10 },
-    (_, i) => new FaceEmotionSquare(i),
-  );
-  const players = ["Alice", "Bob"].map((name, i) => new Player(i, name));
-  const board = new Board(squares, players);
-  const game = new Game(board);
-
   const gamePage = new GamePage(page);
-  await seedRandom(page, 42 * 42 * 42 * 42);
-  await addZustandInitScript(gamePage.page, game.toJSON());
-  await page.goto("/game");
-
-  await gamePage.playTurnButton.click();
-  await gamePage.rollDiceButton.click();
+  await page.goto(
+    "/storybook/iframe.html?id=example-turnresultmodal--face-emotion-scenario&viewMode=story",
+  );
 
   await expect(gamePage.turnResultFullModal).toBeVisible();
   await expect(gamePage.turnResultFullModal).toHaveScreenshot(
@@ -294,21 +221,10 @@ test("screenshot-face-emotion-modal-answer", async ({ page }) => {
 
 test("screenshot-music-emotion-modal", async ({ page }) => {
   await page.setViewportSize(VIEWPORT);
-  const squares = Array.from(
-    { length: 10 },
-    (_, i) => new MusicEmotionSquare(i),
-  );
-  const players = ["Alice", "Bob"].map((name, i) => new Player(i, name));
-  const board = new Board(squares, players);
-  const game = new Game(board);
-
   const gamePage = new GamePage(page);
-  await seedRandom(page);
-  await addZustandInitScript(gamePage.page, game.toJSON());
-  await page.goto("/game");
-
-  await gamePage.playTurnButton.click();
-  await gamePage.rollDiceButton.click();
+  await page.goto(
+    "/storybook/iframe.html?id=example-turnresultmodal--music-emotion-scenario&viewMode=story",
+  );
 
   await expect(gamePage.turnResultFullModal).toBeVisible();
   await expect(gamePage.turnResultFullModal).toHaveScreenshot(
@@ -318,21 +234,10 @@ test("screenshot-music-emotion-modal", async ({ page }) => {
 
 test("screenshot-physical-test-modal", async ({ page }) => {
   await page.setViewportSize(VIEWPORT);
-  const squares = Array.from(
-    { length: 10 },
-    (_, i) => new PhysicalTestSquare(i),
-  );
-  const players = ["Alice", "Bob"].map((name, i) => new Player(i, name));
-  const board = new Board(squares, players);
-  const game = new Game(board);
-
   const gamePage = new GamePage(page);
-  await seedRandom(page);
-  await addZustandInitScript(gamePage.page, game.toJSON());
-  await page.goto("/game");
-
-  await gamePage.playTurnButton.click();
-  await gamePage.rollDiceButton.click();
+  await page.goto(
+    "/storybook/iframe.html?id=example-turnresultmodal--physical-test-scenario&viewMode=story",
+  );
 
   await expect(gamePage.turnResultFullModal).toBeVisible();
   await expect(gamePage.turnResultFullModal).toHaveScreenshot(
@@ -342,21 +247,10 @@ test("screenshot-physical-test-modal", async ({ page }) => {
 
 test("screenshot-what-would-you-do-modal", async ({ page }) => {
   await page.setViewportSize(VIEWPORT);
-  const squares = Array.from(
-    { length: 10 },
-    (_, i) => new WhatWouldYouDoSquare(i),
-  );
-  const players = ["Alice", "Bob"].map((name, i) => new Player(i, name));
-  const board = new Board(squares, players);
-  const game = new Game(board);
-
   const gamePage = new GamePage(page);
-  await seedRandom(page);
-  await addZustandInitScript(gamePage.page, game.toJSON());
-  await page.goto("/game");
-
-  await gamePage.playTurnButton.click();
-  await gamePage.rollDiceButton.click();
+  await page.goto(
+    "/storybook/iframe.html?id=example-turnresultmodal--what-would-you-do-scenario&viewMode=story",
+  );
 
   await expect(gamePage.turnResultFullModal).toBeVisible();
   await expect(gamePage.turnResultFullModal).toHaveScreenshot(

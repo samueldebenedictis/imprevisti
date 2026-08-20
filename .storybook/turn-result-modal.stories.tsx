@@ -12,6 +12,7 @@ import {
   Quiz,
   WhatWouldYouDo,
 } from "../src/model/deck";
+import { faceEmotionCards } from "../src/model/deck/face-emotion";
 import { Player } from "../src/model/player";
 
 const meta = {
@@ -44,9 +45,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 const allPlayers = [
-  new Player(1, "Giocatore 1"),
-  new Player(2, "Giocatore 2"),
-  new Player(3, "Giocatore 3"),
+  new Player(1, "Alice"),
+  new Player(2, "Bob"),
+  new Player(3, "Carol"),
 ];
 
 export const Default: Story = {
@@ -96,7 +97,7 @@ export const MimeScenario: Story = {
     onClose: () => console.log("Close modal"),
     diceResult: 1,
     actionType: "mime",
-    actionData: new Mime(allPlayers[0], new Card("Titolo mimo", "Mimo")),
+    actionData: new Mime(allPlayers[0], new Card("Elefante 🐘", "")),
     onResolveMime: (success, guesserId) =>
       console.log(`Mime success: ${success}, Guesser: ${guesserId}`),
     allPlayers: allPlayers,
@@ -133,6 +134,14 @@ export const PositionChangeWithSpecialEffect: Story = {
   },
 };
 
+const faceEmotionCard = faceEmotionCards.find(
+  (el) => el.title === "donna-giovane-felicità-a",
+) as {
+  title: string;
+  imageUrl: string;
+  emotion: string;
+};
+
 export const FaceEmotionScenario: Story = {
   args: {
     isOpen: true,
@@ -141,8 +150,8 @@ export const FaceEmotionScenario: Story = {
     actionType: "face-emotion",
     actionData: new FaceEmotion(
       allPlayers[0],
-      new Card("felice", "felice"),
-      "/images/face-emotion/uomo-1-felice.png",
+      new Card(faceEmotionCard.emotion, faceEmotionCard.title),
+      faceEmotionCard.imageUrl,
     ),
     onResolveFaceEmotion: (success) =>
       console.log(`Face emotion success: ${success}`),
@@ -192,7 +201,7 @@ export const PhysicalTestScenario: Story = {
     actionType: "physical-test",
     actionData: new PhysicalTest(
       allPlayers[0],
-      new Card("Test fisico", "Fai 10 flessioni"),
+      new Card("Fai una flessione", ""),
     ),
     onResolvePhysicalTest: (success) =>
       console.log(`Physical test success: ${success}`),
@@ -209,10 +218,7 @@ export const WhatWouldYouDoScenario: Story = {
     actionType: "what-would-you-do",
     actionData: new WhatWouldYouDo(
       allPlayers[0],
-      new Card(
-        "Situazione ipotetica",
-        "Se vincessi un viaggio intorno al mondo?",
-      ),
+      new Card("Se vincessi un viaggio intorno al mondo?", ""),
     ),
     onResolveWhatWouldYouDo: (success) =>
       console.log(`What would you do success: ${success}`),
