@@ -8,11 +8,13 @@ type SelectProps = {
   options: { value: string | number; label: string }[];
   className?: string;
   placeholder?: string;
+  id?: string;
 };
 
 export default function Select(props: SelectProps) {
   return (
     <select
+      id={props.id}
       value={props.value}
       onChange={props.onChange}
       className={`ui-text-dark ui-border-focus w-full p-2 ${props.className || ""}`}

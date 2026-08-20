@@ -1,8 +1,15 @@
 "use client";
 
-export function Label(props: { children: string; htmlFor: string }) {
+export function Label(props: {
+  children: string;
+  htmlFor: string;
+  className?: string;
+}) {
   return (
-    <label htmlFor={props.htmlFor} className="ui-text-dark ui-text-subtitle">
+    <label
+      htmlFor={props.htmlFor}
+      className={`ui-text-dark ui-text-subtitle ${props.className ?? ""}`}
+    >
       {props.children}
     </label>
   );
