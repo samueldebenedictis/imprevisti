@@ -1,13 +1,21 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { getCardDisplay } from "@/lib/card-utils";
-import type { PendingAction } from "@/types/session";
+import {
+  ACTOR_SELECTS_TARGET_TYPES,
+  type PendingAction,
+} from "@/types/session";
 import { imagePrefix } from "../image-prefix";
 import { ACTION_LABELS } from "./action-labels";
 import Button from "./ui/button";
 
-// Azioni che richiedono selezione del vincitore dopo "Riuscito"
-const MIME_LIKE = ["mime", "dictation-draw"];
+// Azioni con target libero: l'host chiede "chi ha indovinato?" dopo "Riuscito"
+const MIME_LIKE = ["mime"];
+
+const AWAITING_TARGET_MESSAGES: Record<string, string> = {
+  backwrite: "In attesa che il giocatore scelga a chi scrivere...",
+  "dictation-draw": "In attesa che il giocatore scelga a chi disegnare...",
+};
 
 // Tipi in cui il testo della carta è segreto: il topic è visibile solo sul dispositivo del giocatore
 const HIDE_CARD_ON_HOST = [
@@ -72,10 +80,9 @@ export default function HostActionOverlay({
     pendingAction.type === "mime" ? "Mostra soluzione" : "Mostra risposta";
   const revealValue = pendingAction.type === "quiz" ? cardBody : cardTitle;
 
-  // dictation-draw non arriva mai qui senza target: il server lo assegna
-  // automaticamente al roll (TWO_ACTOR_TYPES in roll/route.ts)
   const awaitingTarget =
-    pendingAction.type === "backwrite" && !pendingAction.targetPlayerId;
+    ACTOR_SELECTS_TARGET_TYPES.includes(pendingAction.type) &&
+    !pendingAction.targetPlayerId;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -129,7 +136,8 @@ export default function HostActionOverlay({
         {/* Backwrite/DictationDraw: attesa scelta target da parte del giocatore */}
         {awaitingTarget && (
           <p className="ui-text-normal text-center text-gray-500">
-            In attesa che il giocatore scelga a chi scrivere...
+            {AWAITING_TARGET_MESSAGES[pendingAction.type] ??
+              "In attesa che il giocatore scelga il bersaglio..."}
           </p>
         )}
 

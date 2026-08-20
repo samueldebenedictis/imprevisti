@@ -12,6 +12,10 @@ export interface PendingAction {
   targetPlayerId?: string; // chi indovina/disegna (mime, backwrite, dictation-draw)
 }
 
+// Tipi in cui l'attore sceglie il target via /select-target prima di agire
+// (mime NO: il target è libero, deciso dall'host a posteriori)
+export const ACTOR_SELECTS_TARGET_TYPES = ["backwrite", "dictation-draw"];
+
 export interface LastMoveInfo {
   actorPlayerId: string;
   diceResult: number; // 0 = turno saltato

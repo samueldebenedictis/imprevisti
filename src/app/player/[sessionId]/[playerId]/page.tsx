@@ -8,7 +8,11 @@ import PlayerRollResultView from "@/app/components/player-roll-result-view";
 import PlayerRollView from "@/app/components/player-roll-view";
 // playerId viene dall'URL — persiste alla chiusura del tab
 import { useSessionPolling } from "@/lib/use-session-polling";
-import type { LastMoveInfo, PublicSessionState } from "@/types/session";
+import {
+  ACTOR_SELECTS_TARGET_TYPES,
+  type LastMoveInfo,
+  type PublicSessionState,
+} from "@/types/session";
 
 export default function PlayerPage() {
   const { sessionId, playerId } = useParams<{
@@ -120,11 +124,12 @@ export default function PlayerPage() {
     );
   }
 
-  // Backwrite senza target: l'attore sceglie il bersaglio.
-  // Dictation-draw non passa mai di qui: il server assegna il target
-  // automaticamente al roll (TWO_ACTOR_TYPES in roll/route.ts).
+  // Backwrite/dictation-draw senza target: l'attore sceglie il bersaglio.
   const needsTargetSelection =
-    isActor && action && action.type === "backwrite" && !action.targetPlayerId;
+    isActor &&
+    action &&
+    ACTOR_SELECTS_TARGET_TYPES.includes(action.type) &&
+    !action.targetPlayerId;
 
   if (needsTargetSelection) {
     const otherPlayers = session.players.filter((p) => p.id !== playerId);
@@ -139,6 +144,7 @@ export default function PlayerPage() {
       <>
         <PlayerActionView
           phase="target-selection"
+          actionType={action.type}
           otherPlayers={otherPlayers}
           onSelectTarget={(targetId) => void selectTarget(targetId)}
         />
