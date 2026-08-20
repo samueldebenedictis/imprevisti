@@ -22,3 +22,6 @@ copy-video:
 
 copy-screenshots:
 	bash scripts/copy-screenshots.sh
+
+tesi:
+	cd elaborato && latexmk -pdf -interaction=nonstopmode -halt-on-error tesi.tex
