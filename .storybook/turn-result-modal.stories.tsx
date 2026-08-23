@@ -12,7 +12,7 @@ import {
   Quiz,
   WhatWouldYouDo,
 } from "../src/model/deck";
-import { faceEmotionCards } from "../src/model/deck/face-emotion";
+import { faceEmotionStorybookCards } from "../src/model/deck/face-emotion";
 import { Player } from "../src/model/player";
 
 const meta = {
@@ -135,7 +135,7 @@ export const PositionChangeWithSpecialEffect: Story = {
 };
 
 const getFaceEmotionCard = (title: string) =>
-  faceEmotionCards.find((el) => el.title === title) as {
+  faceEmotionStorybookCards.find((el) => el.title === title) as {
     title: string;
     imageUrl: string;
     emotion: string;

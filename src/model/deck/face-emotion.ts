@@ -43,12 +43,22 @@ const faceEmotionLabels = [
 
 const faceEmotionVersions = ["a", "b"];
 
-export const faceEmotionCards = faceEmotionSubjects.flatMap((subject) =>
-  faceEmotionLabels.flatMap(({ code: emotionCode, emotion }) =>
-    faceEmotionVersions.map((version) => ({
-      title: `${subject.title}-${emotion}-${version}`,
-      imageUrl: `/images/faces/${subject.id}_${subject.code}_${emotionCode}_${version}.jpg`,
-      emotion,
-    })),
-  ),
+const buildFaceEmotionCards = (labels: typeof faceEmotionLabels) =>
+  faceEmotionSubjects.flatMap((subject) =>
+    labels.flatMap(({ code: emotionCode, emotion }) =>
+      faceEmotionVersions.map((version) => ({
+        title: `${subject.title}-${emotion}-${version}`,
+        imageUrl: `/images/faces/${subject.id}_${subject.code}_${emotionCode}_${version}.jpg`,
+        emotion,
+      })),
+    ),
+  );
+
+/** Carte usate in partita: neutralità esclusa (troppo ambigua da indovinare). */
+export const faceEmotionCards = buildFaceEmotionCards(
+  faceEmotionLabels.filter((label) => label.code !== "n"),
 );
+
+/** Set completo (neutralità inclusa) per Storybook. */
+export const faceEmotionStorybookCards =
+  buildFaceEmotionCards(faceEmotionLabels);
