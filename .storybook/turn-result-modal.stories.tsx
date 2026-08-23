@@ -134,16 +134,16 @@ export const PositionChangeWithSpecialEffect: Story = {
   },
 };
 
-const faceEmotionCard = faceEmotionCards.find(
-  (el) => el.title === "donna-giovane-felicità-a",
-) as {
-  title: string;
-  imageUrl: string;
-  emotion: string;
-};
+const getFaceEmotionCard = (title: string) =>
+  faceEmotionCards.find((el) => el.title === title) as {
+    title: string;
+    imageUrl: string;
+    emotion: string;
+  };
 
-export const FaceEmotionScenario: Story = {
-  args: {
+const makeFaceEmotionScenario = (title: string): Story["args"] => {
+  const faceEmotionCard = getFaceEmotionCard(title);
+  return {
     isOpen: true,
     onClose: () => console.log("Close modal"),
     diceResult: 2,
@@ -157,7 +157,31 @@ export const FaceEmotionScenario: Story = {
       console.log(`Face emotion success: ${success}`),
     allPlayers: allPlayers,
     currentPlayerName: allPlayers[0].getName(),
-  },
+  };
+};
+
+export const FaceEmotionScenario: Story = {
+  args: makeFaceEmotionScenario("donna-giovane-felicità-a"),
+};
+
+export const FaceEmotionAngerScenario: Story = {
+  args: makeFaceEmotionScenario("uomo-adulto-rabbia-a"),
+};
+
+export const FaceEmotionSadnessScenario: Story = {
+  args: makeFaceEmotionScenario("donna-anziana-tristezza-a"),
+};
+
+export const FaceEmotionFearScenario: Story = {
+  args: makeFaceEmotionScenario("uomo-giovane-paura-a"),
+};
+
+export const FaceEmotionDisgustScenario: Story = {
+  args: makeFaceEmotionScenario("donna-adulta-disgusto-a"),
+};
+
+export const FaceEmotionNeutralScenario: Story = {
+  args: makeFaceEmotionScenario("uomo-anziano-neutralità-a"),
 };
 
 export const BackWriteScenario: Story = {

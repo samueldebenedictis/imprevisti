@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import PlayerActionView from "../src/app/components/player-action-view";
+import { faceEmotionCards } from "../src/model/deck/face-emotion";
 
 const meta = {
   title: "SpecialSquares/PlayerDevice/PlayerActionView",
@@ -50,17 +51,64 @@ export const BackWriteActor: Story = {
   },
 };
 
+const getFaceEmotionCard = (title: string) =>
+  faceEmotionCards.find((el) => el.title === title) as {
+    title: string;
+    imageUrl: string;
+    emotion: string;
+  };
+
+// Forma reale inviata dal server (roll/route.ts): il campo immagine sta
+// fuori, il testo della carta è annidato sotto "topic" — getCardDisplay
+// (card-utils.ts) legge imageUrl solo in questa forma.
+const makeFaceEmotionCard = (title: string) => {
+  const faceEmotionCard = getFaceEmotionCard(title);
+  return {
+    topic: {
+      cardTitle: faceEmotionCard.emotion,
+      cardText: faceEmotionCard.emotion,
+    },
+    imageUrl: faceEmotionCard.imageUrl,
+  };
+};
+
 export const FaceEmotionActor: Story = {
   args: {
     phase: "actor",
     actionType: "face-emotion",
-    // Forma reale inviata dal server (roll/route.ts): il campo immagine sta
-    // fuori, il testo della carta è annidato sotto "topic" — getCardDisplay
-    // (card-utils.ts) legge imageUrl solo in questa forma.
-    card: {
-      topic: { cardTitle: "felice", cardText: "felice" },
-      imageUrl: "/images/face-emotion/uomo-1-felice.png",
-    },
+    card: makeFaceEmotionCard("uomo-giovane-felicità-a"),
+  },
+};
+
+export const FaceEmotionActorAngry: Story = {
+  args: {
+    phase: "actor",
+    actionType: "face-emotion",
+    card: makeFaceEmotionCard("uomo-adulto-rabbia-a"),
+  },
+};
+
+export const FaceEmotionActorSad: Story = {
+  args: {
+    phase: "actor",
+    actionType: "face-emotion",
+    card: makeFaceEmotionCard("donna-anziana-tristezza-a"),
+  },
+};
+
+export const FaceEmotionActorFearful: Story = {
+  args: {
+    phase: "actor",
+    actionType: "face-emotion",
+    card: makeFaceEmotionCard("donna-giovane-paura-a"),
+  },
+};
+
+export const FaceEmotionActorDisgusted: Story = {
+  args: {
+    phase: "actor",
+    actionType: "face-emotion",
+    card: makeFaceEmotionCard("donna-adulta-disgusto-a"),
   },
 };
 
