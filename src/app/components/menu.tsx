@@ -12,6 +12,8 @@ import {
   LABEL_NEW_GAME,
   LABEL_SOUNDS_DISABLED,
   LABEL_SOUNDS_ENABLED,
+  LABEL_SPEECH_DISABLED,
+  LABEL_SPEECH_ENABLED,
   MODAL_CLOSE_BUTTON,
 } from "../texts";
 import { soundManager } from "../utils/sound-manager";
@@ -38,7 +40,8 @@ export default function Menu() {
   };
 
   const [isOpen, setIsOpen] = useState(false);
-  const { isSoundEnabled, toggleSound } = useSoundSettings();
+  const { isSoundEnabled, toggleSound, isSpeechEnabled, toggleSpeech } =
+    useSoundSettings();
 
   const toggleMenu = () => {
     // Genera il suono
@@ -53,6 +56,10 @@ export default function Menu() {
 
   const handleSoundToggle = () => {
     toggleSound();
+  };
+
+  const handleSpeechToggle = () => {
+    toggleSpeech();
   };
 
   return (
@@ -116,6 +123,21 @@ export default function Menu() {
                   {isSoundEnabled
                     ? LABEL_SOUNDS_ENABLED
                     : LABEL_SOUNDS_DISABLED}
+                </LabelCheckbox>
+              </div>
+              <div className="mt-3 flex items-center justify-center space-x-3">
+                <input
+                  type="checkbox"
+                  id="speech-toggle"
+                  name="speech-toggle"
+                  checked={isSpeechEnabled}
+                  onChange={handleSpeechToggle}
+                  className="ui-custom-checkbox mr-2"
+                />
+                <LabelCheckbox htmlFor="speech-toggle">
+                  {isSpeechEnabled
+                    ? LABEL_SPEECH_ENABLED
+                    : LABEL_SPEECH_DISABLED}
                 </LabelCheckbox>
               </div>
             </div>

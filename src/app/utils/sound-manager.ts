@@ -8,16 +8,60 @@ export class SoundManager {
   /** Callback per ottenere lo stato del suono dal store */
   private getSoundEnabled: () => boolean;
 
+  /** Callback per ottenere lo stato degli annunci vocali dal store */
+  private getSpeechEnabled: () => boolean;
+
+  /** Voce italiana di qualità selezionata per la sintesi vocale */
+  private preferredVoice: SpeechSynthesisVoice | null = null;
+
   /**
    * Crea una nuova istanza di SoundManager.
    * Il contesto audio viene inizializzato solo lato client per evitare problemi SSR.
    * @param soundEnabledCallback - Callback per ottenere lo stato del suono dal store
+   * @param speechEnabledCallback - Callback per ottenere lo stato degli annunci vocali dal store
    */
-  constructor(soundEnabledCallback?: () => boolean) {
+  constructor(
+    soundEnabledCallback?: () => boolean,
+    speechEnabledCallback?: () => boolean,
+  ) {
     this.getSoundEnabled = soundEnabledCallback || (() => true);
+    this.getSpeechEnabled = speechEnabledCallback || (() => false);
     if (typeof window !== "undefined") {
       this.initAudioContext();
+      this.initPreferredVoice();
     }
+  }
+
+  /**
+   * Seleziona la miglior voce italiana disponibile (es. Google/Natural),
+   * evitando la voce robotica di default del sistema.
+   * Le voci si caricano in modo asincrono su alcuni browser, quindi si
+   * ascolta anche l'evento "voiceschanged".
+   * @private
+   */
+  private initPreferredVoice(): void {
+    if (typeof window === "undefined" || !window.speechSynthesis) return;
+
+    const pickVoice = () => {
+      const voices = window.speechSynthesis.getVoices();
+      const italianVoices = voices.filter((v) => v.lang.startsWith("it"));
+
+      // Scarta motori robotici noti (es. espeak su Linux, spesso duplicati a migliaia)
+      const decentVoices = italianVoices.filter(
+        (v) => !/espeak|mbrola|festival|pico/i.test(v.name),
+      );
+      const pool = decentVoices.length > 0 ? decentVoices : italianVoices;
+
+      this.preferredVoice =
+        pool.find((v) => /natural/i.test(v.name)) ||
+        pool.find((v) => /google/i.test(v.name)) ||
+        pool.find((v) => /online/i.test(v.name)) ||
+        pool[0] ||
+        null;
+    };
+
+    pickVoice();
+    window.speechSynthesis.addEventListener("voiceschanged", pickVoice);
   }
 
   /**
@@ -168,6 +212,62 @@ export class SoundManager {
   }
 
   /**
+   * Sintetizza e riproduce un testo tramite Web Speech API,
+   * usando la voce italiana preferita se disponibile.
+   * @private
+   */
+  private speak(text: string): void {
+    if (!this.getSpeechEnabled()) return;
+    if (typeof window === "undefined" || !window.speechSynthesis) return;
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "it-IT";
+    utterance.rate = 1;
+    utterance.pitch = 1;
+    if (this.preferredVoice) {
+      utterance.voice = this.preferredVoice;
+    }
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+  }
+
+  /**
+   * Annuncia vocalmente esito del turno tramite sintesi vocale.
+   * @param playerName - Nome del giocatore che ha lanciato il dado
+   * @param diceResult - Il numero uscito dal dado (1-6)
+   * @param newPosition - La nuova posizione del giocatore sul tabellone
+   * @param squareLabel - Nome della casella speciale su cui è finito il giocatore (es. "Quiz"), se presente
+   */
+  speakDiceResult(
+    playerName: string,
+    diceResult: number,
+    newPosition: number,
+    squareLabel: string | null = null,
+  ): void {
+    this.speak(
+      `${playerName} ha lanciato un ${diceResult}, la nuova posizione è ${newPosition}${
+        squareLabel ? `, casella ${squareLabel}` : ""
+      }`,
+    );
+  }
+
+  /**
+   * Annuncia vocalmente il salto turno di un giocatore.
+   * @param playerName - Nome del giocatore che salta il turno
+   */
+  speakTurnSkip(playerName: string): void {
+    this.speak(`${playerName} salta il turno`);
+  }
+
+  /**
+   * Annuncia vocalmente la vittoria di un giocatore.
+   * @param winnerName - Nome del giocatore vincitore
+   */
+  speakVictory(winnerName: string): void {
+    this.speak(`${winnerName} ha vinto la partita!`);
+  }
+
+  /**
    * Verifica se gli effetti sonori sono abilitati.
    */
   isSoundEnabled(): boolean {
@@ -180,6 +280,21 @@ export class SoundManager {
    */
   setSoundEnabledCallback(callback: () => boolean): void {
     this.getSoundEnabled = callback;
+  }
+
+  /**
+   * Verifica se gli annunci vocali sono abilitati.
+   */
+  isSpeechEnabled(): boolean {
+    return this.getSpeechEnabled();
+  }
+
+  /**
+   * Aggiorna il callback per ottenere lo stato degli annunci vocali.
+   * @param callback - Nuovo callback per ottenere lo stato degli annunci vocali
+   */
+  setSpeechEnabledCallback(callback: () => boolean): void {
+    this.getSpeechEnabled = callback;
   }
 }
 
