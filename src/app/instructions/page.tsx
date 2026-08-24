@@ -323,6 +323,14 @@ export default function InstructionsPage() {
               una casella speciale), il suo turno verrà automaticamente saltato.
             </li>
           </ul>
+          <p className="mb-2">
+            Dal menu, sotto "Impostazioni audio", è possibile attivare gli{" "}
+            <strong>annunci vocali</strong>: se attivi (disattivati per
+            impostazione predefinita), l&apos;applicazione legge ad alta voce il
+            risultato di ogni turno (giocatore, valore del dado, nuova posizione
+            ed eventuale casella speciale raggiunta), il salto turno e la
+            vittoria finale.
+          </p>
           <Video
             src={`${imagePrefix}/videos/game-at-work-play-turn-chromium.webm`}
             text="Un video che mostra un giocatore giocare il proprio turno"
