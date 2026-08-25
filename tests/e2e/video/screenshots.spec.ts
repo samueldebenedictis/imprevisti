@@ -305,6 +305,8 @@ test("screenshot-end-game", async ({ page }) => {
 
   expect(await gamePage.getWinner()).toMatch(/Alice|Bob/);
 
+  await page.waitForTimeout(1000);
+
   await expect(page).toHaveScreenshot("end-game.png", { fullPage: true });
 });
 

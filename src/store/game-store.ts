@@ -11,7 +11,28 @@ import { Quiz } from "@/model/deck/quiz";
 import { WhatWouldYouDo } from "@/model/deck/what-would-you-do";
 import { type GameJSON, Game as GameModel } from "@/model/game";
 import type { Player } from "@/model/player";
+import {
+  LABEL_BACKWRITE,
+  LABEL_BATTLE,
+  LABEL_DICTATION_DRAW,
+  LABEL_FACE_EMOTION,
+  LABEL_MIME,
+  LABEL_MUSIC_EMOTION,
+  LABEL_QUIZ,
+  LABEL_WHAT_WOULD_YOU_DO,
+} from "../app/texts";
 import { soundManager } from "../app/utils/sound-manager";
+
+const ACTION_TYPE_LABELS: Record<string, string> = {
+  battle: LABEL_BATTLE,
+  quiz: LABEL_QUIZ,
+  mime: LABEL_MIME,
+  backwrite: LABEL_BACKWRITE,
+  "face-emotion": LABEL_FACE_EMOTION,
+  "music-emotion": LABEL_MUSIC_EMOTION,
+  "what-would-you-do": LABEL_WHAT_WOULD_YOU_DO,
+  "dictation-draw": LABEL_DICTATION_DRAW,
+};
 
 export interface GameState {
   // Core game state
@@ -170,6 +191,7 @@ export const useGameStore = create<GameStore>()(
           if (diceResult === 0) {
             // Play turn skip sound
             soundManager.playTurnSkip();
+            soundManager.speakTurnSkip(currentPlayerBeforeRoll.getName());
 
             const initialPosition = game.getPlayerPosition(
               currentPlayerBeforeRoll,
@@ -214,6 +236,8 @@ export const useGameStore = create<GameStore>()(
             const updatedGameData = updatedGame.toJSON();
             set({ game: updatedGame, gameData: updatedGameData });
 
+            const winner = updatedGame.getWinner();
+
             // Check if modal should be shown
             const hasSpecialEffect = (() => {
               if (
@@ -229,6 +253,18 @@ export const useGameStore = create<GameStore>()(
               }
               return false;
             })();
+
+            // Announce dice result (or victory, if the game just ended) via speech synthesis
+            if (winner) {
+              soundManager.speakVictory(winner.getName());
+            } else if (finalPosition !== undefined) {
+              soundManager.speakDiceResult(
+                currentPlayerBeforeRoll.getName(),
+                diceResult,
+                finalPosition,
+                actionType ? ACTION_TYPE_LABELS[actionType] : null,
+              );
+            }
 
             // Play battle sound if battle occurs
             if (actionType === "battle") {

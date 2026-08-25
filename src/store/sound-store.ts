@@ -13,6 +13,15 @@ interface SoundState {
 
   /** Inverte lo stato degli effetti sonori */
   toggleSound: () => void;
+
+  /** Indica se gli annunci vocali (sintesi vocale) sono abilitati */
+  isSpeechEnabled: boolean;
+
+  /** Abilita/disabilita gli annunci vocali */
+  setSpeechEnabled: (enabled: boolean) => void;
+
+  /** Inverte lo stato degli annunci vocali */
+  toggleSpeech: () => void;
 }
 
 /**
@@ -35,12 +44,27 @@ export const useSoundStore = create<SoundState>()(
         const currentState = get().isSoundEnabled;
         set({ isSoundEnabled: !currentState });
       },
+
+      // Stato iniziale - annunci vocali disabilitati di default
+      isSpeechEnabled: false,
+
+      // Setter per abilitare/disabilitare gli annunci vocali
+      setSpeechEnabled: (enabled: boolean) => {
+        set({ isSpeechEnabled: enabled });
+      },
+
+      // Toggle per invertire lo stato corrente
+      toggleSpeech: () => {
+        const currentState = get().isSpeechEnabled;
+        set({ isSpeechEnabled: !currentState });
+      },
     }),
     {
       name: "sound-settings", // Chiave per localStorage
       // Opzioni di persistenza
       partialize: (state) => ({
         isSoundEnabled: state.isSoundEnabled,
+        isSpeechEnabled: state.isSpeechEnabled,
       }),
     },
   ),

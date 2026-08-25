@@ -9,15 +9,16 @@ import { getSoundManager } from "../utils/sound-manager";
  * Questo componente deve essere montato all'inizio nel layout
  */
 export default function SoundProvider() {
-  const { isSoundEnabled } = useSoundSettings();
+  const { isSoundEnabled, isSpeechEnabled } = useSoundSettings();
 
   useEffect(() => {
     // Ottieni l'istanza del sound manager
     const soundManager = getSoundManager();
 
-    // Aggiorna il callback per ottenere lo stato del suono dal store
+    // Aggiorna i callback per ottenere lo stato di suoni e annunci vocali dal store
     soundManager.setSoundEnabledCallback(() => isSoundEnabled);
-  }, [isSoundEnabled]);
+    soundManager.setSpeechEnabledCallback(() => isSpeechEnabled);
+  }, [isSoundEnabled, isSpeechEnabled]);
 
   // Questo componente non renderizza nulla
   return null;
