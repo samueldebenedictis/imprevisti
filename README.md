@@ -24,6 +24,7 @@ Il gioco è disponibile ai seguenti indirizzi:
 - **Istruzioni**: Regole del gioco
 - **Salvataggio partite**: Sistema di salvataggio e caricamento della partita (la partita viene salvata in formato JSON). Lo stato della partita è conservato nello StorageState del browser.
 - **Effetti sonori**: Suoni di feedback per azioni dei giocatori (lancio dado, caselle speciali, combattimenti)
+- **Dashboard feedback** (`/admin/feedback`, protetta da chiave segreta): analizza le risposte raccolte dal modulo Feedback — punteggio SUS medio con grado (0-100), medie delle valutazioni, distribuzione per ruolo/esperienza/spettro autistico con filtri cliccabili, elenco commenti liberi
 - **State management avanzato**: Utilizzo di Zustand per una gestione efficiente dello stato dell'applicazione
 
 ## Tecnologie Utilizzate
@@ -118,10 +119,13 @@ Compila Storybook per la produzione.
 ```
 src/
 ├── app/                   # Pagine e componenti Next.js
+│   ├── admin/
+│   │   └── feedback/      # Dashboard di analisi dei feedback raccolti
 │   ├── api/               # API routes (multiplayer)
 │   │   ├── sessions/      # Crea sessione, long polling, azioni
 │   │   └── feedback/      # Raccolta feedback
 │   ├── components/        # Componenti React condivisi
+│   │   └── charts/        # Bar chart riutilizzabile per la dashboard
 │   ├── game/              # Pagina principale (schermo singolo)
 │   ├── multiplayer/       # Host: lobby e tabellone multi-dispositivo
 │   ├── player/            # Player: schermata per ogni giocatore
@@ -131,7 +135,8 @@ src/
 ├── lib/                   # Librerie condivise
 │   ├── session-store.ts   # Storage sessioni (Vercel KV / Redis / memory)
 │   ├── use-session-polling.ts  # Hook long polling + idle detection
-│   └── card-utils.ts      # Estrazione dati carta da pending action
+│   ├── card-utils.ts      # Estrazione dati carta da pending action
+│   └── sus.ts             # Calcolo punteggio System Usability Scale
 ├── model/                 # Logica e modelli di dati
 │   ├── deck/              # Sistema di carte (mimo, quiz, eccetera)
 │   ├── managers/          # Gestori di gioco (turni, battaglie, eccetera)
