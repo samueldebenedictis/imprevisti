@@ -7,6 +7,7 @@ import { expect, test } from "../app/fixtures";
 import { GamePage } from "../app/pages/game-page";
 import { HomePage } from "../app/pages/home-page";
 import { addZustandInitScript } from "../app/zustand";
+import FEEDBACK_DASHBOARD_FIXTURE from "./feedback-dashboard-fixture";
 
 const VIEWPORT = { width: 1920, height: 1080 };
 
@@ -315,6 +316,32 @@ test("screenshot-feedback", async ({ page }) => {
   await page.goto("/feedback");
 
   await expect(page).toHaveScreenshot("feedback.png", { fullPage: true });
+});
+
+test("screenshot-feedback-dashboard", async ({ page }) => {
+  await page.setViewportSize(VIEWPORT);
+
+  await page.route("**/api/feedback**", async (route, request) => {
+    if (request.method() === "GET") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(FEEDBACK_DASHBOARD_FIXTURE),
+      });
+    } else {
+      await route.continue();
+    }
+  });
+
+  await page.goto("/admin/feedback");
+  await page.getByLabel("Codice di accesso").fill("test-secret");
+  await page.getByRole("button", { name: "Accedi" }).click();
+
+  await expect(page.getByText("Punteggio SUS medio")).toBeVisible();
+  await expect(page.getByText("8 risposte")).toBeVisible();
+  await expect(page).toHaveScreenshot("feedback-dashboard.png", {
+    fullPage: true,
+  });
 });
 
 test("screenshot-menu", async ({ page }) => {
