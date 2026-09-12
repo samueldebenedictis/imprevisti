@@ -42,18 +42,26 @@ const AUTISM_LABELS: Record<string, string> = {
   preferisco_non_rispondere: "Preferisce non rispondere",
 };
 
-type FilterKey = "ageGroup" | "gameExperience" | "autismIdentification";
+type FilterKey =
+  | "ageGroup"
+  | "gameExperience"
+  | "autismIdentification"
+  | "appVersion";
 
+// appVersion non ha una mappa di etichette: il valore grezzo (es. "2.0.16")
+// è già leggibile ed è usato com'è, sia come label che come chiave filtro.
 const FILTER_LABELS: Record<FilterKey, Record<string, string>> = {
   ageGroup: AGE_GROUP_LABELS,
   gameExperience: EXPERIENCE_LABELS,
   autismIdentification: AUTISM_LABELS,
+  appVersion: {},
 };
 
 const EMPTY_FILTERS: Record<FilterKey, Set<string>> = {
   ageGroup: new Set(),
   gameExperience: new Set(),
   autismIdentification: new Set(),
+  appVersion: new Set(),
 };
 
 function countBy(entries: FeedbackEntry[], key: FilterKey) {
@@ -190,6 +198,7 @@ export default function FeedbackDashboardPage() {
   const ageGroupCounts = countBy(filteredEntries, "ageGroup");
   const experienceCounts = countBy(filteredEntries, "gameExperience");
   const autismCounts = countBy(filteredEntries, "autismIdentification");
+  const appVersionCounts = countBy(filteredEntries, "appVersion");
 
   const textEntries = filteredEntries.filter(
     (entry) => entry.whatWorkedWell || entry.challenges || entry.suggestions,
@@ -212,8 +221,8 @@ export default function FeedbackDashboardPage() {
           : `${filteredEntries.length} di ${entries.length} risposte`}
       </p>
       <p className="mb-4 text-gray-600 text-sm">
-        Clicca su una barra di Ruolo / Esperienza / Spettro autistico per
-        filtrare.
+        Clicca su una barra di Ruolo / Esperienza / Spettro autistico / Versione
+        app per filtrare.
       </p>
 
       {activeFilterChips.length > 0 && (
@@ -298,6 +307,16 @@ export default function FeedbackDashboardPage() {
             max={filteredEntries.length}
             selectedKeys={filters.autismIdentification}
             onItemClick={(value) => toggleFilter("autismIdentification", value)}
+          />
+        </section>
+
+        <section className="mb-8">
+          <h2 className="ui-text-subtitle mb-3">Versione app</h2>
+          <BarChart
+            items={appVersionCounts}
+            max={filteredEntries.length}
+            selectedKeys={filters.appVersion}
+            onItemClick={(value) => toggleFilter("appVersion", value)}
           />
         </section>
 

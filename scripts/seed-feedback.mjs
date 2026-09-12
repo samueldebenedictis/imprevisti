@@ -14,9 +14,26 @@
 
 import { readFileSync } from "node:fs";
 
-const { version: appVersion } = JSON.parse(
+const { version: currentVersion } = JSON.parse(
   readFileSync(new URL("../package.json", import.meta.url)),
 );
+
+// Un paio di versioni precedenti fittizie (patch -1/-2), per popolare anche
+// il filtro "Versione app" della dashboard con più di un valore.
+function previousPatchVersion(version, back) {
+  const [major, minor, patch] = version.split(".").map(Number);
+  return `${major}.${minor}.${Math.max(0, patch - back)}`;
+}
+
+// La maggior parte dei feedback arriva dalla versione corrente, il resto da
+// un paio di versioni precedenti: distribuzione realistica per un rollout.
+const APP_VERSIONS = [
+  currentVersion,
+  currentVersion,
+  currentVersion,
+  previousPatchVersion(currentVersion, 1),
+  previousPatchVersion(currentVersion, 2),
+];
 
 const args = process.argv.slice(2);
 const urlFlagIndex = args.indexOf("--url");
@@ -116,7 +133,7 @@ function buildEntry(index) {
       "preferisco_non_rispondere",
       "",
     ]),
-    appVersion,
+    appVersion: pick(APP_VERSIONS),
     digitalVsPhysical: maybe(randomRating(quality), 0.8),
     gameplayClarity: randomRating(quality),
     graphics: randomRating(quality),

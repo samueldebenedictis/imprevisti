@@ -24,7 +24,7 @@ Il gioco è disponibile ai seguenti indirizzi:
 - **Istruzioni**: Regole del gioco
 - **Salvataggio partite**: Sistema di salvataggio e caricamento della partita (la partita viene salvata in formato JSON). Lo stato della partita è conservato nello StorageState del browser.
 - **Effetti sonori**: Suoni di feedback per azioni dei giocatori (lancio dado, caselle speciali, combattimenti)
-- **Dashboard feedback** (`/admin/feedback`, protetta da chiave segreta): analizza le risposte raccolte dal modulo Feedback — punteggio SUS medio con grado (0-100), medie delle valutazioni, distribuzione per ruolo/esperienza/spettro autistico con filtri cliccabili, elenco commenti liberi
+- **Dashboard feedback** (`/admin/feedback`, protetta da chiave segreta): analizza le risposte raccolte dal modulo Feedback — punteggio SUS medio con grado (0-100), medie delle valutazioni, distribuzione per ruolo/esperienza/spettro autistico/versione app con filtri cliccabili, elenco commenti liberi
 - **State management avanzato**: Utilizzo di Zustand per una gestione efficiente dello stato dell'applicazione
 
 ## Tecnologie Utilizzate
