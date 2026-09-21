@@ -8,6 +8,7 @@ import {
   SQUARE_DICTATION_DRAW_TOP,
   SQUARE_FACE_EMOTION_BOTTOM,
   SQUARE_FACE_EMOTION_TOP,
+  SQUARE_FILM,
   SQUARE_MIME,
   SQUARE_MOVE_BACKWARD,
   SQUARE_MOVE_FORWARD,
@@ -40,6 +41,8 @@ const typeToColor = (type: ExtendedSquareType, moveValue?: number): Color => {
       return "orange";
     case "face-emotion":
       return "violet";
+    case "film":
+      return "emerald";
     case "dictation-draw":
       return "indigo";
     case "music-emotion":
@@ -106,6 +109,8 @@ const typeText = (type: ExtendedSquareType, moveValue: number | undefined) => {
   } else if (type === "face-emotion") {
     topDisplayText = SQUARE_FACE_EMOTION_TOP;
     bottomDisplayText = SQUARE_FACE_EMOTION_BOTTOM;
+  } else if (type === "film") {
+    topDisplayText = SQUARE_FILM;
   } else {
     return null;
   }

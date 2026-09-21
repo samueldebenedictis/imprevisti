@@ -3,6 +3,7 @@ import type {
   BackWrite,
   DictationDraw,
   FaceEmotion,
+  Film,
   Mime,
   MusicEmotion,
   PhysicalTest,
@@ -20,6 +21,7 @@ export type GameActionResult = {
     | "quiz"
     | "backwrite"
     | "face-emotion"
+    | "film"
     | "music-emotion"
     | "physical-test"
     | "what-would-you-do"
@@ -31,6 +33,7 @@ export type GameActionResult = {
     | Quiz
     | BackWrite
     | FaceEmotion
+    | Film
     | MusicEmotion
     | PhysicalTest
     | WhatWouldYouDo

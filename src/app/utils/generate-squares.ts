@@ -35,6 +35,7 @@ export const generateSquares = (
     move: boolean;
     backwrite: boolean;
     "face-emotion": boolean;
+    film: boolean;
     "music-emotion": boolean;
     "physical-test": boolean;
     "what-would-you-do": boolean;
@@ -84,6 +85,7 @@ export const generateSquares = (
   if (squareTypes.move) enabledSpecialTypes.push("move");
   if (squareTypes.backwrite) enabledSpecialTypes.push("backwrite");
   if (squareTypes["face-emotion"]) enabledSpecialTypes.push("face-emotion");
+  if (squareTypes.film) enabledSpecialTypes.push("film");
   if (squareTypes["music-emotion"]) enabledSpecialTypes.push("music-emotion");
   if (squareTypes["physical-test"]) enabledSpecialTypes.push("physical-test");
   if (squareTypes["what-would-you-do"])

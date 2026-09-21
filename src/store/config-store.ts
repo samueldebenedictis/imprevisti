@@ -26,6 +26,7 @@ export interface GameConfig {
     move: boolean;
     backwrite: boolean;
     "face-emotion": boolean;
+    film: boolean;
     "music-emotion": boolean;
     "physical-test": boolean;
     "what-would-you-do": boolean;
@@ -76,6 +77,7 @@ const defaultConfig: GameConfig = {
     move: true,
     backwrite: true,
     "face-emotion": true,
+    film: true,
     "music-emotion": true,
     "physical-test": true,
     "what-would-you-do": true,
@@ -225,6 +227,16 @@ export const useConfigStore = create<ConfigStore>()(
     }),
     {
       name: "game-config",
+      // squareTypes salvato prima di un nuovo tipo di casella non lo contiene:
+      // completo con i default così le nuove caselle risultano attive.
+      merge: (persisted, current) => {
+        const saved = persisted as Partial<ConfigStore> | undefined;
+        return {
+          ...current,
+          ...saved,
+          squareTypes: { ...current.squareTypes, ...saved?.squareTypes },
+        };
+      },
       partialize: (state) => ({
         numPlayers: state.numPlayers,
         playerNames: state.playerNames,

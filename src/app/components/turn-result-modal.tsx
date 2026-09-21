@@ -4,6 +4,7 @@ import type {
   BackWrite,
   DictationDraw,
   FaceEmotion,
+  Film,
   Mime,
   MusicEmotion,
   PhysicalTest,
@@ -21,6 +22,7 @@ import BackWriteResult from "./turn-result-modal/back-write-result";
 import BattleResult from "./turn-result-modal/battle-result";
 import DictationDrawResult from "./turn-result-modal/dictation-draw-result";
 import FaceEmotionResult from "./turn-result-modal/face-emotion-result";
+import FilmResult from "./turn-result-modal/film-result";
 import MimeResult from "./turn-result-modal/mime-result";
 import MusicEmotionResult from "./turn-result-modal/music-emotion-result";
 import PhysicalTestResult from "./turn-result-modal/physical-test-result";
@@ -42,6 +44,7 @@ interface DiceResultModalProps {
     | Quiz
     | BackWrite
     | FaceEmotion
+    | Film
     | MusicEmotion
     | PhysicalTest
     | WhatWouldYouDo
@@ -52,6 +55,7 @@ interface DiceResultModalProps {
   onResolveQuiz?: (success: boolean) => void;
   onResolveBackWrite?: (success: boolean, guessPlayerId?: number) => void;
   onResolveFaceEmotion?: (success: boolean) => void;
+  onResolveFilm?: (success: boolean) => void;
   onResolveMusicEmotion?: (success: boolean) => void;
   onResolvePhysicalTest?: (success: boolean) => void;
   onResolveWhatWouldYouDo?: (success: boolean) => void;
@@ -74,6 +78,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
   onResolveQuiz,
   onResolveBackWrite,
   onResolveFaceEmotion,
+  onResolveFilm,
   onResolveMusicEmotion,
   onResolvePhysicalTest,
   onResolveWhatWouldYouDo,
@@ -181,6 +186,16 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
             <FaceEmotionResult
               actionData={actionData as FaceEmotion}
               onResolveFaceEmotion={onResolveFaceEmotion}
+              onClose={onClose}
+            />
+          )}
+
+        {actionType === "film" &&
+          actionData &&
+          (actionData as Film).cardEmotion && (
+            <FilmResult
+              actionData={actionData as Film}
+              onResolveFilm={onResolveFilm}
               onClose={onClose}
             />
           )}

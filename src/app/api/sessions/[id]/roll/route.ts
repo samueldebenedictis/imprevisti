@@ -5,6 +5,7 @@ import type { BackWrite } from "@/model/deck/backwrite";
 import type { Card } from "@/model/deck/card";
 import type { DictationDraw } from "@/model/deck/dictation-draw";
 import type { FaceEmotion } from "@/model/deck/face-emotion";
+import type { Film } from "@/model/deck/film";
 import type { Mime } from "@/model/deck/mime";
 import type { MusicEmotion } from "@/model/deck/music-emotion";
 import type { PhysicalTest } from "@/model/deck/physical-test";
@@ -17,6 +18,7 @@ import type { PendingAction } from "@/types/session";
 function extractCard(result: GameActionResult): {
   card: Card;
   imageUrl?: string;
+  videoUrl?: string;
 } {
   switch (result.type) {
     case "mime":
@@ -34,6 +36,10 @@ function extractCard(result: GameActionResult): {
     case "face-emotion": {
       const d = result.data as FaceEmotion;
       return { card: d.cardEmotion, imageUrl: d.imageUrl };
+    }
+    case "film": {
+      const d = result.data as Film;
+      return { card: d.cardEmotion, videoUrl: d.videoUrl };
     }
     case "dictation-draw": {
       const d = result.data as DictationDraw;
@@ -100,10 +106,13 @@ export async function POST(
     };
     // currentPlayerId rimane invariato — l'host risolve la battaglia
   } else if (result.type !== "none") {
-    const { card, imageUrl } = extractCard(result);
+    const { card, imageUrl, videoUrl } = extractCard(result);
+    let pendingCard: unknown = card;
+    if (imageUrl !== undefined) pendingCard = { topic: card, imageUrl };
+    if (videoUrl !== undefined) pendingCard = { topic: card, videoUrl };
     const pendingAction: PendingAction = {
       type: result.type,
-      card: imageUrl !== undefined ? { topic: card, imageUrl } : card,
+      card: pendingCard,
       actorPlayerId: playerId,
       targetPlayerId: undefined,
     };

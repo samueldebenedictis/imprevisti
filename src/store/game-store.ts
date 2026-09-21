@@ -4,6 +4,7 @@ import { Battle } from "@/model/battle";
 import { BackWrite } from "@/model/deck/backwrite";
 import { DictationDraw } from "@/model/deck/dictation-draw";
 import { FaceEmotion } from "@/model/deck/face-emotion";
+import { Film } from "@/model/deck/film";
 import { Mime } from "@/model/deck/mime";
 import { MusicEmotion } from "@/model/deck/music-emotion";
 import { PhysicalTest } from "@/model/deck/physical-test";
@@ -16,6 +17,7 @@ import {
   LABEL_BATTLE,
   LABEL_DICTATION_DRAW,
   LABEL_FACE_EMOTION,
+  LABEL_FILM,
   LABEL_MIME,
   LABEL_MUSIC_EMOTION,
   LABEL_QUIZ,
@@ -29,6 +31,7 @@ const ACTION_TYPE_LABELS: Record<string, string> = {
   mime: LABEL_MIME,
   backwrite: LABEL_BACKWRITE,
   "face-emotion": LABEL_FACE_EMOTION,
+  film: LABEL_FILM,
   "music-emotion": LABEL_MUSIC_EMOTION,
   "what-would-you-do": LABEL_WHAT_WOULD_YOU_DO,
   "dictation-draw": LABEL_DICTATION_DRAW,
@@ -54,6 +57,7 @@ export interface GameState {
     | Quiz
     | BackWrite
     | FaceEmotion
+    | Film
     | MusicEmotion
     | PhysicalTest
     | WhatWouldYouDo
@@ -89,6 +93,7 @@ export interface GameActions {
   resolveQuiz: (success: boolean) => void;
   resolveBackWrite: (success: boolean, guesserId?: number) => void;
   resolveFaceEmotion: (success: boolean) => void;
+  resolveFilm: (success: boolean) => void;
   resolveMusicEmotion: (success: boolean) => void;
   resolvePhysicalTest: (success: boolean) => void;
   resolveWhatWouldYouDo: (success: boolean) => void;
@@ -429,6 +434,33 @@ export const useGameStore = create<GameStore>()(
             faceEmotionAction.imageUrl,
           );
           game.resolveFaceEmotion(currentFaceEmotionAction, success);
+
+          const updatedGame = GameModel.fromJSON(game.toJSON());
+          const updatedGameData = updatedGame.toJSON();
+          set({ game: updatedGame, gameData: updatedGameData });
+          get().actions.closeModal();
+        },
+
+        resolveFilm: (success: boolean) => {
+          const { game, actionData, actionType } = get();
+          if (!game || !actionData || actionType !== "film") return;
+
+          const filmAction = actionData as Film;
+          const currentFilmPlayer = game
+            .getPlayers()
+            .find((p) => p.getId() === filmAction.emotionPlayer.getId());
+
+          if (!currentFilmPlayer) {
+            get().actions.closeModal();
+            return;
+          }
+
+          const currentFilmAction = new Film(
+            currentFilmPlayer,
+            filmAction.cardEmotion,
+            filmAction.videoUrl,
+          );
+          game.resolveFilm(currentFilmAction, success);
 
           const updatedGame = GameModel.fromJSON(game.toJSON());
           const updatedGameData = updatedGame.toJSON();

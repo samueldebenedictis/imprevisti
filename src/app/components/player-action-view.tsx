@@ -2,6 +2,7 @@ import Image from "next/image";
 import { getCardDisplay } from "@/lib/card-utils";
 import { imagePrefix } from "../image-prefix";
 import { ACTION_LABELS } from "./action-labels";
+import FilmVideo from "./film-video";
 import SpectatorSpinner from "./spectator-spinner";
 import Button from "./ui/button";
 
@@ -83,8 +84,14 @@ export default function PlayerActionView(props: PlayerActionViewProps) {
   }
 
   if (props.phase === "actor") {
-    const { text: cardText, imageUrl } = getCardDisplay(props.card);
-    const showCardText = props.actionType !== "face-emotion";
+    const {
+      text: cardText,
+      body: cardBody,
+      imageUrl,
+      videoUrl,
+    } = getCardDisplay(props.card);
+    const showCardText =
+      props.actionType !== "face-emotion" && props.actionType !== "film";
     return (
       <div className="ui-text-dark my-8 flex min-h-screen flex-col items-center justify-center gap-6 p-8">
         <h2 className="ui-text-title">
@@ -99,6 +106,7 @@ export default function PlayerActionView(props: PlayerActionViewProps) {
             className="ui-border-dark w-full max-w-xs rounded"
           />
         )}
+        {videoUrl && <FilmVideo videoUrl={videoUrl} title={cardBody} />}
         {showCardText && cardText && (
           <div className="ui-border-dark w-full max-w-sm bg-gray-100 p-6 text-center">
             <p className="ui-text-subtitle">{String(cardText)}</p>

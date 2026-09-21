@@ -12,6 +12,7 @@ export const LABEL_MIME = "Mimo";
 export const LABEL_QUIZ = "Quiz";
 export const LABEL_BACKWRITE = "Parole alle spalle";
 export const LABEL_FACE_EMOTION = "Indovina l'emozione";
+export const LABEL_FILM = "Film";
 export const LABEL_MOVE = "Caselle movimento";
 export const LABEL_MUSIC_EMOTION = "Emozioni in musica";
 export const LABEL_PHYSICAL_TEST = "Test fisico";
@@ -42,6 +43,11 @@ export const MODAL_FACE_EMOTION_SHOW_ANSWER = "Mostra risposta";
 export const MODAL_FACE_EMOTION_ANSWER = "Emozione:";
 export const MODAL_FACE_EMOTION_CORRECT = "Corretto";
 export const MODAL_FACE_EMOTION_WRONG = "Sbagliato";
+export const MODAL_FILM_TITLE = "Guarda la scena!";
+export const MODAL_FILM_SHOW_ANSWER = "Mostra risposta";
+export const MODAL_FILM_ANSWER = "Emozione:";
+export const MODAL_FILM_CORRECT = "Corretto";
+export const MODAL_FILM_WRONG = "Sbagliato";
 // Mimo
 export const MODAL_MIME_TITLE = "Mimo!";
 export const MODAL_MIME_SHOW_TOPIC = "Mostra mimo";
@@ -114,6 +120,8 @@ export const MODAL_SPECIAL_EFFECT_INFO_WHAT_WOULD_YOU_DO =
   'Se un giocatore atterra su questa casella dovrà rispondere a una domanda ipotetica del tipo "Cosa faresti se...". Gli altri giocatori giudicheranno se la risposta è convincente. Se la risposta convince la maggioranza, il giocatore potrà avanzare di una casella. Altrimenti, salterà il prossimo turno.';
 export const MODAL_SPECIAL_EFFECT_INFO_FACE_EMOTION =
   "Il giocatore dovrà indovinare l'emozione espressa dal volto che gli verrà mostrato. Se risponde correttamente, potrà avanzare di una casella. Se sbaglia, dovrà saltare un turno.";
+export const MODAL_SPECIAL_EFFECT_INFO_FILM =
+  "Il giocatore dovrà guardare una breve scena di un film e indovinare l'emozione che trasmette. Se risponde correttamente, potrà avanzare di una casella. Se sbaglia, dovrà saltare un turno.";
 
 // Game Save and Restore
 export const LABEL_SAVE_GAME_BUTTON = "Salva partita";
@@ -168,6 +176,7 @@ export const SQUARE_WHAT_WOULD_YOU_DO_TOP = "COSA";
 export const SQUARE_WHAT_WOULD_YOU_DO_BOTTOM = "FARESTI SE...";
 export const SQUARE_FACE_EMOTION_TOP = "INDOVINA";
 export const SQUARE_FACE_EMOTION_BOTTOM = "L'EMOZIONE";
+export const SQUARE_FILM = "FILM";
 
 // Advanced mode
 export const LABEL_ADVANCED_MODE = "Modalità avanzata";
