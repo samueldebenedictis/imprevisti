@@ -121,6 +121,22 @@ export const FaceEmotion: Story = {
   },
 };
 
+// Forma reale inviata dal server (roll/route.ts): il video sta fuori,
+// il testo della carta è annidato sotto "topic".
+export const Film: Story = {
+  args: {
+    ...baseArgs,
+    pendingAction: {
+      type: "film",
+      actorPlayerId: "1",
+      card: {
+        topic: { cardTitle: "tristezza", cardText: "scena-tristezza" },
+        videoUrl: "/videos/tristezza.mp4",
+      },
+    },
+  },
+};
+
 export const MusicEmotion: Story = {
   args: {
     ...baseArgs,
