@@ -126,6 +126,30 @@ describe("POST /api/sessions/[id]/action — remaining action types", () => {
     expect(saved.pendingAction).toBeNull();
   });
 
+  test("film success: reads the { topic, videoUrl } card shape", async () => {
+    const pendingAction: PendingAction = {
+      type: "film",
+      card: {
+        topic: { cardTitle: "felicità", cardText: "scena-felicita" },
+        videoUrl: "/videos/felicita.mp4",
+      },
+      actorPlayerId: "0",
+    };
+    vi.mocked(sessionStore.getSession).mockResolvedValue(
+      mockSession({ pendingAction }),
+    );
+    vi.mocked(sessionStore.saveSession).mockResolvedValue(undefined);
+
+    const res = await POST(
+      makeReq({ hostToken: "host-tok", success: true }),
+      params,
+    );
+    expect(res.status).toBe(200);
+
+    const saved = vi.mocked(sessionStore.saveSession).mock.calls[0][1];
+    expect(saved.pendingAction).toBeNull();
+  });
+
   test("music-emotion success: resolves and advances the turn", async () => {
     const pendingAction: PendingAction = {
       type: "music-emotion",

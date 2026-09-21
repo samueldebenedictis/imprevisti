@@ -56,6 +56,7 @@ const defaultBoardConfig: GameConfig = {
     move: false,
     backwrite: false,
     "face-emotion": false,
+    film: false,
     "music-emotion": false,
     "physical-test": false,
     "what-would-you-do": false,
