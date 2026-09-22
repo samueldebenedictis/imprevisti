@@ -15,7 +15,8 @@
       "!tests/e2e/snapshots",
       "!test-results",
       "!playwright-report",
-      "!public/storybook"
+      "!public/storybook",
+      "!.venv-morph"
     ]
   },
   "formatter": {
