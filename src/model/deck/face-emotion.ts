@@ -62,3 +62,14 @@ export const faceEmotionCards = buildFaceEmotionCards(
 /** Set completo (neutralità inclusa) per Storybook. */
 export const faceEmotionStorybookCards =
   buildFaceEmotionCards(faceEmotionLabels);
+
+/**
+ * Deriva l'URL della gif di morphing (neutro -> espressione) a partire
+ * dall'URL della foto statica. Vale solo per le espressioni non neutre:
+ * non esiste una gif "neutro -> neutro", ma le carte giocabili escludono
+ * già la neutralità (vedi `faceEmotionCards`).
+ */
+export const getFaceEmotionGifUrl = (imageUrl: string) =>
+  imageUrl
+    .replace("/images/faces/", "/images/faces_morph/")
+    .replace(/\.jpg$/, "_morph.gif");
