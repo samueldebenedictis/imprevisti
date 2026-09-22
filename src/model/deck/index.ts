@@ -4,7 +4,7 @@ export { Card } from "./card";
 export { Deck } from "./deck";
 export { DictationDraw } from "./dictation-draw";
 export { DictationDrawDeck } from "./dictation-draw-deck";
-export { FaceEmotion } from "./face-emotion";
+export { FaceEmotion, getFaceEmotionGifUrl } from "./face-emotion";
 export { FaceEmotionDeck } from "./face-emotion-deck";
 export { Film } from "./film";
 export { FilmDeck } from "./film-deck";

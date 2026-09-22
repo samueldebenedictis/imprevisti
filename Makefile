@@ -26,3 +26,14 @@ copy-screenshots:
 tesi:
 	cd elaborato && latexmk -pdf -interaction=nonstopmode -halt-on-error tesi.tex
 	cd elaborato && latexmk -c tesi.tex
+
+face-morph-setup:
+	python3 -m venv .venv-morph
+	.venv-morph/bin/pip install --upgrade pip -q
+	.venv-morph/bin/pip install opencv-contrib-python numpy imageio scipy mediapipe -q
+	mkdir -p scripts/models
+	curl -sL -o scripts/models/face_landmarker.task \
+		"https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task"
+
+face-morph:
+	.venv-morph/bin/python3 scripts/face_morph.py
