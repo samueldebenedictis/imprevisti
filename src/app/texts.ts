@@ -42,6 +42,8 @@ export const MODAL_FACE_EMOTION_SHOW_ANSWER = "Mostra risposta";
 export const MODAL_FACE_EMOTION_ANSWER = "Emozione:";
 export const MODAL_FACE_EMOTION_CORRECT = "Corretto";
 export const MODAL_FACE_EMOTION_WRONG = "Sbagliato";
+export const LABEL_FACE_EMOTION_ANIMATED = "Animato";
+export const LABEL_FACE_EMOTION_STATIC = "Non animato";
 // Mimo
 export const MODAL_MIME_TITLE = "Mimo!";
 export const MODAL_MIME_SHOW_TOPIC = "Mostra mimo";
