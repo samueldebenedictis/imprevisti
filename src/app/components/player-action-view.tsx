@@ -2,6 +2,7 @@ import Image from "next/image";
 import { getCardDisplay } from "@/lib/card-utils";
 import { imagePrefix } from "../image-prefix";
 import { ACTION_LABELS } from "./action-labels";
+import FaceEmotionImage from "./face-emotion-image";
 import FilmVideo from "./film-video";
 import SpectatorSpinner from "./spectator-spinner";
 import Button from "./ui/button";
@@ -97,7 +98,14 @@ export default function PlayerActionView(props: PlayerActionViewProps) {
         <h2 className="ui-text-title">
           {ACTION_LABELS[props.actionType] ?? props.actionType}
         </h2>
-        {imageUrl && (
+        {imageUrl && props.actionType === "face-emotion" && (
+          <FaceEmotionImage
+            imageUrl={imageUrl}
+            alt="emotion"
+            className="ui-border-dark mx-auto block w-full max-w-xs rounded"
+          />
+        )}
+        {imageUrl && props.actionType !== "face-emotion" && (
           <Image
             width={200}
             height={200}
