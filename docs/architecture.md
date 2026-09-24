@@ -85,6 +85,13 @@ npm run e2e:storybook # Playwright E2E for Storybook
 npm run storybook    # Storybook dev on port 6006
 ```
 
+Face-morph gifs (only needed to regenerate `public/images/faces_morph/`, needs Python 3 with the `venv` module):
+
+```bash
+make face-morph-setup   # venv .venv-morph + dependencies + landmark model
+make face-morph         # runs scripts/face_morph.py
+```
+
 ## Environment variables
 
 | Variable | Where | Description |
