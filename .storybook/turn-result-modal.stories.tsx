@@ -6,6 +6,7 @@ import {
   Card,
   DictationDraw,
   FaceEmotion,
+  Film,
   Mime,
   MusicEmotion,
   PhysicalTest,
@@ -13,6 +14,7 @@ import {
   WhatWouldYouDo,
 } from "../src/model/deck";
 import { faceEmotionStorybookCards } from "../src/model/deck/face-emotion";
+import { filmCards } from "../src/model/deck/film";
 import { Player } from "../src/model/player";
 
 const meta = {
@@ -31,6 +33,7 @@ const meta = {
         "mime",
         "backwrite",
         "face-emotion",
+        "film",
         "music-emotion",
         "physical-test",
         "what-would-you-do",
@@ -182,6 +185,48 @@ export const FaceEmotionDisgustScenario: Story = {
 
 export const FaceEmotionNeutralScenario: Story = {
   args: makeFaceEmotionScenario("uomo-anziano-neutralità-a"),
+};
+
+const makeFilmScenario = (title: string): Story["args"] => {
+  const filmCard = filmCards.find((el) => el.title === title) as {
+    title: string;
+    videoUrl: string;
+    emotion: string;
+  };
+  return {
+    isOpen: true,
+    onClose: () => console.log("Close modal"),
+    diceResult: 2,
+    actionType: "film",
+    actionData: new Film(
+      allPlayers[0],
+      new Card(filmCard.emotion, filmCard.title),
+      filmCard.videoUrl,
+    ),
+    onResolveFilm: (success) => console.log(`Film success: ${success}`),
+    allPlayers: allPlayers,
+    currentPlayerName: allPlayers[0].getName(),
+  };
+};
+
+export const FilmScenario: Story = {
+  args: makeFilmScenario("scena-felicita"),
+};
+
+export const FilmAngerScenario: Story = {
+  args: makeFilmScenario("scena-rabbia"),
+};
+
+export const FilmSadnessScenario: Story = {
+  args: makeFilmScenario("scena-tristezza"),
+};
+
+export const FilmFearScenario: Story = {
+  args: makeFilmScenario("scena-paura"),
+};
+
+export const FilmDisgustScenario: Story = {
+  args: makeFilmScenario("scena-disgusto"),
 };
 
 export const BackWriteScenario: Story = {

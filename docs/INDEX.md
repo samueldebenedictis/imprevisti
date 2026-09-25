@@ -65,6 +65,11 @@ Each file is self-contained for its domain.
 → [frontend-patterns.md](frontend-patterns.md) — "getCardDisplay"
 → Source: `src/lib/card-utils.ts`
 
+### Face-emotion image, "Animato" toggle and morph gifs
+→ [frontend-patterns.md](frontend-patterns.md) — "FaceEmotionImage"
+→ [game-model.md](game-model.md) — "Face-emotion animations (face morph)"
+→ Source: `src/app/components/face-emotion-image.tsx`, `src/store/face-emotion-store.ts`, `scripts/face_morph.py`
+
 ### Async fetch inside useEffect (cancelled flag pattern)
 → [frontend-patterns.md](frontend-patterns.md) — "Pattern: cancelled flag"
 

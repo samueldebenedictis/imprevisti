@@ -1,20 +1,15 @@
-import Image from "next/image";
 import type React from "react";
 import { useState } from "react";
-import { type FaceEmotion, getFaceEmotionGifUrl } from "@/model/deck";
-import { useFaceEmotionStore } from "@/store/face-emotion-store";
-import { imagePrefix } from "../../image-prefix";
+import type { FaceEmotion } from "@/model/deck";
 import {
-  LABEL_FACE_EMOTION_ANIMATED,
-  LABEL_FACE_EMOTION_STATIC,
   MODAL_FACE_EMOTION_ANSWER,
   MODAL_FACE_EMOTION_CORRECT,
   MODAL_FACE_EMOTION_SHOW_ANSWER,
   MODAL_FACE_EMOTION_TITLE,
   MODAL_FACE_EMOTION_WRONG,
 } from "../../texts";
+import FaceEmotionImage from "../face-emotion-image";
 import Button from "../ui/button";
-import { LabelCheckbox } from "../ui/label";
 import { H3 } from "./h3";
 
 interface FaceEmotionResultProps {
@@ -29,11 +24,6 @@ const FaceEmotionResult: React.FC<FaceEmotionResultProps> = ({
   onClose,
 }) => {
   const [showEmotionAnswer, setShowEmotionAnswer] = useState(false);
-  const { isAnimated, toggleAnimated } = useFaceEmotionStore();
-
-  const imageSrc = isAnimated
-    ? getFaceEmotionGifUrl(actionData.imageUrl)
-    : actionData.imageUrl;
 
   const handleShowEmotionAnswer = () => {
     setShowEmotionAnswer(true);
@@ -50,26 +40,11 @@ const FaceEmotionResult: React.FC<FaceEmotionResultProps> = ({
   return (
     <div className="mt-4">
       <H3>{MODAL_FACE_EMOTION_TITLE}</H3>
-      <div className="mb-2 flex items-center justify-center space-x-3">
-        <input
-          type="checkbox"
-          id="face-emotion-animated-toggle"
-          name="face-emotion-animated-toggle"
-          checked={isAnimated}
-          onChange={toggleAnimated}
-          className="ui-custom-checkbox mr-2"
-        />
-        <LabelCheckbox htmlFor="face-emotion-animated-toggle">
-          {isAnimated ? LABEL_FACE_EMOTION_ANIMATED : LABEL_FACE_EMOTION_STATIC}
-        </LabelCheckbox>
-      </div>
-      <div className="mb-4 flex justify-center">
-        <Image
-          width={200}
-          height={200}
-          src={`${imagePrefix}${imageSrc}`}
+      <div className="mb-4">
+        <FaceEmotionImage
+          imageUrl={actionData.imageUrl}
           alt={actionData.cardEmotion.cardTitle}
-          className="ui-border-dark m-4 max-h-64 max-w-full"
+          className="ui-border-dark m-4 mx-auto block max-h-64 max-w-full"
           onError={(e) => {
             // Fallback to text if image fails to load
             const target = e.target as HTMLImageElement;

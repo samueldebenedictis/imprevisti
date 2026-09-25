@@ -105,3 +105,10 @@ export const FaceEmotionSquare: Story = {
     squareType: "face-emotion",
   },
 };
+
+export const FilmSquare: Story = {
+  args: {
+    number: 23,
+    squareType: "film",
+  },
+};

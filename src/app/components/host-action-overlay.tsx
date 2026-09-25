@@ -7,6 +7,8 @@ import {
 } from "@/types/session";
 import { imagePrefix } from "../image-prefix";
 import { ACTION_LABELS } from "./action-labels";
+import FaceEmotionImage from "./face-emotion-image";
+import FilmVideo from "./film-video";
 import Button from "./ui/button";
 
 // Azioni con target libero: l'host chiede "chi ha indovinato?" dopo "Riuscito"
@@ -20,6 +22,7 @@ const AWAITING_TARGET_MESSAGES: Record<string, string> = {
 // Tipi in cui il testo della carta è segreto: il topic è visibile solo sul dispositivo del giocatore
 const HIDE_CARD_ON_HOST = [
   "face-emotion",
+  "film",
   "backwrite",
   "mime",
   "dictation-draw",
@@ -65,6 +68,7 @@ export default function HostActionOverlay({
     text: cardTitle,
     body: cardBody,
     imageUrl: cardImageUrl,
+    videoUrl: cardVideoUrl,
   } = getCardDisplay(pendingAction.card);
 
   const showCardTitle =
@@ -75,7 +79,9 @@ export default function HostActionOverlay({
   const showForQuiz = showCardAnswer;
   const showForBackwrite = pendingAction.type === "backwrite" && !!cardTitle;
   const showForMime = pendingAction.type === "mime" && !!cardTitle;
-  const showReveal = showForQuiz || showForBackwrite || showForMime;
+  const showForFilm = pendingAction.type === "film" && !!cardTitle;
+  const showReveal =
+    showForQuiz || showForBackwrite || showForMime || showForFilm;
   const revealLabel =
     pendingAction.type === "mime" ? "Mostra soluzione" : "Mostra risposta";
   const revealValue = pendingAction.type === "quiz" ? cardBody : cardTitle;
@@ -97,15 +103,27 @@ export default function HostActionOverlay({
         </p>
 
         {/* Immagine (face-emotion only — dictation-draw: solo sul dispositivo attore) */}
-        {cardImageUrl && pendingAction.type !== "dictation-draw" && (
-          <Image
-            width={200}
-            height={200}
-            src={`${imagePrefix}${cardImageUrl}`}
+        {cardImageUrl && pendingAction.type === "face-emotion" && (
+          <FaceEmotionImage
+            imageUrl={cardImageUrl}
             alt="card"
-            className="ui-border-dark mx-auto max-w-xs rounded"
+            className="ui-border-dark mx-auto block max-w-xs rounded"
           />
         )}
+        {cardImageUrl &&
+          pendingAction.type !== "face-emotion" &&
+          pendingAction.type !== "dictation-draw" && (
+            <Image
+              width={200}
+              height={200}
+              src={`${imagePrefix}${cardImageUrl}`}
+              alt="card"
+              className="ui-border-dark mx-auto max-w-xs rounded"
+            />
+          )}
+
+        {/* Scena di film (film only): il nome dell'emozione è la risposta */}
+        {cardVideoUrl && <FilmVideo videoUrl={cardVideoUrl} title={cardBody} />}
 
         {/* Testo carta (nascosto per face-emotion: il nome emozione è la risposta) */}
         {showCardTitle && (

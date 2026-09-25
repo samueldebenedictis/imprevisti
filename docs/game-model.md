@@ -98,6 +98,7 @@ const game: Game = Game.fromJSON(json) // → reconstructed instance
 | `mime` | Something to mime |
 | `backwrite` | Write on someone's back |
 | `face-emotion` | Express emotion with your face |
+| `film` | Guess the emotion of a film scene (video in `public/videos/`) |
 | `music-emotion` | Guess emotion from music |
 | `physical-test` | Physical challenge |
 | `what-would-you-do` | Hypothetical scenario |
@@ -112,7 +113,7 @@ Each action type has a manager handling pre/post resolution logic. 15 managers t
 
 ## Deck System (`src/model/deck/`)
 
-9 decks, one per action type. Each deck is a shuffled array of cards dealt in rotation.
+10 decks, one per action type. Each deck is a shuffled array of cards dealt in rotation.
 
 ```ts
 // Simple card
@@ -120,7 +121,19 @@ Each action type has a manager handling pre/post resolution logic. 15 managers t
 
 // Card with image (face-emotion, dictation-draw)
 { topic: { cardTitle: string, cardText: string }, imageUrl: string }
+
+// Card with video (film)
+{ topic: { cardTitle: string, cardText: string }, videoUrl: string }
 ```
+
+### Face-emotion animations (face morph)
+
+Every non-neutral face-emotion card also has an animated gif that morphs the same subject from the neutral expression to the target one.
+
+- **Files**: `public/images/faces_morph/{id}_{age}_{sex}_{expr}_{set}_morph.gif`, same name as the still in `public/images/faces/` plus `_morph`. There is no gif for the neutral expression (`n`); `faceEmotionCards` already excludes it, so every playable card has one.
+- **URL helper**: `getFaceEmotionGifUrl(imageUrl)` in `src/model/deck/face-emotion.ts` derives the gif URL from the still URL. `FaceEmotion.imageUrl` keeps holding the still, so serialization and the API shapes above are unchanged.
+- **Generation**: `make face-morph-setup` (once: Python venv, dependencies, MediaPipe `face_landmarker.task` model) then `make face-morph` (runs `scripts/face_morph.py`). The script detects 478 landmarks, builds a Delaunay triangulation, warps triangle by triangle and cross-dissolves, only inside a feathered face mask so shirt and background stay still. Output is committed, so the app does not need Python at runtime.
+- **UI**: see "`FaceEmotionImage`" in [frontend-patterns.md](frontend-patterns.md).
 
 ## Board Generation (`src/app/utils/generate-squares.ts`)
 

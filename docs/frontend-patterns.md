@@ -178,6 +178,20 @@ const rollDice = async () => {
 
 ---
 
+## `FaceEmotionImage` (`src/app/components/face-emotion-image.tsx`)
+
+Renders the face-emotion photo together with the "Animato" / "Non animato" checkbox. When enabled it shows the morph gif from `getFaceEmotionGifUrl`, and if the gif fails to load it falls back to the still photo. The preference lives in `useFaceEmotionStore` (`isAnimated`, persisted to localStorage under `face-emotion-settings`, default `false`), so it is per browser: host and players are **not** synchronised.
+
+It is the only place that renders a face-emotion image, used by:
+
+- `turn-result-modal/face-emotion-result.tsx` — single-screen modal
+- `host-action-overlay.tsx` — host overlay in multiplayer (`type === "face-emotion"`)
+- `player-action-view.tsx` — active player's phone, `actor` phase (`actionType === "face-emotion"`)
+
+Dictation-draw images keep using a plain `<Image>`: no gif, no checkbox. Any new place showing a face-emotion image must use this component so the checkbox stays available everywhere.
+
+Storybook fixtures must use the real card shape (`{ topic: {...}, imageUrl }`, see `getCardDisplay`); the flat shape drops `imageUrl` and no image is rendered.
+
 ## Zustand Stores
 
 ```ts
@@ -189,6 +203,9 @@ import { useConfigStore } from "@/store/config-store";
 
 // Audio toggle
 import { useSoundStore } from "@/store/sound-store";
+
+// Face-emotion "Animato" toggle (persisted, default off)
+import { useFaceEmotionStore } from "@/store/face-emotion-store";
 ```
 
 These stores are **not used** by multiplayer mode. Multiplayer uses server-side `SessionState` + `useSessionPolling`.

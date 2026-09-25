@@ -5,6 +5,7 @@ import {
   type Deck,
   DictationDrawDeck,
   FaceEmotionDeck,
+  FilmDeck,
   MimeDeck,
   MusicEmotionDeck,
   PhysicalTestDeck,
@@ -17,6 +18,7 @@ import {
   BattleManager,
   DictationDrawManager,
   FaceEmotionManager,
+  FilmManager,
   type GameActionResult,
   GameStateManager,
   MimeManager,
@@ -33,6 +35,7 @@ import {
   BackWrite,
   DictationDraw,
   FaceEmotion,
+  Film,
   Mime,
   MusicEmotion,
   PhysicalTest,
@@ -62,6 +65,7 @@ export class Game {
   private quizDeck: Deck;
   private backWriteDeck: Deck;
   private faceEmotionDeck: Deck;
+  private filmDeck: Deck;
   private musicEmotionDeck: Deck;
   private physicalTestDeck: Deck;
   private whatWouldYouDoDeck: Deck;
@@ -77,6 +81,7 @@ export class Game {
   private quizManager: QuizManager;
   private backWriteManager: BackWriteManager;
   private faceEmotionManager: FaceEmotionManager;
+  private filmManager: FilmManager;
   private musicEmotionManager: MusicEmotionManager;
   private physicalTestManager: PhysicalTestManager;
   private whatWouldYouDoManager: WhatWouldYouDoManager;
@@ -98,6 +103,7 @@ export class Game {
     this.quizDeck = new QuizDeck();
     this.backWriteDeck = new BackWriteDeck();
     this.faceEmotionDeck = new FaceEmotionDeck();
+    this.filmDeck = new FilmDeck();
     this.musicEmotionDeck = new MusicEmotionDeck();
     this.physicalTestDeck = new PhysicalTestDeck();
     this.whatWouldYouDoDeck = new WhatWouldYouDoDeck();
@@ -121,6 +127,7 @@ export class Game {
       this.physicalTestDeck,
       this.whatWouldYouDoDeck,
       this.dictationDrawDeck,
+      this.filmDeck,
       this.dice,
       this.movementManager,
       this.gameStateManager,
@@ -134,6 +141,7 @@ export class Game {
     this.quizManager = new QuizManager(this.movementManager);
     this.backWriteManager = new BackWriteManager(this.movementManager);
     this.faceEmotionManager = new FaceEmotionManager(this.movementManager);
+    this.filmManager = new FilmManager(this.movementManager);
     this.musicEmotionManager = new MusicEmotionManager(this.movementManager);
     this.physicalTestManager = new PhysicalTestManager(this.movementManager);
     this.whatWouldYouDoManager = new WhatWouldYouDoManager(
@@ -210,6 +218,7 @@ export class Game {
       game.physicalTestDeck,
       game.whatWouldYouDoDeck,
       game.dictationDrawDeck,
+      game.filmDeck,
       game.dice,
       game.movementManager, // movementManager also needs to be updated first
       reconstructedGameStateManager,
@@ -223,6 +232,7 @@ export class Game {
     game.quizManager = new QuizManager(game.movementManager);
     game.backWriteManager = new BackWriteManager(game.movementManager);
     game.faceEmotionManager = new FaceEmotionManager(game.movementManager);
+    game.filmManager = new FilmManager(game.movementManager);
     game.musicEmotionManager = new MusicEmotionManager(game.movementManager);
     game.physicalTestManager = new PhysicalTestManager(game.movementManager);
     game.whatWouldYouDoManager = new WhatWouldYouDoManager(
@@ -364,6 +374,14 @@ export class Game {
           data: specialAction,
           diceResult: diceValue,
           actionType: "face-emotion",
+        };
+      }
+      if (specialAction instanceof Film) {
+        return {
+          type: "film",
+          data: specialAction,
+          diceResult: diceValue,
+          actionType: "film",
         };
       }
     }
@@ -511,6 +529,16 @@ export class Game {
       faceEmotionAction,
       success,
     );
+  }
+
+  /**
+   * Risolve un'azione film utilizzando il FilmManager.
+   * @param filmAction - L'oggetto Film da risolvere
+   * @param success - True se l'emozione della scena è stata indovinata, false altrimenti
+   * @returns Un oggetto Battle se si verifica una collisione, null altrimenti
+   */
+  resolveFilm(filmAction: Film, success: boolean): Battle | null {
+    return this.filmManager.resolveFilm(filmAction, success);
   }
 
   // Getter per accesso ai dati del gioco

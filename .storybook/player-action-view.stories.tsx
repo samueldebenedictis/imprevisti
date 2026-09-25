@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import PlayerActionView from "../src/app/components/player-action-view";
 import { faceEmotionCards } from "../src/model/deck/face-emotion";
+import { filmCards } from "../src/model/deck/film";
 
 const meta = {
   title: "SpecialSquares/PlayerDevice/PlayerActionView",
@@ -109,6 +110,60 @@ export const FaceEmotionActorDisgusted: Story = {
     phase: "actor",
     actionType: "face-emotion",
     card: makeFaceEmotionCard("donna-adulta-disgusto-a"),
+  },
+};
+
+// Forma reale inviata dal server: video fuori, testo della carta sotto "topic".
+// cardText è il titolo della scena (non l'emozione, che è la risposta).
+const makeFilmCard = (title: string) => {
+  const filmCard = filmCards.find((el) => el.title === title) as {
+    title: string;
+    videoUrl: string;
+    emotion: string;
+  };
+  return {
+    topic: { cardTitle: filmCard.emotion, cardText: filmCard.title },
+    videoUrl: filmCard.videoUrl,
+  };
+};
+
+export const FilmActor: Story = {
+  args: {
+    phase: "actor",
+    actionType: "film",
+    card: makeFilmCard("scena-felicita"),
+  },
+};
+
+export const FilmActorAngry: Story = {
+  args: {
+    phase: "actor",
+    actionType: "film",
+    card: makeFilmCard("scena-rabbia"),
+  },
+};
+
+export const FilmActorSad: Story = {
+  args: {
+    phase: "actor",
+    actionType: "film",
+    card: makeFilmCard("scena-tristezza"),
+  },
+};
+
+export const FilmActorFearful: Story = {
+  args: {
+    phase: "actor",
+    actionType: "film",
+    card: makeFilmCard("scena-paura"),
+  },
+};
+
+export const FilmActorDisgusted: Story = {
+  args: {
+    phase: "actor",
+    actionType: "film",
+    card: makeFilmCard("scena-disgusto"),
   },
 };
 

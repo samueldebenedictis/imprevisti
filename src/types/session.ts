@@ -6,7 +6,7 @@ export interface SessionPlayer {
 }
 
 export interface PendingAction {
-  type: string; // 'mime' | 'quiz' | 'backwrite' | 'face-emotion' | 'music-emotion' | 'physical-test' | 'what-would-you-do' | 'dictation-draw'
+  type: string; // 'mime' | 'quiz' | 'backwrite' | 'face-emotion' | 'film' | 'music-emotion' | 'physical-test' | 'what-would-you-do' | 'dictation-draw'
   card: unknown; // dati primitivi serializzati (NO oggetti Player)
   actorPlayerId: string; // chi esegue l'azione
   targetPlayerId?: string; // chi indovina/disegna (mime, backwrite, dictation-draw)

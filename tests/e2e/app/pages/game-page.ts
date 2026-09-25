@@ -21,6 +21,10 @@ import {
   MODAL_FACE_EMOTION_SHOW_ANSWER,
   MODAL_FACE_EMOTION_TITLE,
   MODAL_FACE_EMOTION_WRONG,
+  MODAL_FILM_CORRECT,
+  MODAL_FILM_SHOW_ANSWER,
+  MODAL_FILM_TITLE,
+  MODAL_FILM_WRONG,
   MODAL_MIME_CONFIRM,
   MODAL_MIME_GUESSED,
   MODAL_MIME_NOT_GUESSED,
@@ -157,6 +161,18 @@ export class GamePage {
     exact: true,
   });
 
+  filmShowAnswerButton = this.page.getByRole("button", {
+    name: MODAL_FILM_SHOW_ANSWER,
+    exact: true,
+  });
+  filmCorrectButton = this.page.getByRole("button", {
+    name: MODAL_FILM_CORRECT,
+    exact: true,
+  });
+  filmWrongButton = this.page.getByRole("button", {
+    name: MODAL_FILM_WRONG,
+    exact: true,
+  });
   faceEmotionShowAnswerButton = this.page.getByRole("button", {
     name: MODAL_FACE_EMOTION_SHOW_ANSWER,
     exact: true,
@@ -212,6 +228,7 @@ export class GamePage {
   mimeModalTitle = this.page.getByText(MODAL_MIME_TITLE);
   backwriteModalTitle = this.page.getByText(MODAL_BACKWRITE_TITLE);
   faceEmotionModalTitle = this.page.getByText(MODAL_FACE_EMOTION_TITLE);
+  filmModalTitle = this.page.getByText(MODAL_FILM_TITLE);
   musicEmotionModalTitle = this.page.getByText(MODAL_MUSIC_EMOTION_TITLE);
   physicalTestModalTitle = this.page.getByText(MODAL_PHYSICAL_TEST);
   whatWouldYouDoModalTitle = this.page.getByText(MODAL_WHAT_WOULD_YOU_DO_TITLE);
@@ -274,6 +291,14 @@ export class GamePage {
       await this.playerSelectDropdown.waitFor();
       await this.playerSelectDropdown.selectOption({ index: 1 });
       await this.dictationDrawConfirmButton.click();
+    }
+    if (await this.filmModalTitle.isVisible()) {
+      await this.filmShowAnswerButton.click();
+      if (outcome === "positive") {
+        await this.filmCorrectButton.click();
+      } else {
+        await this.filmWrongButton.click();
+      }
     }
     if (await this.faceEmotionModalTitle.isVisible()) {
       await this.faceEmotionShowAnswerButton.click();

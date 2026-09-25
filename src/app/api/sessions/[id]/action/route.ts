@@ -5,6 +5,7 @@ import { BackWrite } from "@/model/deck/backwrite";
 import { Card } from "@/model/deck/card";
 import { DictationDraw } from "@/model/deck/dictation-draw";
 import { FaceEmotion } from "@/model/deck/face-emotion";
+import { Film } from "@/model/deck/film";
 import { Mime } from "@/model/deck/mime";
 import { MusicEmotion } from "@/model/deck/music-emotion";
 import { PhysicalTest } from "@/model/deck/physical-test";
@@ -33,6 +34,7 @@ const HOST_RESOLVED_ACTIONS = [
   "mime",
   "backwrite",
   "face-emotion",
+  "film",
   "music-emotion",
   "physical-test",
   "what-would-you-do",
@@ -94,16 +96,23 @@ export async function POST(
   if (pendingAction.targetPlayerId && !targetPlayer)
     return NextResponse.json({ error: "Target not found" }, { status: 400 });
 
-  // card può essere primitivo o { topic, imageUrl } per FaceEmotion/DictationDraw
+  // card può essere primitivo o { topic, imageUrl } per FaceEmotion/DictationDraw,
+  // { topic, videoUrl } per Film
   const cardData = pendingAction.card as
     | string
-    | { topic: string; imageUrl: string };
+    | { topic: string; imageUrl?: string; videoUrl?: string };
   const cardTopic =
     typeof cardData === "object" && cardData !== null
       ? cardData.topic
       : cardData;
   const imageUrl =
-    typeof cardData === "object" && cardData !== null ? cardData.imageUrl : "";
+    typeof cardData === "object" && cardData !== null
+      ? (cardData.imageUrl ?? "")
+      : "";
+  const videoUrl =
+    typeof cardData === "object" && cardData !== null
+      ? (cardData.videoUrl ?? "")
+      : "";
 
   // La battaglia ha logica di follow-up propria — gestita separatamente
   if (pendingAction.type === "battle") {
@@ -182,6 +191,12 @@ export async function POST(
     case "face-emotion":
       game.resolveFaceEmotion(
         new FaceEmotion(actorPlayer, toCard(cardTopic), imageUrl),
+        success,
+      );
+      break;
+    case "film":
+      game.resolveFilm(
+        new Film(actorPlayer, toCard(cardTopic), videoUrl),
         success,
       );
       break;

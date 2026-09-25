@@ -6,6 +6,8 @@ export { DictationDraw } from "./dictation-draw";
 export { DictationDrawDeck } from "./dictation-draw-deck";
 export { FaceEmotion, getFaceEmotionGifUrl } from "./face-emotion";
 export { FaceEmotionDeck } from "./face-emotion-deck";
+export { Film } from "./film";
+export { FilmDeck } from "./film-deck";
 export { Mime } from "./mime";
 export { MimeDeck } from "./mime-deck";
 export { MusicEmotion } from "./music-emotion";

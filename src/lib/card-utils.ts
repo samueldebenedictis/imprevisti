@@ -2,6 +2,7 @@ export function getCardDisplay(card: unknown): {
   text: string;
   body: string;
   imageUrl?: string;
+  videoUrl?: string;
 } {
   if (!card || typeof card !== "object")
     return { text: String(card ?? ""), body: "" };
@@ -12,6 +13,7 @@ export function getCardDisplay(card: unknown): {
       text: String(topic.cardTitle ?? ""),
       body: String(topic.cardText ?? ""),
       imageUrl: typeof c.imageUrl === "string" ? c.imageUrl : undefined,
+      videoUrl: typeof c.videoUrl === "string" ? c.videoUrl : undefined,
     };
   }
   return {

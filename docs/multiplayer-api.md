@@ -10,7 +10,7 @@ interface SessionPlayer {
 
 interface PendingAction {
   type: string;          // 'quiz' | 'mime' | 'backwrite' | 'face-emotion' |
-                         // 'music-emotion' | 'physical-test' |
+                         // 'film' | 'music-emotion' | 'physical-test' |
                          // 'what-would-you-do' | 'dictation-draw' | 'battle'
   card: unknown;         // serialized primitive or plain object (never class instances)
   actorPlayerId: string;
@@ -200,6 +200,9 @@ The `card` field is `unknown` — serialized from the deck. Two possible shapes:
 
 // Image actions (face-emotion, dictation-draw)
 { topic: { cardTitle: string, cardText: string }, imageUrl: string }
+
+// Video actions (film)
+{ topic: { cardTitle: string, cardText: string }, videoUrl: string }
 ```
 
 Use `getCardDisplay(card)` from `src/lib/card-utils.ts` for type-safe extraction.

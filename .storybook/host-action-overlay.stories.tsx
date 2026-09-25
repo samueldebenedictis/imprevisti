@@ -113,9 +113,24 @@ export const FaceEmotion: Story = {
       type: "face-emotion",
       actorPlayerId: "1",
       card: {
-        cardTitle: "felice",
-        cardText: "felice",
+        topic: { cardTitle: "felice", cardText: "felice" },
         imageUrl: "/images/faces/140_y_f_h_a.jpg",
+      },
+    },
+  },
+};
+
+// Forma reale inviata dal server (roll/route.ts): il video sta fuori,
+// il testo della carta è annidato sotto "topic".
+export const Film: Story = {
+  args: {
+    ...baseArgs,
+    pendingAction: {
+      type: "film",
+      actorPlayerId: "1",
+      card: {
+        topic: { cardTitle: "tristezza", cardText: "scena-tristezza" },
+        videoUrl: "/videos/tristezza.mp4",
       },
     },
   },

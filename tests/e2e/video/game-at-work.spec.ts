@@ -38,6 +38,7 @@ test("setup", async ({ page }) => {
   await homePage.whatWouldYouDoCheckbox.uncheck();
   await homePage.dictationDrawCheckbox.uncheck();
   await homePage.faceEmotionsCheckbox.uncheck();
+  await homePage.filmCheckbox.uncheck();
   await homePage.page.waitForTimeout(TIMEOUT);
 
   await homePage.submit.click();
