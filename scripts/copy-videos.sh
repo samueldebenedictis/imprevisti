@@ -7,15 +7,13 @@ DEST_DIR="$PWD/public/videos"
 
 echo "Copying video files from test-results directory..."
 
-# Delete and recreate the public/videos directory
-if [ -d "$DEST_DIR" ]; then
-    echo "Deleting existing videos directory: $DEST_DIR"
-    rm -rf "$DEST_DIR"
-fi
-
-# Create the videos directory
+# Create the videos directory if missing
 mkdir -p "$DEST_DIR"
-echo "Created destination directory: $DEST_DIR"
+
+# Delete only previously generated game-at-work videos and posters:
+# the other files in public/videos (e.g. music emotion mp4s) are used by the game
+echo "Deleting existing game-at-work videos in: $DEST_DIR"
+rm -f "$DEST_DIR"/game-at-work-*
 
 # Counter for copied files
 copied_count=0

@@ -4,13 +4,43 @@ Genera gif di face morph (naturale -> espressione) per il dataset FACES.
 
 Algoritmo: landmark detection (mediapipe FaceLandmarker, 478 punti) +
 Delaunay triangulation + warp affine triangolo-per-triangolo + cross-dissolve,
-stile Beier-Neely / classico morph a griglia triangolare (come 3dthis.com/morph.htm).
+ovvero il classico morph a maglia triangolare (mesh warping, come
+3dthis.com/morph.htm).
+
+Funzionamento passo passo (per ogni coppia foto neutra / foto espressiva
+dello stesso soggetto e della stessa sessione):
+
+ 1. Ridimensionamento: le due foto (~3500px) vengono portate a 480px di
+    larghezza, per ottenere gif leggere.
+ 2. Landmark: mediapipe individua 478 punti del volto in entrambe le foto.
+    Ogni indice identifica sempre lo stesso punto anatomico (es. angolo
+    della bocca), quindi le corrispondenze tra le due immagini sono
+    automatiche. A questi si aggiungono 8 punti sui bordi dell'immagine.
+ 3. Triangolazione: la triangolazione di Delaunay viene calcolata una sola
+    volta sulla media dei punti delle due foto; le stesse terne di indici
+    definiscono triangoli corrispondenti in entrambe le immagini.
+ 4. Per ogni frame, con alpha che va da 0 (neutro) a 1 (espressione):
+    a. forma intermedia: ogni punto viene interpolato linearmente,
+       pts_mid = (1 - alpha) * pts_neutro + alpha * pts_espressione;
+    b. warp: entrambe le foto vengono deformate verso la forma intermedia,
+       triangolo per triangolo, con una trasformazione affine (3 coppie di
+       punti determinano un'unica trasformazione affine);
+    c. cross-dissolve: le due immagini deformate vengono fuse con pesi
+       (1 - alpha) e alpha, così cambiano insieme geometria e colore;
+    d. maschera: una maschera sfumata sul contorno del volto limita il
+       morph al viso; fuori resta la foto neutra, così spalle e maglia (che
+       tra i due scatti non sono identiche) non vengono distorte.
+ 5. Temporizzazione: alpha segue una curva ease-in-out (partenza e arrivo
+    lenti). La sequenza è: pausa sul neutro, transizione, pausa
+    sull'espressione, transizione inversa; la gif va in loop senza stacchi.
 
 Naming file sorgente: {id}_{age}_{sex}_{expr}_{set}.jpg
   expr: n=neutrale, a=rabbia, d=disgusto, f=paura, h=felicita, s=tristezza
   set:  a / b (due sessioni per soggetto)
+Output: {id}_{age}_{sex}_{expr}_{set}_morph.gif in OUT_DIR.
 
 Uso:
+    make face-morph-setup   # una tantum: virtualenv + modello mediapipe
     .venv-morph/bin/python3 scripts/face_morph.py
 """
 
@@ -30,6 +60,7 @@ SRC_DIR = "public/images/faces"
 OUT_DIR = "public/images/faces_morph"
 MODEL_PATH = "scripts/models/face_landmarker.task"
 
+# Espressioni per cui generare una gif (la neutrale è il punto di partenza)
 EXPR_NAMES = {
     "a": "rabbia",
     "d": "disgusto",
@@ -45,6 +76,7 @@ FPS = 15
 MAX_WIDTH = 480     # ridimensiona per gif leggere (originali sono ~3500px)
 MASK_FEATHER = 15   # px di blur sul bordo maschera viso (evita seam sul collo/maglia)
 
+# Gruppi catturati: id, età, sesso, espressione, sessione
 FILENAME_RE = re.compile(r"^(\d+)_([a-z])_([a-z])_([a-z])_([a-z])\.jpg$")
 
 # 8 punti agli angoli/bordi immagine, cosi la triangolazione copre tutto il
@@ -58,18 +90,24 @@ def border_points(w, h):
 
 
 def detect_landmarks(landmarker, img_bgr):
+    """Passo 2: restituisce i 478 landmark del volto in coordinate pixel,
+    seguiti dagli 8 punti di bordo; None se nessun volto è rilevato."""
+    # mediapipe lavora in RGB, OpenCV carica in BGR
     rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
     mp_img = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb)
     result = landmarker.detect(mp_img)
     if not result.face_landmarks:
         return None
     h, w = img_bgr.shape[:2]
+    # I landmark sono normalizzati in [0, 1]: si riportano in pixel
     pts = [(lm.x * w, lm.y * h) for lm in result.face_landmarks[0]]
     pts.extend(border_points(w, h))
     return np.array(pts, dtype=np.float64)
 
 
 def delaunay_triangles(points, w, h):
+    """Passo 3: triangolazione di Delaunay, come lista di terne di indici
+    nell'array dei punti (validi per entrambe le foto)."""
     # scipy da indici diretti nei simplessi, niente round-matching fragile
     # (cv2.Subdiv2D internamente riquantizza le coordinate e il match per
     # arrotondamento perde triangoli).
@@ -78,9 +116,14 @@ def delaunay_triangles(points, w, h):
 
 
 def warp_triangle(src, dst, t_src, t_dst):
+    """Passo 4b: copia in dst il triangolo t_src di src, deformato con una
+    trasformazione affine in modo da occupare il triangolo t_dst."""
+    # Si lavora sui rettangoli che contengono i due triangoli, non
+    # sull'intera immagine: molto più veloce con centinaia di triangoli
     r_src = cv2.boundingRect(np.float32([t_src]))
     r_dst = cv2.boundingRect(np.float32([t_dst]))
 
+    # Vertici espressi in coordinate relative al proprio rettangolo
     t_src_rect = [(p[0] - r_src[0], p[1] - r_src[1]) for p in t_src]
     t_dst_rect = [(p[0] - r_dst[0], p[1] - r_dst[1]) for p in t_dst]
 
@@ -88,12 +131,15 @@ def warp_triangle(src, dst, t_src, t_dst):
     if src_crop.size == 0 or r_dst[2] <= 0 or r_dst[3] <= 0:
         return
 
+    # Matrice affine 2x3 univocamente determinata dalle 3 coppie di vertici
     warp_mat = cv2.getAffineTransform(np.float32(t_src_rect), np.float32(t_dst_rect))
     dst_crop = cv2.warpAffine(
         src_crop, warp_mat, (r_dst[2], r_dst[3]),
         flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT_101,
     )
 
+    # Maschera del triangolo di destinazione (bordi antialias): del
+    # rettangolo deformato si copiano solo i pixel interni al triangolo
     mask = np.zeros((r_dst[3], r_dst[2]), dtype=np.float32)
     cv2.fillConvexPoly(mask, np.int32(t_dst_rect), 1.0, cv2.LINE_AA)
     mask = mask[:, :, None]
@@ -105,19 +151,23 @@ def warp_triangle(src, dst, t_src, t_dst):
 
 
 def face_mask(pts_mid_face, shape):
-    """Maschera sfumata (hull dei landmark viso) per isolare il warp dal
+    """Passo 4d: maschera sfumata (hull dei landmark viso) per isolare il warp dal
     resto del frame: maglia/spalle si muovono leggermente tra gli scatti
     (non sono pixel-identici) e warpare tutto il frame le distorce."""
     h, w = shape[:2]
     hull = cv2.convexHull(np.float32(pts_mid_face)).astype(np.int32)
     mask = np.zeros((h, w), dtype=np.uint8)
     cv2.fillConvexPoly(mask, hull, 255, cv2.LINE_AA)
+    # Kernel dispari richiesto da GaussianBlur
     k = MASK_FEATHER * 2 + 1
     mask = cv2.GaussianBlur(mask, (k, k), 0)
     return (mask.astype(np.float32) / 255.0)[:, :, None]
 
 
 def morph_frame(img1, img2, pts1, pts2, triangles, alpha, face_count, img_static):
+    """Passo 4: genera il frame intermedio per un dato alpha in [0, 1]
+    (0 = img1 neutra, 1 = img2 espressiva)."""
+    # 4a. forma intermedia
     pts_mid = (1 - alpha) * pts1 + alpha * pts2
 
     warped1 = np.zeros_like(img1, dtype=np.float32)
@@ -126,6 +176,7 @@ def morph_frame(img1, img2, pts1, pts2, triangles, alpha, face_count, img_static
     img1f = img1.astype(np.float32)
     img2f = img2.astype(np.float32)
 
+    # 4b. entrambe le foto deformate verso la forma intermedia
     for tri in triangles:
         t1 = [tuple(pts1[i]) for i in tri]
         t2 = [tuple(pts2[i]) for i in tri]
@@ -133,24 +184,31 @@ def morph_frame(img1, img2, pts1, pts2, triangles, alpha, face_count, img_static
         warp_triangle(img1f, warped1, t1, tm)
         warp_triangle(img2f, warped2, t2, tm)
 
+    # 4c. cross-dissolve
     warped = (1 - alpha) * warped1 + alpha * warped2
 
+    # 4d. morph solo sul viso (solo i landmark del volto, esclusi i punti di
+    # bordo), il resto viene dalla foto statica
     mask = face_mask(pts_mid[:face_count], img1.shape)
     out = warped * mask + img_static.astype(np.float32) * (1 - mask)
     return np.clip(out, 0, 255).astype(np.uint8)
 
 
 def ease_in_out(t):
+    """Passo 5: smoothstep, derivata nulla agli estremi (partenza e arrivo lenti)."""
     return t * t * (3 - 2 * t)
 
 
 def build_morph_gif(landmarker, neutral_path, expr_path, out_path, size=None):
+    """Esegue i passi 1-5 per una coppia di foto e salva la gif; restituisce
+    False se una foto non è leggibile o il volto non viene rilevato."""
     img_n = cv2.imread(neutral_path)
     img_e = cv2.imread(expr_path)
     if img_n is None or img_e is None:
         print(f"  skip (immagine non leggibile): {neutral_path} / {expr_path}")
         return False
 
+    # 1. ridimensionamento, mantenendo le proporzioni della foto neutra
     if size is None:
         h0, w0 = img_n.shape[:2]
         scale = MAX_WIDTH / w0
@@ -158,31 +216,39 @@ def build_morph_gif(landmarker, neutral_path, expr_path, out_path, size=None):
     img_n = cv2.resize(img_n, size, interpolation=cv2.INTER_AREA)
     img_e = cv2.resize(img_e, size, interpolation=cv2.INTER_AREA)
 
+    # 2. landmark
     pts_n = detect_landmarks(landmarker, img_n)
     pts_e = detect_landmarks(landmarker, img_e)
     if pts_n is None or pts_e is None:
         print(f"  skip (volto non rilevato): {neutral_path} / {expr_path}")
         return False
 
+    # 3. triangolazione sulla forma media, condivisa da entrambe le foto
     h, w = img_n.shape[:2]
     avg_pts_for_tri = (pts_n + pts_e) / 2.0
     triangles = delaunay_triangles(avg_pts_for_tri, w, h)
+    # Numero di landmark del volto (i punti di bordo sono in coda)
     face_count = pts_n.shape[0] - len(border_points(w, h))
 
+    # 4. frame della transizione neutro -> espressione
     frames = []
     for i in range(N_FRAMES + 1):
         alpha = ease_in_out(i / N_FRAMES)
         frame = morph_frame(img_n, img_e, pts_n, pts_e, triangles, alpha, face_count, img_n)
         frames.append(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
 
+    # 5. pausa sul neutro, andata, pausa sull'espressione, ritorno
     seq = [frames[0]] * HOLD_FRAMES + frames + [frames[-1]] * HOLD_FRAMES
     seq += frames[::-1][1:]  # torna a neutrale, loop pulito
 
+    # loop=0: la gif si ripete all'infinito
     imageio.mimsave(out_path, seq, fps=FPS, loop=0)
     return True
 
 
 def group_faces(files):
+    """Raggruppa le foto per soggetto e sessione:
+    {(id, età, sesso, sessione): {codice_espressione: path}}."""
     groups = {}
     for f in files:
         name = os.path.basename(f)
@@ -197,6 +263,7 @@ def group_faces(files):
 def main():
     os.makedirs(OUT_DIR, exist_ok=True)
 
+    # Modello mediapipe caricato una volta sola e riusato per tutte le foto
     base_options = BaseOptions(model_asset_path=MODEL_PATH)
     options = vision.FaceLandmarkerOptions(base_options=base_options, num_faces=1)
     landmarker = vision.FaceLandmarker.create_from_options(options)
@@ -204,6 +271,8 @@ def main():
     files = glob.glob(os.path.join(SRC_DIR, "*.jpg"))
     groups = group_faces(files)
 
+    # Per ogni soggetto/sessione: una gif per ciascuna espressione disponibile,
+    # sempre a partire dalla foto neutra dello stesso gruppo
     n_ok, n_skip = 0, 0
     for (fid, age, sex, set_), exprs in sorted(groups.items()):
         if NEUTRAL not in exprs:
