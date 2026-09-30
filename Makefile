@@ -11,7 +11,7 @@ storybook:
 	docker compose up storybook
 
 e2e-video:
-	docker compose run --rm playwright sh -c "npx playwright test -c playwright-video.config.ts game-at-work.spec.ts game-at-work-dual-screen.spec.ts"
+	docker compose run --rm playwright sh -c "npx playwright test -c playwright-video.config.ts game-at-work.spec.ts game-at-work-dual-screen.spec.ts game-at-work-face-morph.spec.ts"
 
 e2e-screenshots:
 	docker compose run --rm playwright sh -c "npx playwright test -c playwright-video.config.ts screenshots.spec.ts screenshots-multiplayer.spec.ts --update-snapshots"
