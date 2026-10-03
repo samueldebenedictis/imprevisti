@@ -318,6 +318,120 @@ test("screenshot-feedback", async ({ page }) => {
   await expect(page).toHaveScreenshot("feedback.png", { fullPage: true });
 });
 
+/** Compilazione di esempio di ciascun passo del modulo feedback, in ordine. */
+const FEEDBACK_STEPS: ((page: Page) => Promise<void>)[] = [
+  async (page) => {
+    await page.getByRole("textbox", { name: "Nome *" }).fill("Mario");
+    const selectElements = page.locator("select");
+    await selectElements.nth(0).selectOption("docente");
+    await selectElements.nth(1).selectOption("digitale");
+    await selectElements.nth(2).selectOption("singolo");
+  },
+  async (page) => {
+    const susAnswers = [4, 2, 5, 1, 4, 2, 5, 1, 4, 2];
+    for (const [i, value] of susAnswers.entries()) {
+      await page.locator(`input[name="sus${i + 1}"][value="${value}"]`).check();
+    }
+  },
+  async (page) => {
+    await page.locator('input[name="digitalVsPhysical"][value="4"]').check();
+    await page.locator('input[name="gameplayClarity"][value="5"]').check();
+    await page.locator('input[name="graphics"][value="4"]').check();
+    await page.locator('input[name="enjoyment"][value="5"]').check();
+    await page.locator('input[name="funLevel"][value="5"]').check();
+  },
+  async (page) => {
+    await page
+      .getByRole("textbox", { name: "Cosa ha funzionato bene?" })
+      .fill("I ragazzi si sono divertiti con le sfide di mimo.");
+    await page
+      .getByRole("textbox", { name: "Cosa ha funzionato male?" })
+      .fill("Alcune domande del quiz erano difficili.");
+    await page
+      .getByRole("textbox", { name: "Suggerimenti per miglioramenti" })
+      .fill("Aggiungere altre carte.");
+    await page.locator("select#autismIdentification").selectOption("no");
+  },
+];
+
+/**
+ * Opens the feedback form and fills the steps before `step` (1-based),
+ * leaving the form on `step`, still empty.
+ */
+async function fillFeedbackUntil(page: Page, step: number) {
+  const next = page.getByRole("button", { name: "Avanti", exact: true });
+  await page.goto("/feedback");
+
+  for (let i = 0; i < step - 1; i++) {
+    await FEEDBACK_STEPS[i](page);
+    await next.click();
+  }
+
+  // Dopo la compilazione la pagina può restare scrollata: nello screenshot
+  // fullPage l'header fisso comparirebbe a metà. Si torna in cima e si
+  // toglie il focus dall'ultimo elemento usato.
+  await page.evaluate(() => {
+    (document.activeElement as HTMLElement | null)?.blur();
+    window.scrollTo(0, 0);
+  });
+}
+
+test("screenshot-feedback-sus", async ({ page }) => {
+  await page.setViewportSize(VIEWPORT);
+  await fillFeedbackUntil(page, 2);
+  await expect(page.getByText("Passo 2 di 4")).toBeVisible();
+
+  await expect(page).toHaveScreenshot("feedback-sus.png", { fullPage: true });
+});
+
+test("screenshot-feedback-ratings", async ({ page }) => {
+  await page.setViewportSize(VIEWPORT);
+  await fillFeedbackUntil(page, 3);
+  await expect(page.getByText("Passo 3 di 4")).toBeVisible();
+
+  await expect(page).toHaveScreenshot("feedback-ratings.png", {
+    fullPage: true,
+  });
+});
+
+test("screenshot-feedback-other", async ({ page }) => {
+  await page.setViewportSize(VIEWPORT);
+  await fillFeedbackUntil(page, 4);
+  await expect(page.getByText("Passo 4 di 4")).toBeVisible();
+
+  await expect(page).toHaveScreenshot("feedback-other.png", {
+    fullPage: true,
+  });
+});
+
+test("screenshot-feedback-thanks", async ({ page }) => {
+  await page.setViewportSize(VIEWPORT);
+
+  // L'invio è intercettato: nessuna risposta finisce nel database reale
+  await page.route("**/api/feedback", async (route, request) => {
+    if (request.method() === "POST") {
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({ ok: true }),
+      });
+    } else {
+      await route.continue();
+    }
+  });
+
+  await fillFeedbackUntil(page, 4);
+  await FEEDBACK_STEPS[3](page);
+  await page.getByRole("button", { name: "Invia" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Grazie per il feedback!" }),
+  ).toBeVisible();
+
+  await expect(page).toHaveScreenshot("feedback-thanks.png", {
+    fullPage: true,
+  });
+});
+
 test("screenshot-feedback-dashboard", async ({ page }) => {
   await page.setViewportSize(VIEWPORT);
 

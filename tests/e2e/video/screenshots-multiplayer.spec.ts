@@ -645,6 +645,146 @@ test("screenshot-multiplayer-dictation-draw-player", async ({ page }) => {
 });
 
 // ---------------------------------------------------------------------------
+// Multiplayer — restanti sfide: per ognuna lo schermo dell'host (tabellone) e
+// quello del giocatore attivo (smartphone). Nelle sfide private (Parole alle
+// spalle, Indovina l'emozione, Film) la carta compare solo sul dispositivo
+// del giocatore; l'host non la vede.
+// ---------------------------------------------------------------------------
+
+const CHALLENGES: {
+  name: string;
+  sessionId: string;
+  positions: number[];
+  pendingAction: Record<string, unknown>;
+  /** Testo che compare sul dispositivo del giocatore quando la pagina è pronta */
+  playerText: string;
+}[] = [
+  {
+    name: "backwrite",
+    sessionId: "BACK0",
+    positions: [7, 2],
+    pendingAction: {
+      type: "backwrite",
+      card: { cardTitle: "Cane", cardText: "" },
+      actorPlayerId: "0",
+      targetPlayerId: "1",
+    },
+    playerText: "Cane",
+  },
+  {
+    name: "face-emotion",
+    sessionId: "FACE0",
+    positions: [9, 2],
+    pendingAction: {
+      type: "face-emotion",
+      card: {
+        topic: { cardTitle: "felicità", cardText: "uomo-anziano-felicità-a" },
+        imageUrl: "/images/faces/004_o_m_h_a.jpg",
+      },
+      actorPlayerId: "0",
+      targetPlayerId: null,
+    },
+    playerText: "Indovina l'emozione",
+  },
+  {
+    name: "film",
+    sessionId: "FILM0",
+    positions: [5, 2],
+    pendingAction: {
+      type: "film",
+      card: {
+        topic: { cardTitle: "felicità", cardText: "scena-felicita" },
+        videoUrl: "/videos/felicita.mp4",
+      },
+      actorPlayerId: "0",
+      targetPlayerId: null,
+    },
+    playerText: "Film",
+  },
+  {
+    name: "music-emotion",
+    sessionId: "MUSIC0",
+    positions: [12, 2],
+    pendingAction: {
+      type: "music-emotion",
+      card: { cardTitle: "Felicità", cardText: "" },
+      actorPlayerId: "0",
+      targetPlayerId: null,
+    },
+    playerText: "Felicità",
+  },
+  {
+    name: "what-would-you-do",
+    sessionId: "WWYD0",
+    positions: [16, 2],
+    pendingAction: {
+      type: "what-would-you-do",
+      card: {
+        cardTitle:
+          "Cosa faresti se un amico si dimenticasse di un appuntamento con te?",
+        cardText: "",
+      },
+      actorPlayerId: "0",
+      targetPlayerId: null,
+    },
+    playerText: "Cosa faresti se un amico",
+  },
+];
+
+for (const challenge of CHALLENGES) {
+  const session = (sessionId: string) =>
+    baseSession(sessionId, {
+      players: [
+        { id: "0", name: "Alice" },
+        { id: "1", name: "Bob" },
+      ],
+      started: true,
+      gameState: makeGameState(
+        [
+          { id: 0, name: "Alice" },
+          { id: 1, name: "Bob" },
+        ],
+        challenge.positions,
+      ),
+      currentPlayerId: "0",
+      pendingAction: challenge.pendingAction,
+    });
+
+  test(`screenshot-multiplayer-${challenge.name}-host`, async ({ page }) => {
+    await page.setViewportSize(VIEWPORT_DESKTOP);
+    await page.addInitScript(() =>
+      localStorage.setItem("hostToken", "host-tok"),
+    );
+    const sessionId = `${challenge.sessionId}1`;
+
+    await seedRandom(page);
+    await mockSession(page, sessionId, session(sessionId));
+
+    await page.goto(`/multiplayer/${sessionId}`);
+    await expect(page.getByText("Alice").first()).toBeVisible();
+    await expect(page).toHaveScreenshot(
+      `multiplayer-${challenge.name}-host.png`,
+      { fullPage: true },
+    );
+  });
+
+  test(`screenshot-multiplayer-${challenge.name}-player`, async ({ page }) => {
+    await page.setViewportSize(VIEWPORT_MOBILE);
+    const sessionId = `${challenge.sessionId}2`;
+
+    await seedRandom(page);
+    await mockSession(page, sessionId, session(sessionId));
+
+    await page.goto(`/player/${sessionId}/0`);
+    await expect(page.getByText(challenge.playerText).first()).toBeVisible();
+    await expect(page).toHaveScreenshot(
+      `multiplayer-${challenge.name}-player.png`,
+      { fullPage: true },
+    );
+  });
+}
+
+// ---------------------------------------------------------------------------
 // Join page
 // ---------------------------------------------------------------------------
 
