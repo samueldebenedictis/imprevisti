@@ -1,0 +1,24 @@
+name: 'Keepalive - Upstash'
+
+# Upstash (piano free) archivia il database dopo 30 giorni di inattività.
+# Una lettura settimanale dei feedback è sufficiente a mantenerlo attivo.
+on:
+  schedule:
+    - cron: '0 6 * * 1' # ogni lunedì alle 06:00 UTC
+  workflow_dispatch:
+
+jobs:
+  ping:
+    name: 'Read feedback'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'GET /api/feedback'
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          FEEDBACK_SECRET: ${{ secrets.FEEDBACK_SECRET }}
+        run: |
+          status=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 \
+            --get --data-urlencode "secret=${FEEDBACK_SECRET}" \
+            "${APP_URL}/api/feedback")
+          echo "HTTP $status"
+          test "$status" = "200"
