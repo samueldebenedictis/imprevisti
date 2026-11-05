@@ -21,7 +21,8 @@ test("Fill form @snapshot", async ({ homePage }) => {
   await homePage.whatWouldYouDoCheckbox.uncheck();
   await homePage.dictationDrawCheckbox.uncheck();
   await homePage.faceEmotionsCheckbox.uncheck();
-  await homePage.filmCheckbox.uncheck();
+  // Casella Film disattivata (FILM_ENABLED = false): riattivare insieme alla sfida
+  // await homePage.filmCheckbox.uncheck();
 
   await homePage.submit.click();
   await expect(homePage.page).toHaveURL(/game/);
@@ -124,7 +125,8 @@ test("End game", async ({ homePage }) => {
   await homePage.whatWouldYouDoCheckbox.uncheck();
   await homePage.dictationDrawCheckbox.uncheck();
   await homePage.faceEmotionsCheckbox.uncheck();
-  await homePage.filmCheckbox.uncheck();
+  // Casella Film disattivata (FILM_ENABLED = false): riattivare insieme alla sfida
+  // await homePage.filmCheckbox.uncheck();
 
   const gamePage = await homePage.submitAndGotoGame();
 
