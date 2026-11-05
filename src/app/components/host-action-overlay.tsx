@@ -80,8 +80,14 @@ export default function HostActionOverlay({
   const showForBackwrite = pendingAction.type === "backwrite" && !!cardTitle;
   const showForMime = pendingAction.type === "mime" && !!cardTitle;
   const showForFilm = pendingAction.type === "film" && !!cardTitle;
+  const showForFaceEmotion =
+    pendingAction.type === "face-emotion" && !!cardTitle;
   const showReveal =
-    showForQuiz || showForBackwrite || showForMime || showForFilm;
+    showForQuiz ||
+    showForBackwrite ||
+    showForMime ||
+    showForFilm ||
+    showForFaceEmotion;
   const revealLabel =
     pendingAction.type === "mime" ? "Mostra soluzione" : "Mostra risposta";
   const revealValue = pendingAction.type === "quiz" ? cardBody : cardTitle;
@@ -132,7 +138,7 @@ export default function HostActionOverlay({
           </div>
         )}
 
-        {/* Risposta/soluzione nascosta: quiz (cardBody), backwrite e mime (cardTitle) */}
+        {/* Risposta/soluzione nascosta: quiz (cardBody), backwrite, mime, film e face-emotion (cardTitle) */}
         {showReveal &&
           (showAnswer ? (
             <div className="ui-border-dark bg-green-50 p-4 text-center">
