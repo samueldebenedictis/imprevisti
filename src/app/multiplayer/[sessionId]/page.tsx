@@ -2,13 +2,17 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { LEFT_BAR_CURRENT_TURN, LEFT_BAR_PLAYERS_POSITION } from "@/app/texts";
 import { useSessionPolling } from "@/lib/use-session-polling";
 import { Game } from "@/model/game";
 import { MoveSquare } from "@/model/square";
 import { useConfigStore } from "@/store/config-store";
-import { useCurrentPlayer, useGameStore } from "@/store/game-store";
+import {
+  ACTION_TYPE_LABELS,
+  useCurrentPlayer,
+  useGameStore,
+} from "@/store/game-store";
 import type { PublicSessionState } from "@/types/session";
 import { URL_HOME } from "@/vars";
 import BoardComponent from "../../components/board";
@@ -19,6 +23,7 @@ import PawnsLayer from "../../components/pawns-layer";
 import { QrCode } from "../../components/qr-code";
 import SquareC from "../../components/square";
 import Button from "../../components/ui/button";
+import { soundManager } from "../../utils/sound-manager";
 
 export default function MultiplayerSessionPage() {
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -46,6 +51,39 @@ export default function MultiplayerSessionPage() {
       gameStore.setGame(Game.fromJSON(session.gameState));
     }
   }, [session?.gameState, session?.started, gameStore]);
+
+  // Annuncio vocale dei lanci: lo schermo host è quello condiviso, quindi
+  // la voce va qui e non sui dispositivi dei giocatori.
+  // Il primo valore osservato viene solo memorizzato, per non riannunciare
+  // un lancio già avvenuto quando la pagina viene ricaricata.
+  const lastAnnouncedRollRef = useRef<number | null | undefined>(undefined);
+  useEffect(() => {
+    if (!session) return;
+    const move = session.lastMoveInfo;
+    const rolledAt = move?.rolledAt ?? null;
+    if (lastAnnouncedRollRef.current === undefined) {
+      lastAnnouncedRollRef.current = rolledAt;
+      return;
+    }
+    if (!move || rolledAt === lastAnnouncedRollRef.current) return;
+    lastAnnouncedRollRef.current = rolledAt;
+
+    const playerName =
+      session.players.find((p) => p.id === move.actorPlayerId)?.name ?? "";
+    if (session.gameOver) {
+      soundManager.speakVictory(session.gameOver.winnerName);
+    } else if (move.diceResult === 0) {
+      soundManager.speakTurnSkip(playerName);
+    } else {
+      const actionType = session.pendingAction?.type;
+      soundManager.speakDiceResult(
+        playerName,
+        move.diceResult,
+        move.squareNumber,
+        actionType ? ACTION_TYPE_LABELS[actionType] : null,
+      );
+    }
+  }, [session]);
 
   const startGame = async () => {
     if (!sessionId || !hostToken) return;

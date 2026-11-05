@@ -135,6 +135,7 @@ describe("session-store (in-memory fallback)", () => {
         diceResult: 4,
         squareNumber: 4,
         squareType: "quiz",
+        rolledAt: 1,
       },
       gameOver: null,
     });

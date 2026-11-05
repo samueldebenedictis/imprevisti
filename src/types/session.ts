@@ -21,6 +21,7 @@ export interface LastMoveInfo {
   diceResult: number; // 0 = turno saltato
   squareNumber: number; // el.getNumber() — stesso valore mostrato sulla casella
   squareType: string;
+  rolledAt: number; // timestamp del lancio — distingue lanci consecutivi identici
 }
 
 export interface SessionState {
