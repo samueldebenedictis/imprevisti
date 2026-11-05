@@ -19,23 +19,29 @@ export class Film {
   ) {}
 }
 
+/**
+ * Video segnaposto usato finché le scene originali non vengono reinserite
+ * (mancano i diritti sui film, vedi FILM_ENABLED in src/vars.ts).
+ */
+const FILM_PLACEHOLDER_URL = "/videos/film-placeholder.mp4";
+
 /** Scene di film: una per ciascuna emozione (video in public/videos). */
 export const filmCards = [
   {
     title: "scena-felicita",
-    videoUrl: "/videos/felicita.mp4",
+    videoUrl: FILM_PLACEHOLDER_URL,
     emotion: "felicità",
   },
-  { title: "scena-rabbia", videoUrl: "/videos/rabbia.mp4", emotion: "rabbia" },
+  { title: "scena-rabbia", videoUrl: FILM_PLACEHOLDER_URL, emotion: "rabbia" },
   {
     title: "scena-tristezza",
-    videoUrl: "/videos/tristezza.mp4",
+    videoUrl: FILM_PLACEHOLDER_URL,
     emotion: "tristezza",
   },
   {
     title: "scena-disgusto",
-    videoUrl: "/videos/disgusto.mp4",
+    videoUrl: FILM_PLACEHOLDER_URL,
     emotion: "disgusto",
   },
-  { title: "scena-paura", videoUrl: "/videos/paura.mp4", emotion: "paura" },
+  { title: "scena-paura", videoUrl: FILM_PLACEHOLDER_URL, emotion: "paura" },
 ];

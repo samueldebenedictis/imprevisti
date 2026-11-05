@@ -87,6 +87,7 @@ export async function POST(
       diceResult: result.diceResult,
       squareNumber: square?.getNumber() ?? newPos,
       squareType: square?.getType() ?? "move",
+      rolledAt: Date.now(),
     };
   }
 

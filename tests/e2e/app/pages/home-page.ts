@@ -6,7 +6,7 @@ import {
   LABEL_BACKWRITE,
   LABEL_DICTATION_DRAW,
   LABEL_FACE_EMOTION,
-  LABEL_FILM,
+  // LABEL_FILM,
   LABEL_MIME,
   LABEL_MOVE,
   LABEL_MUSIC_EMOTION,
@@ -73,7 +73,8 @@ export class HomePage {
   faceEmotionsCheckbox = this.page.getByRole("checkbox", {
     name: LABEL_FACE_EMOTION,
   });
-  filmCheckbox = this.page.getByRole("checkbox", { name: LABEL_FILM });
+  // Casella Film disattivata (FILM_ENABLED = false): riattivare insieme alla sfida
+  // filmCheckbox = this.page.getByRole("checkbox", { name: LABEL_FILM });
 
   // Advanced mode
   advancedModeButton = this.page.getByRole("button", {

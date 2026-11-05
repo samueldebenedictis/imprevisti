@@ -25,7 +25,7 @@ import {
 } from "../app/texts";
 import { soundManager } from "../app/utils/sound-manager";
 
-const ACTION_TYPE_LABELS: Record<string, string> = {
+export const ACTION_TYPE_LABELS: Record<string, string> = {
   battle: LABEL_BATTLE,
   quiz: LABEL_QUIZ,
   mime: LABEL_MIME,

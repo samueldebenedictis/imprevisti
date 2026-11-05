@@ -38,7 +38,8 @@ test("setup", async ({ page }) => {
   await homePage.whatWouldYouDoCheckbox.uncheck();
   await homePage.dictationDrawCheckbox.uncheck();
   await homePage.faceEmotionsCheckbox.uncheck();
-  await homePage.filmCheckbox.uncheck();
+  // Casella Film disattivata (FILM_ENABLED = false): riattivare insieme alla sfida
+  // await homePage.filmCheckbox.uncheck();
   await homePage.page.waitForTimeout(TIMEOUT);
 
   await homePage.submit.click();

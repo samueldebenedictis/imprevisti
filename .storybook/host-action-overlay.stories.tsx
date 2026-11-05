@@ -138,7 +138,7 @@ export const Film: Story = {
       actorPlayerId: "1",
       card: {
         topic: { cardTitle: "tristezza", cardText: "scena-tristezza" },
-        videoUrl: "/videos/tristezza.mp4",
+        videoUrl: "/videos/film-placeholder.mp4",
       },
     },
   },
