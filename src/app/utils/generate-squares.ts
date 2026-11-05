@@ -3,6 +3,7 @@ import type {
   SquareJSON,
   SquareType,
 } from "@/model/square/square";
+import { FILM_ENABLED } from "@/vars";
 
 /**
  * Genera un array di caselle per l'avvio di una nuova partita.
@@ -85,7 +86,7 @@ export const generateSquares = (
   if (squareTypes.move) enabledSpecialTypes.push("move");
   if (squareTypes.backwrite) enabledSpecialTypes.push("backwrite");
   if (squareTypes["face-emotion"]) enabledSpecialTypes.push("face-emotion");
-  if (squareTypes.film) enabledSpecialTypes.push("film");
+  if (squareTypes.film && FILM_ENABLED) enabledSpecialTypes.push("film");
   if (squareTypes["music-emotion"]) enabledSpecialTypes.push("music-emotion");
   if (squareTypes["physical-test"]) enabledSpecialTypes.push("physical-test");
   if (squareTypes["what-would-you-do"])

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useConfigStore } from "../store/config-store";
 import {
+  FILM_ENABLED,
   MAX_PLAYERS,
   MAX_SQUARES,
   MIN_PLAYERS,
@@ -102,7 +103,7 @@ export default function Home() {
     { key: "quiz", label: LABEL_QUIZ },
     { key: "backwrite", label: LABEL_BACKWRITE },
     { key: "face-emotion", label: LABEL_FACE_EMOTION },
-    { key: "film", label: LABEL_FILM },
+    ...(FILM_ENABLED ? [{ key: "film", label: LABEL_FILM }] : []),
     { key: "music-emotion", label: LABEL_MUSIC_EMOTION },
     { key: "physical-test", label: LABEL_PHYSICAL_TEST },
     { key: "what-would-you-do", label: LABEL_WHAT_WOULD_YOU_DO },
