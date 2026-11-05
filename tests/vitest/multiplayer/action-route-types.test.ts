@@ -131,7 +131,7 @@ describe("POST /api/sessions/[id]/action — remaining action types", () => {
       type: "film",
       card: {
         topic: { cardTitle: "felicità", cardText: "scena-felicita" },
-        videoUrl: "/videos/felicita.mp4",
+        videoUrl: "/videos/film-placeholder.mp4",
       },
       actorPlayerId: "0",
     };

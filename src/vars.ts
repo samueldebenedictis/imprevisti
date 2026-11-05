@@ -15,3 +15,7 @@ export const DEFAULT_SQUARES: number = 30;
 export const DEFAULT_SPECIAL_PERCENTAGE_SQUARES: number = 20;
 
 export const SAVEFILE = "save.json";
+
+// Casella "Film" disattivata: mancano i diritti sulle scene dei film.
+// Rimettere a true dopo aver reinserito i video in public/videos.
+export const FILM_ENABLED: boolean = false;

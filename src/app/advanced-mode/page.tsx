@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { SquareJSON } from "../../model/square/square";
 import { useConfigStore } from "../../store/config-store";
-import { URL_HOME } from "../../vars";
+import { FILM_ENABLED, URL_HOME } from "../../vars";
 import Button from "../components/ui/button";
 import Input from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -36,7 +36,7 @@ const squareTypeOptions = [
   { value: "quiz", label: LABEL_QUIZ },
   { value: "backwrite", label: LABEL_BACKWRITE },
   { value: "face-emotion", label: LABEL_FACE_EMOTION },
-  { value: "film", label: LABEL_FILM },
+  ...(FILM_ENABLED ? [{ value: "film", label: LABEL_FILM }] : []),
   { value: "music-emotion", label: LABEL_MUSIC_EMOTION },
   { value: "physical-test", label: LABEL_PHYSICAL_TEST },
   { value: "what-would-you-do", label: LABEL_WHAT_WOULD_YOU_DO },
