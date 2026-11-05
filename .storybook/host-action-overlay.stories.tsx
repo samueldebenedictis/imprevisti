@@ -120,6 +120,14 @@ export const FaceEmotion: Story = {
   },
 };
 
+export const FaceEmotionAnswerRevealed: Story = {
+  args: { ...FaceEmotion.args },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByText("Mostra risposta"));
+  },
+};
+
 // Forma reale inviata dal server (roll/route.ts): il video sta fuori,
 // il testo della carta è annidato sotto "topic".
 export const Film: Story = {
