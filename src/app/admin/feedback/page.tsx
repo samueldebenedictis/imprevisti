@@ -331,7 +331,6 @@ export default function FeedbackDashboardPage() {
                 className="ui-border-dark border-2 p-3 text-sm"
               >
                 <p className="mb-1 font-semibold">
-                  {entry.name || "Anonimo"} ·{" "}
                   {new Date(entry.submittedAt).toLocaleDateString("it-IT")}
                 </p>
                 {entry.whatWorkedWell && (

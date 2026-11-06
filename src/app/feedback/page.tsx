@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { version as appVersion } from "../../../package.json";
 import Button from "../components/ui/button";
-import Input from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import Select from "../components/ui/select";
 
@@ -196,7 +195,6 @@ const STEP_LABELS = ["Info base", "Questionario SUS", "Valutazioni", "Altro"];
 const TOTAL_STEPS = STEP_LABELS.length;
 
 export default function FeedbackPage() {
-  const [name, setName] = useState("");
   const [ageGroup, setGroup] = useState("");
   const [gameExperience, setGameExperience] = useState("");
   const [screenMode, setScreenMode] = useState("");
@@ -241,7 +239,6 @@ export default function FeedbackPage() {
   const getStepInvalidFields = (s: number): string[] => {
     if (s === 0) {
       const fields: string[] = [];
-      if (!name.trim()) fields.push("name");
       if (!ageGroup.trim()) fields.push("ageGroup");
       if (!gameExperience.trim()) fields.push("gameExperience");
       if (!screenMode.trim()) fields.push("screenMode");
@@ -305,7 +302,6 @@ export default function FeedbackPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name,
           ageGroup,
           gameExperience,
           screenMode,
@@ -323,7 +319,6 @@ export default function FeedbackPage() {
 
       if (response.ok) {
         setIsSubmitted(true);
-        setName("");
         setGroup("");
         setGameExperience("");
         setScreenMode("");
@@ -385,26 +380,11 @@ export default function FeedbackPage() {
         {step === 0 && (
           <>
             <h2 className="ui-text-title mb-2">Info base</h2>
-            <div className="mb-4">
-              <Label
-                htmlFor="name"
-                className={`font-light ${invalidFields.has("name") ? "text-red-600" : ""}`}
-              >
-                Nome *
-              </Label>
-              <Input
-                type="text"
-                id="name"
-                name="name"
-                value={name}
-                onChange={(e) => {
-                  setName(e.target.value);
-                  clearInvalid("name");
-                }}
-                required
-                className={`mt-2 ${invalidFields.has("name") ? "border-red-600" : ""}`}
-              />
-            </div>
+            <p className="ui-text-normal mb-4 text-sm">
+              Le risposte sono anonime: non vengono raccolti nome, indirizzo IP
+              né altri dati identificativi, e sono usate solo in forma aggregata
+              per migliorare il gioco.
+            </p>
 
             <div className="mb-4">
               <Label
@@ -546,6 +526,7 @@ export default function FeedbackPage() {
             <div className="mb-4">
               <Label htmlFor="autismIdentification" className="font-light">
                 Hai una diagnosi (o ti riconosci) nello spettro autistico?
+                (facoltativa)
               </Label>
               <div className="mt-1 text-sm">
                 Questa informazione è opzionale, ci aiuta a leggere meglio i

@@ -321,7 +321,6 @@ test("screenshot-feedback", async ({ page }) => {
 /** Compilazione di esempio di ciascun passo del modulo feedback, in ordine. */
 const FEEDBACK_STEPS: ((page: Page) => Promise<void>)[] = [
   async (page) => {
-    await page.getByRole("textbox", { name: "Nome *" }).fill("Mario");
     const selectElements = page.locator("select");
     await selectElements.nth(0).selectOption("docente");
     await selectElements.nth(1).selectOption("digitale");

@@ -1,13 +1,41 @@
 import { NextResponse } from "next/server";
 import { getFeedback, pushFeedback } from "@/lib/session-store";
 
+/**
+ * Campi accettati dal modulo di feedback: tutto il resto viene scartato,
+ * così che nello store finiscano solo i dati previsti (minimizzazione).
+ */
+const ALLOWED_FIELDS = [
+  "ageGroup",
+  "gameExperience",
+  "screenMode",
+  "autismIdentification",
+  "appVersion",
+  "digitalVsPhysical",
+  "gameplayClarity",
+  "graphics",
+  "enjoyment",
+  "funLevel",
+  ...Array.from({ length: 10 }, (_, i) => `sus${i + 1}`),
+  "whatWorkedWell",
+  "challenges",
+  "suggestions",
+] as const;
+
 export async function POST(req: Request) {
   const body = await req.json();
 
   const entry = {
-    ...body,
-    submittedAt: new Date().toISOString(),
-    id: Date.now().toString(),
+    ...Object.fromEntries(
+      ALLOWED_FIELDS.filter((key) => key in body).map((key) => [
+        key,
+        body[key],
+      ]),
+    ),
+    // Solo la data, senza ora: l'orario esatto permetterebbe di risalire
+    // a chi ha inviato la risposta.
+    submittedAt: new Date().toISOString().slice(0, 10),
+    id: crypto.randomUUID(),
   };
 
   await pushFeedback(JSON.stringify(entry));

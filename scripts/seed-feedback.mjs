@@ -41,24 +41,6 @@ const baseUrl =
   urlFlagIndex !== -1 ? args[urlFlagIndex + 1] : "http://localhost:3000";
 const count = Number(args.find((a) => /^\d+$/.test(a))) || 20;
 
-const NAMES = [
-  "Giulia",
-  "Marco",
-  "Sofia",
-  "Luca",
-  "Alice",
-  "Matteo",
-  "Elena",
-  "Davide",
-  "Francesca",
-  "Andrea",
-  "Chiara",
-  "Simone",
-  "Martina",
-  "Riccardo",
-  "Sara",
-];
-
 const WHAT_WORKED = [
   "La grafica colorata piace molto.",
   "Le regole erano chiare fin da subito.",
@@ -122,7 +104,6 @@ function buildEntry(index) {
   const quality = min + Math.random() * (max - min);
 
   return {
-    name: `${pick(NAMES)} ${index + 1}`,
     ageGroup: pick(["docente", "alunno", "none"]),
     gameExperience: pick(["fisico", "digitale", "esperto"]),
     screenMode: pick(["singolo", "multi"]),
