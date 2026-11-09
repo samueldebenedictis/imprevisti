@@ -78,6 +78,51 @@ describe("POST /api/feedback", () => {
   });
 });
 
+describe("POST /api/feedback — input non valido", () => {
+  test("rifiuta un corpo che non è un oggetto", async () => {
+    for (const body of [null, 5, "x", [1, 2]]) {
+      const res = await POST(postRequest(body));
+      expect(res.status).toBe(400);
+    }
+    expect(sessionStore.pushFeedback).not.toHaveBeenCalled();
+  });
+
+  test("rifiuta JSON non valido", async () => {
+    const res = await POST(
+      new Request("http://localhost/api/feedback", {
+        method: "POST",
+        body: "{non json",
+      }),
+    );
+    expect(res.status).toBe(400);
+    expect(sessionStore.pushFeedback).not.toHaveBeenCalled();
+  });
+
+  test("scarta valori che non sono stringhe o numeri e tronca i testi lunghi", async () => {
+    await POST(
+      postRequest({
+        ageGroup: { nested: true },
+        sus1: [4],
+        sus2: 3,
+        challenges: "a".repeat(5000),
+      }),
+    );
+    const entry = savedEntry();
+    expect(entry.ageGroup).toBeUndefined();
+    expect(entry.sus1).toBeUndefined();
+    expect(entry.sus2).toBe(3);
+    expect(entry.challenges).toHaveLength(2000);
+  });
+
+  test("usa la data italiana, non quella UTC", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-11-04T23:30:00Z")); // 00:30 a Roma
+    await POST(postRequest({}));
+    vi.useRealTimers();
+    expect(savedEntry().submittedAt).toBe("2026-11-05");
+  });
+});
+
 describe("GET /api/feedback", () => {
   test("rifiuta le richieste senza chiave corretta", async () => {
     vi.stubEnv("FEEDBACK_SECRET", "segreto");

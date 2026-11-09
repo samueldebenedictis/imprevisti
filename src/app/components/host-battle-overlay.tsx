@@ -1,3 +1,4 @@
+import SpecialEffectInfoIcon from "./turn-result-modal/special-effect-info-icon";
 import Button from "./ui/button";
 
 export interface HostBattleOverlayProps {
@@ -14,7 +15,10 @@ export default function HostBattleOverlay({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="ui-border-dark mx-4 flex w-full max-w-lg flex-col gap-6 bg-white p-8">
-        <h2 className="ui-text-title text-center">Battaglia!</h2>
+        <div className="relative">
+          <h2 className="ui-text-title text-center">Battaglia!</h2>
+          <SpecialEffectInfoIcon actionType="battle" />
+        </div>
         <p className="ui-text-subtitle text-center">
           Carta, forbice, sasso — chi ha vinto?
         </p>

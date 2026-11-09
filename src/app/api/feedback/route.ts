@@ -22,19 +22,44 @@ const ALLOWED_FIELDS = [
   "suggestions",
 ] as const;
 
+/** Lunghezza massima dei campi di testo: oltre, il valore viene troncato. */
+const MAX_TEXT_LENGTH = 2000;
+
+/** Tiene solo stringhe (troncate) e numeri finiti: scarta oggetti, array e simili. */
+function sanitize(value: unknown): string | number | undefined {
+  if (typeof value === "string") return value.slice(0, MAX_TEXT_LENGTH);
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  return undefined;
+}
+
+/** Data di oggi (AAAA-MM-GG) nel fuso italiano, non in UTC. */
+function todayInRome(): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Rome" }).format(
+    new Date(),
+  );
+}
+
 export async function POST(req: Request) {
-  const body = await req.json();
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
+  if (typeof body !== "object" || body === null || Array.isArray(body)) {
+    return NextResponse.json({ error: "Invalid body" }, { status: 400 });
+  }
+  const fields = body as Record<string, unknown>;
 
   const entry = {
     ...Object.fromEntries(
-      ALLOWED_FIELDS.filter((key) => key in body).map((key) => [
-        key,
-        body[key],
-      ]),
+      ALLOWED_FIELDS.map((key) => [key, sanitize(fields[key])]).filter(
+        ([, value]) => value !== undefined,
+      ),
     ),
     // Solo la data, senza ora: l'orario esatto permetterebbe di risalire
     // a chi ha inviato la risposta.
-    submittedAt: new Date().toISOString().slice(0, 10),
+    submittedAt: todayInRome(),
     id: crypto.randomUUID(),
   };
 

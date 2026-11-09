@@ -4,10 +4,7 @@ import { useState } from "react";
 import { getFaceEmotionGifUrl } from "@/model/deck";
 import { useFaceEmotionStore } from "@/store/face-emotion-store";
 import { imagePrefix } from "../image-prefix";
-import {
-  LABEL_FACE_EMOTION_ANIMATED,
-  LABEL_FACE_EMOTION_STATIC,
-} from "../texts";
+import { LABEL_FACE_EMOTION_ANIMATED } from "../texts";
 import { LabelCheckbox } from "./ui/label";
 
 interface FaceEmotionImageProps {
@@ -18,7 +15,7 @@ interface FaceEmotionImageProps {
 }
 
 /**
- * Foto del volto con checkbox "Animato"/"Non animato": se attivo mostra la gif
+ * Foto del volto con checkbox "Animato": se spuntato mostra la gif
  * di morphing neutro -> espressione, ripiegando sulla foto statica se manca.
  */
 const FaceEmotionImage: React.FC<FaceEmotionImageProps> = ({
@@ -45,7 +42,7 @@ const FaceEmotionImage: React.FC<FaceEmotionImageProps> = ({
           className="ui-custom-checkbox mr-2"
         />
         <LabelCheckbox htmlFor="face-emotion-animated-toggle">
-          {isAnimated ? LABEL_FACE_EMOTION_ANIMATED : LABEL_FACE_EMOTION_STATIC}
+          {LABEL_FACE_EMOTION_ANIMATED}
         </LabelCheckbox>
       </div>
       <Image

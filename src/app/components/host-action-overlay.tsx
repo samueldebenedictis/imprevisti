@@ -9,6 +9,7 @@ import { imagePrefix } from "../image-prefix";
 import { ACTION_LABELS } from "./action-labels";
 import FaceEmotionImage from "./face-emotion-image";
 import FilmVideo from "./film-video";
+import SpecialEffectInfoIcon from "./turn-result-modal/special-effect-info-icon";
 import Button from "./ui/button";
 
 // Azioni con target libero: l'host chiede "chi ha indovinato?" dopo "Riuscito"
@@ -99,9 +100,12 @@ export default function HostActionOverlay({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="ui-border-dark mx-4 flex w-full max-w-lg flex-col gap-6 bg-white p-8">
-        <h2 className="ui-text-title text-center">
-          {ACTION_LABELS[pendingAction.type] ?? pendingAction.type}
-        </h2>
+        <div className="relative">
+          <h2 className="ui-text-title text-center">
+            {ACTION_LABELS[pendingAction.type] ?? pendingAction.type}
+          </h2>
+          <SpecialEffectInfoIcon actionType={pendingAction.type} />
+        </div>
 
         <p className="ui-text-subtitle text-center">
           {actorName}

@@ -153,7 +153,7 @@ export default function PlayerPage() {
     );
   }
 
-  // Quiz: risponde verbalmente, coordinatore giudica sull'host
+  // Quiz: risponde verbalmente, educatore giudica sull'host
   if (isActor && action?.type === "quiz") {
     const quizCard = action.card as { cardTitle?: string } | null;
     const quizQuestion = quizCard?.cardTitle ?? "";
