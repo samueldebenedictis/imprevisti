@@ -118,7 +118,7 @@ export const MODAL_SPECIAL_EFFECT_INFO_MUSIC_EMOTION =
 export const MODAL_SPECIAL_EFFECT_INFO_PHYSICAL_TEST =
   "Il giocatore dovrà eseguire un test fisico proposto dalla carta. Se il test è completato con successo, il giocatore potrà avanzare di una casella. Altrimenti, salterà il prossimo turno.";
 export const MODAL_SPECIAL_EFFECT_INFO_WHAT_WOULD_YOU_DO =
-  'Se un giocatore atterra su questa casella dovrà rispondere a una domanda ipotetica del tipo "Cosa faresti se...". Gli altri giocatori giudicheranno se la risposta è convincente. Se la risposta convince la maggioranza, il giocatore potrà avanzare di una casella. Altrimenti, salterà il prossimo turno.';
+  "Se un giocatore atterra su questa casella dovrà rispondere a una domanda ipotetica del tipo \"Cosa faresti se...\". Gli altri giocatori diranno se la risposta li convince e l'educatore registrerà l'esito. Se la risposta è convincente, il giocatore potrà avanzare di una casella. Altrimenti, salterà il prossimo turno.";
 export const MODAL_SPECIAL_EFFECT_INFO_FACE_EMOTION =
   "Il giocatore dovrà indovinare l'emozione espressa dal volto che gli verrà mostrato. Se risponde correttamente, potrà avanzare di una casella. Se sbaglia, dovrà saltare un turno.";
 export const MODAL_SPECIAL_EFFECT_INFO_FILM =
