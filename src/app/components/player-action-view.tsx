@@ -78,7 +78,7 @@ export default function PlayerActionView(props: PlayerActionViewProps) {
           </div>
         )}
         <p className="ui-text-normal text-gray-500">
-          Il coordinatore giudicherà la risposta.
+          L'educatore giudicherà la risposta.
         </p>
       </div>
     );
@@ -121,7 +121,7 @@ export default function PlayerActionView(props: PlayerActionViewProps) {
           </div>
         )}
         <p className="ui-text-normal text-center text-gray-500">
-          Il coordinatore giudica sul tabellone.
+          L'educatore giudica sul tabellone.
         </p>
       </div>
     );

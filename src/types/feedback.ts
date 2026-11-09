@@ -1,7 +1,6 @@
 export interface FeedbackEntry {
   id: string;
-  submittedAt: string;
-  name?: string;
+  submittedAt: string; // solo data (AAAA-MM-GG)
   ageGroup?: string;
   gameExperience?: string;
   screenMode?: string;

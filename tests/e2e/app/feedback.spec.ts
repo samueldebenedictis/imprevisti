@@ -18,7 +18,6 @@ test("Feedback form submission", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Feedback" })).toBeVisible();
 
   // Step 1: Info base
-  await page.getByRole("textbox", { name: "Nome *" }).fill("Test User");
   const selectElements = page.locator("select");
   await selectElements.nth(0).selectOption("alunno");
   await selectElements.nth(1).selectOption("digitale");
@@ -74,7 +73,6 @@ test("Feedback form submission", async ({ page }) => {
   expect(responseData.mocked).toBe(true);
 
   expect(requestData).toEqual({
-    name: "Test User",
     ageGroup: "alunno",
     gameExperience: "digitale",
     screenMode: "multi",
@@ -119,7 +117,6 @@ test("Feedback form submission without optional digitalVsPhysical rating or auti
   await page.goto("/feedback");
 
   // Step 1: Info base
-  await page.getByRole("textbox", { name: "Nome *" }).fill("Test User");
   const selectElements = page.locator("select");
   await selectElements.nth(0).selectOption("docente");
   await selectElements.nth(1).selectOption("fisico");
@@ -165,11 +162,8 @@ test("Feedback form blocks navigation on missing required fields", async ({
   // Nessun campo compilato: Avanti non deve far avanzare lo step
   await page.getByRole("button", { name: "Avanti", exact: true }).click();
   await expect(page.getByText("Passo 1 di 4")).toBeVisible();
-  await expect(page.getByRole("textbox", { name: "Nome *" })).toHaveClass(
-    /border-red-600/,
-  );
+  await expect(page.locator("select#ageGroup")).toHaveClass(/border-red-600/);
 
-  await page.getByRole("textbox", { name: "Nome *" }).fill("Test User");
   const selectElements = page.locator("select");
   await selectElements.nth(0).selectOption("alunno");
   await selectElements.nth(1).selectOption("digitale");

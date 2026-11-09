@@ -9,8 +9,7 @@ import type { FeedbackEntry } from "@/types/feedback";
 const FEEDBACK_DASHBOARD_FIXTURE: FeedbackEntry[] = [
   {
     id: "1",
-    submittedAt: "2026-03-01T09:00:00.000Z",
-    name: "Giulia",
+    submittedAt: "2026-03-01",
     ageGroup: "alunno",
     gameExperience: "digitale",
     autismIdentification: "no",
@@ -33,8 +32,7 @@ const FEEDBACK_DASHBOARD_FIXTURE: FeedbackEntry[] = [
   },
   {
     id: "2",
-    submittedAt: "2026-03-02T09:00:00.000Z",
-    name: "Marco",
+    submittedAt: "2026-03-02",
     ageGroup: "docente",
     gameExperience: "esperto",
     autismIdentification: "si_diagnosi",
@@ -57,8 +55,7 @@ const FEEDBACK_DASHBOARD_FIXTURE: FeedbackEntry[] = [
   },
   {
     id: "3",
-    submittedAt: "2026-03-03T09:00:00.000Z",
-    name: "Sofia",
+    submittedAt: "2026-03-03",
     ageGroup: "alunno",
     gameExperience: "fisico",
     autismIdentification: "no",
@@ -81,8 +78,7 @@ const FEEDBACK_DASHBOARD_FIXTURE: FeedbackEntry[] = [
   },
   {
     id: "4",
-    submittedAt: "2026-03-04T09:00:00.000Z",
-    name: "Luca",
+    submittedAt: "2026-03-04",
     ageGroup: "docente",
     gameExperience: "esperto",
     autismIdentification: "si_non_diagnosticato",
@@ -105,8 +101,7 @@ const FEEDBACK_DASHBOARD_FIXTURE: FeedbackEntry[] = [
   },
   {
     id: "5",
-    submittedAt: "2026-03-05T09:00:00.000Z",
-    name: "Alice",
+    submittedAt: "2026-03-05",
     ageGroup: "alunno",
     gameExperience: "digitale",
     autismIdentification: "preferisco_non_rispondere",
@@ -129,8 +124,7 @@ const FEEDBACK_DASHBOARD_FIXTURE: FeedbackEntry[] = [
   },
   {
     id: "6",
-    submittedAt: "2026-03-06T09:00:00.000Z",
-    name: "Davide",
+    submittedAt: "2026-03-06",
     ageGroup: "none",
     gameExperience: "fisico",
     autismIdentification: "no",
@@ -153,8 +147,7 @@ const FEEDBACK_DASHBOARD_FIXTURE: FeedbackEntry[] = [
   },
   {
     id: "7",
-    submittedAt: "2026-03-07T09:00:00.000Z",
-    name: "Francesca",
+    submittedAt: "2026-03-07",
     ageGroup: "docente",
     gameExperience: "esperto",
     autismIdentification: "preferisco_non_rispondere",
@@ -177,8 +170,7 @@ const FEEDBACK_DASHBOARD_FIXTURE: FeedbackEntry[] = [
   },
   {
     id: "8",
-    submittedAt: "2026-03-08T09:00:00.000Z",
-    name: "Matteo",
+    submittedAt: "2026-03-08",
     ageGroup: "alunno",
     gameExperience: "digitale",
     autismIdentification: "si_diagnosi",

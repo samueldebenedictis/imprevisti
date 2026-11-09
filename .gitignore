@@ -60,3 +60,6 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Feedback backup
+feedback-backup-*.json

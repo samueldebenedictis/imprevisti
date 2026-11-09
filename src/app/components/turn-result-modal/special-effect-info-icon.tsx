@@ -21,7 +21,11 @@ interface SpecialEffectInfoIconProps {
 const SpecialEffectInfoIcon: React.FC<SpecialEffectInfoIconProps> = ({
   actionType,
 }) => {
-  const [showInfo, setShowInfo] = useState(false);
+  // Col mouse si apre al passaggio; su touch (tablet, LIM) con un tocco,
+  // che la fissa aperta finché non si tocca di nuovo o altrove.
+  const [hovered, setHovered] = useState(false);
+  const [pinned, setPinned] = useState(false);
+  const showInfo = hovered || pinned;
 
   const getSpecialEffectInfo = (actionType: string | null) => {
     switch (actionType) {
@@ -54,8 +58,11 @@ const SpecialEffectInfoIcon: React.FC<SpecialEffectInfoIconProps> = ({
     <>
       <div className="absolute top-0 right-0">
         <button
-          onMouseEnter={() => setShowInfo(true)}
-          onMouseLeave={() => setShowInfo(false)}
+          onPointerEnter={(e) => e.pointerType === "mouse" && setHovered(true)}
+          onPointerLeave={(e) => e.pointerType === "mouse" && setHovered(false)}
+          onClick={() => setPinned((prev) => !prev)}
+          onBlur={() => setPinned(false)}
+          aria-expanded={showInfo}
           className="text-gray-600 hover:text-gray-800"
           type="button"
         >
@@ -79,7 +86,7 @@ const SpecialEffectInfoIcon: React.FC<SpecialEffectInfoIconProps> = ({
         </button>
       </div>
       {showInfo && (
-        <div className="ui-border-dark -translate-x-1/2 absolute bottom-10 left-1/2 z-10 min-w-[500px] bg-white p-4 text-xl shadow-lg">
+        <div className="ui-border-dark -translate-x-1/2 absolute top-10 left-1/2 z-10 w-[min(500px,calc(100vw-2rem))] bg-white p-4 text-xl shadow-lg">
           {getSpecialEffectInfo(actionType)}
         </div>
       )}
