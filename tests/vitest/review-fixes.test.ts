@@ -1,5 +1,6 @@
 // @vitest-environment node
 import { afterEach, describe, expect, test, vi } from "vitest";
+import { validateBoardConfig } from "@/lib/board-config";
 import { Battle } from "@/model/battle";
 import { Board } from "@/model/board";
 import { Game } from "@/model/game";
@@ -238,5 +239,56 @@ describe("withSessionLock (in memoria)", () => {
 
     await expect(failing).rejects.toThrow("boom");
     expect(await (await next).text()).toBe("ok");
+  });
+});
+
+describe("validateBoardConfig", () => {
+  const valid = {
+    numSquares: 20,
+    specialPercentage: 20,
+    squareTypes: { quiz: true, mime: false },
+    battlesEnabled: true,
+    customSquares: null,
+  };
+
+  test("accetta una configurazione valida", () => {
+    expect(validateBoardConfig(valid)).toBeNull();
+  });
+
+  test.each([
+    ["boardConfig mancante", undefined],
+    ["troppe caselle", { ...valid, numSquares: 1_000_000 }],
+    ["poche caselle", { ...valid, numSquares: 5 }],
+    ["caselle non intere", { ...valid, numSquares: 20.5 }],
+    ["percentuale fuori scala", { ...valid, specialPercentage: 150 }],
+    ["squareTypes non booleani", { ...valid, squareTypes: { quiz: "si" } }],
+    ["battlesEnabled non booleano", { ...valid, battlesEnabled: "no" }],
+  ])("rifiuta: %s", (_, config) => {
+    expect(validateBoardConfig(config)).not.toBeNull();
+  });
+
+  test("controlla il tabellone personalizzato", () => {
+    const squares = Array.from({ length: 10 }, (_, i) => ({
+      number: i,
+      type: "normal",
+    }));
+    const config = { ...valid, numSquares: 10 };
+    expect(
+      validateBoardConfig({ ...config, customSquares: squares }),
+    ).toBeNull();
+
+    const badType = squares.map((sq, i) =>
+      i === 3 ? { ...sq, type: "boom" } : sq,
+    );
+    expect(
+      validateBoardConfig({ ...config, customSquares: badType }),
+    ).not.toBeNull();
+
+    const badMove = squares.map((sq, i) =>
+      i === 3 ? { number: 3, type: "move", moveValue: 50 } : sq,
+    );
+    expect(
+      validateBoardConfig({ ...config, customSquares: badMove }),
+    ).not.toBeNull();
   });
 });

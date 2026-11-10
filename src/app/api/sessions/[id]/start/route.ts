@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { generateSquares } from "@/app/utils/generate-squares";
+import { validateBoardConfig } from "@/lib/board-config";
 import { getSession, saveSession, withSessionLock } from "@/lib/session-store";
 import { Board } from "@/model/board";
 import { Game } from "@/model/game";
@@ -22,6 +23,9 @@ export async function POST(
       return NextResponse.json({ error: "Session not found" }, { status: 404 });
     if (session.hostToken !== hostToken)
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    const configError = validateBoardConfig(boardConfig);
+    if (configError)
+      return NextResponse.json({ error: configError }, { status: 400 });
     if (session.players.length < 2)
       return NextResponse.json({ error: "Min 2 players" }, { status: 400 });
     if (session.started)
