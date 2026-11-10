@@ -182,10 +182,10 @@ describe("session-store (local ioredis via REDIS_URL)", () => {
     expect(ioLpush).toHaveBeenCalledWith("feedback:list", "hi");
   });
 
-  test("getFeedback calls ioredis lrange with the default count", async () => {
+  test("getFeedback reads the whole list when no count is given", async () => {
     ioLrange.mockResolvedValue(["x"]);
     const result = await getFeedback();
-    expect(ioLrange).toHaveBeenCalledWith("feedback:list", 0, 99);
+    expect(ioLrange).toHaveBeenCalledWith("feedback:list", 0, -1);
     expect(result).toEqual(["x"]);
   });
 });

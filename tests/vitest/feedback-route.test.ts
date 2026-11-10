@@ -202,5 +202,7 @@ describe("GET /api/feedback", () => {
     );
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual([{ id: "a", submittedAt: "2026-11-05" }]);
+    // Tutte le risposte, non solo le ultime 100
+    expect(sessionStore.getFeedback).toHaveBeenCalledWith();
   });
 });

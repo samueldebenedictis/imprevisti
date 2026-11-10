@@ -119,7 +119,7 @@ export async function GET(req: Request) {
   if (searchParams.get("secret") !== process.env.FEEDBACK_SECRET) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const items = await getFeedback(100);
+  const items = await getFeedback();
   return NextResponse.json(
     items.map((i) => (typeof i === "string" ? JSON.parse(i) : i)),
   );

@@ -157,10 +157,15 @@ export async function pushFeedback(entry: string): Promise<void> {
   console.log("[FEEDBACK]", entry);
 }
 
-export async function getFeedback(count = 100): Promise<string[]> {
+/** Restituisce le ultime `count` risposte, oppure tutte se `count` è omesso. */
+export async function getFeedback(count?: number): Promise<string[]> {
   const redis = await getRedis();
   if (redis)
-    return (await redis.lrange("feedback:list", 0, count - 1)) as string[];
+    return (await redis.lrange(
+      "feedback:list",
+      0,
+      count === undefined ? -1 : count - 1,
+    )) as string[];
   return [];
 }
 
