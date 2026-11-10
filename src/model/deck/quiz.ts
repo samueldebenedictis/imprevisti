@@ -117,10 +117,6 @@ export const quizCards = [
     risposta: "Il bosco",
   },
   {
-    domanda: "Qual è il frutto rosso con i semini all’interno?",
-    risposta: "La mela",
-  },
-  {
     domanda: "Come si chiama il pasto che si fa a metà giornata?",
     risposta: "Il pranzo",
   },
@@ -134,9 +130,5 @@ export const quizCards = [
   {
     domanda: "Dove si guarda un film con tante persone?",
     risposta: "Al cinema",
-  },
-  {
-    domanda: "Come si chiama l'oggetto che ti dice che ora è?",
-    risposta: "Orologio",
   },
 ];
