@@ -104,7 +104,7 @@ describe("Face emotion square", () => {
     const result = command.execute({
       player,
       faceEmotionDeck: deck,
-    } as CommandDependencies);
+    } as unknown as CommandDependencies);
 
     expect(result).toBeInstanceOf(FaceEmotion);
     if (result instanceof FaceEmotion) {

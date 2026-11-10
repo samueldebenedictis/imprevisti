@@ -11,6 +11,8 @@ import { PhysicalTest } from "@/model/deck/physical-test";
 import { Quiz } from "@/model/deck/quiz";
 import { WhatWouldYouDo } from "@/model/deck/what-would-you-do";
 import { type GameJSON, Game as GameModel } from "@/model/game";
+import { firstBattle } from "@/model/managers/action-result";
+import type { GameActionResult } from "@/model/managers/types";
 import type { Player } from "@/model/player";
 import {
   LABEL_BACKWRITE,
@@ -112,6 +114,47 @@ export interface GameActions {
 }
 
 type GameStore = GameState & { actions: GameActions };
+
+/**
+ * Chiude la risoluzione di una sfida o di una battaglia.
+ * Salva la partita e, se la risoluzione ha prodotto una nuova azione
+ * (una collisione, o la casella raggiunta dal vincitore di una battaglia),
+ * apre subito la finestra corrispondente.
+ */
+function finishResolution(
+  set: (partial: Partial<GameStore>) => void,
+  get: () => GameStore,
+  game: GameModel,
+  next: GameActionResult | Parameters<typeof firstBattle>[0],
+  partners: (Player | undefined)[] = [],
+) {
+  const updatedGame = GameModel.fromJSON(game.toJSON());
+  set({ game: updatedGame, gameData: updatedGame.toJSON() });
+  get().actions.closeModal();
+  if (updatedGame.isGameEnded()) return;
+
+  const result = toFollowUp(
+    next,
+    partners.filter((p): p is Player => p !== undefined),
+  );
+  if (!result || result.type === "none" || !result.data) return;
+
+  if (result.type === "battle") soundManager.playBattle();
+  soundManager.playSpecialSquare();
+  set({ actionType: result.type, actionData: result.data, isModalOpen: true });
+}
+
+/** Normalizza il valore restituito da resolveBattle() o dai resolve* delle sfide. */
+function toFollowUp(
+  next: GameActionResult | Parameters<typeof firstBattle>[0],
+  partners: Player[],
+): GameActionResult | null {
+  if (next && "type" in next) return next;
+  const battle = firstBattle(next, partners);
+  return battle
+    ? { type: "battle", data: battle, diceResult: 0, actionType: "battle" }
+    : null;
+}
 
 export const useGameStore = create<GameStore>()(
   persist(
@@ -313,12 +356,8 @@ export const useGameStore = create<GameStore>()(
 
           if (currentPlayer1 && currentPlayer2) {
             const currentBattle = new Battle(currentPlayer1, currentPlayer2);
-            game.resolveBattle(currentBattle, winnerPlayer);
-
-            const updatedGame = GameModel.fromJSON(game.toJSON());
-            const updatedGameData = updatedGame.toJSON();
-            set({ game: updatedGame, gameData: updatedGameData });
-            get().actions.closeModal();
+            const followUp = game.resolveBattle(currentBattle, winnerPlayer);
+            finishResolution(set, get, game, followUp);
           }
         },
 
@@ -347,12 +386,15 @@ export const useGameStore = create<GameStore>()(
             currentMimePlayer,
             mimeAction.cardTopic,
           );
-          game.resolveMime(currentMimeAction, success, guesserPlayer);
-
-          const updatedGame = GameModel.fromJSON(game.toJSON());
-          const updatedGameData = updatedGame.toJSON();
-          set({ game: updatedGame, gameData: updatedGameData });
-          get().actions.closeModal();
+          const collisions = game.resolveMime(
+            currentMimeAction,
+            success,
+            guesserPlayer,
+          );
+          finishResolution(set, get, game, collisions, [
+            currentMimeAction.mimePlayer,
+            guesserPlayer,
+          ]);
         },
 
         resolveQuiz: (success: boolean) => {
@@ -373,12 +415,8 @@ export const useGameStore = create<GameStore>()(
             currentQuizPlayer,
             quizAction.cardTopic,
           );
-          game.resolveQuiz(currentQuizAction, success);
-
-          const updatedGame = GameModel.fromJSON(game.toJSON());
-          const updatedGameData = updatedGame.toJSON();
-          set({ game: updatedGame, gameData: updatedGameData });
-          get().actions.closeModal();
+          const collisions = game.resolveQuiz(currentQuizAction, success);
+          finishResolution(set, get, game, collisions);
         },
 
         resolveBackWrite: (success: boolean, guesserId?: number) => {
@@ -406,12 +444,15 @@ export const useGameStore = create<GameStore>()(
             currentBackWritePlayer,
             backWriteAction.cardTopic,
           );
-          game.resolveBackWrite(currentBackWriteAction, success, guesserPlayer);
-
-          const updatedGame = GameModel.fromJSON(game.toJSON());
-          const updatedGameData = updatedGame.toJSON();
-          set({ game: updatedGame, gameData: updatedGameData });
-          get().actions.closeModal();
+          const collisions = game.resolveBackWrite(
+            currentBackWriteAction,
+            success,
+            guesserPlayer,
+          );
+          finishResolution(set, get, game, collisions, [
+            currentBackWriteAction.backWritePlayer,
+            guesserPlayer,
+          ]);
         },
 
         resolveFaceEmotion: (success: boolean) => {
@@ -433,12 +474,11 @@ export const useGameStore = create<GameStore>()(
             faceEmotionAction.cardEmotion,
             faceEmotionAction.imageUrl,
           );
-          game.resolveFaceEmotion(currentFaceEmotionAction, success);
-
-          const updatedGame = GameModel.fromJSON(game.toJSON());
-          const updatedGameData = updatedGame.toJSON();
-          set({ game: updatedGame, gameData: updatedGameData });
-          get().actions.closeModal();
+          const collisions = game.resolveFaceEmotion(
+            currentFaceEmotionAction,
+            success,
+          );
+          finishResolution(set, get, game, collisions);
         },
 
         resolveFilm: (success: boolean) => {
@@ -460,12 +500,8 @@ export const useGameStore = create<GameStore>()(
             filmAction.cardEmotion,
             filmAction.videoUrl,
           );
-          game.resolveFilm(currentFilmAction, success);
-
-          const updatedGame = GameModel.fromJSON(game.toJSON());
-          const updatedGameData = updatedGame.toJSON();
-          set({ game: updatedGame, gameData: updatedGameData });
-          get().actions.closeModal();
+          const collisions = game.resolveFilm(currentFilmAction, success);
+          finishResolution(set, get, game, collisions);
         },
 
         resolveMusicEmotion: (success: boolean) => {
@@ -489,12 +525,11 @@ export const useGameStore = create<GameStore>()(
             currentMusicEmotionPlayer,
             musicEmotionAction.cardEmotion,
           );
-          game.resolveMusicEmotion(currentMusicEmotionAction, success);
-
-          const updatedGame = GameModel.fromJSON(game.toJSON());
-          const updatedGameData = updatedGame.toJSON();
-          set({ game: updatedGame, gameData: updatedGameData });
-          get().actions.closeModal();
+          const collisions = game.resolveMusicEmotion(
+            currentMusicEmotionAction,
+            success,
+          );
+          finishResolution(set, get, game, collisions);
         },
 
         resolvePhysicalTest: (success: boolean) => {
@@ -518,12 +553,11 @@ export const useGameStore = create<GameStore>()(
             currentPhysicalTestPlayer,
             physicalTestAction.cardTest,
           );
-          game.resolvePhysicalTest(currentPhysicalTestAction, success);
-
-          const updatedGame = GameModel.fromJSON(game.toJSON());
-          const updatedGameData = updatedGame.toJSON();
-          set({ game: updatedGame, gameData: updatedGameData });
-          get().actions.closeModal();
+          const collisions = game.resolvePhysicalTest(
+            currentPhysicalTestAction,
+            success,
+          );
+          finishResolution(set, get, game, collisions);
         },
 
         resolveWhatWouldYouDo: (success: boolean) => {
@@ -548,12 +582,11 @@ export const useGameStore = create<GameStore>()(
             currentWhatWouldYouDoPlayer,
             whatWouldYouDoAction.cardQuestion,
           );
-          game.resolveWhatWouldYouDo(currentWhatWouldYouDoAction, success);
-
-          const updatedGame = GameModel.fromJSON(game.toJSON());
-          const updatedGameData = updatedGame.toJSON();
-          set({ game: updatedGame, gameData: updatedGameData });
-          get().actions.closeModal();
+          const collisions = game.resolveWhatWouldYouDo(
+            currentWhatWouldYouDoAction,
+            success,
+          );
+          finishResolution(set, get, game, collisions);
         },
 
         resolveDictationDraw: (success: boolean, drawingPlayerId?: number) => {
@@ -584,16 +617,15 @@ export const useGameStore = create<GameStore>()(
             dictationDrawAction.cardTopic,
             dictationDrawAction.imageUrl,
           );
-          game.resolveDictationDraw(
+          const collisions = game.resolveDictationDraw(
             currentDictationDrawAction,
             success,
             drawingPlayer,
           );
-
-          const updatedGame = GameModel.fromJSON(game.toJSON());
-          const updatedGameData = updatedGame.toJSON();
-          set({ game: updatedGame, gameData: updatedGameData });
-          get().actions.closeModal();
+          finishResolution(set, get, game, collisions, [
+            currentDictationDrawAction.drawingPlayer,
+            drawingPlayer,
+          ]);
         },
 
         openDiceModal: () => set({ isDiceModalOpen: true }),

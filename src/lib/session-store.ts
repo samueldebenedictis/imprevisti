@@ -1,6 +1,13 @@
 import type { PublicSessionState, SessionState } from "@/types/session";
 
 const SESSION_TTL = 60 * 60 * 4; // 4 ore in secondi
+const LOCK_TTL_MS = 5000; // scadenza del lock, se il processo che lo tiene si interrompe
+const LOCK_RETRY_MS = 50;
+const LOCK_MAX_WAIT_MS = 5000;
+
+// Rilascia il lock solo se appartiene ancora a chi lo ha preso
+const RELEASE_LOCK_SCRIPT =
+  'if redis.call("get", KEYS[1]) == ARGV[1] then return redis.call("del", KEYS[1]) else return 0 end';
 
 // Fallback in-memory per sviluppo locale senza Redis
 const memoryStore = new Map<string, SessionState>();
@@ -23,6 +30,11 @@ async function getRedis() {
       lpush: (key: string, val: string) => kv.lpush(key, val),
       lrange: (key: string, start: number, end: number) =>
         kv.lrange(key, start, end),
+      acquireLock: async (key: string, token: string) =>
+        (await kv.set(key, token, { nx: true, px: LOCK_TTL_MS })) === "OK",
+      releaseLock: async (key: string, token: string) => {
+        await kv.eval(RELEASE_LOCK_SCRIPT, [key], [token]);
+      },
     };
   }
 
@@ -49,6 +61,11 @@ async function getRedis() {
       lpush: (key: string, val: string) => client.lpush(key, val),
       lrange: (key: string, start: number, end: number) =>
         client.lrange(key, start, end),
+      acquireLock: async (key: string, token: string) =>
+        (await client.set(key, token, "PX", LOCK_TTL_MS, "NX")) === "OK",
+      releaseLock: async (key: string, token: string) => {
+        await client.eval(RELEASE_LOCK_SCRIPT, 1, key, token);
+      },
     };
   }
 
@@ -81,6 +98,54 @@ export async function deleteSession(id: string): Promise<void> {
     return;
   }
   memoryStore.delete(id);
+}
+
+// Lock in memoria: per ogni sessione, la promessa dell'ultima operazione in coda
+const memoryLocks = new Map<string, Promise<void>>();
+
+/**
+ * Esegue fn in mutua esclusione sulla sessione indicata.
+ * Le route che leggono, modificano e riscrivono la sessione devono passare da qui:
+ * senza lock, due richieste contemporanee (ad esempio due join) leggono lo stesso
+ * stato e l'ultima scrittura cancella la prima.
+ * Se il lock non si libera entro LOCK_MAX_WAIT_MS risponde 503.
+ */
+export async function withSessionLock(
+  id: string,
+  fn: () => Promise<Response>,
+): Promise<Response> {
+  const redis = await getRedis();
+
+  if (!redis) {
+    const previous = memoryLocks.get(id) ?? Promise.resolve();
+    let release = () => {};
+    const current = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const tail = previous.then(() => current);
+    memoryLocks.set(id, tail);
+    await previous;
+    try {
+      return await fn();
+    } finally {
+      release();
+      if (memoryLocks.get(id) === tail) memoryLocks.delete(id);
+    }
+  }
+
+  const key = `lock:session:${id}`;
+  const token = crypto.randomUUID();
+  const deadline = Date.now() + LOCK_MAX_WAIT_MS;
+  while (!(await redis.acquireLock(key, token))) {
+    if (Date.now() > deadline)
+      return Response.json({ error: "Session busy" }, { status: 503 });
+    await new Promise((r) => setTimeout(r, LOCK_RETRY_MS));
+  }
+  try {
+    return await fn();
+  } finally {
+    await redis.releaseLock(key, token);
+  }
 }
 
 export async function pushFeedback(entry: string): Promise<void> {

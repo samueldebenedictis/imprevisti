@@ -1,6 +1,6 @@
 import type { Battle } from "../battle";
 import type { Player } from "../player";
-import { Mime } from "../square";
+import { specialActionToResult } from "./action-result";
 import type { MovementManager } from "./movement-manager";
 import type { SpecialSquareProcessor } from "./special-square-processor";
 import type { TurnManager } from "./turn-manager";
@@ -59,15 +59,6 @@ export class BattleManager {
       winner,
       this.turnManager.getPlayers(),
     );
-    if (effect instanceof Mime) {
-      return {
-        type: "mime",
-        data: effect,
-        diceResult: diceResult,
-        actionType: "mime",
-      };
-    }
-
-    return { type: "none", diceResult: diceResult, actionType: null };
+    return specialActionToResult(effect, diceResult);
   }
 }

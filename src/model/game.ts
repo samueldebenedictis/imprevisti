@@ -30,8 +30,9 @@ import {
   TurnManager,
   WhatWouldYouDoManager,
 } from "./managers";
+import { specialActionToResult } from "./managers/action-result";
 import { Player, type PlayerJSON } from "./player";
-import {
+import type {
   BackWrite,
   DictationDraw,
   FaceEmotion,
@@ -238,6 +239,7 @@ export class Game {
     game.whatWouldYouDoManager = new WhatWouldYouDoManager(
       game.movementManager,
     );
+    game.dictationDrawManager = new DictationDrawManager(game.movementManager);
 
     return game;
   }
@@ -310,83 +312,7 @@ export class Game {
       this.getPlayers(),
     );
 
-    // Se è un'azione speciale, la gestisco
-    if (specialAction) {
-      if (specialAction instanceof Mime) {
-        return {
-          type: "mime",
-          data: specialAction,
-          diceResult: diceValue,
-          actionType: "mime",
-        };
-      }
-      if (specialAction instanceof Quiz) {
-        return {
-          type: "quiz",
-          data: specialAction,
-          diceResult: diceValue,
-          actionType: "quiz",
-        };
-      }
-      if (specialAction instanceof BackWrite) {
-        return {
-          type: "backwrite",
-          data: specialAction,
-          diceResult: diceValue,
-          actionType: "backwrite",
-        };
-      }
-      if (specialAction instanceof MusicEmotion) {
-        return {
-          type: "music-emotion",
-          data: specialAction,
-          diceResult: diceValue,
-          actionType: "music-emotion",
-        };
-      }
-      if (specialAction instanceof PhysicalTest) {
-        return {
-          type: "physical-test",
-          data: specialAction,
-          diceResult: diceValue,
-          actionType: "physical-test",
-        };
-      }
-      if (specialAction instanceof WhatWouldYouDo) {
-        return {
-          type: "what-would-you-do",
-          data: specialAction,
-          diceResult: diceValue,
-          actionType: "what-would-you-do",
-        };
-      }
-      if (specialAction instanceof DictationDraw) {
-        return {
-          type: "dictation-draw",
-          data: specialAction,
-          diceResult: diceValue,
-          actionType: "dictation-draw",
-        };
-      }
-      if (specialAction instanceof FaceEmotion) {
-        return {
-          type: "face-emotion",
-          data: specialAction,
-          diceResult: diceValue,
-          actionType: "face-emotion",
-        };
-      }
-      if (specialAction instanceof Film) {
-        return {
-          type: "film",
-          data: specialAction,
-          diceResult: diceValue,
-          actionType: "film",
-        };
-      }
-    }
-
-    return { type: "none", diceResult: diceValue, actionType: null };
+    return specialActionToResult(specialAction, diceValue);
   }
 
   /**

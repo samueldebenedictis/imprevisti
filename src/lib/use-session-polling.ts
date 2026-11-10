@@ -4,6 +4,7 @@ import type { PublicSessionState } from "@/types/session";
 
 const IDLE_MS = 30 * 60 * 1000; // 30 min inattività → overlay
 const STOP_MS = 5 * 60 * 1000; // 5 min sull'overlay → polling fermo
+const ERROR_RETRY_MS = 2000; // attesa dopo un errore prima di riprovare
 
 export type IdleState = "active" | "idle" | "stopped";
 
@@ -52,11 +53,16 @@ export function useSessionPolling(
             } else if (res.status === 404) {
               if (mountedRef.current) setError("Sessione non trovata");
               break;
+            } else {
+              // Errore del server (500, 503, 504…): attende prima di riprovare,
+              // per non inondare il server di richieste
+              if (mountedRef.current) setError("Connessione persa");
+              await new Promise((r) => setTimeout(r, ERROR_RETRY_MS));
             }
           } catch (e) {
             if ((e as Error).name !== "AbortError" && mountedRef.current) {
               setError("Connessione persa");
-              await new Promise((r) => setTimeout(r, 2000));
+              await new Promise((r) => setTimeout(r, ERROR_RETRY_MS));
             }
           }
         }

@@ -10,7 +10,7 @@ const baseEntry: FeedbackEntry = {
 function withSus(scores: number[]): FeedbackEntry {
   const entry: FeedbackEntry = { ...baseEntry };
   for (let i = 0; i < scores.length; i++) {
-    (entry as Record<string, number>)[`sus${i + 1}`] = scores[i];
+    (entry as unknown as Record<string, number>)[`sus${i + 1}`] = scores[i];
   }
   return entry;
 }
