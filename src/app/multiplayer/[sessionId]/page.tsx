@@ -8,11 +8,7 @@ import { useSessionPolling } from "@/lib/use-session-polling";
 import { Game } from "@/model/game";
 import { MoveSquare } from "@/model/square";
 import { useConfigStore } from "@/store/config-store";
-import {
-  ACTION_TYPE_LABELS,
-  useCurrentPlayer,
-  useGameStore,
-} from "@/store/game-store";
+import { ACTION_TYPE_LABELS } from "@/store/game-store";
 import type { PublicSessionState } from "@/types/session";
 import { URL_HOME } from "@/vars";
 import BoardComponent from "../../components/board";
@@ -34,9 +30,17 @@ export default function MultiplayerSessionPage() {
 
   const { session, idleState, resume } = useSessionPolling(sessionId);
 
-  const gameStore = useGameStore((state) => state.actions);
-  const game = useGameStore((state) => state.game);
-  const currentPlayer = useCurrentPlayer();
+  // Il Game autoritativo vive sul server: qui serve solo a disegnare il
+  // tabellone. Niente game-store, che è persistito e sovrascriverebbe la
+  // partita a schermo singolo salvata nel browser.
+  const game = useMemo(
+    () =>
+      session?.started && session.gameState
+        ? Game.fromJSON(session.gameState)
+        : null,
+    [session?.started, session?.gameState],
+  );
+  const currentPlayer = game ? game.getPlayers()[game.getTurn()] : null;
 
   const config = useConfigStore((state) => state);
 
@@ -45,12 +49,6 @@ export default function MultiplayerSessionPage() {
     setHostToken(token);
     setJoinUrl(`${window.location.origin}/join/${sessionId}`);
   }, [sessionId]);
-
-  useEffect(() => {
-    if (session?.gameState && session.started) {
-      gameStore.setGame(Game.fromJSON(session.gameState));
-    }
-  }, [session?.gameState, session?.started, gameStore]);
 
   // Annuncio vocale dei lanci: lo schermo host è quello condiviso, quindi
   // la voce va qui e non sui dispositivi dei giocatori.
