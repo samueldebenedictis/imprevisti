@@ -2,7 +2,7 @@ import type { SquareType } from "@/model/square/square";
 import type { GameConfig } from "@/store/config-store";
 import { MAX_SQUARES, MIN_SQUARES } from "@/vars";
 
-const SQUARE_TYPES: readonly SquareType[] = [
+export const SQUARE_TYPES: readonly SquareType[] = [
   "normal",
   "mime",
   "quiz",
@@ -16,7 +16,7 @@ const SQUARE_TYPES: readonly SquareType[] = [
   "dictation-draw",
 ];
 
-const MAX_MOVE = 5;
+export const MAX_MOVE = 5;
 
 const isObject = (v: unknown): v is Record<string, unknown> =>
   typeof v === "object" && v !== null && !Array.isArray(v);

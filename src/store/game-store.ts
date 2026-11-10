@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { validateGameJSON } from "@/lib/game-json";
 import { Battle } from "@/model/battle";
 import { BackWrite } from "@/model/deck/backwrite";
 import { DictationDraw } from "@/model/deck/dictation-draw";
@@ -671,6 +672,8 @@ export const useGameStore = create<GameStore>()(
               try {
                 const jsonString = e.target?.result as string;
                 const gameData = JSON.parse(jsonString);
+                const error = validateGameJSON(gameData);
+                if (error) throw new Error(error);
                 const loadedGame = GameModel.fromJSON(gameData);
 
                 set({
