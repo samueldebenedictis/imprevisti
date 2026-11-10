@@ -10,7 +10,7 @@ ovvero il classico morph a maglia triangolare (mesh warping, come
 Funzionamento passo passo (per ogni coppia foto neutra / foto espressiva
 dello stesso soggetto e della stessa sessione):
 
- 1. Ridimensionamento: le due foto (~3500px) vengono portate a 480px di
+ 1. Ridimensionamento: le due foto (2835x3543 px) vengono portate a 480px di
     larghezza, per ottenere gif leggere.
  2. Landmark: mediapipe individua 478 punti del volto in entrambe le foto.
     Ogni indice identifica sempre lo stesso punto anatomico (es. angolo
@@ -73,7 +73,7 @@ NEUTRAL = "n"
 N_FRAMES = 20       # frame per transizione neutrale -> espressione
 HOLD_FRAMES = 6     # frame fermi a inizio/fine (pausa su neutrale/espressione)
 FPS = 15
-MAX_WIDTH = 480     # ridimensiona per gif leggere (originali sono ~3500px)
+MAX_WIDTH = 480     # ridimensiona per gif leggere (originali 2835x3543 px)
 MASK_FEATHER = 15   # px di blur sul bordo maschera viso (evita seam sul collo/maglia)
 
 # Gruppi catturati: id, età, sesso, espressione, sessione
