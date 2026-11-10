@@ -132,7 +132,13 @@ function finishResolution(
   const updatedGame = GameModel.fromJSON(game.toJSON());
   set({ game: updatedGame, gameData: updatedGame.toJSON() });
   get().actions.closeModal();
-  if (updatedGame.isGameEnded()) return;
+  if (updatedGame.isGameEnded()) {
+    // Vittoria ottenuta risolvendo una sfida (ad esempio un Quiz che porta all'arrivo)
+    soundManager.playVictory();
+    const winner = updatedGame.getWinner();
+    if (winner) soundManager.speakVictory(winner.getName());
+    return;
+  }
 
   const result = toFollowUp(
     next,
@@ -305,6 +311,7 @@ export const useGameStore = create<GameStore>()(
 
             // Announce dice result (or victory, if the game just ended) via speech synthesis
             if (winner) {
+              soundManager.playVictory();
               soundManager.speakVictory(winner.getName());
             } else if (finalPosition !== undefined) {
               soundManager.speakDiceResult(

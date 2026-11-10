@@ -199,7 +199,7 @@ export class SoundManager {
   }
 
   /**
-   * Riproduce un effetto sonoro per lavittoria.
+   * Riproduce un effetto sonoro per la vittoria.
    */
   async playVictory(): Promise<void> {
     await this.ensureAudioContext();

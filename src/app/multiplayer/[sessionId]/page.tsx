@@ -65,11 +65,12 @@ export default function MultiplayerSessionPage() {
     if (!move || rolledAt === lastAnnouncedRollRef.current) return;
     lastAnnouncedRollRef.current = rolledAt;
 
+    // La vittoria è annunciata dall'effetto dedicato qui sotto
+    if (session.gameOver) return;
+
     const playerName =
       session.players.find((p) => p.id === move.actorPlayerId)?.name ?? "";
-    if (session.gameOver) {
-      soundManager.speakVictory(session.gameOver.winnerName);
-    } else if (move.diceResult === 0) {
+    if (move.diceResult === 0) {
       soundManager.speakTurnSkip(playerName);
     } else {
       const actionType = session.pendingAction?.type;
@@ -80,6 +81,23 @@ export default function MultiplayerSessionPage() {
         actionType ? ACTION_TYPE_LABELS[actionType] : null,
       );
     }
+  }, [session]);
+
+  // Suono e annuncio della vittoria, sia dopo un lancio sia dopo l'esito di una
+  // sfida. Come per i lanci, una partita già finita al caricamento non viene riannunciata.
+  const wasGameOverRef = useRef<boolean | undefined>(undefined);
+  useEffect(() => {
+    if (!session) return;
+    const isGameOver = Boolean(session.gameOver);
+    if (wasGameOverRef.current === undefined) {
+      wasGameOverRef.current = isGameOver;
+      return;
+    }
+    if (isGameOver && !wasGameOverRef.current && session.gameOver) {
+      soundManager.playVictory();
+      soundManager.speakVictory(session.gameOver.winnerName);
+    }
+    wasGameOverRef.current = isGameOver;
   }, [session]);
 
   const startGame = async () => {
