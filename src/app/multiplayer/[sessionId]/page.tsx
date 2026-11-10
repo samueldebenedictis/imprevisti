@@ -10,7 +10,7 @@ import { MoveSquare } from "@/model/square";
 import { useConfigStore } from "@/store/config-store";
 import { ACTION_TYPE_LABELS } from "@/store/game-store";
 import type { PublicSessionState } from "@/types/session";
-import { URL_HOME } from "@/vars";
+import { URL_FEEDBACK, URL_HOME } from "@/vars";
 import BoardComponent from "../../components/board";
 import HostActionOverlay from "../../components/host-action-overlay";
 import HostBattleOverlay from "../../components/host-battle-overlay";
@@ -258,6 +258,11 @@ export default function MultiplayerSessionPage() {
               <p className="ui-text-subtitle">
                 Vince: <strong>{session.gameOver.winnerName}</strong>
               </p>
+              <Link href={URL_FEEDBACK} className="block">
+                <Button color="green" className="mx-0 w-full">
+                  Dai un feedback!
+                </Button>
+              </Link>
               <Link href={URL_HOME} className="block">
                 <Button color="blue" className="mx-0 w-full">
                   Torna alla home
