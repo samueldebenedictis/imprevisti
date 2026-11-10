@@ -6,6 +6,7 @@ import { MoveSquare } from "@/model/square";
 import { useCurrentPlayer, useGameStore } from "../../store/game-store";
 import { URL_HOME } from "../../vars";
 import BoardComponent from "../components/board";
+import GameOverOverlay from "../components/game-over-overlay";
 import LeftBar from "../components/left-bar";
 import PawnsLayer from "../components/pawns-layer";
 import SquareC from "../components/square";
@@ -150,6 +151,13 @@ export default function Page() {
         newPosition={newPosition}
         boardSize={game.getBoard().getSquares().length}
       />
+      {/* Dopo la chiusura del pannello del dado, così si vede la pedina arrivare */}
+      {game.isGameEnded() && !isDiceModalOpen && !isModalOpen && (
+        <GameOverOverlay
+          winnerName={game.getWinner()?.getName() ?? ""}
+          homeLabel="Nuova partita"
+        />
+      )}
     </div>
   );
 }

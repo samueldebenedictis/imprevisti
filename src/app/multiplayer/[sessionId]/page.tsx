@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { LEFT_BAR_CURRENT_TURN, LEFT_BAR_PLAYERS_POSITION } from "@/app/texts";
@@ -10,8 +9,8 @@ import { MoveSquare } from "@/model/square";
 import { useConfigStore } from "@/store/config-store";
 import { ACTION_TYPE_LABELS } from "@/store/game-store";
 import type { PublicSessionState } from "@/types/session";
-import { URL_FEEDBACK, URL_HOME } from "@/vars";
 import BoardComponent from "../../components/board";
+import GameOverOverlay from "../../components/game-over-overlay";
 import HostActionOverlay from "../../components/host-action-overlay";
 import HostBattleOverlay from "../../components/host-battle-overlay";
 import { IdleOverlay } from "../../components/idle-overlay";
@@ -252,24 +251,7 @@ export default function MultiplayerSessionPage() {
 
         {/* Game over overlay */}
         {session.gameOver && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-            <div className="ui-border-dark mx-4 flex w-full max-w-sm flex-col gap-6 bg-white p-8 text-center">
-              <h2 className="ui-text-title">Fine partita!</h2>
-              <p className="ui-text-subtitle">
-                Vince: <strong>{session.gameOver.winnerName}</strong>
-              </p>
-              <Link href={URL_FEEDBACK} className="block">
-                <Button color="green" className="mx-0 w-full">
-                  Dai un feedback!
-                </Button>
-              </Link>
-              <Link href={URL_HOME} className="block">
-                <Button color="blue" className="mx-0 w-full">
-                  Torna alla home
-                </Button>
-              </Link>
-            </div>
-          </div>
+          <GameOverOverlay winnerName={session.gameOver.winnerName} />
         )}
 
         {/* Battle overlay */}

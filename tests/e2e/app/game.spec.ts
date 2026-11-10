@@ -136,4 +136,16 @@ test("End game", async ({ homePage }) => {
 
   expect(await gamePage.getWinner()).toMatch(/Qui|Quo|Qua/);
   await expect(gamePage.playTurnButton).toBeHidden();
+
+  // Overlay di fine partita, senza l'indicazione del turno nella barra
+  await expect(
+    gamePage.page.getByRole("heading", { name: "Fine partita!" }),
+  ).toBeVisible();
+  await expect(gamePage.page.getByText("Turno di:")).toBeHidden();
+  await expect(
+    gamePage.page.getByRole("link", { name: "Dai un feedback!" }),
+  ).toHaveAttribute("href", "/feedback");
+  await expect(
+    gamePage.page.getByRole("link", { name: "Nuova partita" }),
+  ).toHaveAttribute("href", "/");
 });
