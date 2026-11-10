@@ -114,6 +114,27 @@ describe("POST /api/feedback — input non valido", () => {
     expect(entry.challenges).toHaveLength(2000);
   });
 
+  test("scarta i punteggi fuori dalla scala 1-5 o non interi", async () => {
+    await POST(
+      postRequest({
+        sus1: 0,
+        sus2: 6,
+        sus3: 2.5,
+        sus4: "3",
+        sus5: 1,
+        sus6: 5,
+        graphics: 9,
+        funLevel: 4,
+      }),
+    );
+    const entry = savedEntry();
+    for (const key of ["sus1", "sus2", "sus3", "sus4", "graphics"])
+      expect(entry[key]).toBeUndefined();
+    expect(entry.sus5).toBe(1);
+    expect(entry.sus6).toBe(5);
+    expect(entry.funLevel).toBe(4);
+  });
+
   test("usa la data italiana, non quella UTC", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-11-04T23:30:00Z")); // 00:30 a Roma

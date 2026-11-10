@@ -22,11 +22,32 @@ const ALLOWED_FIELDS = [
   "suggestions",
 ] as const;
 
+/** Campi con un punteggio da 1 a 5: SUS e valutazioni. */
+const RATING_FIELDS = new Set<string>([
+  ...Array.from({ length: 10 }, (_, i) => `sus${i + 1}`),
+  "digitalVsPhysical",
+  "gameplayClarity",
+  "graphics",
+  "enjoyment",
+  "funLevel",
+]);
+
 /** Lunghezza massima dei campi di testo: oltre, il valore viene troncato. */
 const MAX_TEXT_LENGTH = 2000;
 
-/** Tiene solo stringhe (troncate) e numeri finiti: scarta oggetti, array e simili. */
-function sanitize(value: unknown): string | number | undefined {
+/**
+ * Tiene solo stringhe (troncate) e numeri finiti: scarta oggetti, array e simili.
+ * Per i punteggi accetta solo interi da 1 a 5, così un valore fuori scala
+ * non altera il calcolo del SUS.
+ */
+function sanitize(key: string, value: unknown): string | number | undefined {
+  if (RATING_FIELDS.has(key))
+    return typeof value === "number" &&
+      Number.isInteger(value) &&
+      value >= 1 &&
+      value <= 5
+      ? value
+      : undefined;
   if (typeof value === "string") return value.slice(0, MAX_TEXT_LENGTH);
   if (typeof value === "number" && Number.isFinite(value)) return value;
   return undefined;
@@ -53,7 +74,7 @@ export async function POST(req: Request) {
 
   const entry = {
     ...Object.fromEntries(
-      ALLOWED_FIELDS.map((key) => [key, sanitize(fields[key])]).filter(
+      ALLOWED_FIELDS.map((key) => [key, sanitize(key, fields[key])]).filter(
         ([, value]) => value !== undefined,
       ),
     ),
