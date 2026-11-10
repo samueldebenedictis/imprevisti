@@ -207,8 +207,8 @@ describe("GET /api/sessions/[id] (long-poll)", () => {
       params: Promise.resolve({ id: "TEST01" }),
     });
 
-    // Advance one polling cycle (300ms) so a second getSession call is made
-    await vi.advanceTimersByTimeAsync(400);
+    // Advance one polling cycle (1 s) so a second getSession call is made
+    await vi.advanceTimersByTimeAsync(1100);
 
     const res = await responsePromise;
     expect(res.status).toBe(404);
