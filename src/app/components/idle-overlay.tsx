@@ -16,7 +16,7 @@ export function IdleOverlay({
           <>
             <p className="ui-text-title">Stai ancora giocando?</p>
             <p className="ui-text-normal text-gray-500">
-              Il polling è stato sospeso per inattività.
+              Gli aggiornamenti sono in pausa per inattività.
             </p>
             <Button color="green" onClick={onResume} className="mx-0">
               Sì, continua

@@ -456,7 +456,7 @@ export default function FeedbackPage() {
                 }}
                 options={[
                   { value: "singolo", label: "Schermo singolo" },
-                  { value: "multi", label: "Multischermo" },
+                  { value: "multi", label: "Multi-dispositivo" },
                 ]}
                 placeholder="Seleziona..."
                 className={`mt-2 ${invalidFields.has("screenMode") ? "border-red-600" : ""}`}
