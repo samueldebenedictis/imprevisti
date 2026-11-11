@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { LEFT_BAR_CURRENT_TURN, LEFT_BAR_PLAYERS_POSITION } from "@/app/texts";
@@ -8,14 +7,10 @@ import { useSessionPolling } from "@/lib/use-session-polling";
 import { Game } from "@/model/game";
 import { MoveSquare } from "@/model/square";
 import { useConfigStore } from "@/store/config-store";
-import {
-  ACTION_TYPE_LABELS,
-  useCurrentPlayer,
-  useGameStore,
-} from "@/store/game-store";
+import { ACTION_TYPE_LABELS } from "@/store/game-store";
 import type { PublicSessionState } from "@/types/session";
-import { URL_HOME } from "@/vars";
 import BoardComponent from "../../components/board";
+import GameOverOverlay from "../../components/game-over-overlay";
 import HostActionOverlay from "../../components/host-action-overlay";
 import HostBattleOverlay from "../../components/host-battle-overlay";
 import { IdleOverlay } from "../../components/idle-overlay";
@@ -34,9 +29,17 @@ export default function MultiplayerSessionPage() {
 
   const { session, idleState, resume } = useSessionPolling(sessionId);
 
-  const gameStore = useGameStore((state) => state.actions);
-  const game = useGameStore((state) => state.game);
-  const currentPlayer = useCurrentPlayer();
+  // Il Game autoritativo vive sul server: qui serve solo a disegnare il
+  // tabellone. Niente game-store, che è persistito e sovrascriverebbe la
+  // partita a schermo singolo salvata nel browser.
+  const game = useMemo(
+    () =>
+      session?.started && session.gameState
+        ? Game.fromJSON(session.gameState)
+        : null,
+    [session?.started, session?.gameState],
+  );
+  const currentPlayer = game ? game.getPlayers()[game.getTurn()] : null;
 
   const config = useConfigStore((state) => state);
 
@@ -45,12 +48,6 @@ export default function MultiplayerSessionPage() {
     setHostToken(token);
     setJoinUrl(`${window.location.origin}/join/${sessionId}`);
   }, [sessionId]);
-
-  useEffect(() => {
-    if (session?.gameState && session.started) {
-      gameStore.setGame(Game.fromJSON(session.gameState));
-    }
-  }, [session?.gameState, session?.started, gameStore]);
 
   // Annuncio vocale dei lanci: lo schermo host è quello condiviso, quindi
   // la voce va qui e non sui dispositivi dei giocatori.
@@ -68,11 +65,12 @@ export default function MultiplayerSessionPage() {
     if (!move || rolledAt === lastAnnouncedRollRef.current) return;
     lastAnnouncedRollRef.current = rolledAt;
 
+    // La vittoria è annunciata dall'effetto dedicato qui sotto
+    if (session.gameOver) return;
+
     const playerName =
       session.players.find((p) => p.id === move.actorPlayerId)?.name ?? "";
-    if (session.gameOver) {
-      soundManager.speakVictory(session.gameOver.winnerName);
-    } else if (move.diceResult === 0) {
+    if (move.diceResult === 0) {
       soundManager.speakTurnSkip(playerName);
     } else {
       const actionType = session.pendingAction?.type;
@@ -83,6 +81,23 @@ export default function MultiplayerSessionPage() {
         actionType ? ACTION_TYPE_LABELS[actionType] : null,
       );
     }
+  }, [session]);
+
+  // Suono e annuncio della vittoria, sia dopo un lancio sia dopo l'esito di una
+  // sfida. Come per i lanci, una partita già finita al caricamento non viene riannunciata.
+  const wasGameOverRef = useRef<boolean | undefined>(undefined);
+  useEffect(() => {
+    if (!session) return;
+    const isGameOver = Boolean(session.gameOver);
+    if (wasGameOverRef.current === undefined) {
+      wasGameOverRef.current = isGameOver;
+      return;
+    }
+    if (isGameOver && !wasGameOverRef.current && session.gameOver) {
+      soundManager.playVictory();
+      soundManager.speakVictory(session.gameOver.winnerName);
+    }
+    wasGameOverRef.current = isGameOver;
   }, [session]);
 
   const startGame = async () => {
@@ -254,19 +269,7 @@ export default function MultiplayerSessionPage() {
 
         {/* Game over overlay */}
         {session.gameOver && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-            <div className="ui-border-dark mx-4 flex w-full max-w-sm flex-col gap-6 bg-white p-8 text-center">
-              <h2 className="ui-text-title">Fine partita!</h2>
-              <p className="ui-text-subtitle">
-                Vince: <strong>{session.gameOver.winnerName}</strong>
-              </p>
-              <Link href={URL_HOME} className="block">
-                <Button color="blue" className="mx-0 w-full">
-                  Torna alla home
-                </Button>
-              </Link>
-            </div>
-          </div>
+          <GameOverOverlay winnerName={session.gameOver.winnerName} />
         )}
 
         {/* Battle overlay */}

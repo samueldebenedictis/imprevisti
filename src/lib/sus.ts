@@ -35,10 +35,12 @@ export function computeSusScore(entry: FeedbackEntry): number | null {
 
 export type SusGrade = "excellent" | "good" | "ok" | "poor";
 
+// Soglie dalla scala aggettivale di Bangor, Kortum e Miller (2009):
+// punteggio SUS medio associato a "Excellent", "Good" e "OK"
 export function susGrade(score: number): SusGrade {
-  if (score >= 80) return "excellent";
-  if (score >= 60) return "good";
-  if (score >= 40) return "ok";
+  if (score >= 85.5) return "excellent";
+  if (score >= 71.4) return "good";
+  if (score >= 50.9) return "ok";
   return "poor";
 }
 

@@ -155,7 +155,7 @@ describe("Dictation draw square", () => {
     const result = command.execute({
       player,
       dictationDrawDeck: deck,
-    } as CommandDependencies);
+    } as unknown as CommandDependencies);
 
     expect(result).toBeInstanceOf(DictationDraw);
     if (result instanceof DictationDraw) {

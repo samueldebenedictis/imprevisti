@@ -579,6 +579,9 @@ test.describe("Host page — game over", () => {
     await expect(
       page.getByRole("link", { name: "Torna alla home" }),
     ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "Dai un feedback!" }),
+    ).toHaveAttribute("href", "/feedback");
   });
 });
 

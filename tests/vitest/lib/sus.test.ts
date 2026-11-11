@@ -10,7 +10,7 @@ const baseEntry: FeedbackEntry = {
 function withSus(scores: number[]): FeedbackEntry {
   const entry: FeedbackEntry = { ...baseEntry };
   for (let i = 0; i < scores.length; i++) {
-    (entry as Record<string, number>)[`sus${i + 1}`] = scores[i];
+    (entry as unknown as Record<string, number>)[`sus${i + 1}`] = scores[i];
   }
   return entry;
 }
@@ -39,10 +39,14 @@ describe("computeSusScore", () => {
 });
 
 describe("susGrade", () => {
-  it("grades thresholds correctly", () => {
-    expect(susGrade(85)).toBe("excellent");
-    expect(susGrade(65)).toBe("good");
-    expect(susGrade(45)).toBe("ok");
-    expect(susGrade(20)).toBe("poor");
+  it("uses the Bangor, Kortum and Miller thresholds", () => {
+    expect(susGrade(100)).toBe("excellent");
+    expect(susGrade(85.5)).toBe("excellent");
+    expect(susGrade(85)).toBe("good");
+    expect(susGrade(71.4)).toBe("good");
+    expect(susGrade(70)).toBe("ok");
+    expect(susGrade(50.9)).toBe("ok");
+    expect(susGrade(50)).toBe("poor");
+    expect(susGrade(0)).toBe("poor");
   });
 });

@@ -5,6 +5,7 @@ const kvSet = vi.fn();
 const kvDel = vi.fn();
 const kvLpush = vi.fn();
 const kvLrange = vi.fn();
+const kvEval = vi.fn();
 
 vi.mock("@upstash/redis", () => ({
   Redis: vi.fn().mockImplementation(() => ({
@@ -13,6 +14,7 @@ vi.mock("@upstash/redis", () => ({
     del: kvDel,
     lpush: kvLpush,
     lrange: kvLrange,
+    eval: kvEval,
   })),
 }));
 
@@ -21,6 +23,7 @@ const ioSet = vi.fn();
 const ioDel = vi.fn();
 const ioLpush = vi.fn();
 const ioLrange = vi.fn();
+const ioEval = vi.fn();
 
 vi.mock("ioredis", () => ({
   default: vi.fn().mockImplementation(() => ({
@@ -29,6 +32,7 @@ vi.mock("ioredis", () => ({
     del: ioDel,
     lpush: ioLpush,
     lrange: ioLrange,
+    eval: ioEval,
   })),
 }));
 
@@ -38,6 +42,7 @@ import {
   getSession,
   pushFeedback,
   saveSession,
+  withSessionLock,
 } from "@/lib/session-store";
 import type { SessionState } from "@/types/session";
 
@@ -177,10 +182,57 @@ describe("session-store (local ioredis via REDIS_URL)", () => {
     expect(ioLpush).toHaveBeenCalledWith("feedback:list", "hi");
   });
 
-  test("getFeedback calls ioredis lrange with the default count", async () => {
+  test("getFeedback reads the whole list when no count is given", async () => {
     ioLrange.mockResolvedValue(["x"]);
     const result = await getFeedback();
-    expect(ioLrange).toHaveBeenCalledWith("feedback:list", 0, 99);
+    expect(ioLrange).toHaveBeenCalledWith("feedback:list", 0, -1);
     expect(result).toEqual(["x"]);
+  });
+});
+
+describe("withSessionLock (Redis)", () => {
+  const ok = async () => new Response("ok");
+
+  test("Upstash: retries until SET NX succeeds, then releases with the same token", async () => {
+    process.env.KV_REST_API_URL = "https://fake.upstash.io";
+    process.env.KV_REST_API_TOKEN = "tok";
+    delete process.env.REDIS_URL;
+    kvSet.mockResolvedValueOnce(null).mockResolvedValueOnce("OK");
+    kvEval.mockResolvedValue(1);
+
+    const res = await withSessionLock("ABC123", ok);
+
+    expect(await res.text()).toBe("ok");
+    expect(kvSet).toHaveBeenCalledTimes(2);
+    const [key, token, opts] = kvSet.mock.calls[1];
+    expect(key).toBe("lock:session:ABC123");
+    expect(opts).toMatchObject({ nx: true });
+    expect(kvEval).toHaveBeenCalledWith(
+      expect.any(String),
+      ["lock:session:ABC123"],
+      [token],
+    );
+  });
+
+  test("ioredis: acquires with NX and releases after an error in fn", async () => {
+    delete process.env.KV_REST_API_URL;
+    process.env.REDIS_URL = "redis://localhost:6379";
+    ioSet.mockResolvedValue("OK");
+    ioEval.mockResolvedValue(1);
+
+    await expect(
+      withSessionLock("ABC123", async () => {
+        throw new Error("boom");
+      }),
+    ).rejects.toThrow("boom");
+
+    expect(ioSet).toHaveBeenCalledWith(
+      "lock:session:ABC123",
+      expect.any(String),
+      "PX",
+      expect.any(Number),
+      "NX",
+    );
+    expect(ioEval).toHaveBeenCalledTimes(1);
   });
 });

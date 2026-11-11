@@ -307,6 +307,9 @@ test("screenshot-end-game", async ({ page }) => {
   expect(await gamePage.getWinner()).toMatch(/Alice|Bob/);
 
   await page.waitForTimeout(1000);
+  // Chiude il pannello del dado: compare l'overlay di fine partita
+  await gamePage.continueButton.click();
+  await page.getByRole("heading", { name: "Fine partita!" }).waitFor();
 
   await expect(page).toHaveScreenshot("end-game.png", { fullPage: true });
 });

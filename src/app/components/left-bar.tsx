@@ -90,10 +90,12 @@ export default function LeftBar({
         )}
       </div>
       <div className="ui-text-subtitle mb-4 w-full px-2">
-        <p>
-          {LEFT_BAR_CURRENT_TURN}{" "}
-          <span className="text-blue-500">{currentPlayer.getName()}</span>
-        </p>
+        {!gameEnded && (
+          <p>
+            {LEFT_BAR_CURRENT_TURN}{" "}
+            <span className="text-blue-500">{currentPlayer.getName()}</span>
+          </p>
+        )}
         <div id="players-position" className="ui-text-subtitle mt-2">
           {LEFT_BAR_PLAYERS_POSITION}
           <ul className="ui-text-normal">

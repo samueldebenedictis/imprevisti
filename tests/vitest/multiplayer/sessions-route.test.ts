@@ -51,9 +51,7 @@ describe("POST /api/sessions (create session)", () => {
   test("returns sessionId of length 6", async () => {
     vi.mocked(sessionStore.saveSession).mockResolvedValue(undefined);
 
-    const res = await POST(
-      new Request("http://localhost/api/sessions", { method: "POST" }),
-    );
+    const res = await POST();
     expect(res.status).toBe(200);
     const data = await res.json();
     expect(typeof data.sessionId).toBe("string");
@@ -63,9 +61,7 @@ describe("POST /api/sessions (create session)", () => {
   test("returns a hostToken", async () => {
     vi.mocked(sessionStore.saveSession).mockResolvedValue(undefined);
 
-    const res = await POST(
-      new Request("http://localhost/api/sessions", { method: "POST" }),
-    );
+    const res = await POST();
     const data = await res.json();
     expect(data.hostToken).toBeTruthy();
     expect(typeof data.hostToken).toBe("string");
@@ -74,9 +70,7 @@ describe("POST /api/sessions (create session)", () => {
   test("sessionId is uppercase", async () => {
     vi.mocked(sessionStore.saveSession).mockResolvedValue(undefined);
 
-    const res = await POST(
-      new Request("http://localhost/api/sessions", { method: "POST" }),
-    );
+    const res = await POST();
     const data = await res.json();
     expect(data.sessionId).toBe(data.sessionId.toUpperCase());
   });
@@ -84,9 +78,7 @@ describe("POST /api/sessions (create session)", () => {
   test("calls saveSession with updatedAt > 0", async () => {
     vi.mocked(sessionStore.saveSession).mockResolvedValue(undefined);
 
-    await POST(
-      new Request("http://localhost/api/sessions", { method: "POST" }),
-    );
+    await POST();
 
     expect(vi.mocked(sessionStore.saveSession).mock.calls).toHaveLength(1);
     const saved = vi.mocked(sessionStore.saveSession).mock.calls[0][1];
@@ -96,9 +88,7 @@ describe("POST /api/sessions (create session)", () => {
   test("calls saveSession with empty players and started=false", async () => {
     vi.mocked(sessionStore.saveSession).mockResolvedValue(undefined);
 
-    await POST(
-      new Request("http://localhost/api/sessions", { method: "POST" }),
-    );
+    await POST();
 
     const saved = vi.mocked(sessionStore.saveSession).mock.calls[0][1];
     expect(saved.players).toHaveLength(0);
@@ -110,9 +100,7 @@ describe("POST /api/sessions (create session)", () => {
   test("saveSession called with sessionId matching the returned sessionId", async () => {
     vi.mocked(sessionStore.saveSession).mockResolvedValue(undefined);
 
-    const res = await POST(
-      new Request("http://localhost/api/sessions", { method: "POST" }),
-    );
+    const res = await POST();
     const data = await res.json();
 
     const savedId = vi.mocked(sessionStore.saveSession).mock.calls[0][0];
@@ -219,8 +207,8 @@ describe("GET /api/sessions/[id] (long-poll)", () => {
       params: Promise.resolve({ id: "TEST01" }),
     });
 
-    // Advance one polling cycle (300ms) so a second getSession call is made
-    await vi.advanceTimersByTimeAsync(400);
+    // Advance one polling cycle (1 s) so a second getSession call is made
+    await vi.advanceTimersByTimeAsync(1100);
 
     const res = await responsePromise;
     expect(res.status).toBe(404);

@@ -134,7 +134,7 @@ export default function PlayerActionView(props: PlayerActionViewProps) {
           {TARGET_INSTRUCTIONS[props.actionType] ?? "Partecipa all'azione!"}
         </p>
         <p className="ui-text-normal">
-          L&apos;altro giocatore deciderà il risultato.
+          L&apos;educatore registrerà il risultato.
         </p>
       </div>
     );

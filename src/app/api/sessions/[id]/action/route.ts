@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server";
-import { getSession, saveSession, toPublicSession } from "@/lib/session-store";
+import { battlePendingAction, toPendingAction } from "@/lib/pending-action";
+import {
+  getSession,
+  saveSession,
+  toPublicSession,
+  withSessionLock,
+} from "@/lib/session-store";
 import { Battle } from "@/model/battle";
 import { BackWrite } from "@/model/deck/backwrite";
 import { Card } from "@/model/deck/card";
@@ -12,6 +18,8 @@ import { PhysicalTest } from "@/model/deck/physical-test";
 import { Quiz } from "@/model/deck/quiz";
 import { WhatWouldYouDo } from "@/model/deck/what-would-you-do";
 import { Game } from "@/model/game";
+import { firstBattle } from "@/model/managers/action-result";
+import type { PendingAction, SessionState } from "@/types/session";
 
 function nextPlayerId(game: Game): string {
   const players = game.getPlayers();
@@ -58,184 +66,203 @@ export async function POST(
     winnerId?: string;
   } = await req.json();
 
-  const session = await getSession(id);
-  if (!session?.started || !session.gameState)
-    return NextResponse.json({ error: "Game not active" }, { status: 400 });
+  return withSessionLock(id, async () => {
+    const session = await getSession(id);
+    if (!session?.started || !session.gameState)
+      return NextResponse.json({ error: "Game not active" }, { status: 400 });
 
-  const pendingAction = session.pendingAction;
-  if (!pendingAction)
-    return NextResponse.json({ error: "No pending action" }, { status: 409 });
+    const pendingAction = session.pendingAction;
+    if (!pendingAction)
+      return NextResponse.json({ error: "No pending action" }, { status: 409 });
 
-  // Verifica autorizzazione
-  const isHostResolved = HOST_RESOLVED_ACTIONS.includes(pendingAction.type);
-  if (isHostResolved) {
-    if (!hostToken || session.hostToken !== hostToken)
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-  } else {
-    if (pendingAction.actorPlayerId !== playerId)
-      return NextResponse.json(
-        { error: "No pending action for this player" },
-        { status: 409 },
-      );
-  }
-
-  const game = Game.fromJSON(session.gameState);
-  const gamePlayers = game.getPlayers();
-
-  // Ricostruisce Player dal numeric id (String → Number)
-  const actorPlayer = gamePlayers.find(
-    (p) => String(p.getId()) === pendingAction.actorPlayerId,
-  );
-  if (!actorPlayer)
-    return NextResponse.json({ error: "Actor not found" }, { status: 400 });
-  const targetPlayer = pendingAction.targetPlayerId
-    ? gamePlayers.find(
-        (p) => String(p.getId()) === pendingAction.targetPlayerId,
-      )
-    : undefined;
-  if (pendingAction.targetPlayerId && !targetPlayer)
-    return NextResponse.json({ error: "Target not found" }, { status: 400 });
-
-  // card può essere primitivo o { topic, imageUrl } per FaceEmotion/DictationDraw,
-  // { topic, videoUrl } per Film
-  const cardData = pendingAction.card as
-    | string
-    | { topic: string; imageUrl?: string; videoUrl?: string };
-  const cardTopic =
-    typeof cardData === "object" && cardData !== null
-      ? cardData.topic
-      : cardData;
-  const imageUrl =
-    typeof cardData === "object" && cardData !== null
-      ? (cardData.imageUrl ?? "")
-      : "";
-  const videoUrl =
-    typeof cardData === "object" && cardData !== null
-      ? (cardData.videoUrl ?? "")
-      : "";
-
-  // La battaglia ha logica di follow-up propria — gestita separatamente
-  if (pendingAction.type === "battle") {
-    const p1 = gamePlayers.find(
-      (p) => String(p.getId()) === pendingAction.actorPlayerId,
-    );
-    const p2 = gamePlayers.find(
-      (p) => String(p.getId()) === pendingAction.targetPlayerId,
-    );
-    if (!p1 || !p2)
-      return NextResponse.json(
-        { error: "Battle players not found" },
-        { status: 400 },
-      );
-    const battle = new Battle(p1, p2);
-    const winnerPlayer = gamePlayers.find(
-      (p) => String(p.getId()) === winnerId,
-    );
-    if (!winnerPlayer)
-      return NextResponse.json({ error: "Invalid winner" }, { status: 400 });
-
-    const followUp = game.resolveBattle(battle, winnerPlayer);
-    session.gameState = game.toJSON();
-    session.diceResult = null;
-    session.lastMoveInfo = null;
-
-    if (game.isGameEnded()) {
-      session.gameOver = { winnerName: game.getWinner()?.getName() ?? "" };
-      session.currentPlayerId = null;
-      session.pendingAction = null;
-    } else if (followUp.type === "battle") {
-      const fb = followUp.data as Battle;
-      const [fp1, fp2] = fb.getPlayers();
-      session.pendingAction = {
-        type: "battle",
-        card: null,
-        actorPlayerId: String(fp1.getId()),
-        targetPlayerId: String(fp2.getId()),
-      };
+    // Verifica autorizzazione
+    const isHostResolved = HOST_RESOLVED_ACTIONS.includes(pendingAction.type);
+    if (isHostResolved) {
+      if (!hostToken || session.hostToken !== hostToken)
+        return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     } else {
-      session.pendingAction = null;
-      session.currentPlayerId = nextPlayerId(game);
+      if (pendingAction.actorPlayerId !== playerId)
+        return NextResponse.json(
+          { error: "No pending action for this player" },
+          { status: 409 },
+        );
     }
 
-    await saveSession(id, session);
-    return NextResponse.json(toPublicSession(session));
-  }
+    const game = Game.fromJSON(session.gameState);
+    const gamePlayers = game.getPlayers();
 
-  // Per mime/backwrite/dictation-draw: l'host sceglie il vincitore (winnerId),
-  // altrimenti si usa il targetPlayer pre-impostato.
-  const resolveWinner = (fallback: typeof targetPlayer) =>
-    success
-      ? winnerId
-        ? gamePlayers.find((p) => String(p.getId()) === winnerId)
-        : fallback
+    // Ricostruisce Player dal numeric id (String → Number)
+    const actorPlayer = gamePlayers.find(
+      (p) => String(p.getId()) === pendingAction.actorPlayerId,
+    );
+    if (!actorPlayer)
+      return NextResponse.json({ error: "Actor not found" }, { status: 400 });
+    const targetPlayer = pendingAction.targetPlayerId
+      ? gamePlayers.find(
+          (p) => String(p.getId()) === pendingAction.targetPlayerId,
+        )
       : undefined;
+    if (pendingAction.targetPlayerId && !targetPlayer)
+      return NextResponse.json({ error: "Target not found" }, { status: 400 });
 
-  switch (pendingAction.type) {
-    case "mime":
-      game.resolveMime(
-        new Mime(actorPlayer, toCard(cardTopic)),
-        success,
-        resolveWinner(targetPlayer),
-      );
-      break;
-    case "quiz":
-      game.resolveQuiz(new Quiz(actorPlayer, toCard(cardTopic)), success);
-      break;
-    case "backwrite":
-      game.resolveBackWrite(
-        new BackWrite(actorPlayer, toCard(cardTopic)),
-        success,
-        resolveWinner(targetPlayer),
-      );
-      break;
-    case "face-emotion":
-      game.resolveFaceEmotion(
-        new FaceEmotion(actorPlayer, toCard(cardTopic), imageUrl),
-        success,
-      );
-      break;
-    case "film":
-      game.resolveFilm(
-        new Film(actorPlayer, toCard(cardTopic), videoUrl),
-        success,
-      );
-      break;
-    case "music-emotion":
-      game.resolveMusicEmotion(
-        new MusicEmotion(actorPlayer, toCard(cardTopic)),
-        success,
-      );
-      break;
-    case "physical-test":
-      game.resolvePhysicalTest(
-        new PhysicalTest(actorPlayer, toCard(cardTopic)),
-        success,
-      );
-      break;
-    case "what-would-you-do":
-      game.resolveWhatWouldYouDo(
-        new WhatWouldYouDo(actorPlayer, toCard(cardTopic)),
-        success,
-      );
-      break;
-    case "dictation-draw":
-      game.resolveDictationDraw(
-        new DictationDraw(actorPlayer, toCard(cardTopic), imageUrl),
-        success,
-        resolveWinner(targetPlayer),
-      );
-      break;
-  }
+    // card può essere primitivo o { topic, imageUrl } per FaceEmotion/DictationDraw,
+    // { topic, videoUrl } per Film
+    const cardData = pendingAction.card as
+      | string
+      | { topic: string; imageUrl?: string; videoUrl?: string };
+    // Le carte senza immagine sono salvate così come sono, senza "topic"
+    const cardTopic =
+      typeof cardData === "object" && cardData !== null && "topic" in cardData
+        ? cardData.topic
+        : cardData;
+    const imageUrl =
+      typeof cardData === "object" && cardData !== null
+        ? (cardData.imageUrl ?? "")
+        : "";
+    const videoUrl =
+      typeof cardData === "object" && cardData !== null
+        ? (cardData.videoUrl ?? "")
+        : "";
 
+    // La battaglia ha logica di follow-up propria — gestita separatamente
+    if (pendingAction.type === "battle") {
+      const p1 = gamePlayers.find(
+        (p) => String(p.getId()) === pendingAction.actorPlayerId,
+      );
+      const p2 = gamePlayers.find(
+        (p) => String(p.getId()) === pendingAction.targetPlayerId,
+      );
+      if (!p1 || !p2)
+        return NextResponse.json(
+          { error: "Battle players not found" },
+          { status: 400 },
+        );
+      const battle = new Battle(p1, p2);
+      const winnerPlayer = gamePlayers.find(
+        (p) => String(p.getId()) === winnerId,
+      );
+      if (!winnerPlayer)
+        return NextResponse.json({ error: "Invalid winner" }, { status: 400 });
+
+      // Dopo la vittoria il giocatore avanza: può nascere un'altra battaglia
+      // o attivarsi la sfida della casella raggiunta, eseguita dal vincitore
+      const followUp = game.resolveBattle(battle, winnerPlayer);
+      return finishAction(
+        id,
+        session,
+        game,
+        toPendingAction(followUp, String(winnerPlayer.getId())),
+      );
+    }
+
+    // Per mime/backwrite/dictation-draw: l'host sceglie il vincitore (winnerId),
+    // altrimenti si usa il targetPlayer pre-impostato.
+    const resolveWinner = (fallback: typeof targetPlayer) =>
+      success
+        ? winnerId
+          ? gamePlayers.find((p) => String(p.getId()) === winnerId)
+          : fallback
+        : undefined;
+
+    // Le sfide che fanno avanzare i giocatori possono causare collisioni
+    let collisions: Parameters<typeof firstBattle>[0] = null;
+    switch (pendingAction.type) {
+      case "mime":
+        collisions = game.resolveMime(
+          new Mime(actorPlayer, toCard(cardTopic)),
+          success,
+          resolveWinner(targetPlayer),
+        );
+        break;
+      case "quiz":
+        collisions = game.resolveQuiz(
+          new Quiz(actorPlayer, toCard(cardTopic)),
+          success,
+        );
+        break;
+      case "backwrite":
+        collisions = game.resolveBackWrite(
+          new BackWrite(actorPlayer, toCard(cardTopic)),
+          success,
+          resolveWinner(targetPlayer),
+        );
+        break;
+      case "face-emotion":
+        collisions = game.resolveFaceEmotion(
+          new FaceEmotion(actorPlayer, toCard(cardTopic), imageUrl),
+          success,
+        );
+        break;
+      case "film":
+        collisions = game.resolveFilm(
+          new Film(actorPlayer, toCard(cardTopic), videoUrl),
+          success,
+        );
+        break;
+      case "music-emotion":
+        collisions = game.resolveMusicEmotion(
+          new MusicEmotion(actorPlayer, toCard(cardTopic)),
+          success,
+        );
+        break;
+      case "physical-test":
+        collisions = game.resolvePhysicalTest(
+          new PhysicalTest(actorPlayer, toCard(cardTopic)),
+          success,
+        );
+        break;
+      case "what-would-you-do":
+        collisions = game.resolveWhatWouldYouDo(
+          new WhatWouldYouDo(actorPlayer, toCard(cardTopic)),
+          success,
+        );
+        break;
+      case "dictation-draw":
+        collisions = game.resolveDictationDraw(
+          new DictationDraw(actorPlayer, toCard(cardTopic), imageUrl),
+          success,
+          resolveWinner(targetPlayer),
+        );
+        break;
+    }
+
+    const partner = success ? resolveWinner(targetPlayer) : undefined;
+    const battle = firstBattle(
+      collisions,
+      partner ? [actorPlayer, partner] : [],
+    );
+    return finishAction(
+      id,
+      session,
+      game,
+      battle ? battlePendingAction(battle) : null,
+    );
+  });
+}
+
+/**
+ * Salva lo stato dopo la risoluzione di un'azione.
+ * Se è nata una nuova azione (battaglia o sfida) resta in attesa dell'host,
+ * altrimenti il turno passa al giocatore successivo.
+ */
+async function finishAction(
+  id: string,
+  session: SessionState,
+  game: Game,
+  next: PendingAction | null,
+): Promise<Response> {
   session.gameState = game.toJSON();
-  session.pendingAction = null;
   session.diceResult = null;
   session.lastMoveInfo = null;
 
   if (game.isGameEnded()) {
     session.gameOver = { winnerName: game.getWinner()?.getName() ?? "" };
     session.currentPlayerId = null;
+    session.pendingAction = null;
+  } else if (next) {
+    session.pendingAction = next;
   } else {
+    session.pendingAction = null;
     session.currentPlayerId = nextPlayerId(game);
   }
 

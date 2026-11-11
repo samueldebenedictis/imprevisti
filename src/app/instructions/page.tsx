@@ -375,7 +375,7 @@ export default function InstructionsPage() {
         <section id="altro" className="mb-6">
           <h2 className="mb-2 font-semibold text-xl">8. Altro</h2>
           <p className="mb-2">
-            Tutto il codice sorgente del sito è disponile su{" "}
+            Tutto il codice sorgente del sito è disponibile su{" "}
             <a
               className="font-semibold"
               href="https://github.com/samueldebenedictis/tesi"
