@@ -44,6 +44,9 @@ export const MODAL_FACE_EMOTION_ANSWER = "Emozione:";
 export const MODAL_FACE_EMOTION_CORRECT = "Corretto";
 export const MODAL_FACE_EMOTION_WRONG = "Sbagliato";
 export const FACES_DISCLAIMER_TITLE = "Prima di vedere la foto";
+export const FACES_SETUP_TITLE = "Fotografie FACES";
+export const FACES_SETUP_INTRO =
+  "La partita include la sfida \"Indovina l'emozione\", con fotografie del database FACES. Per mostrarle bisogna accettare l'impegno qui sotto; se non lo accetti, la sfida viene tolta dal tabellone.";
 export const FACES_DISCLAIMER_ACCEPT = "Accetto";
 export const FACES_DISCLAIMER_DECLINE = "Non accetto";
 export const FACES_DISCLAIMER_DECLINED =

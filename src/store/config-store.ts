@@ -62,6 +62,8 @@ export interface ConfigActions {
   // Configurazione avanzata
   setCustomSquares: (squares: SquareJSON[]) => void;
   clearCustomSquares: () => void;
+  /** Toglie "Indovina l'emozione" dalla partita (disclaimer FACES non accettato). */
+  excludeFaceEmotion: () => void;
 
   // Creazione partita
   createGame: () => void;
@@ -155,6 +157,17 @@ export const useConfigStore = create<ConfigStore>()(
         setCustomSquares: (squares) => set({ customSquares: squares }),
 
         clearCustomSquares: () => set({ customSquares: null }),
+
+        excludeFaceEmotion: () =>
+          set((state) => ({
+            squareTypes: { ...state.squareTypes, "face-emotion": false },
+            customSquares:
+              state.customSquares?.map((square) =>
+                square.type === "face-emotion"
+                  ? { number: square.number, type: "normal" }
+                  : square,
+              ) ?? null,
+          })),
 
         resetConfig: () => set(defaultConfig),
 

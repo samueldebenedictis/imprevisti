@@ -21,13 +21,20 @@ export async function GET() {
  * sul server con la stessa scadenza di una partita, in un cookie httpOnly
  * valido solo per /api/faces.
  */
-export async function POST() {
+export async function POST(req: Request) {
+  // Secure solo in https (Vercel): in locale via http, ad esempio dal telefono
+  // sulla rete di casa, un cookie Secure verrebbe scartato dal browser
+  const https =
+    (req.headers.get("x-forwarded-proto") ?? new URL(req.url).protocol)
+      .split(",")[0]
+      .trim()
+      .replace(/:$/, "") === "https";
   const token = crypto.randomUUID();
   await grantFacesAccess(token);
   (await cookies()).set(FACES_ACCESS_COOKIE, token, {
     httpOnly: true,
     sameSite: "strict",
-    secure: process.env.NODE_ENV === "production",
+    secure: https,
     path: "/api/faces",
     maxAge: FACES_ACCESS_TTL_SECONDS,
   });

@@ -1,20 +1,14 @@
 import type React from "react";
 import { useEffect, useState } from "react";
-import {
-  FACES_ACCESS_API,
-  FACES_DISCLAIMER_EN,
-  FACES_DISCLAIMER_IT,
-  isFacesImageUrl,
-} from "@/lib/faces";
+import { isFacesImageUrl } from "@/lib/faces";
+import { acceptFacesAccess, fetchFacesAccess } from "@/lib/faces-client";
 import { imagePrefix } from "../image-prefix";
 import {
-  FACES_DISCLAIMER_ACCEPT,
-  FACES_DISCLAIMER_DECLINE,
   FACES_DISCLAIMER_DECLINED,
-  FACES_DISCLAIMER_ERROR,
   FACES_DISCLAIMER_SHOW_AGAIN,
   FACES_DISCLAIMER_TITLE,
 } from "../texts";
+import FacesDisclaimer from "./faces-disclaimer";
 import Button from "./ui/button";
 
 interface FaceEmotionImageProps {
@@ -48,26 +42,16 @@ const FaceEmotionImage: React.FC<FaceEmotionImageProps> = ({
   useEffect(() => {
     if (!gated) return;
     let cancelled = false;
-    fetch(FACES_ACCESS_API, { cache: "no-store" })
-      .then((res) => (res.ok ? res.json() : { granted: false }))
-      .then((data: { granted?: boolean }) => {
-        if (!cancelled) setAccess(data.granted ? "granted" : "required");
-      })
-      .catch(() => {
-        if (!cancelled) setAccess("required");
-      });
+    fetchFacesAccess().then((granted) => {
+      if (!cancelled) setAccess(granted ? "granted" : "required");
+    });
     return () => {
       cancelled = true;
     };
   }, [gated]);
 
   const accept = async () => {
-    try {
-      const res = await fetch(FACES_ACCESS_API, { method: "POST" });
-      setAccess(res.ok ? "granted" : "error");
-    } catch {
-      setAccess("error");
-    }
+    setAccess((await acceptFacesAccess()) ? "granted" : "error");
   };
 
   if (access === "checking") return null;
@@ -103,26 +87,12 @@ const FaceEmotionImage: React.FC<FaceEmotionImageProps> = ({
     );
 
   return (
-    <div className="ui-border-dark mx-auto max-w-sm bg-gray-100 p-4 text-center">
-      <p className="ui-text-subtitle mb-2">{FACES_DISCLAIMER_TITLE}</p>
-      <p className="ui-text-normal mb-2">{FACES_DISCLAIMER_IT}</p>
-      <p className="text-gray-600 text-sm italic" lang="en">
-        {FACES_DISCLAIMER_EN}
-      </p>
-      {access === "error" && (
-        <p className="ui-text-normal mt-2 text-red-600">
-          {FACES_DISCLAIMER_ERROR}
-        </p>
-      )}
-      <div className="flex justify-center">
-        <Button onClick={accept} color="green">
-          {FACES_DISCLAIMER_ACCEPT}
-        </Button>
-        <Button onClick={() => setAccess("declined")} color="red">
-          {FACES_DISCLAIMER_DECLINE}
-        </Button>
-      </div>
-    </div>
+    <FacesDisclaimer
+      title={FACES_DISCLAIMER_TITLE}
+      error={access === "error"}
+      onAccept={accept}
+      onDecline={() => setAccess("declined")}
+    />
   );
 };
 
