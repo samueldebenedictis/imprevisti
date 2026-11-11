@@ -12,7 +12,7 @@ Supporta due modalità di gioco:
 
 Il gioco è disponibile ai seguenti indirizzi:
 
-- **v2+** (schermo singolo + multi-dispositivo): https://www.imprevisti.app/ (alternativo: https://tesi-nine.vercel.app/)
+- **v2+** (schermo singolo + multi-dispositivo): https://imprevisti.app/ (alternativo: https://imprevisti.vercel.app/)
 
 ## Caratteristiche Principali
 
