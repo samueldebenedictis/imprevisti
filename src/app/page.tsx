@@ -2,6 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import {
+  acceptFacesAccess,
+  configUsesFaceEmotion,
+  fetchFacesAccess,
+} from "@/lib/faces-client";
 import { useConfigStore } from "../store/config-store";
 import {
   FACE_EMOTION_ENABLED,
@@ -13,11 +18,14 @@ import {
   URL_ADVANCED_MODE,
   URL_MULTIPLAYER,
 } from "../vars";
+import FacesDisclaimer from "./components/faces-disclaimer";
 import Button from "./components/ui/button";
 import { colorToCssButton } from "./components/ui/color";
 import Input from "./components/ui/input";
 import { Label, LabelCheckbox } from "./components/ui/label";
 import {
+  FACES_SETUP_INTRO,
+  FACES_SETUP_TITLE,
   LABEL_ADVANCED_MODE,
   LABEL_ADVANCED_MODE_ACTIVE,
   LABEL_ADVANCED_MODE_REMOVE,
@@ -113,9 +121,12 @@ export default function Home() {
     { key: "dictation-draw", label: LABEL_DICTATION_DRAW },
   ];
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Disclaimer FACES all'avvio: "hidden", "shown" o "error" (accettazione non registrata)
+  const [facesPrompt, setFacesPrompt] = useState<"hidden" | "shown" | "error">(
+    "hidden",
+  );
 
+  const startGame = () => {
     try {
       if (mode === "multi") {
         // In modalità multi: non creare gioco localmente, naviga al multiplayer
@@ -128,6 +139,35 @@ export default function Home() {
     } catch (error) {
       console.error("Failed to create game:", error);
     }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    // Con "Indovina l'emozione" l'educatore accetta prima il disclaimer FACES
+    if (
+      configUsesFaceEmotion(useConfigStore.getState()) &&
+      !(await fetchFacesAccess())
+    ) {
+      setFacesPrompt("shown");
+      return;
+    }
+    startGame();
+  };
+
+  const acceptFaces = async () => {
+    if (!(await acceptFacesAccess())) {
+      setFacesPrompt("error");
+      return;
+    }
+    setFacesPrompt("hidden");
+    startGame();
+  };
+
+  // Disclaimer non accettato: la sfida viene tolta dal tabellone
+  const declineFaces = () => {
+    actions.excludeFaceEmotion();
+    setFacesPrompt("hidden");
+    startGame();
   };
 
   const mobileWall = (
@@ -159,7 +199,7 @@ export default function Home() {
         <div className="ui-text-dark my-8 flex flex-col items-center justify-center p-2">
           <div className="mb-2 flex w-full max-w-md flex-col items-center gap-1">
             <Button
-              color="red"
+              color="blue"
               onClick={() => {
                 sessionStorage.removeItem("gameMode");
                 setMode(null);
@@ -340,6 +380,20 @@ export default function Home() {
           </form>
         </div>
       </div>
+      {facesPrompt !== "hidden" && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="ui-border-dark mx-4 w-full max-w-lg bg-white p-6">
+            <FacesDisclaimer
+              boxed={false}
+              title={FACES_SETUP_TITLE}
+              intro={FACES_SETUP_INTRO}
+              error={facesPrompt === "error"}
+              onAccept={acceptFaces}
+              onDecline={declineFaces}
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 }

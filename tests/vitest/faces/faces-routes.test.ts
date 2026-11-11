@@ -23,6 +23,9 @@ import {
 } from "@/app/api/faces/access/route";
 import { FACES_ACCESS_COOKIE } from "@/lib/faces";
 
+const post = (url = "http://localhost/api/faces/access", headers = {}) =>
+  accessPOST(new Request(url, { method: "POST", headers }));
+
 const FILE = "004_o_m_h_a.jpg";
 
 const getFile = (file: string) =>
@@ -61,7 +64,7 @@ describe("/api/faces/access", () => {
   });
 
   test("POST rilascia un cookie httpOnly limitato a /api/faces", async () => {
-    const res = await accessPOST();
+    const res = await post();
     expect(await res.json()).toEqual({ granted: true });
     const cookie = jar.get(FACES_ACCESS_COOKIE);
     expect(cookie?.value).toMatch(/^[0-9a-f-]{36}$/);
@@ -73,6 +76,23 @@ describe("/api/faces/access", () => {
     expect(await (await accessGET()).json()).toEqual({ granted: true });
   });
 
+  test("cookie Secure solo in https", async () => {
+    await post();
+    expect(jar.get(FACES_ACCESS_COOKIE)?.options).toMatchObject({
+      secure: false,
+    });
+    await post("http://localhost/api/faces/access", {
+      "x-forwarded-proto": "https",
+    });
+    expect(jar.get(FACES_ACCESS_COOKIE)?.options).toMatchObject({
+      secure: true,
+    });
+    await post("https://imprevisti.app/api/faces/access");
+    expect(jar.get(FACES_ACCESS_COOKIE)?.options).toMatchObject({
+      secure: true,
+    });
+  });
+
   test("un token inventato non vale", async () => {
     jar.set(FACES_ACCESS_COOKIE, { value: "token-inventato" });
     expect(await (await accessGET()).json()).toEqual({ granted: false });
@@ -81,7 +101,7 @@ describe("/api/faces/access", () => {
 
 describe("/api/faces/[file]", () => {
   test("rifiuta i file che non sono carte del mazzo", async () => {
-    await accessPOST();
+    await post();
     for (const file of ["004_o_m_n_a.jpg", "../package.json", "altro.jpg"]) {
       expect((await getFile(file)).status).toBe(404);
     }
@@ -94,7 +114,7 @@ describe("/api/faces/[file]", () => {
   });
 
   test("senza archivio configurato rimanda al segnaposto", async () => {
-    await accessPOST();
+    await post();
     const res = await getFile(FILE);
     expect(res.status).toBe(307);
     expect(res.headers.get("Location")).toBe(
@@ -116,7 +136,7 @@ describe("/api/faces/[file]", () => {
     });
 
     test("restituisce la foto senza cache", async () => {
-      await accessPOST();
+      await post();
       const res = await getFile(FILE);
       expect(res.status).toBe(200);
       expect(await res.text()).toBe("jpeg");
@@ -127,7 +147,7 @@ describe("/api/faces/[file]", () => {
     });
 
     test("un file del mazzo assente dalla cartella dà 404", async () => {
-      await accessPOST();
+      await post();
       expect((await getFile("066_y_m_h_a.jpg")).status).toBe(404);
     });
   });

@@ -7,6 +7,7 @@ import { expect, test } from "../app/fixtures";
 import { GamePage } from "../app/pages/game-page";
 import { HomePage } from "../app/pages/home-page";
 import { addZustandInitScript } from "../app/zustand";
+import { faceVariants, hasFacePhoto, routeFacePhoto } from "./face-photos";
 import FEEDBACK_DASHBOARD_FIXTURE from "./feedback-dashboard-fixture";
 
 const VIEWPORT = { width: 1920, height: 1080 };
@@ -201,24 +202,34 @@ test("screenshot-dictation-draw-modal-image", async ({ page }) => {
   );
 });
 
-test("screenshot-face-emotion-modal-answer", async ({ page }) => {
-  await page.setViewportSize(VIEWPORT);
-  const gamePage = new GamePage(page);
-  await page.goto(
-    "/storybook/iframe.html?id=example-turnresultmodal--face-emotion-scenario&viewMode=story",
-  );
+// La storia FaceEmotionScenario usa la carta "donna-giovane-felicità-a"
+for (const variant of faceVariants("140_y_f_h_a.jpg")) {
+  test(`screenshot-face-emotion-modal-answer${variant.suffix}`, async ({
+    page,
+  }) => {
+    test.skip(
+      !!variant.photo && !hasFacePhoto(variant.photo),
+      "foto FACES non disponibile in private/faces",
+    );
+    await page.setViewportSize(VIEWPORT);
+    await routeFacePhoto(page, variant);
+    const gamePage = new GamePage(page);
+    await page.goto(
+      "/storybook/iframe.html?id=example-turnresultmodal--face-emotion-scenario&viewMode=story",
+    );
 
-  await expect(gamePage.turnResultFullModal).toBeVisible();
-  await expect(gamePage.turnResultFullModal).toHaveScreenshot(
-    "face-emotion-modal.png",
-  );
+    await expect(gamePage.turnResultFullModal).toBeVisible();
+    await expect(gamePage.turnResultFullModal).toHaveScreenshot(
+      `face-emotion-modal${variant.suffix}.png`,
+    );
 
-  await gamePage.faceEmotionShowAnswerButton.click();
+    await gamePage.faceEmotionShowAnswerButton.click();
 
-  await expect(gamePage.turnResultFullModal).toHaveScreenshot(
-    "face-emotion-modal-answer.png",
-  );
-});
+    await expect(gamePage.turnResultFullModal).toHaveScreenshot(
+      `face-emotion-modal-answer${variant.suffix}.png`,
+    );
+  });
+}
 
 test("screenshot-music-emotion-modal", async ({ page }) => {
   await page.setViewportSize(VIEWPORT);

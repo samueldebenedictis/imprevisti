@@ -63,3 +63,5 @@ feedback-backup-*.json
 public/images/faces/
 public/images/faces_morph/
 private/
+# screenshot con le fotografie FACES vere (servono alla tesi, vedi tests/e2e/video/face-photos.ts)
+tests/e2e/snapshots/**/*-faces-chromium-linux.png
