@@ -126,14 +126,13 @@ Each action type has a manager handling pre/post resolution logic. 15 managers t
 { topic: { cardTitle: string, cardText: string }, videoUrl: string }
 ```
 
-### Face-emotion animations (face morph)
+### Face-emotion images (FACES)
 
-Every non-neutral face-emotion card also has an animated gif that morphs the same subject from the neutral expression to the target one.
+The face-emotion deck uses photographs from the FACES database (subjects 004, 066, 079, 116, 140, 168). Their licence forbids distributing them, so they are **not** in the repository nor in `public/`.
 
-- **Files**: `public/images/faces_morph/{id}_{age}_{sex}_{expr}_{set}_morph.gif`, same name as the still in `public/images/faces/` plus `_morph`. There is no gif for the neutral expression (`n`); `faceEmotionCards` already excludes it, so every playable card has one.
-- **URL helper**: `getFaceEmotionGifUrl(imageUrl)` in `src/model/deck/face-emotion.ts` derives the gif URL from the still URL. `FaceEmotion.imageUrl` keeps holding the still, so serialization and the API shapes above are unchanged.
-- **Generation**: `make face-morph-setup` (once: Python venv, dependencies, MediaPipe `face_landmarker.task` model) then `make face-morph` (runs `scripts/face_morph.py`). The script detects 478 landmarks, builds a Delaunay triangulation, warps triangle by triangle and cross-dissolves, only inside a feathered face mask so shirt and background stay still. Output is committed, so the app does not need Python at runtime.
-- **UI**: see "`FaceEmotionImage`" in [frontend-patterns.md](frontend-patterns.md).
+- **Now**: the challenge is disabled (`FACE_EMOTION_ENABLED = false` in `src/vars.ts`, same pattern as `FILM_ENABLED`). Every card points to `public/images/face-placeholder.svg`; each card keeps the FACES file name in `file` (`{id}_{age}_{sex}_{expr}_{set}.jpg`).
+- **Next**: the photos will be served from a private Vercel Blob store by a Route Handler, only during a game and without caching, after the FACES disclaimer has been accepted.
+- **Animations**: the old morph gifs were removed; FACES asked to use Dynamic FACES videos instead.
 
 ## Board Generation (`src/app/utils/generate-squares.ts`)
 

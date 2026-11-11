@@ -43,7 +43,6 @@ export const MODAL_FACE_EMOTION_SHOW_ANSWER = "Mostra risposta";
 export const MODAL_FACE_EMOTION_ANSWER = "Emozione:";
 export const MODAL_FACE_EMOTION_CORRECT = "Corretto";
 export const MODAL_FACE_EMOTION_WRONG = "Sbagliato";
-export const LABEL_FACE_EMOTION_ANIMATED = "Animato";
 export const MODAL_FILM_TITLE = "Guarda la scena!";
 export const MODAL_FILM_SHOW_ANSWER = "Mostra risposta";
 export const MODAL_FILM_ANSWER = "Emozione:";

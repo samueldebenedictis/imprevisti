@@ -180,7 +180,7 @@ const rollDice = async () => {
 
 ## `FaceEmotionImage` (`src/app/components/face-emotion-image.tsx`)
 
-Renders the face-emotion photo together with the "Animato" / "Non animato" checkbox. When enabled it shows the morph gif from `getFaceEmotionGifUrl`, and if the gif fails to load it falls back to the still photo. The preference lives in `useFaceEmotionStore` (`isAnimated`, persisted to localStorage under `face-emotion-settings`, default `false`), so it is per browser: host and players are **not** synchronised.
+Renders the face-emotion photo (for now the placeholder, see "Face-emotion images (FACES)" in [game-model.md](game-model.md)).
 
 It is the only place that renders a face-emotion image, used by:
 
@@ -203,9 +203,6 @@ import { useConfigStore } from "@/store/config-store";
 
 // Audio toggle
 import { useSoundStore } from "@/store/sound-store";
-
-// Face-emotion "Animato" toggle (persisted, default off)
-import { useFaceEmotionStore } from "@/store/face-emotion-store";
 ```
 
 These stores are **not used** by multiplayer mode. Multiplayer uses server-side `SessionState` + `useSessionPolling`.

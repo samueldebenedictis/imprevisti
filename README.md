@@ -12,7 +12,6 @@ Supporta due modalità di gioco:
 
 Il gioco è disponibile ai seguenti indirizzi:
 
-- **v1.4.6** (schermo singolo): https://samueldebenedictis.github.io/tesi/
 - **v2+** (schermo singolo + multi-dispositivo): https://www.imprevisti.app/ (alternativo: https://tesi-nine.vercel.app/)
 
 ## Caratteristiche Principali
@@ -20,7 +19,7 @@ Il gioco è disponibile ai seguenti indirizzi:
 - **Configurazione partita**: Home per impostare i parametri del gioco; numero di giocatori, nomi, caselle ammesse, eccetera.
 - **Gioco interattivo**: Pagina del gioco con tabellone, pedine e stato del gioco
 - **Modalità multi-dispositivo**: ogni giocatore usa il proprio smartphone; l'host coordina sul tabellone principale. Accesso tramite QR code. Sessioni server-side con long polling (riduce le invocazioni serverless di ~5×). Identità giocatore persistita nell'URL (`/player/[sessionId]/[playerId]`), sopravvive alla chiusura del tab.
-- **Azioni di gioco**: quiz, mimo, scrivi sulla schiena, emozione facciale, emozione musicale, test fisico, cosa faresti se, disegno dettato, battaglia
+- **Azioni di gioco**: quiz, mimo, scrivi sulla schiena, emozione facciale (al momento disattivata), emozione musicale, test fisico, cosa faresti se, disegno dettato, battaglia
 - **Istruzioni**: Regole del gioco
 - **Salvataggio partite**: Sistema di salvataggio e caricamento della partita (la partita viene salvata in formato JSON). Lo stato della partita è conservato nello StorageState del browser.
 - **Effetti sonori**: Suoni di feedback per azioni dei giocatori (lancio dado, caselle speciali, combattimenti)
@@ -158,8 +157,8 @@ tests/
 
 1. **Clone**:
    ```bash
-   git clone https://github.com/samueldebenedictis/tesi.git
-   cd tesi
+   git clone https://github.com/samueldebenedictis/imprevisti.git
+   cd imprevisti
    ```
 
 2. **Install**:

@@ -679,7 +679,7 @@ const CHALLENGES: {
       type: "face-emotion",
       card: {
         topic: { cardTitle: "felicità", cardText: "uomo-anziano-felicità-a" },
-        imageUrl: "/images/faces/004_o_m_h_a.jpg",
+        imageUrl: "/images/face-placeholder.svg",
       },
       actorPlayerId: "0",
       targetPlayerId: null,

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useConfigStore } from "../store/config-store";
 import {
+  FACE_EMOTION_ENABLED,
   FILM_ENABLED,
   MAX_PLAYERS,
   MAX_SQUARES,
@@ -102,7 +103,9 @@ export default function Home() {
     { key: "mime", label: LABEL_MIME },
     { key: "quiz", label: LABEL_QUIZ },
     { key: "backwrite", label: LABEL_BACKWRITE },
-    { key: "face-emotion", label: LABEL_FACE_EMOTION },
+    ...(FACE_EMOTION_ENABLED
+      ? [{ key: "face-emotion", label: LABEL_FACE_EMOTION }]
+      : []),
     ...(FILM_ENABLED ? [{ key: "film", label: LABEL_FILM }] : []),
     { key: "music-emotion", label: LABEL_MUSIC_EMOTION },
     { key: "physical-test", label: LABEL_PHYSICAL_TEST },
