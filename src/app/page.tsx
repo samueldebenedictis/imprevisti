@@ -199,7 +199,7 @@ export default function Home() {
         <div className="ui-text-dark my-8 flex flex-col items-center justify-center p-2">
           <div className="mb-2 flex w-full max-w-md flex-col items-center gap-1">
             <Button
-              color="red"
+              color="blue"
               onClick={() => {
                 sessionStorage.removeItem("gameMode");
                 setMode(null);
