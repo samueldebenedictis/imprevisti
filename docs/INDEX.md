@@ -65,10 +65,10 @@ Each file is self-contained for its domain.
 → [frontend-patterns.md](frontend-patterns.md) — "getCardDisplay"
 → Source: `src/lib/card-utils.ts`
 
-### Face-emotion image, "Animato" toggle and morph gifs
+### Face-emotion image (FACES, currently disabled)
 → [frontend-patterns.md](frontend-patterns.md) — "FaceEmotionImage"
-→ [game-model.md](game-model.md) — "Face-emotion animations (face morph)"
-→ Source: `src/app/components/face-emotion-image.tsx`, `src/store/face-emotion-store.ts`, `scripts/face_morph.py`
+→ [game-model.md](game-model.md) — "Face-emotion images (FACES)"
+→ Source: `src/app/components/face-emotion-image.tsx`, `src/model/deck/face-emotion.ts`, `FACE_EMOTION_ENABLED` in `src/vars.ts`
 
 ### Async fetch inside useEffect (cancelled flag pattern)
 → [frontend-patterns.md](frontend-patterns.md) — "Pattern: cancelled flag"

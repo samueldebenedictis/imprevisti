@@ -37,7 +37,8 @@ test("setup", async ({ page }) => {
   await homePage.physicalTestCheckbox.uncheck();
   await homePage.whatWouldYouDoCheckbox.uncheck();
   await homePage.dictationDrawCheckbox.uncheck();
-  await homePage.faceEmotionsCheckbox.uncheck();
+  // Casella "Indovina l'emozione" disattivata (FACE_EMOTION_ENABLED = false): riattivare insieme alla sfida
+  // await homePage.faceEmotionsCheckbox.uncheck();
   // Casella Film disattivata (FILM_ENABLED = false): riattivare insieme alla sfida
   // await homePage.filmCheckbox.uncheck();
   await homePage.page.waitForTimeout(TIMEOUT);

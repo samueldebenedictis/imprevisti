@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="600" viewBox="0 0 480 600" role="img" aria-label="Volto segnaposto">
+  <rect width="480" height="600" fill="#e5e7eb"/>
+  <ellipse cx="240" cy="270" rx="130" ry="165" fill="#d1d5db" stroke="#9ca3af" stroke-width="6"/>
+  <circle cx="190" cy="240" r="14" fill="#6b7280"/>
+  <circle cx="290" cy="240" r="14" fill="#6b7280"/>
+  <path d="M190 340 Q240 360 290 340" fill="none" stroke="#6b7280" stroke-width="8" stroke-linecap="round"/>
+  <text x="240" y="530" font-family="Arial, sans-serif" font-size="28" fill="#4b5563" text-anchor="middle">Immagine non disponibile</text>
+</svg>

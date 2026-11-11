@@ -45,11 +45,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# python (face morph script)
-__pycache__/
-*.pyc
-.venv-morph/
-
 # Removed from .gitignore
 # Mandatory for build and deploy to GitHub Pages
 # package-lock.json

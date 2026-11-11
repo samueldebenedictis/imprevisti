@@ -19,3 +19,9 @@ export const SAVEFILE = "save.json";
 // Casella "Film" disattivata: mancano i diritti sulle scene dei film.
 // Rimettere a true dopo aver reinserito i video in public/videos.
 export const FILM_ENABLED: boolean = false;
+
+// Casella "Indovina l'emozione" disattivata: le fotografie FACES non sono più
+// nei file pubblici e verranno servite da un archivio privato (in attesa
+// della conferma del FACES Technical Agent). Rimettere a true quando il
+// Route Handler che le serve è pronto.
+export const FACE_EMOTION_ENABLED: boolean = false;

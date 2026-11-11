@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
-# Copia tutti gli screenshot generati dai test Playwright nella cartella immagini della tesi.
-# Scansiona tutte le sottocartelle di tests/e2e/snapshots/ e copia i .png in elaborato/immagini/screenshots/.
+# Copia tutti gli screenshot generati dai test Playwright nella cartella immagini della tesi,
+# che sta in un repository separato (elaborato).
+# Uso: scripts/copy-screenshots.sh [cartella di destinazione]
+# Destinazione predefinita: ../elaborato/immagini/screenshots
 
 set -euo pipefail
 
 SNAPSHOTS_DIR="tests/e2e/snapshots"
-DEST_DIR="elaborato/immagini/screenshots"
+DEST_DIR="${1:-../elaborato/immagini/screenshots}"
 
 if [ ! -d "$SNAPSHOTS_DIR" ]; then
   echo "Cartella snapshot non trovata: $SNAPSHOTS_DIR"

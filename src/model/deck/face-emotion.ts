@@ -43,12 +43,20 @@ const faceEmotionLabels = [
 
 const faceEmotionVersions = ["a", "b"];
 
+/**
+ * Immagine mostrata al posto delle fotografie FACES, che non sono più
+ * nei file pubblici (vedi FACE_EMOTION_ENABLED in src/vars.ts).
+ */
+const FACE_PLACEHOLDER_URL = "/images/face-placeholder.svg";
+
 const buildFaceEmotionCards = (labels: typeof faceEmotionLabels) =>
   faceEmotionSubjects.flatMap((subject) =>
     labels.flatMap(({ code: emotionCode, emotion }) =>
       faceEmotionVersions.map((version) => ({
         title: `${subject.title}-${emotion}-${version}`,
-        imageUrl: `/images/faces/${subject.id}_${subject.code}_${emotionCode}_${version}.jpg`,
+        /** Nome del file FACES nell'archivio privato. */
+        file: `${subject.id}_${subject.code}_${emotionCode}_${version}.jpg`,
+        imageUrl: FACE_PLACEHOLDER_URL,
         emotion,
       })),
     ),
@@ -62,14 +70,3 @@ export const faceEmotionCards = buildFaceEmotionCards(
 /** Set completo (neutralità inclusa) per Storybook. */
 export const faceEmotionStorybookCards =
   buildFaceEmotionCards(faceEmotionLabels);
-
-/**
- * Deriva l'URL della gif di morphing (neutro -> espressione) a partire
- * dall'URL della foto statica. Vale solo per le espressioni non neutre:
- * non esiste una gif "neutro -> neutro", ma le carte giocabili escludono
- * già la neutralità (vedi `faceEmotionCards`).
- */
-export const getFaceEmotionGifUrl = (imageUrl: string) =>
-  imageUrl
-    .replace("/images/faces/", "/images/faces_morph/")
-    .replace(/\.jpg$/, "_morph.gif");

@@ -114,7 +114,7 @@ export const FaceEmotion: Story = {
       actorPlayerId: "1",
       card: {
         topic: { cardTitle: "felice", cardText: "felice" },
-        imageUrl: "/images/faces/140_y_f_h_a.jpg",
+        imageUrl: "/images/face-placeholder.svg",
       },
     },
   },

@@ -5,7 +5,7 @@ import {
   LABEL_ADVANCED_MODE_REMOVE,
   LABEL_BACKWRITE,
   LABEL_DICTATION_DRAW,
-  LABEL_FACE_EMOTION,
+  // LABEL_FACE_EMOTION,
   // LABEL_FILM,
   LABEL_MIME,
   LABEL_MOVE,
@@ -70,9 +70,10 @@ export class HomePage {
   dictationDrawCheckbox = this.page.getByRole("checkbox", {
     name: LABEL_DICTATION_DRAW,
   });
-  faceEmotionsCheckbox = this.page.getByRole("checkbox", {
-    name: LABEL_FACE_EMOTION,
-  });
+  // Casella "Indovina l'emozione" disattivata (FACE_EMOTION_ENABLED = false): riattivare insieme alla sfida
+  // faceEmotionsCheckbox = this.page.getByRole("checkbox", {
+  //   name: LABEL_FACE_EMOTION,
+  // });
   // Casella Film disattivata (FILM_ENABLED = false): riattivare insieme alla sfida
   // filmCheckbox = this.page.getByRole("checkbox", { name: LABEL_FILM });
 
