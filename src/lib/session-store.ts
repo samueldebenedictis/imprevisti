@@ -169,6 +169,33 @@ export async function getFeedback(count?: number): Promise<string[]> {
   return [];
 }
 
+// Accessi alle fotografie FACES: token rilasciato dopo l'accettazione del
+// disclaimer, valido quanto una partita (SESSION_TTL)
+const memoryFacesAccess = new Map<string, number>();
+
+export async function grantFacesAccess(token: string): Promise<void> {
+  const redis = await getRedis();
+  if (redis) {
+    await redis.set(`faces-access:${token}`, 1);
+    return;
+  }
+  memoryFacesAccess.set(token, Date.now() + SESSION_TTL * 1000);
+}
+
+export async function hasFacesAccess(token: string): Promise<boolean> {
+  const redis = await getRedis();
+  if (redis) return (await redis.get(`faces-access:${token}`)) !== null;
+  const expiresAt = memoryFacesAccess.get(token);
+  if (expiresAt === undefined) return false;
+  if (expiresAt < Date.now()) {
+    memoryFacesAccess.delete(token);
+    return false;
+  }
+  return true;
+}
+
+export const FACES_ACCESS_TTL_SECONDS = SESSION_TTL;
+
 export function toPublicSession(session: SessionState): PublicSessionState {
   const { hostToken: _, ...pub } = session;
   return pub;

@@ -43,6 +43,14 @@ export const MODAL_FACE_EMOTION_SHOW_ANSWER = "Mostra risposta";
 export const MODAL_FACE_EMOTION_ANSWER = "Emozione:";
 export const MODAL_FACE_EMOTION_CORRECT = "Corretto";
 export const MODAL_FACE_EMOTION_WRONG = "Sbagliato";
+export const FACES_DISCLAIMER_TITLE = "Prima di vedere la foto";
+export const FACES_DISCLAIMER_ACCEPT = "Accetto";
+export const FACES_DISCLAIMER_DECLINE = "Non accetto";
+export const FACES_DISCLAIMER_DECLINED =
+  "Foto non mostrata: senza accettazione la sfida prosegue senza immagine.";
+export const FACES_DISCLAIMER_SHOW_AGAIN = "Leggi di nuovo";
+export const FACES_DISCLAIMER_ERROR =
+  "Impossibile registrare l'accettazione. Riprova.";
 export const MODAL_FILM_TITLE = "Guarda la scena!";
 export const MODAL_FILM_SHOW_ANSWER = "Mostra risposta";
 export const MODAL_FILM_ANSWER = "Emozione:";

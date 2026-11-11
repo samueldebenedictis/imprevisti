@@ -43,30 +43,46 @@ const faceEmotionLabels = [
 
 const faceEmotionVersions = ["a", "b"];
 
-/**
- * Immagine mostrata al posto delle fotografie FACES, che non sono più
- * nei file pubblici (vedi FACE_EMOTION_ENABLED in src/vars.ts).
- */
+/** Le fotografie FACES sono servite dal Route Handler /api/faces/[file]. */
+export const FACES_API_PREFIX = "/api/faces/";
+
+export const facesImageUrl = (file: string) => `${FACES_API_PREFIX}${file}`;
+
+/** Immagine senza volti per Storybook e per i test. */
 const FACE_PLACEHOLDER_URL = "/images/face-placeholder.svg";
 
-const buildFaceEmotionCards = (labels: typeof faceEmotionLabels) =>
+const buildFaceEmotionCards = (
+  labels: typeof faceEmotionLabels,
+  toImageUrl: (file: string) => string,
+) =>
   faceEmotionSubjects.flatMap((subject) =>
     labels.flatMap(({ code: emotionCode, emotion }) =>
-      faceEmotionVersions.map((version) => ({
-        title: `${subject.title}-${emotion}-${version}`,
-        /** Nome del file FACES nell'archivio privato. */
-        file: `${subject.id}_${subject.code}_${emotionCode}_${version}.jpg`,
-        imageUrl: FACE_PLACEHOLDER_URL,
-        emotion,
-      })),
+      faceEmotionVersions.map((version) => {
+        const file = `${subject.id}_${subject.code}_${emotionCode}_${version}.jpg`;
+        return {
+          title: `${subject.title}-${emotion}-${version}`,
+          /** Nome del file FACES nell'archivio privato. */
+          file,
+          imageUrl: toImageUrl(file),
+          emotion,
+        };
+      }),
     ),
   );
 
 /** Carte usate in partita: neutralità esclusa (troppo ambigua da indovinare). */
 export const faceEmotionCards = buildFaceEmotionCards(
   faceEmotionLabels.filter((label) => label.code !== "n"),
+  facesImageUrl,
+);
+
+/** Nomi dei file FACES che il Route Handler può restituire. */
+export const faceEmotionFiles: ReadonlySet<string> = new Set(
+  faceEmotionCards.map((card) => card.file),
 );
 
 /** Set completo (neutralità inclusa) per Storybook. */
-export const faceEmotionStorybookCards =
-  buildFaceEmotionCards(faceEmotionLabels);
+export const faceEmotionStorybookCards = buildFaceEmotionCards(
+  faceEmotionLabels,
+  () => FACE_PLACEHOLDER_URL,
+);
