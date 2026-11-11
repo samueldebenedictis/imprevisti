@@ -25,4 +25,4 @@ copy-video:
 	docker compose run --rm playwright node scripts/extract-video-posters.mjs
 
 copy-screenshots:
-	bash scripts/copy-screenshots.sh $(DEST)
+	bash scripts/copy-screenshots.sh $(TESI)

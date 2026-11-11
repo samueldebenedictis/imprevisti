@@ -1,4 +1,10 @@
 import { expect, type Page, test } from "@playwright/test";
+import {
+  type FaceVariant,
+  faceVariants,
+  hasFacePhoto,
+  routeFacePhoto,
+} from "./face-photos";
 
 async function seedRandom(page: Page, seed = 42) {
   await page.addInitScript((s: number) => {
@@ -658,6 +664,8 @@ const CHALLENGES: {
   pendingAction: Record<string, unknown>;
   /** Testo che compare sul dispositivo del giocatore quando la pagina è pronta */
   playerText: string;
+  /** Foto FACES della carta: genera anche la versione "-faces" degli screenshot */
+  facePhoto?: string;
 }[] = [
   {
     name: "backwrite",
@@ -685,6 +693,7 @@ const CHALLENGES: {
       targetPlayerId: null,
     },
     playerText: "Indovina l'emozione",
+    facePhoto: "004_o_m_h_a.jpg",
   },
   {
     name: "film",
@@ -750,38 +759,58 @@ for (const challenge of CHALLENGES) {
       pendingAction: challenge.pendingAction,
     });
 
-  test(`screenshot-multiplayer-${challenge.name}-host`, async ({ page }) => {
-    await page.setViewportSize(VIEWPORT_DESKTOP);
-    await page.addInitScript(() =>
-      localStorage.setItem("hostToken", "host-tok"),
-    );
-    const sessionId = `${challenge.sessionId}1`;
+  const variants: FaceVariant[] = challenge.facePhoto
+    ? faceVariants(challenge.facePhoto)
+    : [{ suffix: "" }];
 
-    await seedRandom(page);
-    await mockSession(page, sessionId, session(sessionId));
+  for (const variant of variants) {
+    const skipWithoutPhoto = () =>
+      test.skip(
+        !!variant.photo && !hasFacePhoto(variant.photo),
+        "foto FACES non disponibile in private/faces",
+      );
 
-    await page.goto(`/multiplayer/${sessionId}`);
-    await expect(page.getByText("Alice").first()).toBeVisible();
-    await expect(page).toHaveScreenshot(
-      `multiplayer-${challenge.name}-host.png`,
-      { fullPage: true },
-    );
-  });
+    test(`screenshot-multiplayer-${challenge.name}-host${variant.suffix}`, async ({
+      page,
+    }) => {
+      skipWithoutPhoto();
+      await page.setViewportSize(VIEWPORT_DESKTOP);
+      await routeFacePhoto(page, variant);
+      await page.addInitScript(() =>
+        localStorage.setItem("hostToken", "host-tok"),
+      );
+      const sessionId = `${challenge.sessionId}1`;
 
-  test(`screenshot-multiplayer-${challenge.name}-player`, async ({ page }) => {
-    await page.setViewportSize(VIEWPORT_MOBILE);
-    const sessionId = `${challenge.sessionId}2`;
+      await seedRandom(page);
+      await mockSession(page, sessionId, session(sessionId));
 
-    await seedRandom(page);
-    await mockSession(page, sessionId, session(sessionId));
+      await page.goto(`/multiplayer/${sessionId}`);
+      await expect(page.getByText("Alice").first()).toBeVisible();
+      await expect(page).toHaveScreenshot(
+        `multiplayer-${challenge.name}-host${variant.suffix}.png`,
+        { fullPage: true },
+      );
+    });
 
-    await page.goto(`/player/${sessionId}/0`);
-    await expect(page.getByText(challenge.playerText).first()).toBeVisible();
-    await expect(page).toHaveScreenshot(
-      `multiplayer-${challenge.name}-player.png`,
-      { fullPage: true },
-    );
-  });
+    test(`screenshot-multiplayer-${challenge.name}-player${variant.suffix}`, async ({
+      page,
+    }) => {
+      skipWithoutPhoto();
+      await page.setViewportSize(VIEWPORT_MOBILE);
+      await routeFacePhoto(page, variant);
+      const sessionId = `${challenge.sessionId}2`;
+
+      await seedRandom(page);
+      await mockSession(page, sessionId, session(sessionId));
+
+      await page.goto(`/player/${sessionId}/0`);
+      await expect(page.getByText(challenge.playerText).first()).toBeVisible();
+      await expect(page).toHaveScreenshot(
+        `multiplayer-${challenge.name}-player${variant.suffix}.png`,
+        { fullPage: true },
+      );
+    });
+  }
 }
 
 // ---------------------------------------------------------------------------
