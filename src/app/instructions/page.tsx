@@ -378,7 +378,7 @@ export default function InstructionsPage() {
             Tutto il codice sorgente del sito è disponibile su{" "}
             <a
               className="font-semibold"
-              href="https://github.com/samueldebenedictis/tesi"
+              href="https://github.com/samueldebenedictis/imprevisti"
             >
               GitHub
             </a>
