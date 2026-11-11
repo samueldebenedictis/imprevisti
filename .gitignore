@@ -58,3 +58,8 @@ node_modules/
 
 # Feedback backup
 feedback-backup-*.json
+
+# fotografie FACES: la licenza ne vieta la distribuzione (vedi src/lib/faces.ts)
+public/images/faces/
+public/images/faces_morph/
+private/

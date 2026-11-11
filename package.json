@@ -25,6 +25,7 @@
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@upstash/redis": "^1.38.0",
+    "@vercel/blob": "2.8.2",
     "husky": "^9.1.7",
     "ioredis": "^5.11.1",
     "next": "^16.2.9",
