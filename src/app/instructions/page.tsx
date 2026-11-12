@@ -219,6 +219,19 @@ export default function InstructionsPage() {
             usano volti illustrati: le caselle Emozioni in movimento diventano
             Indovina l&apos;emozione.
           </p>
+          <p className="mb-2">
+            <strong>Per gli educatori:</strong> per generare un codice aprite la
+            pagina{" "}
+            <a className="font-semibold" href="/educatore/codice">
+              Codici FACES
+            </a>
+            , inserite il codice di accesso educatori e premete{" "}
+            <strong>Genera un codice</strong>. Il codice vale per una sola
+            partita e scade dopo 24 ore se non viene usato: inseritelo
+            all&apos;avvio della partita, sul dispositivo del tabellone. Il
+            codice di accesso educatori viene comunicato in privato e non va
+            diffuso.
+          </p>
           <Video
             src={`${imagePrefix}/videos/game-at-work-setup-chromium.webm`}
             text="Un video che mostra l'applicativo durante la configurazione senza caselle speciali"

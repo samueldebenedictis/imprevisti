@@ -24,7 +24,7 @@ Il gioco è disponibile ai seguenti indirizzi:
 - **Istruzioni**: Regole del gioco
 - **Salvataggio partite**: Sistema di salvataggio e caricamento della partita (la partita viene salvata in formato JSON). Lo stato della partita è conservato nello StorageState del browser.
 - **Effetti sonori**: Suoni di feedback per azioni dei giocatori (lancio dado, caselle speciali, combattimenti)
-- **Codici FACES** (`/admin/codici`, protetta da chiave segreta): l'educatore genera i codici monouso per le partite con le fotografie FACES (un codice per partita, valido 24 ore se non usato)
+- **Codici FACES** (`/educatore/codice`, protetta da chiave segreta): l'educatore genera i codici monouso per le partite con le fotografie FACES (un codice per partita, valido 24 ore se non usato)
 - **Dashboard feedback** (`/admin/feedback`, protetta da chiave segreta): analizza le risposte raccolte dal modulo Feedback — punteggio SUS medio con grado (0-100), medie delle valutazioni, distribuzione per ruolo/esperienza/spettro autistico/versione app con filtri cliccabili, elenco commenti liberi
 - **State management avanzato**: Utilizzo di Zustand per una gestione efficiente dello stato dell'applicazione
 
@@ -121,8 +121,9 @@ Compila Storybook per la produzione.
 src/
 ├── app/                   # Pagine e componenti Next.js
 │   ├── admin/
-│   │   ├── codici/        # Codici monouso per le fotografie FACES
 │   │   └── feedback/      # Dashboard di analisi dei feedback raccolti
+│   ├── educatore/
+│   │   └── codice/        # Codici monouso per foto e video FACES
 │   ├── api/               # API routes
 │   │   ├── sessions/      # Crea sessione, long polling, azioni
 │   │   ├── faces/         # Foto e video FACES, codici e accessi
@@ -197,7 +198,7 @@ tests/
 | `KV_REST_API_URL` | Vercel KV REST URL (produzione) | — |
 | `KV_REST_API_TOKEN` | Vercel KV token (produzione) | — |
 | `FEEDBACK_SECRET` | Chiave della dashboard feedback | — (dashboard non accessibile) |
-| `FACES_CODES_SECRET` | Chiave della pagina educatori `/admin/codici` | — (nessun codice generabile) |
+| `FACES_CODES_SECRET` | Chiave della pagina educatori `/educatore/codice` | — (nessun codice generabile) |
 | `BLOB_READ_WRITE_TOKEN` | Archivio Vercel Blob privato con foto e video FACES (produzione) | — (segnaposto) |
 | `FACES_LOCAL_DIR` | Cartella locale con foto e video FACES, solo da shell e mai in `.env.local` | — (segnaposto) |
 

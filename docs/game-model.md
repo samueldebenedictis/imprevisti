@@ -136,7 +136,7 @@ Each game has a **face set** (`faceSet` in `GameJSON`, `Game.getFaceSet()`):
 
 Access rules agreed with FACES (November 2026):
 
-1. An educator generates a **one-time code** on `/admin/codici` (protected by `FACES_CODES_SECRET`). A code is valid 24 hours if unused and works for **one game only**.
+1. An educator generates a **one-time code** on `/educatore/codice` (protected by `FACES_CODES_SECRET`). A code is valid 24 hours if unused and works for **one game only**.
 2. At game setup, if the board includes "Indovina l'emozione" or "Emozioni in movimento", a modal asks for the code and the FACES disclaimer. `POST /api/faces/access {code}` uses the code (GETDEL, so it cannot be reused) and creates a *grant* valid as long as a game (4 hours). The device gets an httpOnly cookie `faces_grant` (path `/api`) whose token points to the grant. Without a code: `faceSet = "ai"`.
 3. Multiplayer: only the host enters the code. `/api/sessions/[id]/start` reads the host cookie and stores the grant in the session (`facesGrantId`, never public). A grant is bound to the first game that uses it (`bindFacesGrant`): a second game started by the same host gets the illustrated faces. Players' phones accept the disclaimer and call `POST /api/faces/access {sessionId}`.
 4. `/api/faces/[file]` serves a photo (`image/jpeg`) or a clip (`video/mp4`) only with a valid token **and** an active grant, with `Cache-Control: no-store`. Only the 60 photos and 30 clips of the decks are allowed. The client downloads clips whole and plays them from memory (`EmotionVideoPlayer`), so no Range requests are needed on iOS.

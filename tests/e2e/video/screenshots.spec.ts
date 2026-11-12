@@ -105,7 +105,7 @@ test("screenshot-faces-codes", async ({ page }) => {
       }),
     }),
   );
-  await page.goto("/admin/codici");
+  await page.goto("/educatore/codice");
   await page.getByLabel("Codice di accesso educatori").fill("test-secret");
   await page.getByRole("button", { name: "Genera un codice" }).click();
 

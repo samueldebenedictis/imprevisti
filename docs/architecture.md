@@ -26,7 +26,8 @@ src/
 │   │   ├── sessions/           # Multiplayer session management
 │   │   ├── faces/              # FACES photos, one-time codes, device access
 │   │   └── feedback/           # Feedback collection
-│   ├── admin/                  # codici/ (FACES codes), feedback/ (dashboard)
+│   ├── admin/                  # feedback/ (dashboard)
+│   ├── educatore/              # codice/ (one-time FACES codes)
 │   ├── components/             # Shared React components
 │   │   ├── ui/                 # Button, Input, Label, Select
 │   │   └── turn-result-modal/  # Per-action-type modal variants
@@ -95,7 +96,7 @@ npm run storybook    # Storybook dev on port 6006
 | `KV_REST_API_URL` | Vercel | Vercel KV REST endpoint (auto-injected) |
 | `KV_REST_API_TOKEN` | Vercel | Vercel KV token (auto-injected) |
 | `FEEDBACK_SECRET` | `.env.local` / Vercel | Secret for `GET /api/feedback?secret=` |
-| `FACES_CODES_SECRET` | `.env.local` / Vercel | Secret of the educators' page `/admin/codici` (generates one-time FACES codes). Never commit it |
+| `FACES_CODES_SECRET` | `.env.local` / Vercel | Secret of the educators' page `/educatore/codice` (generates one-time FACES codes). Never commit it |
 | `BLOB_READ_WRITE_TOKEN` | Vercel | Private Blob store with the FACES photos (auto-injected) |
 | `FACES_LOCAL_DIR` | shell only | Local folder with the FACES photos (not in `.env.local`: Docker e2e would capture them) |
 
