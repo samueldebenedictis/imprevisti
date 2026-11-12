@@ -5,7 +5,7 @@ import { useState } from "react";
 import {
   acceptFacesAccess,
   configUsesFaceEmotion,
-  fetchFacesAccess,
+  revokeFacesAccess,
 } from "@/lib/faces-client";
 import { useConfigStore } from "../store/config-store";
 import {
@@ -24,6 +24,12 @@ import { colorToCssButton } from "./components/ui/color";
 import Input from "./components/ui/input";
 import { Label, LabelCheckbox } from "./components/ui/label";
 import {
+  FACES_CODE_INVALID,
+  FACES_CODE_LABEL,
+  FACES_CODE_MISSING,
+  FACES_CODE_PLACEHOLDER,
+  FACES_DISCLAIMER_ERROR,
+  FACES_SETUP_DECLINE,
   FACES_SETUP_INTRO,
   FACES_SETUP_TITLE,
   LABEL_ADVANCED_MODE,
@@ -121,10 +127,10 @@ export default function Home() {
     { key: "dictation-draw", label: LABEL_DICTATION_DRAW },
   ];
 
-  // Disclaimer FACES all'avvio: "hidden", "shown" o "error" (accettazione non registrata)
-  const [facesPrompt, setFacesPrompt] = useState<"hidden" | "shown" | "error">(
-    "hidden",
-  );
+  // Finestra FACES all'avvio: codice dell'educatore e disclaimer
+  const [facesPrompt, setFacesPrompt] = useState(false);
+  const [facesCode, setFacesCode] = useState("");
+  const [facesError, setFacesError] = useState<string>();
 
   const startGame = () => {
     try {
@@ -141,32 +147,42 @@ export default function Home() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Con "Indovina l'emozione" l'educatore accetta prima il disclaimer FACES
-    if (
-      configUsesFaceEmotion(useConfigStore.getState()) &&
-      !(await fetchFacesAccess())
-    ) {
-      setFacesPrompt("shown");
+    // Con "Indovina l'emozione" si chiede un codice nuovo per ogni partita:
+    // un codice vale per una sola partita
+    if (configUsesFaceEmotion(useConfigStore.getState())) {
+      setFacesCode("");
+      setFacesError(undefined);
+      setFacesPrompt(true);
       return;
     }
+    actions.setFaceSet("ai");
     startGame();
   };
 
   const acceptFaces = async () => {
-    if (!(await acceptFacesAccess())) {
-      setFacesPrompt("error");
+    if (!facesCode.trim()) {
+      setFacesError(FACES_CODE_MISSING);
       return;
     }
-    setFacesPrompt("hidden");
+    const result = await acceptFacesAccess({ code: facesCode });
+    if (result !== "granted") {
+      setFacesError(
+        result === "invalid-code" ? FACES_CODE_INVALID : FACES_DISCLAIMER_ERROR,
+      );
+      return;
+    }
+    actions.setFaceSet("faces");
+    setFacesPrompt(false);
     startGame();
   };
 
-  // Disclaimer non accettato: la sfida viene tolta dal tabellone
-  const declineFaces = () => {
-    actions.excludeFaceEmotion();
-    setFacesPrompt("hidden");
+  // Senza codice o senza accettazione: volti illustrati al posto delle foto FACES
+  const declineFaces = async () => {
+    await revokeFacesAccess();
+    actions.setFaceSet("ai");
+    setFacesPrompt(false);
     startGame();
   };
 
@@ -380,17 +396,32 @@ export default function Home() {
           </form>
         </div>
       </div>
-      {facesPrompt !== "hidden" && (
+      {facesPrompt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="ui-border-dark mx-4 w-full max-w-lg bg-white p-6">
             <FacesDisclaimer
               boxed={false}
               title={FACES_SETUP_TITLE}
               intro={FACES_SETUP_INTRO}
-              error={facesPrompt === "error"}
+              error={facesError}
+              declineLabel={FACES_SETUP_DECLINE}
               onAccept={acceptFaces}
               onDecline={declineFaces}
-            />
+            >
+              <div className="mt-4 text-left">
+                <Label htmlFor="faces-code">{FACES_CODE_LABEL}</Label>
+                <Input
+                  id="faces-code"
+                  value={facesCode}
+                  placeholder={FACES_CODE_PLACEHOLDER}
+                  className="font-mono uppercase tracking-widest"
+                  onChange={(e) => {
+                    setFacesCode(e.target.value);
+                    setFacesError(undefined);
+                  }}
+                />
+              </div>
+            </FacesDisclaimer>
           </div>
         </div>
       )}

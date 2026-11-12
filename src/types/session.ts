@@ -27,6 +27,8 @@ export interface LastMoveInfo {
 export interface SessionState {
   sessionId: string;
   hostToken: string; // segreto per autorizzare azioni host
+  /** Permesso FACES della partita (codice dell'educatore usato dall'host). Non pubblico. */
+  facesGrantId?: string;
   players: SessionPlayer[];
   started: boolean;
   gameState: GameJSON | null;
@@ -39,5 +41,8 @@ export interface SessionState {
   updatedAt: number;
 }
 
-// Versione pubblica senza hostToken
-export type PublicSessionState = Omit<SessionState, "hostToken">;
+// Versione pubblica senza segreti
+export type PublicSessionState = Omit<
+  SessionState,
+  "hostToken" | "facesGrantId"
+>;

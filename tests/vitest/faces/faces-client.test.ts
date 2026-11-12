@@ -1,6 +1,10 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { FACES_ACCESS_API } from "@/lib/faces";
-import { acceptFacesAccess, fetchFacesAccess } from "@/lib/faces-client";
+import {
+  acceptFacesAccess,
+  fetchFacesAccess,
+  revokeFacesAccess,
+} from "@/lib/faces-client";
 
 const respond = (ok: boolean, body: unknown = {}) =>
   vi.fn(async () => ({ ok, json: async () => body }));
@@ -43,27 +47,76 @@ describe("fetchFacesAccess", () => {
 });
 
 describe("acceptFacesAccess", () => {
-  test("invia l'accettazione con POST", async () => {
+  test("invia codice o partita con POST", async () => {
     const fetchMock = respond(true);
     vi.stubGlobal("fetch", fetchMock);
-    await expect(acceptFacesAccess()).resolves.toBe(true);
+    await expect(acceptFacesAccess({ code: "K7PM3X" })).resolves.toBe(
+      "granted",
+    );
     expect(fetchMock).toHaveBeenCalledWith(FACES_ACCESS_API, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: "K7PM3X" }),
     });
+    await acceptFacesAccess({ sessionId: "ABC123" });
+    expect(fetchMock).toHaveBeenLastCalledWith(
+      FACES_ACCESS_API,
+      expect.objectContaining({
+        body: JSON.stringify({ sessionId: "ABC123" }),
+      }),
+    );
   });
 
-  test("falso se il server rifiuta", async () => {
-    vi.stubGlobal("fetch", respond(false));
-    await expect(acceptFacesAccess()).resolves.toBe(false);
+  test.each([
+    ["invalid-code", "invalid-code"],
+    ["no-session-access", "no-session-access"],
+    ["missing-code", "error"],
+  ])("errore %s dal server: %s", async (error, expected) => {
+    vi.stubGlobal("fetch", respond(false, { error }));
+    await expect(acceptFacesAccess({ code: "X" })).resolves.toBe(expected);
   });
 
-  test("falso se la richiesta fallisce", async () => {
+  test("risposta d'errore senza JSON", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({
+        ok: false,
+        json: async () => {
+          throw new Error("not json");
+        },
+      })),
+    );
+    await expect(acceptFacesAccess({ code: "X" })).resolves.toBe("error");
+  });
+
+  test("errore se la richiesta fallisce", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn(async () => {
         throw new Error("offline");
       }),
     );
-    await expect(acceptFacesAccess()).resolves.toBe(false);
+    await expect(acceptFacesAccess({ code: "X" })).resolves.toBe("error");
+  });
+});
+
+describe("revokeFacesAccess", () => {
+  test("chiede al server di togliere l'accesso", async () => {
+    const fetchMock = respond(true);
+    vi.stubGlobal("fetch", fetchMock);
+    await revokeFacesAccess();
+    expect(fetchMock).toHaveBeenCalledWith(FACES_ACCESS_API, {
+      method: "DELETE",
+    });
+  });
+
+  test("senza rete non si rompe", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => {
+        throw new Error("offline");
+      }),
+    );
+    await expect(revokeFacesAccess()).resolves.toBeUndefined();
   });
 });

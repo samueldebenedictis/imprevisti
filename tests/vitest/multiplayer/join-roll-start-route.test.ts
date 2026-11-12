@@ -7,6 +7,11 @@ import { Square } from "@/model/square/square";
 import type { GameConfig } from "@/store/config-store";
 import type { SessionState } from "@/types/session";
 
+// Nessun cookie FACES: la partita usa i volti illustrati
+vi.mock("next/headers", () => ({
+  cookies: async () => ({ get: () => undefined }),
+}));
+
 vi.mock("@/lib/session-store", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/lib/session-store")>();
   return { ...actual, getSession: vi.fn(), saveSession: vi.fn() };
@@ -50,6 +55,7 @@ const defaultBoardConfig: GameConfig = {
   numPlayers: 2,
   playerNames: ["Alice", "Bob"],
   numSquares: 20,
+  faceSet: "ai",
   squareTypes: {
     mime: false,
     quiz: true,

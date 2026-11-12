@@ -35,6 +35,8 @@ export interface HostActionOverlayProps {
   onResolve: (success: boolean) => void;
   onResolveWithWinner: (winnerId: string) => void;
   isResolving?: boolean;
+  /** Partita: serve per l'accesso alle fotografie FACES. */
+  sessionId?: string;
 }
 
 export default function HostActionOverlay({
@@ -43,6 +45,7 @@ export default function HostActionOverlay({
   onResolve,
   onResolveWithWinner,
   isResolving = false,
+  sessionId,
 }: HostActionOverlayProps) {
   const [selectingWinner, setSelectingWinner] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
@@ -116,6 +119,7 @@ export default function HostActionOverlay({
         {cardImageUrl && pendingAction.type === "face-emotion" && (
           <FaceEmotionImage
             imageUrl={cardImageUrl}
+            sessionId={sessionId}
             alt="card"
             className="ui-border-dark mx-auto block max-w-xs rounded"
           />

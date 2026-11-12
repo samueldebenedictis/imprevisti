@@ -1,14 +1,9 @@
-import { beforeEach, describe, expect, test, vi } from "vitest";
-
-// La sfida è disattivata nel codice: per i test la si considera attiva
-vi.mock("@/vars", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("@/vars")>()),
-  FACE_EMOTION_ENABLED: true,
-}));
+import { beforeEach, describe, expect, test } from "vitest";
 
 import { configUsesFaceEmotion } from "@/lib/faces-client";
 import type { SquareJSON } from "@/model/square/square";
 import { useConfigStore } from "@/store/config-store";
+import { useGameStore } from "@/store/game-store";
 
 const board = (types: SquareJSON["type"][]): SquareJSON[] =>
   types.map((type, number) => ({ number, type }));
@@ -59,37 +54,28 @@ describe("configUsesFaceEmotion", () => {
   });
 });
 
-describe("excludeFaceEmotion", () => {
+describe("volti della partita", () => {
   beforeEach(() => {
     useConfigStore.getState().actions.resetConfig();
   });
 
-  test("toglie la sfida dai tipi di casella", () => {
+  const createGame = () => {
     const { actions } = useConfigStore.getState();
-    actions.setSquareType("face-emotion", true);
-    actions.excludeFaceEmotion();
-    expect(useConfigStore.getState().squareTypes["face-emotion"]).toBe(false);
+    actions.setPlayerName(0, "Lucia");
+    actions.setPlayerName(1, "Renzo");
+    actions.createGame();
+    return useGameStore.getState().game;
+  };
+
+  test("di default volti illustrati", () => {
+    expect(useConfigStore.getState().faceSet).toBe("ai");
+    expect(createGame()?.getFaceSet()).toBe("ai");
   });
 
-  test("trasforma in normali le caselle della sfida nel tabellone personalizzato", () => {
-    const { actions } = useConfigStore.getState();
-    actions.setCustomSquares([
-      { number: 0, type: "normal" },
-      { number: 1, type: "face-emotion" },
-      { number: 2, type: "move", moveValue: 2 },
-      { number: 3, type: "normal" },
-    ]);
-    actions.excludeFaceEmotion();
-    expect(useConfigStore.getState().customSquares).toEqual([
-      { number: 0, type: "normal" },
-      { number: 1, type: "normal" },
-      { number: 2, type: "move", moveValue: 2 },
-      { number: 3, type: "normal" },
-    ]);
-  });
-
-  test("senza tabellone personalizzato resta null", () => {
-    useConfigStore.getState().actions.excludeFaceEmotion();
-    expect(useConfigStore.getState().customSquares).toBeNull();
+  test("con il codice: fotografie FACES", () => {
+    useConfigStore.getState().actions.setFaceSet("faces");
+    const game = createGame();
+    expect(game?.getFaceSet()).toBe("faces");
+    expect(game?.toJSON().faceSet).toBe("faces");
   });
 });

@@ -6,16 +6,31 @@ import { FACES_API_PREFIX } from "@/model/deck/face-emotion";
  * La licenza vieta di distribuirle: non sono tra i file pubblici, ma in un
  * archivio privato. Il Route Handler /api/faces/[file] le restituisce solo ai
  * dispositivi che hanno accettato il disclaimer (punto 4 del FACES Platform
- * Release Agreement), senza permetterne la memorizzazione nella cache.
+ * Release Agreement), in una partita avviata con un codice monouso dato
+ * dall'educatore, senza permetterne la memorizzazione nella cache.
  */
 
-/** Cookie con il token d'accesso rilasciato dopo l'accettazione. */
-export const FACES_ACCESS_COOKIE = "faces_access";
+/**
+ * Cookie con il token d'accesso rilasciato dopo codice e disclaimer.
+ * Nome diverso dal vecchio "faces_access" (path /api/faces), che il browser
+ * manderebbe per primo alle foto, prima di questo.
+ */
+export const FACES_ACCESS_COOKIE = "faces_grant";
 
 export const FACES_ACCESS_API = "/api/faces/access";
 
+/**
+ * Il cookie vale per tutte le API: serve anche all'avvio di una partita
+ * multigiocatore (/api/sessions/.../start), per legare il codice alla partita.
+ */
+export const FACES_COOKIE_PATH = "/api";
+
+export const FACES_CODES_API = "/api/faces/codes";
+
 export const isFacesImageUrl = (url: string) =>
-  url.startsWith(FACES_API_PREFIX) && url !== FACES_ACCESS_API;
+  url.startsWith(FACES_API_PREFIX) &&
+  url !== FACES_ACCESS_API &&
+  url !== FACES_CODES_API;
 
 /** Testo del disclaimer fornito da FACES, da accettare prima delle foto. */
 export const FACES_DISCLAIMER_EN =

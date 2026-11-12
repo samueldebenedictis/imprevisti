@@ -32,6 +32,8 @@ type PlayerActionViewProps =
       phase: "actor";
       actionType: string;
       card: unknown;
+      /** Partita: serve per l'accesso alle fotografie FACES. */
+      sessionId?: string;
     }
   | {
       phase: "target";
@@ -103,6 +105,7 @@ export default function PlayerActionView(props: PlayerActionViewProps) {
             imageUrl={imageUrl}
             alt="emotion"
             className="ui-border-dark mx-auto block w-full max-w-xs rounded"
+            sessionId={props.sessionId}
           />
         )}
         {imageUrl && props.actionType !== "face-emotion" && (

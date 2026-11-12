@@ -14,13 +14,46 @@ export async function fetchFacesAccess(): Promise<boolean> {
   }
 }
 
-/** Registra l'accettazione del disclaimer FACES per questo dispositivo. */
-export async function acceptFacesAccess(): Promise<boolean> {
+export type FacesAccessResult =
+  | "granted"
+  /** Codice inesistente, scaduto o già usato. */
+  | "invalid-code"
+  /** La partita multigiocatore non è stata avviata con un codice. */
+  | "no-session-access"
+  | "error";
+
+/**
+ * Registra l'accettazione del disclaimer FACES per questo dispositivo, con il
+ * codice dell'educatore (avvio della partita) o con la partita multigiocatore
+ * a cui il dispositivo partecipa.
+ */
+export async function acceptFacesAccess(
+  access: { code: string } | { sessionId: string },
+): Promise<FacesAccessResult> {
   try {
-    const res = await fetch(FACES_ACCESS_API, { method: "POST" });
-    return res.ok;
+    const res = await fetch(FACES_ACCESS_API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(access),
+    });
+    if (res.ok) return "granted";
+    const { error } = (await res.json().catch(() => ({}))) as {
+      error?: string;
+    };
+    return error === "invalid-code" || error === "no-session-access"
+      ? error
+      : "error";
   } catch {
-    return false;
+    return "error";
+  }
+}
+
+/** Partita senza fotografie FACES: toglie l'accesso a questo dispositivo. */
+export async function revokeFacesAccess(): Promise<void> {
+  try {
+    await fetch(FACES_ACCESS_API, { method: "DELETE" });
+  } catch {
+    // Senza rete il cookie resta, ma la partita usa comunque i volti illustrati
   }
 }
 

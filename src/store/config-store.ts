@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { generateSquares } from "@/app/utils/generate-squares";
 import { Board } from "@/model/board";
+import type { FaceSet } from "@/model/deck/face-emotion";
 import { Game as GameModel } from "@/model/game";
 import { Player } from "@/model/player";
 import type { SquareJSON } from "@/model/square/square";
@@ -37,6 +38,8 @@ export interface GameConfig {
   specialPercentage: number;
   customSquares: SquareJSON[] | null;
   battlesEnabled: boolean;
+  /** Volti di "Indovina l'emozione", scelti all'avvio (codice FACES o volti illustrati). */
+  faceSet: FaceSet;
 }
 
 export interface ConfigActions {
@@ -62,8 +65,7 @@ export interface ConfigActions {
   // Configurazione avanzata
   setCustomSquares: (squares: SquareJSON[]) => void;
   clearCustomSquares: () => void;
-  /** Toglie "Indovina l'emozione" dalla partita (disclaimer FACES non accettato). */
-  excludeFaceEmotion: () => void;
+  setFaceSet: (faceSet: FaceSet) => void;
 
   // Creazione partita
   createGame: () => void;
@@ -90,6 +92,7 @@ const defaultConfig: GameConfig = {
   specialPercentage: DEFAULT_SPECIAL_PERCENTAGE_SQUARES,
   customSquares: null,
   battlesEnabled: true,
+  faceSet: "ai",
 };
 
 export const useConfigStore = create<ConfigStore>()(
@@ -158,16 +161,7 @@ export const useConfigStore = create<ConfigStore>()(
 
         clearCustomSquares: () => set({ customSquares: null }),
 
-        excludeFaceEmotion: () =>
-          set((state) => ({
-            squareTypes: { ...state.squareTypes, "face-emotion": false },
-            customSquares:
-              state.customSquares?.map((square) =>
-                square.type === "face-emotion"
-                  ? { number: square.number, type: "normal" }
-                  : square,
-              ) ?? null,
-          })),
+        setFaceSet: (faceSet) => set({ faceSet }),
 
         resetConfig: () => set(defaultConfig),
 
@@ -233,7 +227,12 @@ export const useConfigStore = create<ConfigStore>()(
           );
 
           // Creo il Game
-          const game = new GameModel(board, 6, config.battlesEnabled);
+          const game = new GameModel(
+            board,
+            6,
+            config.battlesEnabled,
+            config.faceSet,
+          );
 
           const gameStore = useGameStore.getState();
           gameStore.actions.setGame(game);
@@ -260,6 +259,7 @@ export const useConfigStore = create<ConfigStore>()(
         specialPercentage: state.specialPercentage,
         customSquares: state.customSquares,
         battlesEnabled: state.battlesEnabled,
+        faceSet: state.faceSet,
       }),
     },
   ),
