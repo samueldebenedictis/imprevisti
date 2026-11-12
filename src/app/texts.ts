@@ -12,7 +12,7 @@ export const LABEL_MIME = "Mimo";
 export const LABEL_QUIZ = "Quiz";
 export const LABEL_BACKWRITE = "Parole alle spalle";
 export const LABEL_FACE_EMOTION = "Indovina l'emozione";
-export const LABEL_FILM = "Film";
+export const LABEL_EMOTION_VIDEO = "Emozioni in movimento";
 export const LABEL_MOVE = "Caselle movimento";
 export const LABEL_MUSIC_EMOTION = "Emozioni in musica";
 export const LABEL_PHYSICAL_TEST = "Test fisico";
@@ -46,7 +46,7 @@ export const MODAL_FACE_EMOTION_WRONG = "Sbagliato";
 export const FACES_DISCLAIMER_TITLE = "Prima di vedere la foto";
 export const FACES_SETUP_TITLE = "Fotografie FACES";
 export const FACES_SETUP_INTRO =
-  "La partita include la sfida \"Indovina l'emozione\". Con il codice dato dall'educatore si usano le fotografie del database FACES, che richiedono l'impegno qui sotto. Senza codice si gioca con volti illustrati.";
+  "La partita include sfide sulle emozioni. Con il codice dato dall'educatore si usano fotografie e video del database FACES, che richiedono l'impegno qui sotto. Senza codice si gioca con volti illustrati.";
 export const FACES_CODE_LABEL = "Codice dell'educatore";
 export const FACES_CODE_PLACEHOLDER = "Es. K7PM3X";
 export const FACES_SETUP_DECLINE = "Gioca senza codice";
@@ -61,11 +61,11 @@ export const FACES_DISCLAIMER_DECLINED =
 export const FACES_DISCLAIMER_SHOW_AGAIN = "Leggi di nuovo";
 export const FACES_DISCLAIMER_ERROR =
   "Impossibile registrare l'accettazione. Riprova.";
-export const MODAL_FILM_TITLE = "Guarda la scena!";
-export const MODAL_FILM_SHOW_ANSWER = "Mostra risposta";
-export const MODAL_FILM_ANSWER = "Emozione:";
-export const MODAL_FILM_CORRECT = "Corretto";
-export const MODAL_FILM_WRONG = "Sbagliato";
+export const MODAL_EMOTION_VIDEO_TITLE = "Emozioni in movimento!";
+export const MODAL_EMOTION_VIDEO_SHOW_ANSWER = "Mostra risposta";
+export const MODAL_EMOTION_VIDEO_ANSWER = "Emozione:";
+export const MODAL_EMOTION_VIDEO_CORRECT = "Corretto";
+export const MODAL_EMOTION_VIDEO_WRONG = "Sbagliato";
 // Mimo
 export const MODAL_MIME_TITLE = "Mimo!";
 export const MODAL_MIME_SHOW_TOPIC = "Mostra mimo";
@@ -138,8 +138,8 @@ export const MODAL_SPECIAL_EFFECT_INFO_WHAT_WOULD_YOU_DO =
   "Se un giocatore atterra su questa casella dovrà rispondere a una domanda ipotetica del tipo \"Cosa faresti se...\". Gli altri giocatori diranno se la risposta li convince e l'educatore registrerà l'esito. Se la risposta è convincente, il giocatore potrà avanzare di una casella. Altrimenti, salterà il prossimo turno.";
 export const MODAL_SPECIAL_EFFECT_INFO_FACE_EMOTION =
   "Il giocatore dovrà indovinare l'emozione espressa dal volto che gli verrà mostrato. Se risponde correttamente, potrà avanzare di una casella. Se sbaglia, dovrà saltare un turno.";
-export const MODAL_SPECIAL_EFFECT_INFO_FILM =
-  "Il giocatore dovrà guardare una breve scena di un film e indovinare l'emozione che trasmette. Se risponde correttamente, potrà avanzare di una casella. Se sbaglia, dovrà saltare un turno.";
+export const MODAL_SPECIAL_EFFECT_INFO_EMOTION_VIDEO =
+  "Il giocatore guarderà un breve video di un volto che passa da un'espressione neutra a un'emozione, e dovrà indovinare quale. Se risponde correttamente, potrà avanzare di una casella. Se sbaglia, dovrà saltare un turno.";
 
 // Game Save and Restore
 export const LABEL_SAVE_GAME_BUTTON = "Salva partita";
@@ -194,7 +194,8 @@ export const SQUARE_WHAT_WOULD_YOU_DO_TOP = "COSA";
 export const SQUARE_WHAT_WOULD_YOU_DO_BOTTOM = "FARESTI SE...";
 export const SQUARE_FACE_EMOTION_TOP = "INDOVINA";
 export const SQUARE_FACE_EMOTION_BOTTOM = "L'EMOZIONE";
-export const SQUARE_FILM = "FILM";
+export const SQUARE_EMOTION_VIDEO_TOP = "EMOZIONI";
+export const SQUARE_EMOTION_VIDEO_BOTTOM = "IN MOVIMENTO";
 
 // Advanced mode
 export const LABEL_ADVANCED_MODE = "Modalità avanzata";

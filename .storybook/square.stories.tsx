@@ -106,9 +106,9 @@ export const FaceEmotionSquare: Story = {
   },
 };
 
-export const FilmSquare: Story = {
+export const EmotionVideoSquare: Story = {
   args: {
     number: 23,
-    squareType: "film",
+    squareType: "emotion-video",
   },
 };

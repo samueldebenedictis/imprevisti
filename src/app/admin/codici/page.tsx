@@ -83,9 +83,10 @@ export default function FacesCodesPage() {
     <div className="ui-text-dark my-8 flex flex-col items-center justify-center p-4">
       <h1 className="ui-text-title m-2">Codici FACES</h1>
       <p className="ui-text-normal m-2 max-w-md text-center">
-        Ogni codice permette una sola partita con le fotografie FACES nella
-        sfida &quot;Indovina l&apos;emozione&quot;. Consegnalo solo a chi gioca
-        in presenza. Se non viene usato, scade dopo 24 ore.
+        Ogni codice permette una sola partita con fotografie e video FACES nelle
+        sfide &quot;Indovina l&apos;emozione&quot; ed &quot;Emozioni in
+        movimento&quot;. Consegnalo solo a chi gioca in presenza. Se non viene
+        usato, scade dopo 24 ore.
       </p>
       <form
         onSubmit={(e) => {

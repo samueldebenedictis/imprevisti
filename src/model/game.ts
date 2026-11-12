@@ -4,8 +4,8 @@ import {
   BackWriteDeck,
   type Deck,
   DictationDrawDeck,
+  EmotionVideoDeck,
   FaceEmotionDeck,
-  FilmDeck,
   MimeDeck,
   MusicEmotionDeck,
   PhysicalTestDeck,
@@ -18,8 +18,8 @@ import {
   BackWriteManager,
   BattleManager,
   DictationDrawManager,
+  EmotionVideoManager,
   FaceEmotionManager,
-  FilmManager,
   type GameActionResult,
   GameStateManager,
   MimeManager,
@@ -36,8 +36,8 @@ import { Player, type PlayerJSON } from "./player";
 import type {
   BackWrite,
   DictationDraw,
+  EmotionVideo,
   FaceEmotion,
-  Film,
   Mime,
   MusicEmotion,
   PhysicalTest,
@@ -70,7 +70,7 @@ export class Game {
   private quizDeck: Deck;
   private backWriteDeck: Deck;
   private faceEmotionDeck: Deck;
-  private filmDeck: Deck;
+  private emotionVideoDeck: Deck;
   private musicEmotionDeck: Deck;
   private physicalTestDeck: Deck;
   private whatWouldYouDoDeck: Deck;
@@ -86,7 +86,7 @@ export class Game {
   private quizManager: QuizManager;
   private backWriteManager: BackWriteManager;
   private faceEmotionManager: FaceEmotionManager;
-  private filmManager: FilmManager;
+  private emotionVideoManager: EmotionVideoManager;
   private musicEmotionManager: MusicEmotionManager;
   private physicalTestManager: PhysicalTestManager;
   private whatWouldYouDoManager: WhatWouldYouDoManager;
@@ -115,7 +115,7 @@ export class Game {
     this.quizDeck = new QuizDeck();
     this.backWriteDeck = new BackWriteDeck();
     this.faceEmotionDeck = new FaceEmotionDeck(faceSet);
-    this.filmDeck = new FilmDeck();
+    this.emotionVideoDeck = new EmotionVideoDeck();
     this.musicEmotionDeck = new MusicEmotionDeck();
     this.physicalTestDeck = new PhysicalTestDeck();
     this.whatWouldYouDoDeck = new WhatWouldYouDoDeck();
@@ -139,7 +139,7 @@ export class Game {
       this.physicalTestDeck,
       this.whatWouldYouDoDeck,
       this.dictationDrawDeck,
-      this.filmDeck,
+      this.emotionVideoDeck,
       this.dice,
       this.movementManager,
       this.gameStateManager,
@@ -153,7 +153,7 @@ export class Game {
     this.quizManager = new QuizManager(this.movementManager);
     this.backWriteManager = new BackWriteManager(this.movementManager);
     this.faceEmotionManager = new FaceEmotionManager(this.movementManager);
-    this.filmManager = new FilmManager(this.movementManager);
+    this.emotionVideoManager = new EmotionVideoManager(this.movementManager);
     this.musicEmotionManager = new MusicEmotionManager(this.movementManager);
     this.physicalTestManager = new PhysicalTestManager(this.movementManager);
     this.whatWouldYouDoManager = new WhatWouldYouDoManager(
@@ -236,7 +236,7 @@ export class Game {
       game.physicalTestDeck,
       game.whatWouldYouDoDeck,
       game.dictationDrawDeck,
-      game.filmDeck,
+      game.emotionVideoDeck,
       game.dice,
       game.movementManager, // movementManager also needs to be updated first
       reconstructedGameStateManager,
@@ -250,7 +250,7 @@ export class Game {
     game.quizManager = new QuizManager(game.movementManager);
     game.backWriteManager = new BackWriteManager(game.movementManager);
     game.faceEmotionManager = new FaceEmotionManager(game.movementManager);
-    game.filmManager = new FilmManager(game.movementManager);
+    game.emotionVideoManager = new EmotionVideoManager(game.movementManager);
     game.musicEmotionManager = new MusicEmotionManager(game.movementManager);
     game.physicalTestManager = new PhysicalTestManager(game.movementManager);
     game.whatWouldYouDoManager = new WhatWouldYouDoManager(
@@ -475,13 +475,19 @@ export class Game {
   }
 
   /**
-   * Risolve un'azione film utilizzando il FilmManager.
-   * @param filmAction - L'oggetto Film da risolvere
+   * Risolve un'azione film utilizzando il EmotionVideoManager.
+   * @param emotionVideoAction - L'oggetto EmotionVideo da risolvere
    * @param success - True se l'emozione della scena è stata indovinata, false altrimenti
    * @returns Un oggetto Battle se si verifica una collisione, null altrimenti
    */
-  resolveFilm(filmAction: Film, success: boolean): Battle | null {
-    return this.filmManager.resolveFilm(filmAction, success);
+  resolveEmotionVideo(
+    emotionVideoAction: EmotionVideo,
+    success: boolean,
+  ): Battle | null {
+    return this.emotionVideoManager.resolveEmotionVideo(
+      emotionVideoAction,
+      success,
+    );
   }
 
   // Getter per accesso ai dati del gioco

@@ -1,5 +1,5 @@
 import type { SquareJSON } from "@/model/square/square";
-import { FACE_EMOTION_ENABLED } from "@/vars";
+import { EMOTION_VIDEO_ENABLED, FACE_EMOTION_ENABLED } from "@/vars";
 import { FACES_ACCESS_API } from "./faces";
 
 /** Chiede al server se questo dispositivo ha già accettato il disclaimer FACES. */
@@ -59,20 +59,25 @@ export async function revokeFacesAccess(): Promise<void> {
 
 interface BoardChoice {
   numSquares: number;
-  squareTypes: { "face-emotion": boolean };
+  squareTypes: { "face-emotion": boolean; "emotion-video": boolean };
   customSquares: SquareJSON[] | null;
 }
 
 /**
- * Indica se la partita che sta per iniziare conterrà la sfida
- * "Indovina l'emozione", e quindi fotografie FACES.
+ * Indica se la partita che sta per iniziare può mostrare materiale FACES:
+ * "Indovina l'emozione" (fotografie) o "Emozioni in movimento" (clip).
+ * In quel caso all'avvio si chiede il codice dell'educatore.
  */
 export function configUsesFaceEmotion(config: BoardChoice): boolean {
-  if (!FACE_EMOTION_ENABLED) return false;
+  const enabled = new Set<string>();
+  if (FACE_EMOTION_ENABLED) enabled.add("face-emotion");
+  if (EMOTION_VIDEO_ENABLED) enabled.add("emotion-video");
   const usesCustomSquares =
     config.customSquares !== null &&
     config.customSquares.length === config.numSquares;
   if (usesCustomSquares)
-    return (config.customSquares ?? []).some((s) => s.type === "face-emotion");
-  return config.squareTypes["face-emotion"];
+    return (config.customSquares ?? []).some((s) => enabled.has(s.type));
+  return [...enabled].some(
+    (type) => config.squareTypes[type as keyof BoardChoice["squareTypes"]],
+  );
 }

@@ -2,8 +2,8 @@ import type { Board } from "../board";
 import type { Deck, Mime, Quiz } from "../deck";
 import type { BackWrite } from "../deck/backwrite";
 import type { DictationDraw } from "../deck/dictation-draw";
+import type { EmotionVideo } from "../deck/emotion-video";
 import type { FaceEmotion } from "../deck/face-emotion";
-import type { Film } from "../deck/film";
 import type { MusicEmotion } from "../deck/music-emotion";
 import type { PhysicalTest } from "../deck/physical-test";
 import type { WhatWouldYouDo } from "../deck/what-would-you-do";
@@ -21,7 +21,7 @@ export type CommandDependencies = {
   quizDeck: Deck;
   backWriteDeck: Deck;
   faceEmotionDeck: Deck;
-  filmDeck: Deck;
+  emotionVideoDeck: Deck;
   musicEmotionDeck: Deck;
   physicalTestDeck: Deck;
   whatWouldYouDoDeck: Deck;
@@ -48,7 +48,7 @@ export interface Command {
     | Quiz
     | BackWrite
     | FaceEmotion
-    | Film
+    | EmotionVideo
     | MusicEmotion
     | PhysicalTest
     | WhatWouldYouDo

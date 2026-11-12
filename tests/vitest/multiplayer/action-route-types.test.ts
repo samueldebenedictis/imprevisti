@@ -128,10 +128,13 @@ describe("POST /api/sessions/[id]/action — remaining action types", () => {
 
   test("film success: reads the { topic, videoUrl } card shape", async () => {
     const pendingAction: PendingAction = {
-      type: "film",
+      type: "emotion-video",
       card: {
-        topic: { cardTitle: "felicità", cardText: "scena-felicita" },
-        videoUrl: "/videos/film-placeholder.mp4",
+        topic: {
+          cardTitle: "felicità",
+          cardText: "donna-giovane-felicità-video",
+        },
+        videoUrl: "/videos/emotion-video-placeholder.mp4",
       },
       actorPlayerId: "0",
     };

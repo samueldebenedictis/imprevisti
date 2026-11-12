@@ -140,7 +140,7 @@ export default function Page() {
         onResolveQuiz={actions.resolveQuiz}
         onResolveBackWrite={actions.resolveBackWrite}
         onResolveFaceEmotion={actions.resolveFaceEmotion}
-        onResolveFilm={actions.resolveFilm}
+        onResolveEmotionVideo={actions.resolveEmotionVideo}
         onResolveMusicEmotion={actions.resolveMusicEmotion}
         onResolvePhysicalTest={actions.resolvePhysicalTest}
         onResolveWhatWouldYouDo={actions.resolveWhatWouldYouDo}

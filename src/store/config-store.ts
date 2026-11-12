@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { generateSquares } from "@/app/utils/generate-squares";
 import { Board } from "@/model/board";
+import { squaresForFaceSet } from "@/model/deck/emotion-video";
 import type { FaceSet } from "@/model/deck/face-emotion";
 import { Game as GameModel } from "@/model/game";
 import { Player } from "@/model/player";
@@ -10,8 +11,8 @@ import {
   DEFAULT_PLAYERS,
   DEFAULT_SPECIAL_PERCENTAGE_SQUARES,
   DEFAULT_SQUARES,
+  EMOTION_VIDEO_ENABLED,
   FACE_EMOTION_ENABLED,
-  FILM_ENABLED,
   MAX_PLAYERS,
   MAX_SQUARES,
   MIN_PLAYERS,
@@ -29,7 +30,7 @@ export interface GameConfig {
     move: boolean;
     backwrite: boolean;
     "face-emotion": boolean;
-    film: boolean;
+    "emotion-video": boolean;
     "music-emotion": boolean;
     "physical-test": boolean;
     "what-would-you-do": boolean;
@@ -83,7 +84,7 @@ const defaultConfig: GameConfig = {
     move: true,
     backwrite: true,
     "face-emotion": FACE_EMOTION_ENABLED,
-    film: FILM_ENABLED,
+    "emotion-video": EMOTION_VIDEO_ENABLED,
     "music-emotion": true,
     "physical-test": true,
     "what-would-you-do": true,
@@ -203,16 +204,18 @@ export const useConfigStore = create<ConfigStore>()(
             .slice(0, config.numPlayers)
             .map((name, id) => new Player(id, name.trim()));
 
-          // Generate le caselle (personalizzate o automatiche)
-          const squareJSON =
+          // Generate le caselle (personalizzate o automatiche), adattate ai volti
+          const squareJSON = squaresForFaceSet(
             config.customSquares &&
-            config.customSquares.length === config.numSquares
+              config.customSquares.length === config.numSquares
               ? config.customSquares
               : generateSquares(
                   config.numSquares,
                   config.squareTypes,
                   config.specialPercentage / 100,
-                );
+                ),
+            config.faceSet,
+          );
 
           // Creo il tabellone
           const board = Board.fromJSON(

@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
-/** Cartella dell'archivio Blob privato che contiene le fotografie FACES. */
+/** Cartella dell'archivio Blob privato con le fotografie e le clip FACES. */
 export const FACES_BLOB_FOLDER = "faces";
 
 export type FacesImage =
@@ -9,7 +9,7 @@ export type FacesImage =
   | { kind: "placeholder" };
 
 /**
- * Legge una fotografia FACES dall'archivio privato.
+ * Legge una fotografia o una clip FACES dall'archivio privato.
  *
  * - Produzione: Vercel Blob privato (BLOB_READ_WRITE_TOKEN impostato).
  * - Sviluppo locale: cartella indicata da FACES_LOCAL_DIR, fuori dal repository

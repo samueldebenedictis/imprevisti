@@ -42,6 +42,7 @@ import type { SessionState } from "@/types/session";
 
 const SECRET = "segreto-educatori";
 const FILE = "004_o_m_h_a.jpg";
+const VIDEO = "004_o_m_n_h.mp4";
 
 const json = (body: unknown) => ({
   method: "POST",
@@ -308,7 +309,7 @@ describe("avvio di una partita multigiocatore", () => {
       move: false,
       backwrite: false,
       "face-emotion": true,
-      film: false,
+      "emotion-video": false,
       "music-emotion": false,
       "physical-test": false,
       "what-would-you-do": false,
@@ -370,6 +371,33 @@ describe("avvio di una partita multigiocatore", () => {
     expect(started.facesGrantId).toBeUndefined();
   });
 
+  test("senza codice le clip diventano Indovina l'emozione", async () => {
+    const squares = Array.from({ length: 10 }, (_, number) => ({
+      number,
+      type: number === 3 ? "emotion-video" : "normal",
+    }));
+    const custom = { ...boardConfig, numSquares: 10, customSquares: squares };
+    const types = async (id: string) => {
+      await saveSession(id, session({ sessionId: id }));
+      await startPOST(
+        new Request(
+          `http://localhost/api/sessions/${id}/start`,
+          json({
+            hostToken: "host-tok",
+            boardConfig: custom,
+            faceSet: "faces",
+          }),
+        ),
+        { params: Promise.resolve({ id }) },
+      );
+      const started = (await getSession(id)) as SessionState;
+      return started.gameState?.board.squares[3].type;
+    };
+    expect(await types("VID01")).toBe("face-emotion");
+    await withAccess();
+    expect(await types("VID02")).toBe("emotion-video");
+  });
+
   test("host con cookie ma partita senza codice: volti illustrati", async () => {
     await withAccess();
     const started = await start("HOST03", "ai");
@@ -409,12 +437,31 @@ describe("/api/faces/[file]", () => {
     );
   });
 
+  test("le clip senza archivio rimandano al video segnaposto", async () => {
+    await withAccess();
+    const res = await getFile(VIDEO);
+    expect(res.status).toBe(307);
+    expect(res.headers.get("Location")).toBe(
+      "http://localhost/videos/emotion-video-placeholder.mp4",
+    );
+  });
+
+  test("solo le clip dei soggetti del mazzo, senza accesso 403", async () => {
+    expect((await getFile(VIDEO)).status).toBe(403);
+    await withAccess();
+    // Clip neutra e soggetto non usato dal gioco
+    for (const file of ["004_o_m_n_n.mp4", "082_m_m_n_n.mp4"]) {
+      expect((await getFile(file)).status).toBe(404);
+    }
+  });
+
   describe("con FACES_LOCAL_DIR", () => {
     let dir: string;
 
     beforeEach(async () => {
       dir = await mkdtemp(path.join(tmpdir(), "faces-"));
       await writeFile(path.join(dir, FILE), "jpeg");
+      await writeFile(path.join(dir, VIDEO), "mp4");
       process.env.FACES_LOCAL_DIR = dir;
     });
 
@@ -428,6 +475,17 @@ describe("/api/faces/[file]", () => {
       expect(res.status).toBe(200);
       expect(await res.text()).toBe("jpeg");
       expect(res.headers.get("Content-Type")).toBe("image/jpeg");
+      expect(res.headers.get("Cache-Control")).toBe(
+        "private, no-store, max-age=0",
+      );
+    });
+
+    test("restituisce la clip come video/mp4 senza cache", async () => {
+      await withAccess();
+      const res = await getFile(VIDEO);
+      expect(res.status).toBe(200);
+      expect(await res.text()).toBe("mp4");
+      expect(res.headers.get("Content-Type")).toBe("video/mp4");
       expect(res.headers.get("Cache-Control")).toBe(
         "private, no-store, max-age=0",
       );

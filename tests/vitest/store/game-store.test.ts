@@ -31,8 +31,8 @@ import {
   BackWrite,
   Card,
   DictationDraw,
+  EmotionVideo,
   FaceEmotion,
-  Film,
   Mime,
   MusicEmotion,
   PhysicalTest,
@@ -430,9 +430,9 @@ const challenges: {
     resolve: (s) => actions().resolveFaceEmotion(s),
   },
   {
-    type: "film",
-    make: (p) => new Film(p, card, "/videos/x.mp4"),
-    resolve: (s) => actions().resolveFilm(s),
+    type: "emotion-video",
+    make: (p) => new EmotionVideo(p, card, "/videos/x.mp4"),
+    resolve: (s) => actions().resolveEmotionVideo(s),
   },
   {
     type: "music-emotion",

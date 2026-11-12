@@ -9,7 +9,7 @@ export const SQUARE_TYPES: readonly SquareType[] = [
   "move",
   "backwrite",
   "face-emotion",
-  "film",
+  "emotion-video",
   "music-emotion",
   "physical-test",
   "what-would-you-do",

@@ -1,10 +1,12 @@
 import { Card } from "./card";
 import { Deck } from "./deck";
-import { filmCards } from "./film";
+import { emotionVideoCards } from "./emotion-video";
 
-export class FilmDeck extends Deck {
+export class EmotionVideoDeck extends Deck {
   constructor(
-    cards: Card[] = filmCards.map((el) => new Card(el.emotion, el.title)),
+    cards: Card[] = emotionVideoCards.map(
+      (el) => new Card(el.emotion, el.title),
+    ),
   ) {
     super(cards);
   }
@@ -16,6 +18,6 @@ export class FilmDeck extends Deck {
    */
   getVideoData(card: Card) {
     const cardText = card.cardText;
-    return filmCards.find((el) => el.title === cardText);
+    return emotionVideoCards.find((el) => el.title === cardText);
   }
 }

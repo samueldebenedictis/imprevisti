@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import PlayerActionView from "../src/app/components/player-action-view";
+import { emotionVideoStorybookCards } from "../src/model/deck/emotion-video";
 import { faceEmotionCards } from "../src/model/deck/face-emotion";
-import { filmCards } from "../src/model/deck/film";
 
 const meta = {
   title: "SpecialSquares/PlayerDevice/PlayerActionView",
@@ -114,56 +114,61 @@ export const FaceEmotionActorDisgusted: Story = {
 };
 
 // Forma reale inviata dal server: video fuori, testo della carta sotto "topic".
-// cardText è il titolo della scena (non l'emozione, che è la risposta).
-const makeFilmCard = (title: string) => {
-  const filmCard = filmCards.find((el) => el.title === title) as {
+// cardText è il titolo della clip (non l'emozione, che è la risposta).
+const makeEmotionVideoCard = (title: string) => {
+  const emotionVideoCard = emotionVideoStorybookCards.find(
+    (el) => el.title === title,
+  ) as {
     title: string;
     videoUrl: string;
     emotion: string;
   };
   return {
-    topic: { cardTitle: filmCard.emotion, cardText: filmCard.title },
-    videoUrl: filmCard.videoUrl,
+    topic: {
+      cardTitle: emotionVideoCard.emotion,
+      cardText: emotionVideoCard.title,
+    },
+    videoUrl: emotionVideoCard.videoUrl,
   };
 };
 
-export const FilmActor: Story = {
+export const EmotionVideoActor: Story = {
   args: {
     phase: "actor",
-    actionType: "film",
-    card: makeFilmCard("scena-felicita"),
+    actionType: "emotion-video",
+    card: makeEmotionVideoCard("donna-giovane-felicità-video"),
   },
 };
 
-export const FilmActorAngry: Story = {
+export const EmotionVideoActorAngry: Story = {
   args: {
     phase: "actor",
-    actionType: "film",
-    card: makeFilmCard("scena-rabbia"),
+    actionType: "emotion-video",
+    card: makeEmotionVideoCard("uomo-anziano-rabbia-video"),
   },
 };
 
-export const FilmActorSad: Story = {
+export const EmotionVideoActorSad: Story = {
   args: {
     phase: "actor",
-    actionType: "film",
-    card: makeFilmCard("scena-tristezza"),
+    actionType: "emotion-video",
+    card: makeEmotionVideoCard("uomo-giovane-tristezza-video"),
   },
 };
 
-export const FilmActorFearful: Story = {
+export const EmotionVideoActorFearful: Story = {
   args: {
     phase: "actor",
-    actionType: "film",
-    card: makeFilmCard("scena-paura"),
+    actionType: "emotion-video",
+    card: makeEmotionVideoCard("donna-anziana-paura-video"),
   },
 };
 
-export const FilmActorDisgusted: Story = {
+export const EmotionVideoActorDisgusted: Story = {
   args: {
     phase: "actor",
-    actionType: "film",
-    card: makeFilmCard("scena-disgusto"),
+    actionType: "emotion-video",
+    card: makeEmotionVideoCard("donna-adulta-disgusto-video"),
   },
 };
 

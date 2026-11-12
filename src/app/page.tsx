@@ -9,8 +9,8 @@ import {
 } from "@/lib/faces-client";
 import { useConfigStore } from "../store/config-store";
 import {
+  EMOTION_VIDEO_ENABLED,
   FACE_EMOTION_ENABLED,
-  FILM_ENABLED,
   MAX_PLAYERS,
   MAX_SQUARES,
   MIN_PLAYERS,
@@ -38,8 +38,8 @@ import {
   LABEL_BACKWRITE,
   LABEL_BATTLES_ENABLED,
   LABEL_DICTATION_DRAW,
+  LABEL_EMOTION_VIDEO,
   LABEL_FACE_EMOTION,
-  LABEL_FILM,
   LABEL_MIME,
   LABEL_MOVE,
   LABEL_MUSIC_EMOTION,
@@ -120,7 +120,9 @@ export default function Home() {
     ...(FACE_EMOTION_ENABLED
       ? [{ key: "face-emotion", label: LABEL_FACE_EMOTION }]
       : []),
-    ...(FILM_ENABLED ? [{ key: "film", label: LABEL_FILM }] : []),
+    ...(EMOTION_VIDEO_ENABLED
+      ? [{ key: "emotion-video", label: LABEL_EMOTION_VIDEO }]
+      : []),
     { key: "music-emotion", label: LABEL_MUSIC_EMOTION },
     { key: "physical-test", label: LABEL_PHYSICAL_TEST },
     { key: "what-would-you-do", label: LABEL_WHAT_WOULD_YOU_DO },

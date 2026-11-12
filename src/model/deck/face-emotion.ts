@@ -23,7 +23,7 @@ export class FaceEmotion {
  * Soggetti del dataset FACES (Ebner, Riediger & Lindenberger) usati per le carte.
  * Codice file: {id}_{eta}_{genere}_{emozione}_{versione}.jpg
  */
-const faceEmotionSubjects = [
+export const faceEmotionSubjects = [
   { id: "004", code: "o_m", title: "uomo-anziano" },
   { id: "066", code: "y_m", title: "uomo-giovane" },
   { id: "079", code: "o_f", title: "donna-anziana" },
@@ -32,7 +32,7 @@ const faceEmotionSubjects = [
   { id: "168", code: "m_f", title: "donna-adulta" },
 ];
 
-const faceEmotionLabels = [
+export const faceEmotionLabels = [
   { code: "h", emotion: "felicità" },
   { code: "a", emotion: "rabbia" },
   { code: "s", emotion: "tristezza" },
@@ -43,10 +43,15 @@ const faceEmotionLabels = [
 
 const faceEmotionVersions = ["a", "b"];
 
-/** Le fotografie FACES sono servite dal Route Handler /api/faces/[file]. */
+/** Fotografie e clip FACES sono servite dal Route Handler /api/faces/[file]. */
 export const FACES_API_PREFIX = "/api/faces/";
 
 export const facesImageUrl = (file: string) => `${FACES_API_PREFIX}${file}`;
+
+/** Emozioni giocabili (neutralità esclusa, troppo ambigua da indovinare). */
+export const playableFaceEmotionLabels = faceEmotionLabels.filter(
+  (label) => label.code !== "n",
+);
 
 /** Immagine senza volti per Storybook e per i test. */
 const FACE_PLACEHOLDER_URL = "/images/face-placeholder.svg";
@@ -72,7 +77,7 @@ const buildFaceEmotionCards = (
 
 /** Carte usate in partita: neutralità esclusa (troppo ambigua da indovinare). */
 export const faceEmotionCards = buildFaceEmotionCards(
-  faceEmotionLabels.filter((label) => label.code !== "n"),
+  playableFaceEmotionLabels,
   facesImageUrl,
 );
 
