@@ -121,6 +121,10 @@ describe("POST /api/sessions/[id]/join", () => {
     expect(res.status).toBe(200);
     const data = await res.json();
     expect(data.playerId).toBe("1");
+    // Segreto del giocatore: restituito e salvato, privato nella sessione
+    expect(data.playerSecret).toMatch(/^[0-9a-f-]{36}$/);
+    const saved = vi.mocked(sessionStore.saveSession).mock.calls.at(-1)?.[1];
+    expect(saved?.playerSecrets).toEqual([data.playerSecret]);
   });
 
   test("409 when game is already started", async () => {

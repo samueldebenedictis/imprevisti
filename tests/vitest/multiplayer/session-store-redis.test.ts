@@ -253,22 +253,31 @@ describe("codici FACES (Redis)", () => {
     process.env.KV_REST_API_TOKEN = "tok";
     delete process.env.REDIS_URL;
 
-    await saveFacesCode("K7PM3X");
+    await saveFacesCode("K7PM3XQ2");
     expect(kvSet).toHaveBeenCalledWith(
-      "faces-code:K7PM3X",
+      "faces-code:K7PM3XQ2",
       expect.objectContaining({ createdAt: expect.any(Number) }),
       { ex: FACES_CODE_TTL },
     );
 
     kvGetdel.mockResolvedValueOnce({ createdAt: 1 });
-    const grantId = await redeemFacesCode("K7PM3X");
-    expect(kvGetdel).toHaveBeenCalledWith("faces-code:K7PM3X");
-    expect(kvSet).toHaveBeenCalledWith(`faces-grant:${grantId}`, 1, {
+    const grantId = await redeemFacesCode("K7PM3XQ2");
+    expect(kvGetdel).toHaveBeenCalledWith("faces-code:K7PM3XQ2");
+    expect(kvSet).toHaveBeenCalledWith(
+      `faces-grant:${grantId}`,
+      { sessionId: null },
+      { ex: FACES_ACCESS_TTL_SECONDS },
+    );
+
+    // Codice per una multigiocatore: anche la chiave del permesso libero
+    kvGetdel.mockResolvedValueOnce({ createdAt: 1 });
+    const multiId = await redeemFacesCode("K7PM3XQ2", "multi");
+    expect(kvSet).toHaveBeenCalledWith(`faces-grant-free:${multiId}`, true, {
       ex: FACES_ACCESS_TTL_SECONDS,
     });
 
     kvGetdel.mockResolvedValueOnce(null);
-    expect(await redeemFacesCode("K7PM3X")).toBeNull();
+    expect(await redeemFacesCode("K7PM3XQ2")).toBeNull();
 
     await grantFacesAccess("tok-1", grantId as string);
     expect(kvSet).toHaveBeenCalledWith("faces-access:tok-1", grantId, {
@@ -278,7 +287,7 @@ describe("codici FACES (Redis)", () => {
       key === "faces-access:tok-1"
         ? grantId
         : key.startsWith("faces-grant:")
-          ? 1
+          ? { sessionId: null }
           : null,
     );
     expect(await getFacesAccessGrant("tok-1")).toBe(grantId);
@@ -291,20 +300,20 @@ describe("codici FACES (Redis)", () => {
     delete process.env.KV_REST_API_TOKEN;
     process.env.REDIS_URL = "redis://localhost:6379";
 
-    await saveFacesCode("K7PM3X");
+    await saveFacesCode("K7PM3XQ2");
     expect(ioSet).toHaveBeenCalledWith(
-      "faces-code:K7PM3X",
+      "faces-code:K7PM3XQ2",
       expect.stringContaining("createdAt"),
       "EX",
       FACES_CODE_TTL,
     );
 
     ioGetdel.mockResolvedValueOnce(JSON.stringify({ createdAt: 1 }));
-    const grantId = await redeemFacesCode("K7PM3X");
+    const grantId = await redeemFacesCode("K7PM3XQ2");
     expect(grantId).toMatch(/^[0-9a-f-]{36}$/);
 
     ioGetdel.mockResolvedValueOnce(null);
-    expect(await redeemFacesCode("K7PM3X")).toBeNull();
+    expect(await redeemFacesCode("K7PM3XQ2")).toBeNull();
 
     // Token valido ma permesso scaduto (chiave assente)
     ioGet.mockImplementation(async (key: string) =>

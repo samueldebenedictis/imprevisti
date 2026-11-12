@@ -210,9 +210,7 @@ async function facesSet(key: string, value: unknown, ttl: number) {
   memoryFaces.set(key, { value, expiresAt: Date.now() + ttl * 1000 });
 }
 
-async function facesGet(key: string): Promise<unknown> {
-  const redis = await getRedis();
-  if (redis) return redis.getValue(key);
+function memoryGet(key: string): unknown {
   const entry = memoryFaces.get(key);
   if (!entry) return null;
   if (entry.expiresAt < Date.now()) {
@@ -222,11 +220,20 @@ async function facesGet(key: string): Promise<unknown> {
   return entry.value;
 }
 
-/** Legge e cancella in un solo passo: un codice non si può usare due volte. */
+async function facesGet(key: string): Promise<unknown> {
+  const redis = await getRedis();
+  if (redis) return redis.getValue(key);
+  return memoryGet(key);
+}
+
+/**
+ * Legge e cancella in un solo passo (GETDEL; in memoria senza await in mezzo):
+ * di due richieste contemporanee solo una trova il valore.
+ */
 async function facesTake(key: string): Promise<unknown> {
   const redis = await getRedis();
   if (redis) return redis.take(key);
-  const value = await facesGet(key);
+  const value = memoryGet(key);
   memoryFaces.delete(key);
   return value;
 }
@@ -240,15 +247,31 @@ export async function saveFacesCode(code: string): Promise<void> {
   );
 }
 
+/** Partita per cui si usa il codice: schermo singolo o multigiocatore. */
+export type FacesGameMode = "single" | "multi";
+
+/** Permesso: la partita a cui è legato (null finché la multigiocatore non parte). */
+interface FacesGrant {
+  sessionId: string | null;
+}
+
 /**
  * Usa un codice: se è valido lo cancella e crea un permesso per la partita.
+ * Solo un permesso "multi" può poi essere legato a una partita
+ * multigiocatore, e una volta sola (chiave faces-grant-free).
  * @returns l'id del permesso, oppure null se il codice non esiste, è scaduto o è già stato usato
  */
-export async function redeemFacesCode(code: string): Promise<string | null> {
+export async function redeemFacesCode(
+  code: string,
+  mode: FacesGameMode = "single",
+): Promise<string | null> {
   const found = await facesTake(`faces-code:${code}`);
   if (found === null) return null;
   const grantId = crypto.randomUUID();
-  await facesSet(`faces-grant:${grantId}`, 1, SESSION_TTL);
+  const grant: FacesGrant = { sessionId: null };
+  await facesSet(`faces-grant:${grantId}`, grant, SESSION_TTL);
+  if (mode === "multi")
+    await facesSet(`faces-grant-free:${grantId}`, true, SESSION_TTL);
   return grantId;
 }
 
@@ -258,19 +281,37 @@ export async function isFacesGrantActive(grantId: string): Promise<boolean> {
 
 /**
  * Lega il permesso a una partita multigiocatore: un codice vale per una sola
- * partita, quindi un permesso già usato da un'altra partita viene rifiutato.
- * Da qui l'accesso dura quanto la partita.
- * @returns true se il permesso è attivo e libero (o già di questa partita)
+ * partita. La chiave faces-grant-free si consuma con GETDEL, quindi tra due
+ * avvii contemporanei (anche di partite diverse) ne vince uno solo. Da qui
+ * l'accesso dura quanto la partita.
+ * @returns true se il permesso era libero (o è già di questa partita)
  */
 export async function bindFacesGrant(
   grantId: string,
   sessionId: string,
 ): Promise<boolean> {
-  const owner = await facesGet(`faces-grant:${grantId}`);
-  if (owner === null) return false;
-  if (owner !== 1 && owner !== sessionId) return false;
-  await facesSet(`faces-grant:${grantId}`, sessionId, SESSION_TTL);
+  if (!(await isFacesGrantActive(grantId))) return false;
+  if ((await facesTake(`faces-grant-free:${grantId}`)) === null) {
+    const grant = (await facesGet(
+      `faces-grant:${grantId}`,
+    )) as FacesGrant | null;
+    return grant?.sessionId === sessionId;
+  }
+  const grant: FacesGrant = { sessionId };
+  await facesSet(`faces-grant:${grantId}`, grant, SESSION_TTL);
   return true;
+}
+
+/** Il segreto è dell'host o di un giocatore della partita. */
+export function isSessionMember(
+  session: SessionState,
+  secret: unknown,
+): boolean {
+  if (typeof secret !== "string" || !secret) return false;
+  return (
+    secret === session.hostToken ||
+    (session.playerSecrets ?? []).includes(secret)
+  );
 }
 
 /** Registra il disclaimer accettato da un dispositivo, per un permesso. */
@@ -295,6 +336,11 @@ export async function hasFacesAccess(token: string): Promise<boolean> {
 }
 
 export function toPublicSession(session: SessionState): PublicSessionState {
-  const { hostToken: _, facesGrantId: __, ...pub } = session;
+  const {
+    hostToken: _,
+    facesGrantId: __,
+    playerSecrets: ___,
+    ...pub
+  } = session;
   return pub;
 }

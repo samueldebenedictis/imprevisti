@@ -48,7 +48,7 @@ export const FACES_SETUP_TITLE = "Fotografie FACES";
 export const FACES_SETUP_INTRO =
   "La partita include sfide sulle emozioni. Con il codice dato dall'educatore si usano fotografie e video del database FACES, che richiedono l'impegno qui sotto. Senza codice si gioca con volti illustrati.";
 export const FACES_CODE_LABEL = "Codice dell'educatore";
-export const FACES_CODE_PLACEHOLDER = "Es. K7PM3X";
+export const FACES_CODE_PLACEHOLDER = "Es. K7PM-3XQ2";
 export const FACES_SETUP_DECLINE = "Gioca senza codice";
 export const FACES_CODE_MISSING = "Inserisci il codice dell'educatore.";
 export const FACES_CODE_INVALID = "Codice non valido, scaduto o già usato.";

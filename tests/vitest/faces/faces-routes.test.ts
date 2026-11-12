@@ -27,7 +27,7 @@ import {
 } from "@/app/api/faces/access/route";
 import { POST as codesPOST } from "@/app/api/faces/codes/route";
 import { POST as startPOST } from "@/app/api/sessions/[id]/start/route";
-import { FACES_ACCESS_COOKIE } from "@/lib/faces";
+import { FACES_ACCESS_COOKIE, formatFacesCode } from "@/lib/faces";
 import {
   bindFacesGrant,
   FACES_ACCESS_TTL_SECONDS,
@@ -58,7 +58,12 @@ const post = (
   accessPOST(
     new Request(url, {
       ...json(body),
-      headers: { "Content-Type": "application/json", ...headers },
+      // IP diverso a ogni richiesta, così il limite ai tentativi non interferisce
+      headers: {
+        "Content-Type": "application/json",
+        "x-forwarded-for": crypto.randomUUID(),
+        ...headers,
+      },
     }),
   );
 
@@ -69,7 +74,8 @@ const requestCode = (body: unknown = { secret: SECRET }) =>
 const newCode = async () => (await (await requestCode()).json()).code as string;
 
 /** Dispositivo con accesso: codice usato e disclaimer accettato. */
-const withAccess = async () => post({ code: await newCode() });
+const withAccess = async (mode: "single" | "multi" = "multi") =>
+  post({ code: await newCode(), mode });
 
 const granted = async () => (await (await accessGET()).json()).granted;
 
@@ -105,14 +111,20 @@ afterEach(() => {
 });
 
 describe("/api/faces/codes", () => {
-  test("genera un codice di 6 caratteri valido 24 ore", async () => {
+  test("genera un codice di 8 caratteri valido 24 ore", async () => {
     const before = Date.now();
     const res = await requestCode();
     expect(res.status).toBe(200);
     expect(res.headers.get("Cache-Control")).toContain("no-store");
     const { code, expiresAt } = await res.json();
-    expect(code).toMatch(/^[A-HJKMNP-Z2-9]{6}$/);
+    expect(code).toMatch(/^[A-HJKMNP-Z2-9]{8}$/);
     expect(expiresAt).toBeGreaterThanOrEqual(before + FACES_CODE_TTL * 1000);
+  });
+
+  test("mostrato in due gruppi, accettato anche così", async () => {
+    const code = await newCode();
+    expect(formatFacesCode(code)).toBe(`${code.slice(0, 4)}-${code.slice(4)}`);
+    expect((await post({ code: formatFacesCode(code) })).status).toBe(200);
   });
 
   test("codici diversi a ogni richiesta", async () => {
@@ -178,7 +190,7 @@ describe("/api/faces/access con il codice dell'educatore", () => {
   });
 
   test("codice inventato o di formato sbagliato: 403", async () => {
-    for (const code of ["AAAAAA", "ABC", "0O1IL0", ""]) {
+    for (const code of ["AAAAAAAA", "AAAAAA", "ABC", "0O1IL0AA", ""]) {
       const res = await post({ code });
       expect(res.status).toBe(403);
       expect(await res.json()).toMatchObject({ error: "invalid-code" });
@@ -264,19 +276,40 @@ function session(overrides: Partial<SessionState> = {}): SessionState {
 
 describe("/api/faces/access dai telefoni di una partita multigiocatore", () => {
   test("partita avviata con un codice: accesso dopo il disclaimer", async () => {
-    await saveFacesCode("K7PM3X");
-    const grantId = (await redeemFacesCode("K7PM3X")) as string;
+    await saveFacesCode("K7PM3XQ2");
+    const grantId = (await redeemFacesCode("K7PM3XQ2")) as string;
     await saveSession("FACE01", session({ facesGrantId: grantId }));
 
-    const res = await post({ sessionId: "FACE01" });
+    const res = await post({ sessionId: "FACE01", secret: "host-tok" });
     expect(res.status).toBe(200);
     expect(await granted()).toBe(true);
+  });
+
+  test("serve il segreto dell'host o di un giocatore della partita", async () => {
+    await saveFacesCode("K7PM3WQ2");
+    const grantId = (await redeemFacesCode("K7PM3WQ2", "multi")) as string;
+    await saveSession(
+      "FACE04",
+      session({
+        sessionId: "FACE04",
+        facesGrantId: grantId,
+        playerSecrets: ["segreto-alice"],
+      }),
+    );
+    for (const secret of [undefined, "", "inventato", 42]) {
+      const res = await post({ sessionId: "FACE04", secret });
+      expect(res.status).toBe(403);
+      expect(jar.has(FACES_ACCESS_COOKIE)).toBe(false);
+    }
+    expect(
+      (await post({ sessionId: "FACE04", secret: "segreto-alice" })).status,
+    ).toBe(200);
   });
 
   test("partita senza codice o inesistente: 403", async () => {
     await saveSession("FACE02", session({ sessionId: "FACE02" }));
     for (const sessionId of ["FACE02", "NOPE99"]) {
-      const res = await post({ sessionId });
+      const res = await post({ sessionId, secret: "host-tok" });
       expect(res.status).toBe(403);
       expect(await res.json()).toMatchObject({ error: "no-session-access" });
     }
@@ -284,16 +317,21 @@ describe("/api/faces/access dai telefoni di una partita multigiocatore", () => {
 
   test("permesso scaduto: 403", async () => {
     vi.useFakeTimers({ toFake: ["Date"] });
-    await saveFacesCode("K7PM3Y");
-    const grantId = (await redeemFacesCode("K7PM3Y")) as string;
+    await saveFacesCode("K7PM3YQ2");
+    const grantId = (await redeemFacesCode("K7PM3YQ2")) as string;
     await saveSession("FACE03", session({ facesGrantId: grantId }));
     vi.setSystemTime(Date.now() + FACES_ACCESS_TTL_SECONDS * 1000 + 1000);
-    expect((await post({ sessionId: "FACE03" })).status).toBe(403);
+    expect(
+      (await post({ sessionId: "FACE03", secret: "host-tok" })).status,
+    ).toBe(403);
   });
 
   test("il permesso non compare nello stato pubblico della partita", () => {
-    const pub = toPublicSession(session({ facesGrantId: "segreto" }));
+    const pub = toPublicSession(
+      session({ facesGrantId: "segreto", playerSecrets: ["s"] }),
+    );
     expect(pub).not.toHaveProperty("facesGrantId");
+    expect(pub).not.toHaveProperty("playerSecrets");
     expect(pub).not.toHaveProperty("hostToken");
   });
 });
@@ -341,7 +379,9 @@ describe("avvio di una partita multigiocatore", () => {
 
     // Un telefono della partita ottiene l'accesso
     jar.clear();
-    expect((await post({ sessionId: "HOST01" })).status).toBe(200);
+    expect(
+      (await post({ sessionId: "HOST01", secret: "host-tok" })).status,
+    ).toBe(200);
   });
 
   test("un codice vale per una sola partita", async () => {
@@ -353,7 +393,21 @@ describe("avvio di una partita multigiocatore", () => {
     expect(second.facesGrantId).toBeUndefined();
     // Il telefono di un giocatore della prima partita ha ancora accesso
     jar.clear();
-    expect((await post({ sessionId: "HOST05" })).status).toBe(200);
+    expect(
+      (await post({ sessionId: "HOST05", secret: "host-tok" })).status,
+    ).toBe(200);
+  });
+
+  test("codice usato su schermo singolo: non vale per una multigiocatore", async () => {
+    await withAccess("single");
+    const started = await start("HOST08", "faces");
+    expect(started.gameState?.faceSet).toBe("ai");
+    expect(started.facesGrantId).toBeUndefined();
+  });
+
+  test("modalità sconosciuta: trattata come schermo singolo", async () => {
+    await post({ code: await newCode(), mode: "altro" });
+    expect((await start("HOST09", "faces")).gameState?.faceSet).toBe("ai");
   });
 
   test("permesso scaduto all'avvio: volti illustrati", async () => {
@@ -504,10 +558,34 @@ describe("bindFacesGrant", () => {
   });
 
   test("stessa partita: sempre accettato; altra partita: rifiutato", async () => {
-    await saveFacesCode("K7PM3Z");
-    const grantId = (await redeemFacesCode("K7PM3Z")) as string;
+    await saveFacesCode("K7PM3ZQ2");
+    const grantId = (await redeemFacesCode("K7PM3ZQ2", "multi")) as string;
     expect(await bindFacesGrant(grantId, "S1")).toBe(true);
     expect(await bindFacesGrant(grantId, "S1")).toBe(true);
     expect(await bindFacesGrant(grantId, "S2")).toBe(false);
+  });
+
+  test("permesso da schermo singolo: mai legato", async () => {
+    await saveFacesCode("K7PM3VQ2");
+    const grantId = (await redeemFacesCode("K7PM3VQ2")) as string;
+    expect(await bindFacesGrant(grantId, "S1")).toBe(false);
+  });
+
+  test("id di partita numerico: nessuna confusione con il permesso libero", async () => {
+    await saveFacesCode("K7PM3UQ2");
+    const grantId = (await redeemFacesCode("K7PM3UQ2", "multi")) as string;
+    expect(await bindFacesGrant(grantId, "123456")).toBe(true);
+    expect(await bindFacesGrant(grantId, "123456")).toBe(true);
+    expect(await bindFacesGrant(grantId, "1")).toBe(false);
+  });
+
+  test("due avvii contemporanei di partite diverse: ne vince uno", async () => {
+    await saveFacesCode("K7PM3TQ2");
+    const grantId = (await redeemFacesCode("K7PM3TQ2", "multi")) as string;
+    const results = await Promise.all([
+      bindFacesGrant(grantId, "S1"),
+      bindFacesGrant(grantId, "S2"),
+    ]);
+    expect(results.filter(Boolean)).toHaveLength(1);
   });
 });

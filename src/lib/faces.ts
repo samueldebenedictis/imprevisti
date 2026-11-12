@@ -38,3 +38,7 @@ export const FACES_DISCLAIMER_EN =
 
 export const FACES_DISCLAIMER_IT =
   "Mi impegno a non distribuire, pubblicare, copiare o diffondere in alcun modo a terzi le immagini che mi verranno mostrate.";
+
+/** Codice da mostrare all'educatore, in due gruppi: K7PM-3XQ2. */
+export const formatFacesCode = (code: string) =>
+  `${code.slice(0, 4)}-${code.slice(4)}`;

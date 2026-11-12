@@ -1,7 +1,11 @@
 import type React from "react";
 import { useEffect, useState } from "react";
 import { isFacesImageUrl } from "@/lib/faces";
-import { acceptFacesAccess, fetchFacesAccess } from "@/lib/faces-client";
+import {
+  acceptFacesAccess,
+  fetchFacesAccess,
+  loadSessionSecret,
+} from "@/lib/faces-client";
 import {
   FACES_DISCLAIMER_DECLINED,
   FACES_DISCLAIMER_ERROR,
@@ -65,7 +69,10 @@ const FacesAccessGate: React.FC<FacesAccessGateProps> = ({
 
   const accept = async () => {
     if (!sessionId) return;
-    const result = await acceptFacesAccess({ sessionId });
+    const result = await acceptFacesAccess({
+      sessionId,
+      secret: loadSessionSecret(sessionId),
+    });
     if (result === "granted") setAccess("granted");
     else setAccess(result === "no-session-access" ? "unavailable" : "error");
   };

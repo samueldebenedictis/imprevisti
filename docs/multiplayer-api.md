@@ -95,7 +95,7 @@ A player joins the session.
 
 Body: `{ playerName: string }` (max 50 chars, validated server-side)
 
-Response: `{ playerId: string }` — numeric string ("0", "1", ...)
+Response: `{ playerId: string, playerSecret: string }` — `playerId` is a numeric string ("0", "1", ...); `playerSecret` is a random UUID kept in `session.playerSecrets` (never public), saved by the phone in `localStorage` (`playerSecret:{sessionId}`) and sent to `POST /api/faces/access {sessionId, secret}` to see FACES photos and clips
 
 ---
 

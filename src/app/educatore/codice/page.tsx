@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FACES_CODES_API } from "@/lib/faces";
+import { FACES_CODES_API, formatFacesCode } from "@/lib/faces";
 import Button from "../../components/ui/button";
 import Input from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
@@ -127,7 +127,7 @@ export default function FacesCodesPage() {
             className="my-2 font-bold font-mono text-4xl tracking-widest"
             data-testid="faces-code"
           >
-            {latest.code}
+            {formatFacesCode(latest.code)}
           </p>
           <p className="text-gray-600 text-sm">
             Valido fino al {formatTime(latest.expiresAt)}, se non usato
@@ -141,7 +141,7 @@ export default function FacesCodesPage() {
           <ul className="font-mono text-sm">
             {previous.map(({ code, expiresAt }) => (
               <li key={code}>
-                {code} · scade il {formatTime(expiresAt)}
+                {formatFacesCode(code)} · scade il {formatTime(expiresAt)}
               </li>
             ))}
           </ul>

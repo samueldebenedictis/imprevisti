@@ -29,6 +29,8 @@ export interface SessionState {
   hostToken: string; // segreto per autorizzare azioni host
   /** Permesso FACES della partita (codice dell'educatore usato dall'host). Non pubblico. */
   facesGrantId?: string;
+  /** Segreti dei giocatori (dati da /join), per l'accesso FACES. Non pubblici. */
+  playerSecrets?: string[];
   players: SessionPlayer[];
   started: boolean;
   gameState: GameJSON | null;
@@ -44,5 +46,5 @@ export interface SessionState {
 // Versione pubblica senza segreti
 export type PublicSessionState = Omit<
   SessionState,
-  "hostToken" | "facesGrantId"
+  "hostToken" | "facesGrantId" | "playerSecrets"
 >;

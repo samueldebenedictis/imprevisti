@@ -5,7 +5,8 @@ import { createHash, randomInt, timingSafeEqual } from "node:crypto";
  * Alfabeto senza caratteri che si confondono (0/O, 1/I/L).
  */
 const CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
-export const FACES_CODE_LENGTH = 6;
+// 8 caratteri: 31^8 ≈ 852 miliardi di combinazioni, impossibili da indovinare
+export const FACES_CODE_LENGTH = 8;
 
 export function generateFacesCode(): string {
   return Array.from(

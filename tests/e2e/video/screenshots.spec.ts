@@ -85,7 +85,7 @@ test("screenshot-faces-setup-modal", async ({ page }) => {
   await expect(homePage.facesDeclineButton).toBeVisible();
   await expect(page).toHaveScreenshot("faces-setup-modal.png");
 
-  await page.getByLabel("Codice dell'educatore").fill("K7PM3X");
+  await page.getByLabel("Codice dell'educatore").fill("K7PM3XQ2");
   await page.getByRole("button", { name: "Accetto" }).click();
   await expect(page.getByText(FACES_CODE_INVALID)).toBeVisible();
   await expect(page).toHaveScreenshot("faces-setup-modal-invalid.png");
@@ -100,7 +100,7 @@ test("screenshot-faces-codes", async ({ page }) => {
       status: 200,
       contentType: "application/json",
       body: JSON.stringify({
-        code: "K7PM3X",
+        code: "K7PM3XQ2",
         expiresAt: Date.UTC(2026, 10, 13, 9, 30),
       }),
     }),
@@ -109,7 +109,7 @@ test("screenshot-faces-codes", async ({ page }) => {
   await page.getByLabel("Codice di accesso educatori").fill("test-secret");
   await page.getByRole("button", { name: "Genera un codice" }).click();
 
-  await expect(page.getByTestId("faces-code")).toHaveText("K7PM3X");
+  await expect(page.getByTestId("faces-code")).toHaveText("K7PM-3XQ2");
   await expect(page).toHaveScreenshot("faces-codes.png", { fullPage: true });
 });
 

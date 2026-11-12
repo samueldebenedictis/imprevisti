@@ -22,13 +22,45 @@ export type FacesAccessResult =
   | "no-session-access"
   | "error";
 
+export type FacesAccessRequest =
+  /** Codice dell'educatore, per una partita a schermo singolo o multigiocatore. */
+  | { code: string; mode: "single" | "multi" }
+  /** Partita multigiocatore, con il segreto dell'host o del giocatore. */
+  | { sessionId: string; secret: string | null };
+
+const playerSecretKey = (sessionId: string) => `playerSecret:${sessionId}`;
+
+/** Salva il segreto ricevuto entrando in una partita come giocatore. */
+export function savePlayerSecret(sessionId: string, secret: string): void {
+  try {
+    localStorage.setItem(playerSecretKey(sessionId), secret);
+  } catch {
+    // Senza storage il telefono non potrà vedere le foto FACES
+  }
+}
+
+/**
+ * Segreto con cui questo dispositivo partecipa alla partita: quello del
+ * giocatore, oppure il token dell'host (tabellone).
+ */
+export function loadSessionSecret(sessionId: string): string | null {
+  try {
+    return (
+      localStorage.getItem(playerSecretKey(sessionId)) ??
+      localStorage.getItem("hostToken")
+    );
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Registra l'accettazione del disclaimer FACES per questo dispositivo, con il
  * codice dell'educatore (avvio della partita) o con la partita multigiocatore
  * a cui il dispositivo partecipa.
  */
 export async function acceptFacesAccess(
-  access: { code: string } | { sessionId: string },
+  access: FacesAccessRequest,
 ): Promise<FacesAccessResult> {
   try {
     const res = await fetch(FACES_ACCESS_API, {

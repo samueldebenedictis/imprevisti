@@ -3,7 +3,9 @@ import { FACES_ACCESS_API } from "@/lib/faces";
 import {
   acceptFacesAccess,
   fetchFacesAccess,
+  loadSessionSecret,
   revokeFacesAccess,
+  savePlayerSecret,
 } from "@/lib/faces-client";
 
 const respond = (ok: boolean, body: unknown = {}) =>
@@ -50,19 +52,19 @@ describe("acceptFacesAccess", () => {
   test("invia codice o partita con POST", async () => {
     const fetchMock = respond(true);
     vi.stubGlobal("fetch", fetchMock);
-    await expect(acceptFacesAccess({ code: "K7PM3X" })).resolves.toBe(
-      "granted",
-    );
+    await expect(
+      acceptFacesAccess({ code: "K7PM3XQ2", mode: "single" }),
+    ).resolves.toBe("granted");
     expect(fetchMock).toHaveBeenCalledWith(FACES_ACCESS_API, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code: "K7PM3X" }),
+      body: JSON.stringify({ code: "K7PM3XQ2", mode: "single" }),
     });
-    await acceptFacesAccess({ sessionId: "ABC123" });
+    await acceptFacesAccess({ sessionId: "ABC123", secret: "s" });
     expect(fetchMock).toHaveBeenLastCalledWith(
       FACES_ACCESS_API,
       expect.objectContaining({
-        body: JSON.stringify({ sessionId: "ABC123" }),
+        body: JSON.stringify({ sessionId: "ABC123", secret: "s" }),
       }),
     );
   });
@@ -73,7 +75,9 @@ describe("acceptFacesAccess", () => {
     ["missing-code", "error"],
   ])("errore %s dal server: %s", async (error, expected) => {
     vi.stubGlobal("fetch", respond(false, { error }));
-    await expect(acceptFacesAccess({ code: "X" })).resolves.toBe(expected);
+    await expect(
+      acceptFacesAccess({ code: "X", mode: "single" }),
+    ).resolves.toBe(expected);
   });
 
   test("risposta d'errore senza JSON", async () => {
@@ -86,7 +90,9 @@ describe("acceptFacesAccess", () => {
         },
       })),
     );
-    await expect(acceptFacesAccess({ code: "X" })).resolves.toBe("error");
+    await expect(
+      acceptFacesAccess({ code: "X", mode: "single" }),
+    ).resolves.toBe("error");
   });
 
   test("errore se la richiesta fallisce", async () => {
@@ -96,7 +102,9 @@ describe("acceptFacesAccess", () => {
         throw new Error("offline");
       }),
     );
-    await expect(acceptFacesAccess({ code: "X" })).resolves.toBe("error");
+    await expect(
+      acceptFacesAccess({ code: "X", mode: "single" }),
+    ).resolves.toBe("error");
   });
 });
 
@@ -118,5 +126,37 @@ describe("revokeFacesAccess", () => {
       }),
     );
     await expect(revokeFacesAccess()).resolves.toBeUndefined();
+  });
+});
+
+describe("segreto della partita multigiocatore", () => {
+  afterEach(() => localStorage.clear());
+
+  test("telefono: il segreto del giocatore", () => {
+    localStorage.setItem("hostToken", "host-tok");
+    savePlayerSecret("ABC123", "segreto-alice");
+    expect(loadSessionSecret("ABC123")).toBe("segreto-alice");
+  });
+
+  test("tabellone: il token dell'host", () => {
+    localStorage.setItem("hostToken", "host-tok");
+    expect(loadSessionSecret("ABC123")).toBe("host-tok");
+  });
+
+  test("nessun segreto: null", () => {
+    expect(loadSessionSecret("ABC123")).toBeNull();
+  });
+
+  test("storage non disponibile: nessun errore", () => {
+    const fail = () => {
+      throw new Error("blocked");
+    };
+    const spies = [
+      vi.spyOn(Storage.prototype, "getItem").mockImplementation(fail),
+      vi.spyOn(Storage.prototype, "setItem").mockImplementation(fail),
+    ];
+    expect(() => savePlayerSecret("ABC123", "s")).not.toThrow();
+    expect(loadSessionSecret("ABC123")).toBeNull();
+    for (const spy of spies) spy.mockRestore();
   });
 });

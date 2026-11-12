@@ -4,10 +4,12 @@ import { FACES_ACCESS_COOKIE, FACES_COOKIE_PATH } from "@/lib/faces";
 import { isFacesCodeFormat, normalizeFacesCode } from "@/lib/faces-codes";
 import {
   FACES_ACCESS_TTL_SECONDS,
+  type FacesGameMode,
   getSession,
   grantFacesAccess,
   hasFacesAccess,
   isFacesGrantActive,
+  isSessionMember,
   redeemFacesCode,
 } from "@/lib/session-store";
 
@@ -23,23 +25,33 @@ export async function GET() {
   return NextResponse.json({ granted }, { headers: NO_STORE });
 }
 
-/** Permesso richiesto: con il codice dell'educatore o da una partita multigiocatore. */
+/**
+ * Permesso richiesto: con il codice dell'educatore o da una partita
+ * multigiocatore, con il segreto dell'host o di un giocatore che vi partecipa.
+ */
 async function findGrant(body: unknown): Promise<string | NextResponse> {
-  const { code, sessionId } = (body ?? {}) as {
+  const { code, mode, sessionId, secret } = (body ?? {}) as {
     code?: unknown;
+    mode?: unknown;
     sessionId?: unknown;
+    secret?: unknown;
   };
 
   if (typeof code === "string") {
     const normalized = normalizeFacesCode(code);
     if (!isFacesCodeFormat(normalized)) return deny("invalid-code");
-    return (await redeemFacesCode(normalized)) ?? deny("invalid-code");
+    const gameMode: FacesGameMode = mode === "multi" ? "multi" : "single";
+    return (
+      (await redeemFacesCode(normalized, gameMode)) ?? deny("invalid-code")
+    );
   }
 
   // Dispositivi dei giocatori: valgono il codice usato dall'host della partita
   if (typeof sessionId === "string") {
     const session = await getSession(sessionId);
-    const grantId = session?.facesGrantId;
+    if (!session || !isSessionMember(session, secret))
+      return deny("no-session-access");
+    const grantId = session.facesGrantId;
     if (!grantId || !(await isFacesGrantActive(grantId)))
       return deny("no-session-access");
     return grantId;

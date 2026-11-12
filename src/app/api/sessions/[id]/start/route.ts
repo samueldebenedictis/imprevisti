@@ -53,10 +53,10 @@ export async function POST(
       (p) => new Player(Number(p.id), p.name),
     );
 
-    // Fotografie FACES solo se l'host ha usato un codice valido (cookie
-    // d'accesso) non ancora usato da un'altra partita: il permesso viene
-    // legato a questa partita, così i telefoni dei giocatori possono vedere
-    // le foto dopo aver accettato il disclaimer
+    // Fotografie FACES solo se l'host ha usato un codice valido per una
+    // partita multigiocatore (cookie d'accesso) non ancora usato da un'altra
+    // partita: il permesso viene legato a questa partita, così i telefoni dei
+    // giocatori possono vedere le foto dopo aver accettato il disclaimer
     const hostGrant =
       requestedFaceSet === "faces" && facesToken
         ? await getFacesAccessGrant(facesToken)

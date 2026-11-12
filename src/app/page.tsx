@@ -182,7 +182,12 @@ export default function Home() {
       setFacesError(FACES_CODE_MISSING);
       return;
     }
-    const result = await acceptFacesAccess({ code: facesCode });
+    // La modalità decide se il permesso potrà essere legato a una partita
+    // multigiocatore: un codice usato su schermo singolo non vale per l'altra
+    const result = await acceptFacesAccess({
+      code: facesCode,
+      mode: mode === "multi" ? "multi" : "single",
+    });
     if (result !== "granted") {
       setFacesError(
         result === "invalid-code" ? FACES_CODE_INVALID : FACES_DISCLAIMER_ERROR,
