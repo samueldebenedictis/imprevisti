@@ -210,13 +210,15 @@ export default function AdvancedMode() {
         </div>
 
         <div className="flex flex-wrap justify-center">
-          <Button color="red" onClick={handleReset}>
+          <Button color="red" onClick={handleCancel}>
+            {LABEL_ADVANCED_MODE_CANCEL}
+          </Button>
+          <Button color="yellow" onClick={handleReset}>
             {LABEL_ADVANCED_MODE_RESET}
           </Button>
           <Button color="green" onClick={handleApply}>
             {LABEL_ADVANCED_MODE_APPLY}
           </Button>
-          <Button onClick={handleCancel}>{LABEL_ADVANCED_MODE_CANCEL}</Button>
         </div>
       </div>
     </div>
