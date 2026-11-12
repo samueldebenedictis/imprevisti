@@ -6,8 +6,8 @@ export const LABEL_PLAYER_NAME = (n: number) => `Nome giocatore ${n}:`;
 export const LABEL_SQUARES_NUMBER = "Numero di caselle:";
 export const LABEL_GAME_CONFIGURATION = "Configurazione gioco";
 export const LABEL_SPECIAL_SQUARES = "Caselle speciali";
-export const LABEL_SPECIAL_PERCENTAGE = (n: number) =>
-  `Percentuale di caselle speciali: ${n}%`;
+export const LABEL_SPECIAL_SQUARES_COUNT = (count: number) =>
+  `Numero di caselle speciali: ${count}`;
 export const LABEL_MIME = "Mimo";
 export const LABEL_QUIZ = "Quiz";
 export const LABEL_BACKWRITE = "Parole alle spalle";

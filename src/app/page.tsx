@@ -48,12 +48,19 @@ import {
   LABEL_PLAYER_NAME,
   LABEL_PLAYERS_NUMBER,
   LABEL_QUIZ,
-  LABEL_SPECIAL_PERCENTAGE,
   LABEL_SPECIAL_SQUARES,
+  LABEL_SPECIAL_SQUARES_COUNT,
   LABEL_SQUARES_NUMBER,
   LABEL_SUBMIT,
   LABEL_WHAT_WOULD_YOU_DO,
 } from "./texts";
+import {
+  countSpecialSquares,
+  getEnabledSpecialTypes,
+  maxSpecialSquares,
+  percentageForSpecialSquares,
+  specialSquaresForPercentage,
+} from "./utils/generate-squares";
 
 type Mode = "single" | "multi";
 
@@ -106,6 +113,12 @@ export default function Home() {
   const numSquares = useConfigStore((state) => state.numSquares);
   const squareTypes = useConfigStore((state) => state.squareTypes);
   const specialPercentage = useConfigStore((state) => state.specialPercentage);
+  const hasSpecialTypes = getEnabledSpecialTypes(squareTypes).length > 0;
+  const specialCount = countSpecialSquares(
+    numSquares,
+    squareTypes,
+    specialPercentage / 100,
+  );
   const customSquares = useConfigStore((state) => state.customSquares);
   const battlesEnabled = useConfigStore((state) => state.battlesEnabled);
   const actions = useConfigStore((state) => state.actions);
@@ -342,21 +355,33 @@ export default function Home() {
                   </div>
                 </div>
 
+                {/* Il cursore regola il numero di caselle; nello stato resta la
+                    percentuale, così cambiando le caselle si riscala */}
                 <div className="mb-4">
-                  <Label htmlFor="specialPercentage">
-                    {LABEL_SPECIAL_PERCENTAGE(specialPercentage)}
+                  <Label htmlFor="specialSquares">
+                    {LABEL_SPECIAL_SQUARES_COUNT(specialCount)}
                   </Label>
                   <input
                     type="range"
-                    id="specialPercentage"
-                    name="specialPercentage"
+                    id="specialSquares"
+                    name="specialSquares"
                     min="0"
-                    max="100"
-                    value={specialPercentage}
+                    max={maxSpecialSquares(numSquares)}
+                    step="1"
+                    value={specialSquaresForPercentage(
+                      numSquares,
+                      specialPercentage / 100,
+                    )}
+                    disabled={!hasSpecialTypes}
                     onChange={(e) =>
-                      actions.setSpecialPercentage(parseInt(e.target.value))
+                      actions.setSpecialPercentage(
+                        percentageForSpecialSquares(
+                          numSquares,
+                          Number(e.target.value),
+                        ),
+                      )
                     }
-                    className="mx-0 w-full"
+                    className="mx-0 w-full disabled:opacity-50"
                   />
                 </div>
               </>

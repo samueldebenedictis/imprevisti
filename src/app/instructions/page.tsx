@@ -340,8 +340,9 @@ export default function InstructionsPage() {
           <p className="mb-2">
             Clicca su <strong>Applica</strong> per tornare alla configurazione
             con il tabellone personalizzato attivo. I controlli di tipologia e
-            percentuale verranno nascosti. Per tornare alla modalità standard,
-            usa il pulsante <strong>Rimuovi configurazione avanzata</strong>.
+            numero di caselle speciali verranno nascosti. Per tornare alla
+            modalità standard, usa il pulsante{" "}
+            <strong>Rimuovi configurazione avanzata</strong>.
           </p>
         </section>
 
