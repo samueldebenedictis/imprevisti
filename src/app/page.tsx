@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   acceptFacesAccess,
   configUsesFaceEmotion,
@@ -97,10 +97,16 @@ function ModeSelection({ onSelect }: { onSelect: (mode: Mode) => void }) {
 
 export default function Home() {
   const router = useRouter();
-  const [mode, setMode] = useState<Mode | null>(() => {
-    if (typeof window === "undefined") return null;
-    return (sessionStorage.getItem("gameMode") as Mode) ?? null;
-  });
+  // La modalità scelta è in sessionStorage, che il server non ha: si legge
+  // dopo il montaggio, così il primo render coincide con l'HTML del server
+  // (niente errore di hydration ricaricando la pagina)
+  const [mode, setMode] = useState<Mode | null>(null);
+  const [modeLoaded, setModeLoaded] = useState(false);
+  useEffect(() => {
+    const saved = sessionStorage.getItem("gameMode");
+    if (saved === "single" || saved === "multi") setMode(saved);
+    setModeLoaded(true);
+  }, []);
 
   const handleModeSelect = (m: Mode) => {
     sessionStorage.setItem("gameMode", m);
@@ -217,6 +223,16 @@ export default function Home() {
       </p>
     </div>
   );
+
+  // Finché la modalità non è letta, la parte desktop resta vuota: niente
+  // lampo della scelta della modalità prima del form
+  if (!modeLoaded)
+    return (
+      <>
+        {mobileWall}
+        <div className="hidden md:block" />
+      </>
+    );
 
   if (!mode) {
     return (
