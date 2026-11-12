@@ -37,8 +37,7 @@ test("setup", async ({ page }) => {
   await homePage.physicalTestCheckbox.uncheck();
   await homePage.whatWouldYouDoCheckbox.uncheck();
   await homePage.dictationDrawCheckbox.uncheck();
-  // Casella "Indovina l'emozione" disattivata (FACE_EMOTION_ENABLED = false): riattivare insieme alla sfida
-  // await homePage.faceEmotionsCheckbox.uncheck();
+  await homePage.faceEmotionsCheckbox.uncheck();
   // Casella Film disattivata (FILM_ENABLED = false): riattivare insieme alla sfida
   // await homePage.filmCheckbox.uncheck();
   await homePage.page.waitForTimeout(TIMEOUT);
@@ -71,6 +70,10 @@ test("setup with special squares", async ({ page }) => {
   await homePage.page.waitForTimeout(TIMEOUT);
 
   await homePage.submit.click();
+  await homePage.page.waitForTimeout(TIMEOUT);
+
+  // Richiesta del codice FACES: senza codice si gioca con i volti illustrati
+  await homePage.facesDeclineButton.click();
   await homePage.page.waitForTimeout(TIMEOUT);
 
   await expect(homePage.page).toHaveURL(/game/);

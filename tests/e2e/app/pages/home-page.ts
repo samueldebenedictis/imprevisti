@@ -1,11 +1,12 @@
 import { expect, type Page } from "@playwright/test";
 import {
+  FACES_SETUP_DECLINE,
   LABEL_ADVANCED_MODE,
   LABEL_ADVANCED_MODE_ACTIVE,
   LABEL_ADVANCED_MODE_REMOVE,
   LABEL_BACKWRITE,
   LABEL_DICTATION_DRAW,
-  // LABEL_FACE_EMOTION,
+  LABEL_FACE_EMOTION,
   // LABEL_FILM,
   LABEL_MIME,
   LABEL_MOVE,
@@ -34,8 +35,19 @@ export class HomePage {
     await this.singleModeButton.click();
   }
 
-  async submitAndGotoGame() {
+  /** Finestra FACES all'avvio: "Gioca senza codice" (volti illustrati). */
+  facesDeclineButton = this.page.getByRole("button", {
+    name: FACES_SETUP_DECLINE,
+  });
+
+  /**
+   * Avvia la partita. Con la sfida "Indovina l'emozione" nel tabellone
+   * compare la richiesta del codice FACES: `withoutFacesCode` la chiude
+   * giocando con i volti illustrati.
+   */
+  async submitAndGotoGame({ withoutFacesCode = false } = {}) {
     await this.submit.click();
+    if (withoutFacesCode) await this.facesDeclineButton.click();
     const homePage = new GamePage(this.page);
     await expect(homePage.page).toHaveURL(/game/);
     return homePage;
@@ -70,10 +82,9 @@ export class HomePage {
   dictationDrawCheckbox = this.page.getByRole("checkbox", {
     name: LABEL_DICTATION_DRAW,
   });
-  // Casella "Indovina l'emozione" disattivata (FACE_EMOTION_ENABLED = false): riattivare insieme alla sfida
-  // faceEmotionsCheckbox = this.page.getByRole("checkbox", {
-  //   name: LABEL_FACE_EMOTION,
-  // });
+  faceEmotionsCheckbox = this.page.getByRole("checkbox", {
+    name: LABEL_FACE_EMOTION,
+  });
   // Casella Film disattivata (FILM_ENABLED = false): riattivare insieme alla sfida
   // filmCheckbox = this.page.getByRole("checkbox", { name: LABEL_FILM });
 

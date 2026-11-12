@@ -20,8 +20,7 @@ test("Fill form @snapshot", async ({ homePage }) => {
   await homePage.physicalTestCheckbox.uncheck();
   await homePage.whatWouldYouDoCheckbox.uncheck();
   await homePage.dictationDrawCheckbox.uncheck();
-  // Casella "Indovina l'emozione" disattivata (FACE_EMOTION_ENABLED = false): riattivare insieme alla sfida
-  // await homePage.faceEmotionsCheckbox.uncheck();
+  await homePage.faceEmotionsCheckbox.uncheck();
   // Casella Film disattivata (FILM_ENABLED = false): riattivare insieme alla sfida
   // await homePage.filmCheckbox.uncheck();
 
@@ -99,7 +98,9 @@ test("Play turns", async ({ homePage }) => {
   // move square can send player back to square 0
   await homePage.moveCheckbox.uncheck();
 
-  const gamePage = await homePage.submitAndGotoGame();
+  const gamePage = await homePage.submitAndGotoGame({
+    withoutFacesCode: true,
+  });
 
   await gamePage.playTurn();
   await gamePage.playTurn();
@@ -125,8 +126,7 @@ test("End game", async ({ homePage }) => {
   await homePage.physicalTestCheckbox.uncheck();
   await homePage.whatWouldYouDoCheckbox.uncheck();
   await homePage.dictationDrawCheckbox.uncheck();
-  // Casella "Indovina l'emozione" disattivata (FACE_EMOTION_ENABLED = false): riattivare insieme alla sfida
-  // await homePage.faceEmotionsCheckbox.uncheck();
+  await homePage.faceEmotionsCheckbox.uncheck();
   // Casella Film disattivata (FILM_ENABLED = false): riattivare insieme alla sfida
   // await homePage.filmCheckbox.uncheck();
 

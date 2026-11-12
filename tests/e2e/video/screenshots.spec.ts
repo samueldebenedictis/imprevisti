@@ -1,4 +1,5 @@
 import type { Page } from "@playwright/test";
+import { FACES_CODE_INVALID } from "@/app/texts";
 import { Board } from "@/model/board";
 import { Game } from "@/model/game";
 import { Player } from "@/model/player";
@@ -54,6 +55,57 @@ test("screenshot-home-filled", async ({ page }) => {
   await homePage.squaresNumber.pressSequentially("20");
 
   await expect(page).toHaveScreenshot("home-filled.png", { fullPage: true });
+});
+
+// Finestra all'avvio con "Indovina l'emozione": codice dell'educatore e disclaimer FACES
+test("screenshot-faces-setup-modal", async ({ page }) => {
+  await page.setViewportSize(VIEWPORT);
+  await page.addInitScript(() => sessionStorage.removeItem("gameMode"));
+  // Nessun codice vero: il server risponde come a un codice già usato
+  await page.route("**/api/faces/access", (route) =>
+    route.fulfill({
+      status: 403,
+      contentType: "application/json",
+      body: JSON.stringify({ granted: false, error: "invalid-code" }),
+    }),
+  );
+  await page.goto("/");
+  const homePage = new HomePage(page);
+
+  await homePage.selectSingleMode();
+  await homePage.playerName(1).pressSequentially("Alice");
+  await homePage.playerName(2).pressSequentially("Bob");
+  await homePage.submit.click();
+
+  await expect(homePage.facesDeclineButton).toBeVisible();
+  await expect(page).toHaveScreenshot("faces-setup-modal.png");
+
+  await page.getByLabel("Codice dell'educatore").fill("K7PM3X");
+  await page.getByRole("button", { name: "Accetto" }).click();
+  await expect(page.getByText(FACES_CODE_INVALID)).toBeVisible();
+  await expect(page).toHaveScreenshot("faces-setup-modal-invalid.png");
+});
+
+// Pagina degli educatori che genera i codici monouso
+test("screenshot-faces-codes", async ({ page }) => {
+  await page.setViewportSize(VIEWPORT);
+  await page.addInitScript(() => sessionStorage.clear());
+  await page.route("**/api/faces/codes", (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        code: "K7PM3X",
+        expiresAt: Date.UTC(2026, 10, 13, 9, 30),
+      }),
+    }),
+  );
+  await page.goto("/admin/codici");
+  await page.getByLabel("Codice di accesso educatori").fill("test-secret");
+  await page.getByRole("button", { name: "Genera un codice" }).click();
+
+  await expect(page.getByTestId("faces-code")).toHaveText("K7PM3X");
+  await expect(page).toHaveScreenshot("faces-codes.png", { fullPage: true });
 });
 
 test("screenshot-advanced-mode", async ({ page }) => {

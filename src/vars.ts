@@ -24,4 +24,4 @@ export const FILM_ENABLED: boolean = false;
 // nei file pubblici e verranno servite da un archivio privato (in attesa
 // della conferma del FACES Technical Agent). Rimettere a true quando il
 // Route Handler che le serve è pronto.
-export const FACE_EMOTION_ENABLED: boolean = false;
+export const FACE_EMOTION_ENABLED: boolean = true;
