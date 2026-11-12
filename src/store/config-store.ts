@@ -5,6 +5,7 @@ import { Board } from "@/model/board";
 import { squaresForFaceSet } from "@/model/deck/emotion-video";
 import type { FaceSet } from "@/model/deck/face-emotion";
 import { Game as GameModel } from "@/model/game";
+import { defaultPawn, type PawnStyle, pawnOrDefault } from "@/model/pawn";
 import { Player } from "@/model/player";
 import type { SquareJSON } from "@/model/square/square";
 import {
@@ -23,6 +24,8 @@ import { useGameStore } from "./game-store";
 export interface GameConfig {
   numPlayers: number;
   playerNames: string[];
+  /** Pedina di ogni giocatore (schermo singolo), allineata a playerNames. */
+  playerPawns: PawnStyle[];
   numSquares: number;
   squareTypes: {
     mime: boolean;
@@ -47,6 +50,7 @@ export interface ConfigActions {
   // Giocatori
   setNumPlayers: (num: number) => void;
   setPlayerName: (index: number, name: string) => void;
+  setPlayerPawn: (index: number, pawn: PawnStyle) => void;
   addPlayer: () => void;
   removePlayer: (index: number) => void;
 
@@ -74,9 +78,19 @@ export interface ConfigActions {
 
 type ConfigStore = GameConfig & { actions: ConfigActions };
 
+/**
+ * Pedine per `length` giocatori: tiene quelle valide già scelte e completa
+ * con quelle predefinite (anche per le configurazioni salvate senza pedine).
+ */
+function pawnsFor(pawns: unknown, length: number): PawnStyle[] {
+  const saved = Array.isArray(pawns) ? pawns : [];
+  return Array.from({ length }, (_, i) => pawnOrDefault(saved[i], i));
+}
+
 const defaultConfig: GameConfig = {
   numPlayers: DEFAULT_PLAYERS,
   playerNames: [""],
+  playerPawns: [defaultPawn(0)],
   numSquares: DEFAULT_SQUARES,
   squareTypes: {
     mime: true,
@@ -108,7 +122,11 @@ export const useConfigStore = create<ConfigStore>()(
             { length: num },
             (_, i) => currentNames[i] || "",
           );
-          set({ numPlayers: num, playerNames: newNames });
+          set({
+            numPlayers: num,
+            playerNames: newNames,
+            playerPawns: pawnsFor(get().playerPawns, newNames.length),
+          });
         },
 
         setPlayerName: (index, name) => {
@@ -121,12 +139,22 @@ export const useConfigStore = create<ConfigStore>()(
           set({ playerNames: currentNames });
         },
 
+        setPlayerPawn: (index, pawn) => {
+          const pawns = pawnsFor(
+            get().playerPawns,
+            Math.max(get().playerNames.length, index + 1),
+          );
+          pawns[index] = pawn;
+          set({ playerPawns: pawns });
+        },
+
         addPlayer: () => {
           const { numPlayers, playerNames } = get();
           if (numPlayers < MAX_PLAYERS) {
             set({
               numPlayers: numPlayers + 1,
               playerNames: [...playerNames, ""],
+              playerPawns: pawnsFor(get().playerPawns, playerNames.length + 1),
             });
           }
         },
@@ -138,6 +166,10 @@ export const useConfigStore = create<ConfigStore>()(
             set({
               numPlayers: numPlayers - 1,
               playerNames: newNames,
+              playerPawns: pawnsFor(
+                get().playerPawns,
+                playerNames.length,
+              ).filter((_, i) => i !== index),
             });
           }
         },
@@ -202,7 +234,14 @@ export const useConfigStore = create<ConfigStore>()(
           // Creo i giocatori
           const players = config.playerNames
             .slice(0, config.numPlayers)
-            .map((name, id) => new Player(id, name.trim()));
+            .map(
+              (name, id) =>
+                new Player(
+                  id,
+                  name.trim(),
+                  pawnOrDefault(config.playerPawns?.[id], id),
+                ),
+            );
 
           // Generate le caselle (personalizzate o automatiche), adattate ai volti
           const squareJSON = squaresForFaceSet(
@@ -252,11 +291,17 @@ export const useConfigStore = create<ConfigStore>()(
           ...current,
           ...saved,
           squareTypes: { ...current.squareTypes, ...saved?.squareTypes },
+          // Configurazioni salvate prima delle pedine: quelle predefinite
+          playerPawns: pawnsFor(
+            saved?.playerPawns,
+            (saved?.playerNames ?? current.playerNames).length,
+          ),
         };
       },
       partialize: (state) => ({
         numPlayers: state.numPlayers,
         playerNames: state.playerNames,
+        playerPawns: state.playerPawns,
         numSquares: state.numSquares,
         squareTypes: state.squareTypes,
         specialPercentage: state.specialPercentage,

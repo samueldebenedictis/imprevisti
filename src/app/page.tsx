@@ -7,6 +7,7 @@ import {
   configUsesFaceEmotion,
   revokeFacesAccess,
 } from "@/lib/faces-client";
+import { pawnOrDefault } from "@/model/pawn";
 import { useConfigStore } from "../store/config-store";
 import {
   EMOTION_VIDEO_ENABLED,
@@ -19,6 +20,7 @@ import {
   URL_MULTIPLAYER,
 } from "../vars";
 import FacesDisclaimer from "./components/faces-disclaimer";
+import PawnPickerButton from "./components/pawn-picker-button";
 import SpecialEffectInfoIcon from "./components/turn-result-modal/special-effect-info-icon";
 import Button from "./components/ui/button";
 import { colorToCssButton } from "./components/ui/color";
@@ -116,6 +118,7 @@ export default function Home() {
   // Selettori store form
   const numPlayers = useConfigStore((state) => state.numPlayers);
   const playerNames = useConfigStore((state) => state.playerNames);
+  const playerPawns = useConfigStore((state) => state.playerPawns);
   const numSquares = useConfigStore((state) => state.numSquares);
   const squareTypes = useConfigStore((state) => state.squareTypes);
   const specialPercentage = useConfigStore((state) => state.specialPercentage);
@@ -300,16 +303,23 @@ export default function Home() {
                     <Label htmlFor={`playerName${index}`}>
                       {LABEL_PLAYER_NAME(index + 1)}
                     </Label>
-                    <Input
-                      type="text"
-                      id={`playerName${index}`}
-                      name={`playerName${index}`}
-                      value={playerNames[index] ?? ""}
-                      onChange={(e) =>
-                        actions.setPlayerName(index, e.target.value)
-                      }
-                      required
-                    />
+                    <div className="flex items-center gap-3">
+                      <Input
+                        type="text"
+                        id={`playerName${index}`}
+                        name={`playerName${index}`}
+                        value={playerNames[index] ?? ""}
+                        onChange={(e) =>
+                          actions.setPlayerName(index, e.target.value)
+                        }
+                        required
+                      />
+                      <PawnPickerButton
+                        name={playerNames[index] ?? ""}
+                        value={pawnOrDefault(playerPawns[index], index)}
+                        onChange={(pawn) => actions.setPlayerPawn(index, pawn)}
+                      />
+                    </div>
                   </div>
                 ))}
               </>

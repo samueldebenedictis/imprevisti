@@ -18,6 +18,7 @@ Il gioco è disponibile ai seguenti indirizzi:
 
 - **Configurazione partita**: Home per impostare i parametri del gioco; numero di giocatori, nomi, caselle ammesse, eccetera.
 - **Gioco interattivo**: Pagina del gioco con tabellone, pedine e stato del gioco
+- **Pedine personalizzate**: ogni giocatore sceglie colore (8) e forma (rettangolo, angoli arrotondati, capsula, esagono, parallelogramma) della propria pedina, in configurazione o entrando dal telefono
 - **Modalità multi-dispositivo**: ogni giocatore usa il proprio smartphone; l'host coordina sul tabellone principale. Accesso tramite QR code. Sessioni server-side con long polling (riduce le invocazioni serverless di ~5×). Identità giocatore persistita nell'URL (`/player/[sessionId]/[playerId]`), sopravvive alla chiusura del tab.
 - **Azioni di gioco**: quiz, mimo, scrivi sulla schiena, indovina l'emozione, emozioni in movimento, emozione musicale, test fisico, cosa faresti se, disegno dettato, battaglia
 - **Indovina l'emozione** ed **Emozioni in movimento**: con un codice monouso dato dall'educatore le sfide usano le fotografie del database FACES (Ebner, Riediger & Lindenberger, 2010) e i video di Dynamic FACES (Holland et al., 2019), mostrati solo dopo l'accettazione del disclaimer e mai inclusi nel repository; senza codice si usano volti illustrati creati per il progetto e le caselle Emozioni in movimento diventano Indovina l'emozione

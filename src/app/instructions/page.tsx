@@ -189,6 +189,13 @@ export default function InstructionsPage() {
               partecipante.
             </li>
             <li>
+              <strong>Pedina:</strong> accanto a ogni nome c&apos;è
+              l&apos;anteprima della pedina; cliccatela per sceglierne il colore
+              e la forma (rettangolo, angoli arrotondati, capsula, esagono o
+              parallelogramma). Due giocatori possono avere lo stesso colore: il
+              nome li distingue.
+            </li>
+            <li>
               <strong>Numero di caselle:</strong> determinate la lunghezza del
               tabellone.
             </li>
@@ -257,6 +264,8 @@ export default function InstructionsPage() {
             schermata iniziale. L&apos;educatore configura la partita e avvia la
             lobby: sullo schermo comparirà un codice QR che ogni giocatore deve
             scansionare con il proprio telefono per unirsi alla sessione.
+            Entrando, ogni giocatore inserisce il proprio nome e sceglie colore
+            e forma della pedina.
           </p>
           <ul className="mb-2 list-inside list-disc">
             <li>
