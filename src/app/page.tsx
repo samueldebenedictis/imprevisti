@@ -19,6 +19,7 @@ import {
   URL_MULTIPLAYER,
 } from "../vars";
 import FacesDisclaimer from "./components/faces-disclaimer";
+import SpecialEffectInfoIcon from "./components/turn-result-modal/special-effect-info-icon";
 import Button from "./components/ui/button";
 import { colorToCssButton } from "./components/ui/color";
 import Input from "./components/ui/input";
@@ -215,7 +216,7 @@ export default function Home() {
       {mobileWall}
       <div className="hidden md:block">
         <div className="ui-text-dark my-8 flex flex-col items-center justify-center p-2">
-          <div className="mb-2 flex w-full max-w-md flex-col items-center gap-1">
+          <div className="mb-2 flex w-full max-w-xl flex-col items-center gap-1">
             <Button
               color="blue"
               onClick={() => {
@@ -227,20 +228,20 @@ export default function Home() {
               Cambia modalità
             </Button>
           </div>
-          <hr className="mb-2 w-full max-w-md border-gray-200" />
+          <hr className="mb-2 w-full max-w-xl border-gray-200" />
           <h1 className="ui-text-title m-2 text-center">
             {mode === "multi"
               ? "Gioco multi-dispositivo"
               : "Gioco schermo singolo"}
           </h1>
-          <p className="ui-text-normal mb-4 max-w-md text-center">
+          <p className="ui-text-normal mb-4 max-w-xl text-center">
             {mode === "multi"
               ? "Configura il tabellone. I giocatori si uniranno scansionando il QR code."
               : "Configura il tabellone. Tutti i giocatori giocheranno a turno sullo stesso schermo."}
           </p>
           <form
             onSubmit={handleSubmit}
-            className="m-2 w-full max-w-md bg-white"
+            className="m-2 w-full max-w-xl bg-white"
           >
             {mode === "single" && (
               <>
@@ -305,9 +306,13 @@ export default function Home() {
                 onChange={(e) => actions.setBattlesEnabled(e.target.checked)}
                 className="ui-custom-checkbox mr-2"
               />
-              <LabelCheckbox htmlFor="battlesEnabled">
-                {LABEL_BATTLES_ENABLED}
-              </LabelCheckbox>
+              {/* Icona nel flusso del testo: segue l'ultima parola anche se va a capo */}
+              <span>
+                <LabelCheckbox htmlFor="battlesEnabled">
+                  {LABEL_BATTLES_ENABLED}
+                </LabelCheckbox>
+                <SpecialEffectInfoIcon actionType="battle" inline />
+              </span>
             </div>
 
             {!hasCustomSquares && (
@@ -331,6 +336,7 @@ export default function Home() {
                           className="ui-custom-checkbox mr-2"
                         />
                         <LabelCheckbox htmlFor={key}>{label}</LabelCheckbox>
+                        <SpecialEffectInfoIcon actionType={key} inline />
                       </div>
                     ))}
                   </div>
