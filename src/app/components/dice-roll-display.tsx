@@ -1,4 +1,5 @@
 import {
+  DICE_ARIA_ROLL,
   DICE_BUTTON_CONTINUE,
   DICE_BUTTON_ROLL,
   DICE_BUTTON_ROLLING,
@@ -78,8 +79,17 @@ export default function DiceRollComponent({
               </Button>
             )}
           </div>
+          {/* Il dado stesso lancia, come il pulsante sopra */}
           <div className="mt-8 flex items-center justify-center">
-            <Dice isRolling={isRolling} result={diceResult} />
+            <button
+              type="button"
+              onClick={onRollDice}
+              disabled={isRolling || displayResult}
+              aria-label={DICE_ARIA_ROLL}
+              className="cursor-pointer disabled:cursor-default"
+            >
+              <Dice isRolling={isRolling} result={diceResult} />
+            </button>
           </div>
         </>
       )}
