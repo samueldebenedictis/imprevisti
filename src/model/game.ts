@@ -12,6 +12,7 @@ import {
   QuizDeck,
   WhatWouldYouDoDeck,
 } from "./deck";
+import type { FaceSet } from "./deck/face-emotion";
 import { Dice } from "./dice";
 import {
   BackWriteManager,
@@ -52,6 +53,8 @@ export interface GameJSON {
   gameEnded: boolean;
   winnerId?: number;
   battlesEnabled: boolean;
+  /** Volti di "Indovina l'emozione"; assente nei salvataggi precedenti. */
+  faceSet?: FaceSet;
 }
 
 /**
@@ -62,6 +65,7 @@ export class Game {
   private board: Board;
   private dice: Dice;
   private battlesEnabled: boolean;
+  private faceSet: FaceSet;
   private mimeDeck: Deck;
   private quizDeck: Deck;
   private backWriteDeck: Deck;
@@ -94,16 +98,23 @@ export class Game {
    * @param players - Array delle istanze dei giocatori
    * @param diceFaces - Numero di facce del dado (opzionale, default 6)
    * @param battlesEnabled - Se false, le collisioni tra giocatori non generano battaglie (opzionale, default true)
+   * @param faceSet - Volti di "Indovina l'emozione": fotografie FACES, solo per partite con codice d'accesso, o volti illustrati (default)
    */
-  constructor(board: Board, diceFaces = 6, battlesEnabled = true) {
+  constructor(
+    board: Board,
+    diceFaces = 6,
+    battlesEnabled = true,
+    faceSet: FaceSet = "ai",
+  ) {
     // Inizializzazione componenti base
     this.board = board;
     this.dice = new Dice(diceFaces);
     this.battlesEnabled = battlesEnabled;
+    this.faceSet = faceSet;
     this.mimeDeck = new MimeDeck();
     this.quizDeck = new QuizDeck();
     this.backWriteDeck = new BackWriteDeck();
-    this.faceEmotionDeck = new FaceEmotionDeck();
+    this.faceEmotionDeck = new FaceEmotionDeck(faceSet);
     this.filmDeck = new FilmDeck();
     this.musicEmotionDeck = new MusicEmotionDeck();
     this.physicalTestDeck = new PhysicalTestDeck();
@@ -168,6 +179,7 @@ export class Game {
       gameEnded: this.gameStateManager.isGameEnded(),
       winnerId: this.gameStateManager.getWinner()?.getId(),
       battlesEnabled: this.battlesEnabled,
+      faceSet: this.faceSet,
     };
   }
 
@@ -187,7 +199,12 @@ export class Game {
 
     const board = Board.fromJSON(json.board, players);
 
-    const game = new Game(board, 6, json.battlesEnabled ?? true);
+    const game = new Game(
+      board,
+      6,
+      json.battlesEnabled ?? true,
+      json.faceSet ?? "ai",
+    );
 
     game.turnManager = TurnManager.fromJSON(
       json.currentTurn,
@@ -523,5 +540,10 @@ export class Game {
    */
   isGameEnded(): boolean {
     return this.gameStateManager.isGameEnded();
+  }
+
+  /** Volti usati da "Indovina l'emozione" in questa partita. */
+  getFaceSet(): FaceSet {
+    return this.faceSet;
   }
 }
