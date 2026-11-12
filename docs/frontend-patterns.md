@@ -180,7 +180,7 @@ const rollDice = async () => {
 
 ## `FaceEmotionImage` (`src/app/components/face-emotion-image.tsx`)
 
-Renders the face-emotion photo (for now the placeholder, see "Face-emotion images (FACES)" in [game-model.md](game-model.md)).
+Renders the face-emotion image (see "Face-emotion images (FACES)" in [game-model.md](game-model.md)). Illustrated faces are shown directly. FACES photos (`/api/faces/...`) need device access: with a `sessionId` (multiplayer) the device can accept the disclaimer and get access from the game; without one (single screen) access only comes from the code entered at setup, otherwise a "not available" message is shown.
 
 It is the only place that renders a face-emotion image, used by:
 

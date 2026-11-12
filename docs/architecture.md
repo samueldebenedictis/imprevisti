@@ -4,7 +4,7 @@
 
 | Layer | Technology |
 |-------|-----------|
-| Framework | Next.js 15 (App Router) |
+| Framework | Next.js 16 (App Router) |
 | Language | TypeScript |
 | State management | Zustand (persisted to localStorage) |
 | Styling | Tailwind CSS |
@@ -24,7 +24,9 @@ src/
 ├── app/                        # Next.js App Router
 │   ├── api/                    # Server-side API routes
 │   │   ├── sessions/           # Multiplayer session management
+│   │   ├── faces/              # FACES photos, one-time codes, device access
 │   │   └── feedback/           # Feedback collection
+│   ├── admin/                  # codici/ (FACES codes), feedback/ (dashboard)
 │   ├── components/             # Shared React components
 │   │   ├── ui/                 # Button, Input, Label, Select
 │   │   └── turn-result-modal/  # Per-action-type modal variants
@@ -93,6 +95,9 @@ npm run storybook    # Storybook dev on port 6006
 | `KV_REST_API_URL` | Vercel | Vercel KV REST endpoint (auto-injected) |
 | `KV_REST_API_TOKEN` | Vercel | Vercel KV token (auto-injected) |
 | `FEEDBACK_SECRET` | `.env.local` / Vercel | Secret for `GET /api/feedback?secret=` |
+| `FACES_CODES_SECRET` | `.env.local` / Vercel | Secret of the educators' page `/admin/codici` (generates one-time FACES codes). Never commit it |
+| `BLOB_READ_WRITE_TOKEN` | Vercel | Private Blob store with the FACES photos (auto-injected) |
+| `FACES_LOCAL_DIR` | shell only | Local folder with the FACES photos (not in `.env.local`: Docker e2e would capture them) |
 
 Copy `.env.dist` → `.env.local` and fill in values. Redis is optional: without it, multiplayer uses the in-memory fallback (not persistent across restarts).
 

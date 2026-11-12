@@ -128,11 +128,19 @@ Each action type has a manager handling pre/post resolution logic. 15 managers t
 
 ### Face-emotion images (FACES)
 
-The face-emotion deck uses photographs from the FACES database (subjects 004, 066, 079, 116, 140, 168). Their licence forbids distributing them, so they are **not** in the repository nor in `public/`.
+Each game has a **face set** (`faceSet` in `GameJSON`, `Game.getFaceSet()`):
 
-- **Now**: the challenge is disabled (`FACE_EMOTION_ENABLED = false` in `src/vars.ts`, same pattern as `FILM_ENABLED`). Every card points to `public/images/face-placeholder.svg`; each card keeps the FACES file name in `file` (`{id}_{age}_{sex}_{expr}_{set}.jpg`).
-- **Next**: the photos will be served from a private Vercel Blob store by a Route Handler, only during a game and without caching, after the FACES disclaimer has been accepted.
-- **Animations**: the old morph gifs were removed; FACES asked to use Dynamic FACES videos instead.
+- `"faces"`: photographs from the FACES database (subjects 004, 066, 079, 116, 140, 168; neutral excluded). Their licence forbids distributing them, so they are **not** in the repository nor in `public/`: cards point to `/api/faces/{file}` (`{id}_{age}_{sex}_{expr}_{set}.jpg`).
+- `"ai"` (default, also for old saves): 36 illustrated faces made for the project (`public/images/face-emotion/`, 6 faces × felicità, rabbia, tristezza, sorpresa, paura, stanchezza). Used when a game has no FACES code or the disclaimer is not accepted.
+
+Access rules agreed with FACES (November 2026):
+
+1. An educator generates a **one-time code** on `/admin/codici` (protected by `FACES_CODES_SECRET`). A code is valid 24 hours if unused and works for **one game only**.
+2. At game setup, if the board includes "Indovina l'emozione", a modal asks for the code and the FACES disclaimer. `POST /api/faces/access {code}` uses the code (GETDEL, so it cannot be reused) and creates a *grant* valid as long as a game (4 hours). The device gets an httpOnly cookie `faces_grant` (path `/api`) whose token points to the grant. Without a code: `faceSet = "ai"`.
+3. Multiplayer: only the host enters the code. `/api/sessions/[id]/start` reads the host cookie and stores the grant in the session (`facesGrantId`, never public). A grant is bound to the first game that uses it (`bindFacesGrant`): a second game started by the same host gets the illustrated faces. Players' phones accept the disclaimer and call `POST /api/faces/access {sessionId}`.
+4. `/api/faces/[file]` serves a photo only with a valid token **and** an active grant, with `Cache-Control: no-store`.
+
+Codes and the secret are never published (repository, README). The public game URL may stay in the README.
 
 ## Board Generation (`src/app/utils/generate-squares.ts`)
 

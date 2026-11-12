@@ -65,10 +65,10 @@ Each file is self-contained for its domain.
 → [frontend-patterns.md](frontend-patterns.md) — "getCardDisplay"
 → Source: `src/lib/card-utils.ts`
 
-### Face-emotion image (FACES, currently disabled)
+### Face-emotion image (FACES photos with one-time codes, or illustrated faces)
 → [frontend-patterns.md](frontend-patterns.md) — "FaceEmotionImage"
 → [game-model.md](game-model.md) — "Face-emotion images (FACES)"
-→ Source: `src/app/components/face-emotion-image.tsx`, `src/model/deck/face-emotion.ts`, `FACE_EMOTION_ENABLED` in `src/vars.ts`
+→ Source: `src/app/components/face-emotion-image.tsx`, `src/model/deck/face-emotion.ts`, `src/app/api/faces/`, `src/app/admin/codici/page.tsx`, `src/lib/faces-codes.ts`
 
 ### Async fetch inside useEffect (cancelled flag pattern)
 → [frontend-patterns.md](frontend-patterns.md) — "Pattern: cancelled flag"

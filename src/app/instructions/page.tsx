@@ -206,6 +206,18 @@ export default function InstructionsPage() {
             Una volta configurato, cliccate su "Inizia Gioco" per avviare la
             partita.
           </p>
+          <p className="mb-2">
+            Se il tabellone contiene la casella{" "}
+            <strong>Indovina l&apos;emozione</strong>, prima dell&apos;avvio
+            compare una finestra che chiede il{" "}
+            <strong>codice dell&apos;educatore</strong>. Con un codice valido la
+            sfida usa le fotografie del database FACES: per vederle bisogna
+            accettare l&apos;impegno a non diffonderle. Ogni codice vale per una
+            sola partita; lo genera l&apos;educatore e lo consegna a chi gioca
+            in presenza. Scegliendo <strong>Gioca senza codice</strong> la sfida
+            resta nel tabellone, ma con volti illustrati al posto delle
+            fotografie.
+          </p>
           <Video
             src={`${imagePrefix}/videos/game-at-work-setup-chromium.webm`}
             text="Un video che mostra l'applicativo durante la configurazione senza caselle speciali"
@@ -253,6 +265,12 @@ export default function InstructionsPage() {
             <li>
               <strong>Sfide condivise:</strong> per Quiz, Test fisico e altre
               sfide il contenuto è visibile su tutti i dispositivi.
+            </li>
+            <li>
+              <strong>Indovina l&apos;emozione:</strong> il codice
+              dell&apos;educatore si inserisce una sola volta, sul dispositivo
+              del tabellone. Sui telefoni dei giocatori le fotografie FACES
+              compaiono dopo aver accettato l&apos;impegno a non diffonderle.
             </li>
             <li>
               <strong>Battaglia:</strong> i due giocatori coinvolti effettuano
