@@ -19,8 +19,8 @@ Il gioco è disponibile ai seguenti indirizzi:
 - **Configurazione partita**: Home per impostare i parametri del gioco; numero di giocatori, nomi, caselle ammesse, eccetera.
 - **Gioco interattivo**: Pagina del gioco con tabellone, pedine e stato del gioco
 - **Modalità multi-dispositivo**: ogni giocatore usa il proprio smartphone; l'host coordina sul tabellone principale. Accesso tramite QR code. Sessioni server-side con long polling (riduce le invocazioni serverless di ~5×). Identità giocatore persistita nell'URL (`/player/[sessionId]/[playerId]`), sopravvive alla chiusura del tab.
-- **Azioni di gioco**: quiz, mimo, scrivi sulla schiena, indovina l'emozione, emozione musicale, test fisico, cosa faresti se, disegno dettato, battaglia
-- **Indovina l'emozione**: con un codice monouso dato dall'educatore la sfida usa le fotografie del database FACES (Ebner, Riediger & Lindenberger, 2010), mostrate solo dopo l'accettazione del disclaimer e mai incluse nel repository; senza codice usa volti illustrati creati per il progetto
+- **Azioni di gioco**: quiz, mimo, scrivi sulla schiena, indovina l'emozione, emozioni in movimento, emozione musicale, test fisico, cosa faresti se, disegno dettato, battaglia
+- **Indovina l'emozione** ed **Emozioni in movimento**: con un codice monouso dato dall'educatore le sfide usano le fotografie del database FACES (Ebner, Riediger & Lindenberger, 2010) e i video di Dynamic FACES (Holland et al., 2019), mostrati solo dopo l'accettazione del disclaimer e mai inclusi nel repository; senza codice si usano volti illustrati creati per il progetto e le caselle Emozioni in movimento diventano Indovina l'emozione
 - **Istruzioni**: Regole del gioco
 - **Salvataggio partite**: Sistema di salvataggio e caricamento della partita (la partita viene salvata in formato JSON). Lo stato della partita è conservato nello StorageState del browser.
 - **Effetti sonori**: Suoni di feedback per azioni dei giocatori (lancio dado, caselle speciali, combattimenti)
@@ -125,7 +125,7 @@ src/
 │   │   └── feedback/      # Dashboard di analisi dei feedback raccolti
 │   ├── api/               # API routes
 │   │   ├── sessions/      # Crea sessione, long polling, azioni
-│   │   ├── faces/         # Fotografie FACES, codici e accessi
+│   │   ├── faces/         # Foto e video FACES, codici e accessi
 │   │   └── feedback/      # Raccolta feedback
 │   ├── components/        # Componenti React condivisi
 │   │   └── charts/        # Bar chart riutilizzabile per la dashboard
@@ -139,7 +139,7 @@ src/
 │   ├── session-store.ts   # Storage sessioni (Vercel KV / Redis / memory)
 │   ├── use-session-polling.ts  # Hook long polling + idle detection
 │   ├── card-utils.ts      # Estrazione dati carta da pending action
-│   ├── faces*.ts          # Accesso alle fotografie FACES (codici, archivio, client)
+│   ├── faces*.ts          # Accesso a foto e video FACES (codici, archivio, client)
 │   └── sus.ts             # Calcolo punteggio System Usability Scale
 ├── model/                 # Logica e modelli di dati
 │   ├── deck/              # Sistema di carte (mimo, quiz, eccetera)
@@ -198,7 +198,7 @@ tests/
 | `KV_REST_API_TOKEN` | Vercel KV token (produzione) | — |
 | `FEEDBACK_SECRET` | Chiave della dashboard feedback | — (dashboard non accessibile) |
 | `FACES_CODES_SECRET` | Chiave della pagina educatori `/admin/codici` | — (nessun codice generabile) |
-| `BLOB_READ_WRITE_TOKEN` | Archivio Vercel Blob privato con le fotografie FACES (produzione) | — (segnaposto) |
-| `FACES_LOCAL_DIR` | Cartella locale con le fotografie FACES, solo da shell e mai in `.env.local` | — (segnaposto) |
+| `BLOB_READ_WRITE_TOKEN` | Archivio Vercel Blob privato con foto e video FACES (produzione) | — (segnaposto) |
+| `FACES_LOCAL_DIR` | Cartella locale con foto e video FACES, solo da shell e mai in `.env.local` | — (segnaposto) |
 
 Le chiavi non vanno mai pubblicate nel repository: si impostano in `.env.local` (ignorato da git) e su Vercel.

@@ -98,7 +98,7 @@ const game: Game = Game.fromJSON(json) // → reconstructed instance
 | `mime` | Something to mime |
 | `backwrite` | Write on someone's back |
 | `face-emotion` | Express emotion with your face |
-| `film` | Guess the emotion of a film scene (video in `public/videos/`) |
+| `emotion-video` | "Emozioni in movimento": guess the emotion of a Dynamic FACES clip (neutral → emotion); without a FACES code these squares become `face-emotion` |
 | `music-emotion` | Guess emotion from music |
 | `physical-test` | Physical challenge |
 | `what-would-you-do` | Hypothetical scenario |
@@ -122,23 +122,24 @@ Each action type has a manager handling pre/post resolution logic. 15 managers t
 // Card with image (face-emotion, dictation-draw)
 { topic: { cardTitle: string, cardText: string }, imageUrl: string }
 
-// Card with video (film)
+// Card with video (emotion-video)
 { topic: { cardTitle: string, cardText: string }, videoUrl: string }
 ```
 
-### Face-emotion images (FACES)
+### Face-emotion images and clips (FACES)
 
 Each game has a **face set** (`faceSet` in `GameJSON`, `Game.getFaceSet()`):
 
 - `"faces"`: photographs from the FACES database (subjects 004, 066, 079, 116, 140, 168; neutral excluded). Their licence forbids distributing them, so they are **not** in the repository nor in `public/`: cards point to `/api/faces/{file}` (`{id}_{age}_{sex}_{expr}_{set}.jpg`).
-- `"ai"` (default, also for old saves): 36 illustrated faces made for the project (`public/images/face-emotion/`, 6 faces × felicità, rabbia, tristezza, sorpresa, paura, stanchezza). Used when a game has no FACES code or the disclaimer is not accepted.
+  Their Dynamic FACES clips (same subjects, neutral → emotion, 2 s, `{id}_{age}_{sex}_n_{expr}.mp4`, used unmodified) feed "Emozioni in movimento" (`emotion-video`).
+- `"ai"` (default, also for old saves): 36 illustrated faces made for the project (`public/images/face-emotion/`, 6 faces × felicità, rabbia, tristezza, sorpresa, paura, stanchezza). Used when a game has no FACES code or the disclaimer is not accepted. There are no illustrated clips: `squaresForFaceSet` turns `emotion-video` squares into `face-emotion` squares, so the board keeps the same number of challenges.
 
 Access rules agreed with FACES (November 2026):
 
 1. An educator generates a **one-time code** on `/admin/codici` (protected by `FACES_CODES_SECRET`). A code is valid 24 hours if unused and works for **one game only**.
-2. At game setup, if the board includes "Indovina l'emozione", a modal asks for the code and the FACES disclaimer. `POST /api/faces/access {code}` uses the code (GETDEL, so it cannot be reused) and creates a *grant* valid as long as a game (4 hours). The device gets an httpOnly cookie `faces_grant` (path `/api`) whose token points to the grant. Without a code: `faceSet = "ai"`.
+2. At game setup, if the board includes "Indovina l'emozione" or "Emozioni in movimento", a modal asks for the code and the FACES disclaimer. `POST /api/faces/access {code}` uses the code (GETDEL, so it cannot be reused) and creates a *grant* valid as long as a game (4 hours). The device gets an httpOnly cookie `faces_grant` (path `/api`) whose token points to the grant. Without a code: `faceSet = "ai"`.
 3. Multiplayer: only the host enters the code. `/api/sessions/[id]/start` reads the host cookie and stores the grant in the session (`facesGrantId`, never public). A grant is bound to the first game that uses it (`bindFacesGrant`): a second game started by the same host gets the illustrated faces. Players' phones accept the disclaimer and call `POST /api/faces/access {sessionId}`.
-4. `/api/faces/[file]` serves a photo only with a valid token **and** an active grant, with `Cache-Control: no-store`.
+4. `/api/faces/[file]` serves a photo (`image/jpeg`) or a clip (`video/mp4`) only with a valid token **and** an active grant, with `Cache-Control: no-store`. Only the 60 photos and 30 clips of the decks are allowed. The client downloads clips whole and plays them from memory (`EmotionVideoPlayer`), so no Range requests are needed on iOS.
 
 Codes and the secret are never published (repository, README). The public game URL may stay in the README.
 
