@@ -2,6 +2,7 @@ import { expect, type Page, test } from "@playwright/test";
 import {
   type FaceVariant,
   faceVariants,
+  freezeVideosOnLastFrame,
   hasFacePhoto,
   routeFacePhoto,
 } from "./face-photos";
@@ -653,7 +654,7 @@ test("screenshot-multiplayer-dictation-draw-player", async ({ page }) => {
 // ---------------------------------------------------------------------------
 // Multiplayer — restanti sfide: per ognuna lo schermo dell'host (tabellone) e
 // quello del giocatore attivo (smartphone). Nelle sfide private (Parole alle
-// spalle, Indovina l'emozione, Film) la carta compare solo sul dispositivo
+// spalle, Indovina l'emozione, Emozioni in movimento) la carta compare solo sul dispositivo
 // del giocatore; l'host non la vede.
 // ---------------------------------------------------------------------------
 
@@ -696,19 +697,23 @@ const CHALLENGES: {
     facePhoto: "004_o_m_h_a.jpg",
   },
   {
-    name: "film",
-    sessionId: "FILM0",
+    name: "emotion-video",
+    sessionId: "VIDEO0",
     positions: [5, 2],
     pendingAction: {
-      type: "film",
+      type: "emotion-video",
       card: {
-        topic: { cardTitle: "felicità", cardText: "scena-felicita" },
-        videoUrl: "/videos/film-placeholder.mp4",
+        topic: {
+          cardTitle: "felicità",
+          cardText: "donna-giovane-felicità-video",
+        },
+        videoUrl: "/videos/emotion-video-placeholder.mp4",
       },
       actorPlayerId: "0",
       targetPlayerId: null,
     },
-    playerText: "Film",
+    playerText: "Emozioni in movimento",
+    facePhoto: "140_y_f_n_h.mp4",
   },
   {
     name: "music-emotion",
@@ -786,6 +791,8 @@ for (const challenge of CHALLENGES) {
 
       await page.goto(`/multiplayer/${sessionId}`);
       await expect(page.getByText("Alice").first()).toBeVisible();
+      if (challenge.name === "emotion-video")
+        await freezeVideosOnLastFrame(page);
       await expect(page).toHaveScreenshot(
         `multiplayer-${challenge.name}-host${variant.suffix}.png`,
         { fullPage: true },
@@ -805,6 +812,8 @@ for (const challenge of CHALLENGES) {
 
       await page.goto(`/player/${sessionId}/0`);
       await expect(page.getByText(challenge.playerText).first()).toBeVisible();
+      if (challenge.name === "emotion-video")
+        await freezeVideosOnLastFrame(page);
       await expect(page).toHaveScreenshot(
         `multiplayer-${challenge.name}-player${variant.suffix}.png`,
         { fullPage: true },

@@ -8,7 +8,12 @@ import { expect, test } from "../app/fixtures";
 import { GamePage } from "../app/pages/game-page";
 import { HomePage } from "../app/pages/home-page";
 import { addZustandInitScript } from "../app/zustand";
-import { faceVariants, hasFacePhoto, routeFacePhoto } from "./face-photos";
+import {
+  faceVariants,
+  freezeVideosOnLastFrame,
+  hasFacePhoto,
+  routeFacePhoto,
+} from "./face-photos";
 import FEEDBACK_DASHBOARD_FIXTURE from "./feedback-dashboard-fixture";
 
 const VIEWPORT = { width: 1920, height: 1080 };
@@ -279,6 +284,36 @@ for (const variant of faceVariants("140_y_f_h_a.jpg")) {
 
     await expect(gamePage.turnResultFullModal).toHaveScreenshot(
       `face-emotion-modal-answer${variant.suffix}.png`,
+    );
+  });
+}
+
+// La storia EmotionVideoScenario usa la carta "donna-giovane-felicità-video"
+for (const variant of faceVariants("140_y_f_n_h.mp4")) {
+  test(`screenshot-emotion-video-modal-answer${variant.suffix}`, async ({
+    page,
+  }) => {
+    test.skip(
+      !!variant.photo && !hasFacePhoto(variant.photo),
+      "clip FACES non disponibile in private/faces",
+    );
+    await page.setViewportSize(VIEWPORT);
+    await routeFacePhoto(page, variant);
+    const gamePage = new GamePage(page);
+    await page.goto(
+      "/storybook/iframe.html?id=example-turnresultmodal--emotion-video-scenario&viewMode=story",
+    );
+
+    await expect(gamePage.turnResultFullModal).toBeVisible();
+    await freezeVideosOnLastFrame(page);
+    await expect(gamePage.turnResultFullModal).toHaveScreenshot(
+      `emotion-video-modal${variant.suffix}.png`,
+    );
+
+    await gamePage.emotionVideoShowAnswerButton.click();
+
+    await expect(gamePage.turnResultFullModal).toHaveScreenshot(
+      `emotion-video-modal-answer${variant.suffix}.png`,
     );
   });
 }
