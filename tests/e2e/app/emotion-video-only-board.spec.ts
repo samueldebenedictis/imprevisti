@@ -1,13 +1,19 @@
-import { MODAL_SPECIAL_EFFECT_INFO_FILM } from "@/app/texts";
+import {
+  MODAL_SPECIAL_EFFECT_INFO_EMOTION_VIDEO,
+  SQUARE_EMOTION_VIDEO_BOTTOM,
+} from "@/app/texts";
 import { Board } from "@/model/board";
 import { Game } from "@/model/game";
 import { Player } from "@/model/player";
-import { FilmSquare } from "@/model/square/film-square";
+import { EmotionVideoSquare } from "@/model/square/emotion-video-square";
 import { expect, test } from "./fixtures";
 import { addZustandInitScript } from "./zustand";
 
 test.beforeEach(async ({ page }) => {
-  const squares = Array.from({ length: 10 }, (_, i) => new FilmSquare(i));
+  const squares = Array.from(
+    { length: 10 },
+    (_, i) => new EmotionVideoSquare(i),
+  );
   const players = ["Alice", "Bob"].map((name, i) => new Player(i, name));
   const board = new Board(squares, players);
   const game = new Game(board);
@@ -16,12 +22,14 @@ test.beforeEach(async ({ page }) => {
   await addZustandInitScript(page, gameData);
 });
 
-test("Film only board - basic functionality", async ({ gamePage }) => {
+test("EmotionVideo only board - basic functionality", async ({ gamePage }) => {
   await gamePage.goto();
-  await expect(gamePage.page.getByText("FILM")).toHaveCount(8);
+  await expect(
+    gamePage.page.getByText(SQUARE_EMOTION_VIDEO_BOTTOM),
+  ).toHaveCount(8);
 });
 
-test("Film only board - modal appears after dice roll", async ({
+test("EmotionVideo only board - modal appears after dice roll", async ({
   gamePage,
 }) => {
   await gamePage.goto();
@@ -30,7 +38,9 @@ test("Film only board - modal appears after dice roll", async ({
   await expect(gamePage.turnResultModal).toBeVisible();
 });
 
-test("Film only board - Success moves player forward", async ({ gamePage }) => {
+test("EmotionVideo only board - Success moves player forward", async ({
+  gamePage,
+}) => {
   await gamePage.goto();
 
   await gamePage.playTurnButton.click();
@@ -38,16 +48,18 @@ test("Film only board - Success moves player forward", async ({ gamePage }) => {
 
   await expect(gamePage.turnResultModal).toBeVisible();
   const initialPosition = await gamePage.getPositionInModal();
-  await gamePage.filmShowAnswerButton.click();
+  await gamePage.emotionVideoShowAnswerButton.click();
 
-  await gamePage.filmCorrectButton.click();
+  await gamePage.emotionVideoCorrectButton.click();
   const finalPosition = await gamePage.getPlayerPosition(0);
 
   await expect(gamePage.turnResultModal).not.toBeVisible();
   expect(finalPosition).toBe(initialPosition + 1);
 });
 
-test("Film only board - Failure skips player turn", async ({ gamePage }) => {
+test("EmotionVideo only board - Failure skips player turn", async ({
+  gamePage,
+}) => {
   await gamePage.goto();
 
   await gamePage.playTurnButton.click();
@@ -56,14 +68,14 @@ test("Film only board - Failure skips player turn", async ({ gamePage }) => {
   await expect(gamePage.turnResultModal).toBeVisible();
   const initialPosition = await gamePage.getPositionInModal();
 
-  await gamePage.filmShowAnswerButton.click();
-  await gamePage.filmWrongButton.click();
+  await gamePage.emotionVideoShowAnswerButton.click();
+  await gamePage.emotionVideoWrongButton.click();
 
   const finalPosition = await gamePage.getPlayerPosition(0);
   expect(finalPosition).toBe(initialPosition);
 });
 
-test("Film only board - Info icon shows tooltip on hover", async ({
+test("EmotionVideo only board - Info icon shows tooltip on hover", async ({
   gamePage,
 }) => {
   await gamePage.goto();
@@ -74,6 +86,6 @@ test("Film only board - Info icon shows tooltip on hover", async ({
 
   await gamePage.specialEffectInfoIcon.hover();
   await expect(
-    gamePage.page.getByText(MODAL_SPECIAL_EFFECT_INFO_FILM),
+    gamePage.page.getByText(MODAL_SPECIAL_EFFECT_INFO_EMOTION_VIDEO),
   ).toBeVisible();
 });

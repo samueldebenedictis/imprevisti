@@ -5,16 +5,16 @@ import {
   BackWrite,
   Card,
   DictationDraw,
+  EmotionVideo,
   FaceEmotion,
-  Film,
   Mime,
   MusicEmotion,
   PhysicalTest,
   Quiz,
   WhatWouldYouDo,
 } from "../src/model/deck";
+import { emotionVideoStorybookCards } from "../src/model/deck/emotion-video";
 import { faceEmotionStorybookCards } from "../src/model/deck/face-emotion";
-import { filmCards } from "../src/model/deck/film";
 import { Player } from "../src/model/player";
 
 const meta = {
@@ -33,7 +33,7 @@ const meta = {
         "mime",
         "backwrite",
         "face-emotion",
-        "film",
+        "emotion-video",
         "music-emotion",
         "physical-test",
         "what-would-you-do",
@@ -187,8 +187,10 @@ export const FaceEmotionNeutralScenario: Story = {
   args: makeFaceEmotionScenario("uomo-anziano-neutralità-a"),
 };
 
-const makeFilmScenario = (title: string): Story["args"] => {
-  const filmCard = filmCards.find((el) => el.title === title) as {
+const makeEmotionVideoScenario = (title: string): Story["args"] => {
+  const emotionVideoCard = emotionVideoStorybookCards.find(
+    (el) => el.title === title,
+  ) as {
     title: string;
     videoUrl: string;
     emotion: string;
@@ -197,36 +199,37 @@ const makeFilmScenario = (title: string): Story["args"] => {
     isOpen: true,
     onClose: () => console.log("Close modal"),
     diceResult: 2,
-    actionType: "film",
-    actionData: new Film(
+    actionType: "emotion-video",
+    actionData: new EmotionVideo(
       allPlayers[0],
-      new Card(filmCard.emotion, filmCard.title),
-      filmCard.videoUrl,
+      new Card(emotionVideoCard.emotion, emotionVideoCard.title),
+      emotionVideoCard.videoUrl,
     ),
-    onResolveFilm: (success) => console.log(`Film success: ${success}`),
+    onResolveEmotionVideo: (success) =>
+      console.log(`EmotionVideo success: ${success}`),
     allPlayers: allPlayers,
     currentPlayerName: allPlayers[0].getName(),
   };
 };
 
-export const FilmScenario: Story = {
-  args: makeFilmScenario("scena-felicita"),
+export const EmotionVideoScenario: Story = {
+  args: makeEmotionVideoScenario("donna-giovane-felicità-video"),
 };
 
-export const FilmAngerScenario: Story = {
-  args: makeFilmScenario("scena-rabbia"),
+export const EmotionVideoAngerScenario: Story = {
+  args: makeEmotionVideoScenario("uomo-anziano-rabbia-video"),
 };
 
-export const FilmSadnessScenario: Story = {
-  args: makeFilmScenario("scena-tristezza"),
+export const EmotionVideoSadnessScenario: Story = {
+  args: makeEmotionVideoScenario("uomo-giovane-tristezza-video"),
 };
 
-export const FilmFearScenario: Story = {
-  args: makeFilmScenario("scena-paura"),
+export const EmotionVideoFearScenario: Story = {
+  args: makeEmotionVideoScenario("donna-anziana-paura-video"),
 };
 
-export const FilmDisgustScenario: Story = {
-  args: makeFilmScenario("scena-disgusto"),
+export const EmotionVideoDisgustScenario: Story = {
+  args: makeEmotionVideoScenario("donna-adulta-disgusto-video"),
 };
 
 export const BackWriteScenario: Story = {

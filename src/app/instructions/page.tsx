@@ -9,8 +9,8 @@ import {
   LABEL_BACKWRITE,
   LABEL_BATTLE,
   LABEL_DICTATION_DRAW,
+  LABEL_EMOTION_VIDEO,
   LABEL_FACE_EMOTION,
-  LABEL_FILM,
   LABEL_MIME,
   LABEL_MOVE,
   LABEL_MUSIC_EMOTION,
@@ -20,8 +20,8 @@ import {
   MODAL_SPECIAL_EFFECT_INFO_BACKWRITE,
   MODAL_SPECIAL_EFFECT_INFO_BATTLE,
   MODAL_SPECIAL_EFFECT_INFO_DICTATION_DRAW,
+  MODAL_SPECIAL_EFFECT_INFO_EMOTION_VIDEO,
   MODAL_SPECIAL_EFFECT_INFO_FACE_EMOTION,
-  MODAL_SPECIAL_EFFECT_INFO_FILM,
   MODAL_SPECIAL_EFFECT_INFO_MIME,
   MODAL_SPECIAL_EFFECT_INFO_MOVE,
   MODAL_SPECIAL_EFFECT_INFO_MUSIC_EMOTION,
@@ -71,8 +71,8 @@ export default function InstructionsPage() {
       description: MODAL_SPECIAL_EFFECT_INFO_FACE_EMOTION,
     },
     {
-      title: LABEL_FILM,
-      description: MODAL_SPECIAL_EFFECT_INFO_FILM,
+      title: LABEL_EMOTION_VIDEO,
+      description: MODAL_SPECIAL_EFFECT_INFO_EMOTION_VIDEO,
     },
     {
       title: LABEL_MOVE,
@@ -206,6 +206,32 @@ export default function InstructionsPage() {
             Una volta configurato, cliccate su "Inizia Gioco" per avviare la
             partita.
           </p>
+          <p className="mb-2">
+            Se il tabellone contiene le caselle{" "}
+            <strong>Indovina l&apos;emozione</strong> o{" "}
+            <strong>Emozioni in movimento</strong>, prima dell&apos;avvio
+            compare una finestra che chiede il{" "}
+            <strong>codice dell&apos;educatore</strong>. Con un codice valido le
+            sfide usano le fotografie e i video del database FACES: per vederli
+            bisogna accettare l&apos;impegno a non diffonderli. Ogni codice vale
+            per una sola partita; lo genera l&apos;educatore e lo consegna a chi
+            gioca in presenza. Scegliendo <strong>Gioca senza codice</strong> si
+            usano volti illustrati: le caselle Emozioni in movimento diventano
+            Indovina l&apos;emozione.
+          </p>
+          <p className="mb-2">
+            <strong>Per gli educatori:</strong> per generare un codice aprite la
+            pagina{" "}
+            <a className="font-semibold" href="/educatore/codice">
+              Codici FACES
+            </a>
+            , inserite il codice di accesso educatori e premete{" "}
+            <strong>Genera un codice</strong>. Il codice vale per una sola
+            partita e scade dopo 24 ore se non viene usato: inseritelo
+            all&apos;avvio della partita, sul dispositivo del tabellone. Il
+            codice di accesso educatori viene comunicato in privato e non va
+            diffuso.
+          </p>
           <Video
             src={`${imagePrefix}/videos/game-at-work-setup-chromium.webm`}
             text="Un video che mostra l'applicativo durante la configurazione senza caselle speciali"
@@ -253,6 +279,15 @@ export default function InstructionsPage() {
             <li>
               <strong>Sfide condivise:</strong> per Quiz, Test fisico e altre
               sfide il contenuto è visibile su tutti i dispositivi.
+            </li>
+            <li>
+              <strong>
+                Indovina l&apos;emozione ed Emozioni in movimento:
+              </strong>{" "}
+              il codice dell&apos;educatore si inserisce una sola volta, sul
+              dispositivo del tabellone. Sui telefoni dei giocatori fotografie e
+              video FACES compaiono dopo aver accettato l&apos;impegno a non
+              diffonderli.
             </li>
             <li>
               <strong>Battaglia:</strong> i due giocatori coinvolti effettuano
@@ -305,8 +340,9 @@ export default function InstructionsPage() {
           <p className="mb-2">
             Clicca su <strong>Applica</strong> per tornare alla configurazione
             con il tabellone personalizzato attivo. I controlli di tipologia e
-            percentuale verranno nascosti. Per tornare alla modalità standard,
-            usa il pulsante <strong>Rimuovi configurazione avanzata</strong>.
+            numero di caselle speciali verranno nascosti. Per tornare alla
+            modalità standard, usa il pulsante{" "}
+            <strong>Rimuovi configurazione avanzata</strong>.
           </p>
         </section>
 

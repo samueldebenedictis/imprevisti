@@ -4,21 +4,22 @@ import {
   BackWriteDeck,
   type Deck,
   DictationDrawDeck,
+  EmotionVideoDeck,
   FaceEmotionDeck,
-  FilmDeck,
   MimeDeck,
   MusicEmotionDeck,
   PhysicalTestDeck,
   QuizDeck,
   WhatWouldYouDoDeck,
 } from "./deck";
+import type { FaceSet } from "./deck/face-emotion";
 import { Dice } from "./dice";
 import {
   BackWriteManager,
   BattleManager,
   DictationDrawManager,
+  EmotionVideoManager,
   FaceEmotionManager,
-  FilmManager,
   type GameActionResult,
   GameStateManager,
   MimeManager,
@@ -35,8 +36,8 @@ import { Player, type PlayerJSON } from "./player";
 import type {
   BackWrite,
   DictationDraw,
+  EmotionVideo,
   FaceEmotion,
-  Film,
   Mime,
   MusicEmotion,
   PhysicalTest,
@@ -52,6 +53,8 @@ export interface GameJSON {
   gameEnded: boolean;
   winnerId?: number;
   battlesEnabled: boolean;
+  /** Volti di "Indovina l'emozione"; assente nei salvataggi precedenti. */
+  faceSet?: FaceSet;
 }
 
 /**
@@ -62,11 +65,12 @@ export class Game {
   private board: Board;
   private dice: Dice;
   private battlesEnabled: boolean;
+  private faceSet: FaceSet;
   private mimeDeck: Deck;
   private quizDeck: Deck;
   private backWriteDeck: Deck;
   private faceEmotionDeck: Deck;
-  private filmDeck: Deck;
+  private emotionVideoDeck: Deck;
   private musicEmotionDeck: Deck;
   private physicalTestDeck: Deck;
   private whatWouldYouDoDeck: Deck;
@@ -82,7 +86,7 @@ export class Game {
   private quizManager: QuizManager;
   private backWriteManager: BackWriteManager;
   private faceEmotionManager: FaceEmotionManager;
-  private filmManager: FilmManager;
+  private emotionVideoManager: EmotionVideoManager;
   private musicEmotionManager: MusicEmotionManager;
   private physicalTestManager: PhysicalTestManager;
   private whatWouldYouDoManager: WhatWouldYouDoManager;
@@ -94,17 +98,24 @@ export class Game {
    * @param players - Array delle istanze dei giocatori
    * @param diceFaces - Numero di facce del dado (opzionale, default 6)
    * @param battlesEnabled - Se false, le collisioni tra giocatori non generano battaglie (opzionale, default true)
+   * @param faceSet - Volti di "Indovina l'emozione": fotografie FACES, solo per partite con codice d'accesso, o volti illustrati (default)
    */
-  constructor(board: Board, diceFaces = 6, battlesEnabled = true) {
+  constructor(
+    board: Board,
+    diceFaces = 6,
+    battlesEnabled = true,
+    faceSet: FaceSet = "ai",
+  ) {
     // Inizializzazione componenti base
     this.board = board;
     this.dice = new Dice(diceFaces);
     this.battlesEnabled = battlesEnabled;
+    this.faceSet = faceSet;
     this.mimeDeck = new MimeDeck();
     this.quizDeck = new QuizDeck();
     this.backWriteDeck = new BackWriteDeck();
-    this.faceEmotionDeck = new FaceEmotionDeck();
-    this.filmDeck = new FilmDeck();
+    this.faceEmotionDeck = new FaceEmotionDeck(faceSet);
+    this.emotionVideoDeck = new EmotionVideoDeck();
     this.musicEmotionDeck = new MusicEmotionDeck();
     this.physicalTestDeck = new PhysicalTestDeck();
     this.whatWouldYouDoDeck = new WhatWouldYouDoDeck();
@@ -128,7 +139,7 @@ export class Game {
       this.physicalTestDeck,
       this.whatWouldYouDoDeck,
       this.dictationDrawDeck,
-      this.filmDeck,
+      this.emotionVideoDeck,
       this.dice,
       this.movementManager,
       this.gameStateManager,
@@ -142,7 +153,7 @@ export class Game {
     this.quizManager = new QuizManager(this.movementManager);
     this.backWriteManager = new BackWriteManager(this.movementManager);
     this.faceEmotionManager = new FaceEmotionManager(this.movementManager);
-    this.filmManager = new FilmManager(this.movementManager);
+    this.emotionVideoManager = new EmotionVideoManager(this.movementManager);
     this.musicEmotionManager = new MusicEmotionManager(this.movementManager);
     this.physicalTestManager = new PhysicalTestManager(this.movementManager);
     this.whatWouldYouDoManager = new WhatWouldYouDoManager(
@@ -168,6 +179,7 @@ export class Game {
       gameEnded: this.gameStateManager.isGameEnded(),
       winnerId: this.gameStateManager.getWinner()?.getId(),
       battlesEnabled: this.battlesEnabled,
+      faceSet: this.faceSet,
     };
   }
 
@@ -187,7 +199,12 @@ export class Game {
 
     const board = Board.fromJSON(json.board, players);
 
-    const game = new Game(board, 6, json.battlesEnabled ?? true);
+    const game = new Game(
+      board,
+      6,
+      json.battlesEnabled ?? true,
+      json.faceSet ?? "ai",
+    );
 
     game.turnManager = TurnManager.fromJSON(
       json.currentTurn,
@@ -219,7 +236,7 @@ export class Game {
       game.physicalTestDeck,
       game.whatWouldYouDoDeck,
       game.dictationDrawDeck,
-      game.filmDeck,
+      game.emotionVideoDeck,
       game.dice,
       game.movementManager, // movementManager also needs to be updated first
       reconstructedGameStateManager,
@@ -233,7 +250,7 @@ export class Game {
     game.quizManager = new QuizManager(game.movementManager);
     game.backWriteManager = new BackWriteManager(game.movementManager);
     game.faceEmotionManager = new FaceEmotionManager(game.movementManager);
-    game.filmManager = new FilmManager(game.movementManager);
+    game.emotionVideoManager = new EmotionVideoManager(game.movementManager);
     game.musicEmotionManager = new MusicEmotionManager(game.movementManager);
     game.physicalTestManager = new PhysicalTestManager(game.movementManager);
     game.whatWouldYouDoManager = new WhatWouldYouDoManager(
@@ -458,13 +475,19 @@ export class Game {
   }
 
   /**
-   * Risolve un'azione film utilizzando il FilmManager.
-   * @param filmAction - L'oggetto Film da risolvere
+   * Risolve un'azione film utilizzando il EmotionVideoManager.
+   * @param emotionVideoAction - L'oggetto EmotionVideo da risolvere
    * @param success - True se l'emozione della scena è stata indovinata, false altrimenti
    * @returns Un oggetto Battle se si verifica una collisione, null altrimenti
    */
-  resolveFilm(filmAction: Film, success: boolean): Battle | null {
-    return this.filmManager.resolveFilm(filmAction, success);
+  resolveEmotionVideo(
+    emotionVideoAction: EmotionVideo,
+    success: boolean,
+  ): Battle | null {
+    return this.emotionVideoManager.resolveEmotionVideo(
+      emotionVideoAction,
+      success,
+    );
   }
 
   // Getter per accesso ai dati del gioco
@@ -523,5 +546,10 @@ export class Game {
    */
   isGameEnded(): boolean {
     return this.gameStateManager.isGameEnded();
+  }
+
+  /** Volti usati da "Indovina l'emozione" in questa partita. */
+  getFaceSet(): FaceSet {
+    return this.faceSet;
   }
 }

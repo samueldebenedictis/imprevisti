@@ -1,14 +1,22 @@
 import { Card } from "./card";
 import { Deck } from "./deck";
-import { faceEmotionCards } from "./face-emotion";
+import { type FaceSet, faceEmotionCardsFor } from "./face-emotion";
 
 export class FaceEmotionDeck extends Deck {
+  private readonly imageCards: ReturnType<typeof faceEmotionCardsFor>;
+
+  /**
+   * @param faceSet - Volti del mazzo: fotografie FACES o volti illustrati
+   * @param cards - Carte del mazzo (default: tutte quelle del set di volti)
+   */
   constructor(
-    cards: Card[] = faceEmotionCards.map(
+    faceSet: FaceSet = "ai",
+    cards: Card[] = faceEmotionCardsFor(faceSet).map(
       (el) => new Card(el.emotion, el.title),
     ),
   ) {
     super(cards);
+    this.imageCards = faceEmotionCardsFor(faceSet);
   }
 
   /**
@@ -18,6 +26,6 @@ export class FaceEmotionDeck extends Deck {
    */
   getImageData(card: Card) {
     const cardText = card.cardText;
-    return faceEmotionCards.find((el) => el.title === cardText);
+    return this.imageCards.find((el) => el.title === cardText);
   }
 }

@@ -4,8 +4,8 @@ import {
   MODAL_SPECIAL_EFFECT_INFO_BACKWRITE,
   MODAL_SPECIAL_EFFECT_INFO_BATTLE,
   MODAL_SPECIAL_EFFECT_INFO_DICTATION_DRAW,
+  MODAL_SPECIAL_EFFECT_INFO_EMOTION_VIDEO,
   MODAL_SPECIAL_EFFECT_INFO_FACE_EMOTION,
-  MODAL_SPECIAL_EFFECT_INFO_FILM,
   MODAL_SPECIAL_EFFECT_INFO_MIME,
   MODAL_SPECIAL_EFFECT_INFO_MOVE,
   MODAL_SPECIAL_EFFECT_INFO_MUSIC_EMOTION,
@@ -16,10 +16,16 @@ import {
 
 interface SpecialEffectInfoIconProps {
   actionType: string | null;
+  /**
+   * Accanto a un'etichetta (configurazione della partita), con la spiegazione
+   * che si apre sotto, invece che nell'angolo della finestra.
+   */
+  inline?: boolean;
 }
 
 const SpecialEffectInfoIcon: React.FC<SpecialEffectInfoIconProps> = ({
   actionType,
+  inline = false,
 }) => {
   // Col mouse si apre al passaggio; su touch (tablet, LIM) con un tocco,
   // che la fissa aperta finché non si tocca di nuovo o altrove.
@@ -47,44 +53,58 @@ const SpecialEffectInfoIcon: React.FC<SpecialEffectInfoIconProps> = ({
         return MODAL_SPECIAL_EFFECT_INFO_WHAT_WOULD_YOU_DO;
       case "face-emotion":
         return MODAL_SPECIAL_EFFECT_INFO_FACE_EMOTION;
-      case "film":
-        return MODAL_SPECIAL_EFFECT_INFO_FILM;
+      case "emotion-video":
+        return MODAL_SPECIAL_EFFECT_INFO_EMOTION_VIDEO;
       default:
         return MODAL_SPECIAL_EFFECT_INFO_MOVE;
     }
   };
 
+  const button = (
+    <button
+      onPointerEnter={(e) => e.pointerType === "mouse" && setHovered(true)}
+      onPointerLeave={(e) => e.pointerType === "mouse" && setHovered(false)}
+      onClick={() => setPinned((prev) => !prev)}
+      onBlur={() => setPinned(false)}
+      aria-expanded={showInfo}
+      className={`text-gray-600 hover:text-gray-800 ${inline ? "ml-1 flex" : ""}`}
+      type="button"
+    >
+      <svg
+        width={inline ? 16 : 20}
+        height={inline ? 16 : 20}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        role="img"
+        aria-label="Informazioni effetto speciale"
+      >
+        <title>Informazioni effetto speciale</title>
+        <circle cx="12" cy="12" r="10" />
+        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+        <path d="M12 17h.01" />
+      </svg>
+    </button>
+  );
+
+  if (inline)
+    return (
+      <span className="relative inline-flex align-middle">
+        {button}
+        {showInfo && (
+          <span className="ui-border-dark -translate-x-1/2 absolute top-6 left-1/2 z-20 w-72 bg-white p-3 text-base shadow-lg">
+            {getSpecialEffectInfo(actionType)}
+          </span>
+        )}
+      </span>
+    );
+
   return (
     <>
-      <div className="absolute top-0 right-0">
-        <button
-          onPointerEnter={(e) => e.pointerType === "mouse" && setHovered(true)}
-          onPointerLeave={(e) => e.pointerType === "mouse" && setHovered(false)}
-          onClick={() => setPinned((prev) => !prev)}
-          onBlur={() => setPinned(false)}
-          aria-expanded={showInfo}
-          className="text-gray-600 hover:text-gray-800"
-          type="button"
-        >
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            role="img"
-            aria-label="Informazioni effetto speciale"
-          >
-            <title>Informazioni effetto speciale</title>
-            <circle cx="12" cy="12" r="10" />
-            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-            <path d="M12 17h.01" />
-          </svg>
-        </button>
-      </div>
+      <div className="absolute top-0 right-0">{button}</div>
       {showInfo && (
         <div className="ui-border-dark -translate-x-1/2 absolute top-10 left-1/2 z-10 w-[min(500px,calc(100vw-2rem))] bg-white p-4 text-xl shadow-lg">
           {getSpecialEffectInfo(actionType)}

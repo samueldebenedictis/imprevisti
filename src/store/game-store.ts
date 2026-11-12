@@ -4,8 +4,8 @@ import { validateGameJSON } from "@/lib/game-json";
 import { Battle } from "@/model/battle";
 import { BackWrite } from "@/model/deck/backwrite";
 import { DictationDraw } from "@/model/deck/dictation-draw";
+import { EmotionVideo } from "@/model/deck/emotion-video";
 import { FaceEmotion } from "@/model/deck/face-emotion";
-import { Film } from "@/model/deck/film";
 import { Mime } from "@/model/deck/mime";
 import { MusicEmotion } from "@/model/deck/music-emotion";
 import { PhysicalTest } from "@/model/deck/physical-test";
@@ -19,8 +19,8 @@ import {
   LABEL_BACKWRITE,
   LABEL_BATTLE,
   LABEL_DICTATION_DRAW,
+  LABEL_EMOTION_VIDEO,
   LABEL_FACE_EMOTION,
-  LABEL_FILM,
   LABEL_MIME,
   LABEL_MUSIC_EMOTION,
   LABEL_QUIZ,
@@ -34,7 +34,7 @@ export const ACTION_TYPE_LABELS: Record<string, string> = {
   mime: LABEL_MIME,
   backwrite: LABEL_BACKWRITE,
   "face-emotion": LABEL_FACE_EMOTION,
-  film: LABEL_FILM,
+  "emotion-video": LABEL_EMOTION_VIDEO,
   "music-emotion": LABEL_MUSIC_EMOTION,
   "what-would-you-do": LABEL_WHAT_WOULD_YOU_DO,
   "dictation-draw": LABEL_DICTATION_DRAW,
@@ -60,7 +60,7 @@ export interface GameState {
     | Quiz
     | BackWrite
     | FaceEmotion
-    | Film
+    | EmotionVideo
     | MusicEmotion
     | PhysicalTest
     | WhatWouldYouDo
@@ -96,7 +96,7 @@ export interface GameActions {
   resolveQuiz: (success: boolean) => void;
   resolveBackWrite: (success: boolean, guesserId?: number) => void;
   resolveFaceEmotion: (success: boolean) => void;
-  resolveFilm: (success: boolean) => void;
+  resolveEmotionVideo: (success: boolean) => void;
   resolveMusicEmotion: (success: boolean) => void;
   resolvePhysicalTest: (success: boolean) => void;
   resolveWhatWouldYouDo: (success: boolean) => void;
@@ -489,26 +489,31 @@ export const useGameStore = create<GameStore>()(
           finishResolution(set, get, game, collisions);
         },
 
-        resolveFilm: (success: boolean) => {
+        resolveEmotionVideo: (success: boolean) => {
           const { game, actionData, actionType } = get();
-          if (!game || !actionData || actionType !== "film") return;
+          if (!game || !actionData || actionType !== "emotion-video") return;
 
-          const filmAction = actionData as Film;
-          const currentFilmPlayer = game
+          const emotionVideoAction = actionData as EmotionVideo;
+          const currentEmotionVideoPlayer = game
             .getPlayers()
-            .find((p) => p.getId() === filmAction.emotionPlayer.getId());
+            .find(
+              (p) => p.getId() === emotionVideoAction.emotionPlayer.getId(),
+            );
 
-          if (!currentFilmPlayer) {
+          if (!currentEmotionVideoPlayer) {
             get().actions.closeModal();
             return;
           }
 
-          const currentFilmAction = new Film(
-            currentFilmPlayer,
-            filmAction.cardEmotion,
-            filmAction.videoUrl,
+          const currentEmotionVideoAction = new EmotionVideo(
+            currentEmotionVideoPlayer,
+            emotionVideoAction.cardEmotion,
+            emotionVideoAction.videoUrl,
           );
-          const collisions = game.resolveFilm(currentFilmAction, success);
+          const collisions = game.resolveEmotionVideo(
+            currentEmotionVideoAction,
+            success,
+          );
           finishResolution(set, get, game, collisions);
         },
 

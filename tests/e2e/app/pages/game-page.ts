@@ -17,14 +17,14 @@ import {
   MODAL_DICTATION_DRAW_NOT_DRAWN,
   MODAL_DICTATION_DRAW_SHOW_IMAGE,
   MODAL_DICTATION_DRAW_TITLE,
+  MODAL_EMOTION_VIDEO_CORRECT,
+  MODAL_EMOTION_VIDEO_SHOW_ANSWER,
+  MODAL_EMOTION_VIDEO_TITLE,
+  MODAL_EMOTION_VIDEO_WRONG,
   MODAL_FACE_EMOTION_CORRECT,
   MODAL_FACE_EMOTION_SHOW_ANSWER,
   MODAL_FACE_EMOTION_TITLE,
   MODAL_FACE_EMOTION_WRONG,
-  MODAL_FILM_CORRECT,
-  MODAL_FILM_SHOW_ANSWER,
-  MODAL_FILM_TITLE,
-  MODAL_FILM_WRONG,
   MODAL_MIME_CONFIRM,
   MODAL_MIME_GUESSED,
   MODAL_MIME_NOT_GUESSED,
@@ -161,16 +161,16 @@ export class GamePage {
     exact: true,
   });
 
-  filmShowAnswerButton = this.page.getByRole("button", {
-    name: MODAL_FILM_SHOW_ANSWER,
+  emotionVideoShowAnswerButton = this.page.getByRole("button", {
+    name: MODAL_EMOTION_VIDEO_SHOW_ANSWER,
     exact: true,
   });
-  filmCorrectButton = this.page.getByRole("button", {
-    name: MODAL_FILM_CORRECT,
+  emotionVideoCorrectButton = this.page.getByRole("button", {
+    name: MODAL_EMOTION_VIDEO_CORRECT,
     exact: true,
   });
-  filmWrongButton = this.page.getByRole("button", {
-    name: MODAL_FILM_WRONG,
+  emotionVideoWrongButton = this.page.getByRole("button", {
+    name: MODAL_EMOTION_VIDEO_WRONG,
     exact: true,
   });
   faceEmotionShowAnswerButton = this.page.getByRole("button", {
@@ -228,7 +228,7 @@ export class GamePage {
   mimeModalTitle = this.page.getByText(MODAL_MIME_TITLE);
   backwriteModalTitle = this.page.getByText(MODAL_BACKWRITE_TITLE);
   faceEmotionModalTitle = this.page.getByText(MODAL_FACE_EMOTION_TITLE);
-  filmModalTitle = this.page.getByText(MODAL_FILM_TITLE);
+  emotionVideoModalTitle = this.page.getByText(MODAL_EMOTION_VIDEO_TITLE);
   musicEmotionModalTitle = this.page.getByText(MODAL_MUSIC_EMOTION_TITLE);
   physicalTestModalTitle = this.page.getByText(MODAL_PHYSICAL_TEST);
   whatWouldYouDoModalTitle = this.page.getByText(MODAL_WHAT_WOULD_YOU_DO_TITLE);
@@ -292,12 +292,12 @@ export class GamePage {
       await this.playerSelectDropdown.selectOption({ index: 1 });
       await this.dictationDrawConfirmButton.click();
     }
-    if (await this.filmModalTitle.isVisible()) {
-      await this.filmShowAnswerButton.click();
+    if (await this.emotionVideoModalTitle.isVisible()) {
+      await this.emotionVideoShowAnswerButton.click();
       if (outcome === "positive") {
-        await this.filmCorrectButton.click();
+        await this.emotionVideoCorrectButton.click();
       } else {
-        await this.filmWrongButton.click();
+        await this.emotionVideoWrongButton.click();
       }
     }
     if (await this.faceEmotionModalTitle.isVisible()) {

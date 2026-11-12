@@ -3,8 +3,8 @@ import type { Player } from "../player";
 import {
   BackWrite,
   DictationDraw,
+  EmotionVideo,
   FaceEmotion,
-  Film,
   Mime,
   MusicEmotion,
   PhysicalTest,
@@ -18,7 +18,7 @@ type SpecialAction =
   | Quiz
   | BackWrite
   | FaceEmotion
-  | Film
+  | EmotionVideo
   | MusicEmotion
   | PhysicalTest
   | WhatWouldYouDo
@@ -54,7 +54,7 @@ function actionType(
   if (action instanceof WhatWouldYouDo) return "what-would-you-do";
   if (action instanceof DictationDraw) return "dictation-draw";
   if (action instanceof FaceEmotion) return "face-emotion";
-  if (action instanceof Film) return "film";
+  if (action instanceof EmotionVideo) return "emotion-video";
   return "none";
 }
 

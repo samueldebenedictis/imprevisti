@@ -4,7 +4,11 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { SquareJSON } from "../../model/square/square";
 import { useConfigStore } from "../../store/config-store";
-import { FACE_EMOTION_ENABLED, FILM_ENABLED, URL_HOME } from "../../vars";
+import {
+  EMOTION_VIDEO_ENABLED,
+  FACE_EMOTION_ENABLED,
+  URL_HOME,
+} from "../../vars";
 import Button from "../components/ui/button";
 import Input from "../components/ui/input";
 import { Label } from "../components/ui/label";
@@ -17,8 +21,8 @@ import {
   LABEL_ADVANCED_MODE_RESET,
   LABEL_BACKWRITE,
   LABEL_DICTATION_DRAW,
+  LABEL_EMOTION_VIDEO,
   LABEL_FACE_EMOTION,
-  LABEL_FILM,
   LABEL_MIME,
   LABEL_MOVE_VALUE,
   LABEL_MUSIC_EMOTION,
@@ -38,7 +42,9 @@ const squareTypeOptions = [
   ...(FACE_EMOTION_ENABLED
     ? [{ value: "face-emotion", label: LABEL_FACE_EMOTION }]
     : []),
-  ...(FILM_ENABLED ? [{ value: "film", label: LABEL_FILM }] : []),
+  ...(EMOTION_VIDEO_ENABLED
+    ? [{ value: "emotion-video", label: LABEL_EMOTION_VIDEO }]
+    : []),
   { value: "music-emotion", label: LABEL_MUSIC_EMOTION },
   { value: "physical-test", label: LABEL_PHYSICAL_TEST },
   { value: "what-would-you-do", label: LABEL_WHAT_WOULD_YOU_DO },
@@ -51,7 +57,7 @@ const typeBadgeColor: Record<string, string> = {
   quiz: "bg-amber-500",
   backwrite: "bg-orange-500",
   "face-emotion": "bg-violet-500",
-  film: "bg-emerald-500",
+  "emotion-video": "bg-emerald-500",
   "music-emotion": "bg-pink-500",
   "physical-test": "bg-cyan-500",
   "what-would-you-do": "bg-lime-500",
@@ -204,13 +210,15 @@ export default function AdvancedMode() {
         </div>
 
         <div className="flex flex-wrap justify-center">
-          <Button color="red" onClick={handleReset}>
+          <Button color="red" onClick={handleCancel}>
+            {LABEL_ADVANCED_MODE_CANCEL}
+          </Button>
+          <Button color="yellow" onClick={handleReset}>
             {LABEL_ADVANCED_MODE_RESET}
           </Button>
           <Button color="green" onClick={handleApply}>
             {LABEL_ADVANCED_MODE_APPLY}
           </Button>
-          <Button onClick={handleCancel}>{LABEL_ADVANCED_MODE_CANCEL}</Button>
         </div>
       </div>
     </div>

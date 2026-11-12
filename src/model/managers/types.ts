@@ -2,8 +2,8 @@ import type { Battle } from "../battle";
 import type {
   BackWrite,
   DictationDraw,
+  EmotionVideo,
   FaceEmotion,
-  Film,
   Mime,
   MusicEmotion,
   PhysicalTest,
@@ -21,7 +21,7 @@ export type GameActionResult = {
     | "quiz"
     | "backwrite"
     | "face-emotion"
-    | "film"
+    | "emotion-video"
     | "music-emotion"
     | "physical-test"
     | "what-would-you-do"
@@ -33,7 +33,7 @@ export type GameActionResult = {
     | Quiz
     | BackWrite
     | FaceEmotion
-    | Film
+    | EmotionVideo
     | MusicEmotion
     | PhysicalTest
     | WhatWouldYouDo

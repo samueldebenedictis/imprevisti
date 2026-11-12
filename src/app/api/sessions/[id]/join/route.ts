@@ -31,8 +31,11 @@ export async function POST(
     // ID numerico come stringa: Player(id: number) usa Number(p.id)
     const playerId = String(session.players.length);
     session.players.push({ id: playerId, name: playerName.trim() });
+    // Segreto del giocatore: serve al telefono per l'accesso alle foto FACES
+    const playerSecret = crypto.randomUUID();
+    session.playerSecrets = [...(session.playerSecrets ?? []), playerSecret];
     await saveSession(id, session);
 
-    return NextResponse.json({ playerId });
+    return NextResponse.json({ playerId, playerSecret });
   });
 }

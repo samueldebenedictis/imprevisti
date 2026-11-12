@@ -5,12 +5,12 @@ import { useState } from "react";
 import {
   acceptFacesAccess,
   configUsesFaceEmotion,
-  fetchFacesAccess,
+  revokeFacesAccess,
 } from "@/lib/faces-client";
 import { useConfigStore } from "../store/config-store";
 import {
+  EMOTION_VIDEO_ENABLED,
   FACE_EMOTION_ENABLED,
-  FILM_ENABLED,
   MAX_PLAYERS,
   MAX_SQUARES,
   MIN_PLAYERS,
@@ -19,11 +19,18 @@ import {
   URL_MULTIPLAYER,
 } from "../vars";
 import FacesDisclaimer from "./components/faces-disclaimer";
+import SpecialEffectInfoIcon from "./components/turn-result-modal/special-effect-info-icon";
 import Button from "./components/ui/button";
 import { colorToCssButton } from "./components/ui/color";
 import Input from "./components/ui/input";
 import { Label, LabelCheckbox } from "./components/ui/label";
 import {
+  FACES_CODE_INVALID,
+  FACES_CODE_LABEL,
+  FACES_CODE_MISSING,
+  FACES_CODE_PLACEHOLDER,
+  FACES_DISCLAIMER_ERROR,
+  FACES_SETUP_DECLINE,
   FACES_SETUP_INTRO,
   FACES_SETUP_TITLE,
   LABEL_ADVANCED_MODE,
@@ -32,8 +39,8 @@ import {
   LABEL_BACKWRITE,
   LABEL_BATTLES_ENABLED,
   LABEL_DICTATION_DRAW,
+  LABEL_EMOTION_VIDEO,
   LABEL_FACE_EMOTION,
-  LABEL_FILM,
   LABEL_MIME,
   LABEL_MOVE,
   LABEL_MUSIC_EMOTION,
@@ -41,12 +48,19 @@ import {
   LABEL_PLAYER_NAME,
   LABEL_PLAYERS_NUMBER,
   LABEL_QUIZ,
-  LABEL_SPECIAL_PERCENTAGE,
   LABEL_SPECIAL_SQUARES,
+  LABEL_SPECIAL_SQUARES_COUNT,
   LABEL_SQUARES_NUMBER,
   LABEL_SUBMIT,
   LABEL_WHAT_WOULD_YOU_DO,
 } from "./texts";
+import {
+  countSpecialSquares,
+  getEnabledSpecialTypes,
+  maxSpecialSquares,
+  percentageForSpecialSquares,
+  specialSquaresForPercentage,
+} from "./utils/generate-squares";
 
 type Mode = "single" | "multi";
 
@@ -99,6 +113,12 @@ export default function Home() {
   const numSquares = useConfigStore((state) => state.numSquares);
   const squareTypes = useConfigStore((state) => state.squareTypes);
   const specialPercentage = useConfigStore((state) => state.specialPercentage);
+  const hasSpecialTypes = getEnabledSpecialTypes(squareTypes).length > 0;
+  const specialCount = countSpecialSquares(
+    numSquares,
+    squareTypes,
+    specialPercentage / 100,
+  );
   const customSquares = useConfigStore((state) => state.customSquares);
   const battlesEnabled = useConfigStore((state) => state.battlesEnabled);
   const actions = useConfigStore((state) => state.actions);
@@ -114,17 +134,19 @@ export default function Home() {
     ...(FACE_EMOTION_ENABLED
       ? [{ key: "face-emotion", label: LABEL_FACE_EMOTION }]
       : []),
-    ...(FILM_ENABLED ? [{ key: "film", label: LABEL_FILM }] : []),
+    ...(EMOTION_VIDEO_ENABLED
+      ? [{ key: "emotion-video", label: LABEL_EMOTION_VIDEO }]
+      : []),
     { key: "music-emotion", label: LABEL_MUSIC_EMOTION },
     { key: "physical-test", label: LABEL_PHYSICAL_TEST },
     { key: "what-would-you-do", label: LABEL_WHAT_WOULD_YOU_DO },
     { key: "dictation-draw", label: LABEL_DICTATION_DRAW },
   ];
 
-  // Disclaimer FACES all'avvio: "hidden", "shown" o "error" (accettazione non registrata)
-  const [facesPrompt, setFacesPrompt] = useState<"hidden" | "shown" | "error">(
-    "hidden",
-  );
+  // Finestra FACES all'avvio: codice dell'educatore e disclaimer
+  const [facesPrompt, setFacesPrompt] = useState(false);
+  const [facesCode, setFacesCode] = useState("");
+  const [facesError, setFacesError] = useState<string>();
 
   const startGame = () => {
     try {
@@ -141,32 +163,47 @@ export default function Home() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Con "Indovina l'emozione" l'educatore accetta prima il disclaimer FACES
-    if (
-      configUsesFaceEmotion(useConfigStore.getState()) &&
-      !(await fetchFacesAccess())
-    ) {
-      setFacesPrompt("shown");
+    // Con "Indovina l'emozione" si chiede un codice nuovo per ogni partita:
+    // un codice vale per una sola partita
+    if (configUsesFaceEmotion(useConfigStore.getState())) {
+      setFacesCode("");
+      setFacesError(undefined);
+      setFacesPrompt(true);
       return;
     }
+    actions.setFaceSet("ai");
     startGame();
   };
 
   const acceptFaces = async () => {
-    if (!(await acceptFacesAccess())) {
-      setFacesPrompt("error");
+    if (!facesCode.trim()) {
+      setFacesError(FACES_CODE_MISSING);
       return;
     }
-    setFacesPrompt("hidden");
+    // La modalità decide se il permesso potrà essere legato a una partita
+    // multigiocatore: un codice usato su schermo singolo non vale per l'altra
+    const result = await acceptFacesAccess({
+      code: facesCode,
+      mode: mode === "multi" ? "multi" : "single",
+    });
+    if (result !== "granted") {
+      setFacesError(
+        result === "invalid-code" ? FACES_CODE_INVALID : FACES_DISCLAIMER_ERROR,
+      );
+      return;
+    }
+    actions.setFaceSet("faces");
+    setFacesPrompt(false);
     startGame();
   };
 
-  // Disclaimer non accettato: la sfida viene tolta dal tabellone
-  const declineFaces = () => {
-    actions.excludeFaceEmotion();
-    setFacesPrompt("hidden");
+  // Senza codice o senza accettazione: volti illustrati al posto delle foto FACES
+  const declineFaces = async () => {
+    await revokeFacesAccess();
+    actions.setFaceSet("ai");
+    setFacesPrompt(false);
     startGame();
   };
 
@@ -197,7 +234,7 @@ export default function Home() {
       {mobileWall}
       <div className="hidden md:block">
         <div className="ui-text-dark my-8 flex flex-col items-center justify-center p-2">
-          <div className="mb-2 flex w-full max-w-md flex-col items-center gap-1">
+          <div className="mb-2 flex w-full max-w-xl flex-col items-center gap-1">
             <Button
               color="blue"
               onClick={() => {
@@ -209,20 +246,20 @@ export default function Home() {
               Cambia modalità
             </Button>
           </div>
-          <hr className="mb-2 w-full max-w-md border-gray-200" />
+          <hr className="mb-2 w-full max-w-xl border-gray-200" />
           <h1 className="ui-text-title m-2 text-center">
             {mode === "multi"
               ? "Gioco multi-dispositivo"
               : "Gioco schermo singolo"}
           </h1>
-          <p className="ui-text-normal mb-4 max-w-md text-center">
+          <p className="ui-text-normal mb-4 max-w-xl text-center">
             {mode === "multi"
               ? "Configura il tabellone. I giocatori si uniranno scansionando il QR code."
               : "Configura il tabellone. Tutti i giocatori giocheranno a turno sullo stesso schermo."}
           </p>
           <form
             onSubmit={handleSubmit}
-            className="m-2 w-full max-w-md bg-white"
+            className="m-2 w-full max-w-xl bg-white"
           >
             {mode === "single" && (
               <>
@@ -287,9 +324,13 @@ export default function Home() {
                 onChange={(e) => actions.setBattlesEnabled(e.target.checked)}
                 className="ui-custom-checkbox mr-2"
               />
-              <LabelCheckbox htmlFor="battlesEnabled">
-                {LABEL_BATTLES_ENABLED}
-              </LabelCheckbox>
+              {/* Icona nel flusso del testo: segue l'ultima parola anche se va a capo */}
+              <span>
+                <LabelCheckbox htmlFor="battlesEnabled">
+                  {LABEL_BATTLES_ENABLED}
+                </LabelCheckbox>
+                <SpecialEffectInfoIcon actionType="battle" inline />
+              </span>
             </div>
 
             {!hasCustomSquares && (
@@ -313,26 +354,39 @@ export default function Home() {
                           className="ui-custom-checkbox mr-2"
                         />
                         <LabelCheckbox htmlFor={key}>{label}</LabelCheckbox>
+                        <SpecialEffectInfoIcon actionType={key} inline />
                       </div>
                     ))}
                   </div>
                 </div>
 
+                {/* Il cursore regola il numero di caselle; nello stato resta la
+                    percentuale, così cambiando le caselle si riscala */}
                 <div className="mb-4">
-                  <Label htmlFor="specialPercentage">
-                    {LABEL_SPECIAL_PERCENTAGE(specialPercentage)}
+                  <Label htmlFor="specialSquares">
+                    {LABEL_SPECIAL_SQUARES_COUNT(specialCount)}
                   </Label>
                   <input
                     type="range"
-                    id="specialPercentage"
-                    name="specialPercentage"
+                    id="specialSquares"
+                    name="specialSquares"
                     min="0"
-                    max="100"
-                    value={specialPercentage}
+                    max={maxSpecialSquares(numSquares)}
+                    step="1"
+                    value={specialSquaresForPercentage(
+                      numSquares,
+                      specialPercentage / 100,
+                    )}
+                    disabled={!hasSpecialTypes}
                     onChange={(e) =>
-                      actions.setSpecialPercentage(parseInt(e.target.value))
+                      actions.setSpecialPercentage(
+                        percentageForSpecialSquares(
+                          numSquares,
+                          Number(e.target.value),
+                        ),
+                      )
                     }
-                    className="mx-0 w-full"
+                    className="mx-0 w-full disabled:opacity-50"
                   />
                 </div>
               </>
@@ -380,17 +434,32 @@ export default function Home() {
           </form>
         </div>
       </div>
-      {facesPrompt !== "hidden" && (
+      {facesPrompt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="ui-border-dark mx-4 w-full max-w-lg bg-white p-6">
             <FacesDisclaimer
               boxed={false}
               title={FACES_SETUP_TITLE}
               intro={FACES_SETUP_INTRO}
-              error={facesPrompt === "error"}
+              error={facesError}
+              declineLabel={FACES_SETUP_DECLINE}
               onAccept={acceptFaces}
               onDecline={declineFaces}
-            />
+            >
+              <div className="mt-4 text-left">
+                <Label htmlFor="faces-code">{FACES_CODE_LABEL}</Label>
+                <Input
+                  id="faces-code"
+                  value={facesCode}
+                  placeholder={FACES_CODE_PLACEHOLDER}
+                  className="font-mono uppercase tracking-widest"
+                  onChange={(e) => {
+                    setFacesCode(e.target.value);
+                    setFacesError(undefined);
+                  }}
+                />
+              </div>
+            </FacesDisclaimer>
           </div>
         </div>
       )}

@@ -12,6 +12,15 @@ const RELEASE_LOCK_SCRIPT =
 // Fallback in-memory per sviluppo locale senza Redis
 const memoryStore = new Map<string, SessionState>();
 
+const parseJSON = (val: string | null): unknown => {
+  if (val === null) return null;
+  try {
+    return JSON.parse(val);
+  } catch {
+    return null;
+  }
+};
+
 // Singleton ioredis — evita connessioni multiple per invocazione serverless
 let _redis: import("ioredis").Redis | null = null;
 
@@ -26,6 +35,10 @@ async function getRedis() {
     return {
       get: (key: string) => kv.get<SessionState>(key),
       set: (key: string, val: unknown) => kv.set(key, val, { ex: SESSION_TTL }),
+      setEx: (key: string, val: unknown, ttl: number) =>
+        kv.set(key, val, { ex: ttl }),
+      getValue: (key: string) => kv.get<unknown>(key),
+      take: (key: string) => kv.getdel<unknown>(key),
       del: (key: string) => kv.del(key),
       lpush: (key: string, val: string) => kv.lpush(key, val),
       lrange: (key: string, start: number, end: number) =>
@@ -57,6 +70,11 @@ async function getRedis() {
       set: async (key: string, val: unknown) => {
         await client.set(key, JSON.stringify(val), "EX", SESSION_TTL);
       },
+      setEx: async (key: string, val: unknown, ttl: number) => {
+        await client.set(key, JSON.stringify(val), "EX", ttl);
+      },
+      getValue: async (key: string) => parseJSON(await client.get(key)),
+      take: async (key: string) => parseJSON(await client.getdel(key)),
       del: (key: string) => client.del(key),
       lpush: (key: string, val: string) => client.lpush(key, val),
       lrange: (key: string, start: number, end: number) =>
@@ -169,34 +187,160 @@ export async function getFeedback(count?: number): Promise<string[]> {
   return [];
 }
 
-// Accessi alle fotografie FACES: token rilasciato dopo l'accettazione del
-// disclaimer, valido quanto una partita (SESSION_TTL)
-const memoryFacesAccess = new Map<string, number>();
+// Accesso alle fotografie FACES (regole concordate con FACES):
+// - l'educatore genera un codice monouso, valido FACES_CODE_TTL se non usato;
+// - il codice usato all'avvio di una partita diventa un "permesso" (grant)
+//   valido quanto una partita (SESSION_TTL);
+// - ogni dispositivo che accetta il disclaimer riceve un token legato al
+//   permesso: le foto si vedono solo con token e permesso entrambi validi.
 
-export async function grantFacesAccess(token: string): Promise<void> {
+/** Durata di un codice non usato: 24 ore. */
+export const FACES_CODE_TTL = 60 * 60 * 24;
+export const FACES_ACCESS_TTL_SECONDS = SESSION_TTL;
+
+// Fallback in-memory: chiave -> valore e scadenza
+const memoryFaces = new Map<string, { value: unknown; expiresAt: number }>();
+
+async function facesSet(key: string, value: unknown, ttl: number) {
   const redis = await getRedis();
   if (redis) {
-    await redis.set(`faces-access:${token}`, 1);
+    await redis.setEx(key, value, ttl);
     return;
   }
-  memoryFacesAccess.set(token, Date.now() + SESSION_TTL * 1000);
+  memoryFaces.set(key, { value, expiresAt: Date.now() + ttl * 1000 });
 }
 
-export async function hasFacesAccess(token: string): Promise<boolean> {
-  const redis = await getRedis();
-  if (redis) return (await redis.get(`faces-access:${token}`)) !== null;
-  const expiresAt = memoryFacesAccess.get(token);
-  if (expiresAt === undefined) return false;
-  if (expiresAt < Date.now()) {
-    memoryFacesAccess.delete(token);
-    return false;
+function memoryGet(key: string): unknown {
+  const entry = memoryFaces.get(key);
+  if (!entry) return null;
+  if (entry.expiresAt < Date.now()) {
+    memoryFaces.delete(key);
+    return null;
   }
+  return entry.value;
+}
+
+async function facesGet(key: string): Promise<unknown> {
+  const redis = await getRedis();
+  if (redis) return redis.getValue(key);
+  return memoryGet(key);
+}
+
+/**
+ * Legge e cancella in un solo passo (GETDEL; in memoria senza await in mezzo):
+ * di due richieste contemporanee solo una trova il valore.
+ */
+async function facesTake(key: string): Promise<unknown> {
+  const redis = await getRedis();
+  if (redis) return redis.take(key);
+  const value = memoryGet(key);
+  memoryFaces.delete(key);
+  return value;
+}
+
+/** Salva un nuovo codice monouso generato dall'educatore. */
+export async function saveFacesCode(code: string): Promise<void> {
+  await facesSet(
+    `faces-code:${code}`,
+    { createdAt: Date.now() },
+    FACES_CODE_TTL,
+  );
+}
+
+/** Partita per cui si usa il codice: schermo singolo o multigiocatore. */
+export type FacesGameMode = "single" | "multi";
+
+/** Permesso: la partita a cui è legato (null finché la multigiocatore non parte). */
+interface FacesGrant {
+  sessionId: string | null;
+}
+
+/**
+ * Usa un codice: se è valido lo cancella e crea un permesso per la partita.
+ * Solo un permesso "multi" può poi essere legato a una partita
+ * multigiocatore, e una volta sola (chiave faces-grant-free).
+ * @returns l'id del permesso, oppure null se il codice non esiste, è scaduto o è già stato usato
+ */
+export async function redeemFacesCode(
+  code: string,
+  mode: FacesGameMode = "single",
+): Promise<string | null> {
+  const found = await facesTake(`faces-code:${code}`);
+  if (found === null) return null;
+  const grantId = crypto.randomUUID();
+  const grant: FacesGrant = { sessionId: null };
+  await facesSet(`faces-grant:${grantId}`, grant, SESSION_TTL);
+  if (mode === "multi")
+    await facesSet(`faces-grant-free:${grantId}`, true, SESSION_TTL);
+  return grantId;
+}
+
+export async function isFacesGrantActive(grantId: string): Promise<boolean> {
+  return (await facesGet(`faces-grant:${grantId}`)) !== null;
+}
+
+/**
+ * Lega il permesso a una partita multigiocatore: un codice vale per una sola
+ * partita. La chiave faces-grant-free si consuma con GETDEL, quindi tra due
+ * avvii contemporanei (anche di partite diverse) ne vince uno solo. Da qui
+ * l'accesso dura quanto la partita.
+ * @returns true se il permesso era libero (o è già di questa partita)
+ */
+export async function bindFacesGrant(
+  grantId: string,
+  sessionId: string,
+): Promise<boolean> {
+  if (!(await isFacesGrantActive(grantId))) return false;
+  if ((await facesTake(`faces-grant-free:${grantId}`)) === null) {
+    const grant = (await facesGet(
+      `faces-grant:${grantId}`,
+    )) as FacesGrant | null;
+    return grant?.sessionId === sessionId;
+  }
+  const grant: FacesGrant = { sessionId };
+  await facesSet(`faces-grant:${grantId}`, grant, SESSION_TTL);
   return true;
 }
 
-export const FACES_ACCESS_TTL_SECONDS = SESSION_TTL;
+/** Il segreto è dell'host o di un giocatore della partita. */
+export function isSessionMember(
+  session: SessionState,
+  secret: unknown,
+): boolean {
+  if (typeof secret !== "string" || !secret) return false;
+  return (
+    secret === session.hostToken ||
+    (session.playerSecrets ?? []).includes(secret)
+  );
+}
+
+/** Registra il disclaimer accettato da un dispositivo, per un permesso. */
+export async function grantFacesAccess(
+  token: string,
+  grantId: string,
+): Promise<void> {
+  await facesSet(`faces-access:${token}`, grantId, SESSION_TTL);
+}
+
+/** Permesso del dispositivo, se il token e il permesso sono ancora validi. */
+export async function getFacesAccessGrant(
+  token: string,
+): Promise<string | null> {
+  const grantId = await facesGet(`faces-access:${token}`);
+  if (typeof grantId !== "string") return null;
+  return (await isFacesGrantActive(grantId)) ? grantId : null;
+}
+
+export async function hasFacesAccess(token: string): Promise<boolean> {
+  return (await getFacesAccessGrant(token)) !== null;
+}
 
 export function toPublicSession(session: SessionState): PublicSessionState {
-  const { hostToken: _, ...pub } = session;
+  const {
+    hostToken: _,
+    facesGrantId: __,
+    playerSecrets: ___,
+    ...pub
+  } = session;
   return pub;
 }

@@ -22,7 +22,7 @@ const meta = {
         "physical-test",
         "what-would-you-do",
         "face-emotion",
-        "film",
+        "emotion-video",
         null,
       ],
     },
@@ -92,7 +92,7 @@ export const FaceEmotion: Story = {
 };
 
 export const Film: Story = {
-  args: { actionType: "film" },
+  args: { actionType: "emotion-video" },
   play: hoverIcon,
 };
 

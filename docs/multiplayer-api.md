@@ -10,7 +10,7 @@ interface SessionPlayer {
 
 interface PendingAction {
   type: string;          // 'quiz' | 'mime' | 'backwrite' | 'face-emotion' |
-                         // 'film' | 'music-emotion' | 'physical-test' |
+                         // 'emotion-video' | 'music-emotion' | 'physical-test' |
                          // 'what-would-you-do' | 'dictation-draw' | 'battle'
   card: unknown;         // serialized primitive or plain object (never class instances)
   actorPlayerId: string;
@@ -95,7 +95,7 @@ A player joins the session.
 
 Body: `{ playerName: string }` (max 50 chars, validated server-side)
 
-Response: `{ playerId: string }` — numeric string ("0", "1", ...)
+Response: `{ playerId: string, playerSecret: string }` — `playerId` is a numeric string ("0", "1", ...); `playerSecret` is a random UUID kept in `session.playerSecrets` (never public), saved by the phone in `localStorage` (`playerSecret:{sessionId}`) and sent to `POST /api/faces/access {sessionId, secret}` to see FACES photos and clips
 
 ---
 
@@ -201,7 +201,7 @@ The `card` field is `unknown` — serialized from the deck. Two possible shapes:
 // Image actions (face-emotion, dictation-draw)
 { topic: { cardTitle: string, cardText: string }, imageUrl: string }
 
-// Video actions (film)
+// Video actions (emotion-video)
 { topic: { cardTitle: string, cardText: string }, videoUrl: string }
 ```
 

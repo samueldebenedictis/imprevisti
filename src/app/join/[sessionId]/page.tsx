@@ -4,6 +4,7 @@ import { useState } from "react";
 import Button from "@/app/components/ui/button";
 import Input from "@/app/components/ui/input";
 import { Label } from "@/app/components/ui/label";
+import { savePlayerSecret } from "@/lib/faces-client";
 
 export default function JoinPage() {
   const { sessionId } = useParams<{ sessionId: string }>();
@@ -27,7 +28,9 @@ export default function JoinPage() {
       setLoading(false);
       return;
     }
-    const { playerId } = await res.json();
+    const { playerId, playerSecret } = await res.json();
+    if (typeof playerSecret === "string")
+      savePlayerSecret(sessionId, playerSecret);
     router.push(`/player/${sessionId}/${playerId}`);
   };
 

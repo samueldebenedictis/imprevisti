@@ -7,6 +7,11 @@ import { Square } from "@/model/square/square";
 import type { GameConfig } from "@/store/config-store";
 import type { SessionState } from "@/types/session";
 
+// Nessun cookie FACES: la partita usa i volti illustrati
+vi.mock("next/headers", () => ({
+  cookies: async () => ({ get: () => undefined }),
+}));
+
 vi.mock("@/lib/session-store", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/lib/session-store")>();
   return { ...actual, getSession: vi.fn(), saveSession: vi.fn() };
@@ -50,13 +55,14 @@ const defaultBoardConfig: GameConfig = {
   numPlayers: 2,
   playerNames: ["Alice", "Bob"],
   numSquares: 20,
+  faceSet: "ai",
   squareTypes: {
     mime: false,
     quiz: true,
     move: false,
     backwrite: false,
     "face-emotion": false,
-    film: false,
+    "emotion-video": false,
     "music-emotion": false,
     "physical-test": false,
     "what-would-you-do": false,
@@ -115,6 +121,10 @@ describe("POST /api/sessions/[id]/join", () => {
     expect(res.status).toBe(200);
     const data = await res.json();
     expect(data.playerId).toBe("1");
+    // Segreto del giocatore: restituito e salvato, privato nella sessione
+    expect(data.playerSecret).toMatch(/^[0-9a-f-]{36}$/);
+    const saved = vi.mocked(sessionStore.saveSession).mock.calls.at(-1)?.[1];
+    expect(saved?.playerSecrets).toEqual([data.playerSecret]);
   });
 
   test("409 when game is already started", async () => {

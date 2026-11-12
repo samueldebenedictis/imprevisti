@@ -6,6 +6,7 @@ const kvDel = vi.fn();
 const kvLpush = vi.fn();
 const kvLrange = vi.fn();
 const kvEval = vi.fn();
+const kvGetdel = vi.fn();
 
 vi.mock("@upstash/redis", () => ({
   Redis: vi.fn().mockImplementation(() => ({
@@ -15,6 +16,7 @@ vi.mock("@upstash/redis", () => ({
     lpush: kvLpush,
     lrange: kvLrange,
     eval: kvEval,
+    getdel: kvGetdel,
   })),
 }));
 
@@ -24,6 +26,7 @@ const ioDel = vi.fn();
 const ioLpush = vi.fn();
 const ioLrange = vi.fn();
 const ioEval = vi.fn();
+const ioGetdel = vi.fn();
 
 vi.mock("ioredis", () => ({
   default: vi.fn().mockImplementation(() => ({
@@ -33,14 +36,21 @@ vi.mock("ioredis", () => ({
     lpush: ioLpush,
     lrange: ioLrange,
     eval: ioEval,
+    getdel: ioGetdel,
   })),
 }));
 
 import {
   deleteSession,
+  FACES_ACCESS_TTL_SECONDS,
+  FACES_CODE_TTL,
+  getFacesAccessGrant,
   getFeedback,
   getSession,
+  grantFacesAccess,
   pushFeedback,
+  redeemFacesCode,
+  saveFacesCode,
   saveSession,
   withSessionLock,
 } from "@/lib/session-store";
@@ -234,5 +244,86 @@ describe("withSessionLock (Redis)", () => {
       "NX",
     );
     expect(ioEval).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("codici FACES (Redis)", () => {
+  test("Upstash: codice con scadenza, uso con GETDEL, accesso legato al permesso", async () => {
+    process.env.KV_REST_API_URL = "https://example.upstash.io";
+    process.env.KV_REST_API_TOKEN = "tok";
+    delete process.env.REDIS_URL;
+
+    await saveFacesCode("K7PM3XQ2");
+    expect(kvSet).toHaveBeenCalledWith(
+      "faces-code:K7PM3XQ2",
+      expect.objectContaining({ createdAt: expect.any(Number) }),
+      { ex: FACES_CODE_TTL },
+    );
+
+    kvGetdel.mockResolvedValueOnce({ createdAt: 1 });
+    const grantId = await redeemFacesCode("K7PM3XQ2");
+    expect(kvGetdel).toHaveBeenCalledWith("faces-code:K7PM3XQ2");
+    expect(kvSet).toHaveBeenCalledWith(
+      `faces-grant:${grantId}`,
+      { sessionId: null },
+      { ex: FACES_ACCESS_TTL_SECONDS },
+    );
+
+    // Codice per una multigiocatore: anche la chiave del permesso libero
+    kvGetdel.mockResolvedValueOnce({ createdAt: 1 });
+    const multiId = await redeemFacesCode("K7PM3XQ2", "multi");
+    expect(kvSet).toHaveBeenCalledWith(`faces-grant-free:${multiId}`, true, {
+      ex: FACES_ACCESS_TTL_SECONDS,
+    });
+
+    kvGetdel.mockResolvedValueOnce(null);
+    expect(await redeemFacesCode("K7PM3XQ2")).toBeNull();
+
+    await grantFacesAccess("tok-1", grantId as string);
+    expect(kvSet).toHaveBeenCalledWith("faces-access:tok-1", grantId, {
+      ex: FACES_ACCESS_TTL_SECONDS,
+    });
+    kvGet.mockImplementation(async (key: string) =>
+      key === "faces-access:tok-1"
+        ? grantId
+        : key.startsWith("faces-grant:")
+          ? { sessionId: null }
+          : null,
+    );
+    expect(await getFacesAccessGrant("tok-1")).toBe(grantId);
+    expect(await getFacesAccessGrant("tok-2")).toBeNull();
+    kvGet.mockReset();
+  });
+
+  test("ioredis: valori in JSON, GETDEL e permesso scaduto", async () => {
+    delete process.env.KV_REST_API_URL;
+    delete process.env.KV_REST_API_TOKEN;
+    process.env.REDIS_URL = "redis://localhost:6379";
+
+    await saveFacesCode("K7PM3XQ2");
+    expect(ioSet).toHaveBeenCalledWith(
+      "faces-code:K7PM3XQ2",
+      expect.stringContaining("createdAt"),
+      "EX",
+      FACES_CODE_TTL,
+    );
+
+    ioGetdel.mockResolvedValueOnce(JSON.stringify({ createdAt: 1 }));
+    const grantId = await redeemFacesCode("K7PM3XQ2");
+    expect(grantId).toMatch(/^[0-9a-f-]{36}$/);
+
+    ioGetdel.mockResolvedValueOnce(null);
+    expect(await redeemFacesCode("K7PM3XQ2")).toBeNull();
+
+    // Token valido ma permesso scaduto (chiave assente)
+    ioGet.mockImplementation(async (key: string) =>
+      key === "faces-access:tok-1" ? JSON.stringify(grantId) : null,
+    );
+    expect(await getFacesAccessGrant("tok-1")).toBeNull();
+
+    // Valore illeggibile
+    ioGet.mockResolvedValue("{non json");
+    expect(await getFacesAccessGrant("tok-1")).toBeNull();
+    ioGet.mockReset();
   });
 });

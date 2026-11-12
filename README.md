@@ -19,10 +19,12 @@ Il gioco è disponibile ai seguenti indirizzi:
 - **Configurazione partita**: Home per impostare i parametri del gioco; numero di giocatori, nomi, caselle ammesse, eccetera.
 - **Gioco interattivo**: Pagina del gioco con tabellone, pedine e stato del gioco
 - **Modalità multi-dispositivo**: ogni giocatore usa il proprio smartphone; l'host coordina sul tabellone principale. Accesso tramite QR code. Sessioni server-side con long polling (riduce le invocazioni serverless di ~5×). Identità giocatore persistita nell'URL (`/player/[sessionId]/[playerId]`), sopravvive alla chiusura del tab.
-- **Azioni di gioco**: quiz, mimo, scrivi sulla schiena, emozione facciale (al momento disattivata), emozione musicale, test fisico, cosa faresti se, disegno dettato, battaglia
+- **Azioni di gioco**: quiz, mimo, scrivi sulla schiena, indovina l'emozione, emozioni in movimento, emozione musicale, test fisico, cosa faresti se, disegno dettato, battaglia
+- **Indovina l'emozione** ed **Emozioni in movimento**: con un codice monouso dato dall'educatore le sfide usano le fotografie del database FACES (Ebner, Riediger & Lindenberger, 2010) e i video di Dynamic FACES (Holland et al., 2019), mostrati solo dopo l'accettazione del disclaimer e mai inclusi nel repository; senza codice si usano volti illustrati creati per il progetto e le caselle Emozioni in movimento diventano Indovina l'emozione
 - **Istruzioni**: Regole del gioco
 - **Salvataggio partite**: Sistema di salvataggio e caricamento della partita (la partita viene salvata in formato JSON). Lo stato della partita è conservato nello StorageState del browser.
 - **Effetti sonori**: Suoni di feedback per azioni dei giocatori (lancio dado, caselle speciali, combattimenti)
+- **Codici FACES** (`/educatore/codice`, protetta da chiave segreta): l'educatore genera i codici monouso per le partite con le fotografie FACES (un codice per partita, valido 24 ore se non usato)
 - **Dashboard feedback** (`/admin/feedback`, protetta da chiave segreta): analizza le risposte raccolte dal modulo Feedback — punteggio SUS medio con grado (0-100), medie delle valutazioni, distribuzione per ruolo/esperienza/spettro autistico/versione app con filtri cliccabili, elenco commenti liberi
 - **State management avanzato**: Utilizzo di Zustand per una gestione efficiente dello stato dell'applicazione
 
@@ -120,8 +122,11 @@ src/
 ├── app/                   # Pagine e componenti Next.js
 │   ├── admin/
 │   │   └── feedback/      # Dashboard di analisi dei feedback raccolti
-│   ├── api/               # API routes (multiplayer)
+│   ├── educatore/
+│   │   └── codice/        # Codici monouso per foto e video FACES
+│   ├── api/               # API routes
 │   │   ├── sessions/      # Crea sessione, long polling, azioni
+│   │   ├── faces/         # Foto e video FACES, codici e accessi
 │   │   └── feedback/      # Raccolta feedback
 │   ├── components/        # Componenti React condivisi
 │   │   └── charts/        # Bar chart riutilizzabile per la dashboard
@@ -135,6 +140,7 @@ src/
 │   ├── session-store.ts   # Storage sessioni (Vercel KV / Redis / memory)
 │   ├── use-session-polling.ts  # Hook long polling + idle detection
 │   ├── card-utils.ts      # Estrazione dati carta da pending action
+│   ├── faces*.ts          # Accesso a foto e video FACES (codici, archivio, client)
 │   └── sus.ts             # Calcolo punteggio System Usability Scale
 ├── model/                 # Logica e modelli di dati
 │   ├── deck/              # Sistema di carte (mimo, quiz, eccetera)
@@ -175,7 +181,7 @@ tests/
 4. **Dev server con multiplayer** (richiede Docker):
    ```bash
    docker compose up -d   # avvia Redis locale
-   # crea .env.local con: REDIS_URL=redis://localhost:6379
+   cp .env.dist .env.local   # REDIS_URL=redis://localhost:6379
    npm run dev
    ```
 
@@ -191,3 +197,9 @@ tests/
 | `REDIS_URL` | URL Redis locale (sviluppo) | — (fallback in-memory) |
 | `KV_REST_API_URL` | Vercel KV REST URL (produzione) | — |
 | `KV_REST_API_TOKEN` | Vercel KV token (produzione) | — |
+| `FEEDBACK_SECRET` | Chiave della dashboard feedback | — (dashboard non accessibile) |
+| `FACES_CODES_SECRET` | Chiave della pagina educatori `/educatore/codice` | — (nessun codice generabile) |
+| `BLOB_READ_WRITE_TOKEN` | Archivio Vercel Blob privato con foto e video FACES (produzione) | — (segnaposto) |
+| `FACES_LOCAL_DIR` | Cartella locale con foto e video FACES, solo da shell e mai in `.env.local` | — (segnaposto) |
+
+Le chiavi non vanno mai pubblicate nel repository: si impostano in `.env.local` (ignorato da git) e su Vercel.

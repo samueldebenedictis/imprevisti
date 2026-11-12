@@ -115,6 +115,7 @@ export default function MultiplayerSessionPage() {
           customSquares: config.customSquares,
           battlesEnabled: config.battlesEnabled,
         },
+        faceSet: config.faceSet,
       }),
     });
     if (!res.ok) {
@@ -294,6 +295,7 @@ export default function MultiplayerSessionPage() {
             onResolve={(success) => void resolveActionAsHost(success)}
             onResolveWithWinner={(winnerId) => void resolveWithWinner(winnerId)}
             isResolving={isResolving}
+            sessionId={sessionId}
           />
         )}
       </div>

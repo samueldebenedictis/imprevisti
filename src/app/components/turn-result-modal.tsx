@@ -3,8 +3,8 @@ import type { Battle } from "@/model/battle";
 import type {
   BackWrite,
   DictationDraw,
+  EmotionVideo,
   FaceEmotion,
-  Film,
   Mime,
   MusicEmotion,
   PhysicalTest,
@@ -21,8 +21,8 @@ import {
 import BackWriteResult from "./turn-result-modal/back-write-result";
 import BattleResult from "./turn-result-modal/battle-result";
 import DictationDrawResult from "./turn-result-modal/dictation-draw-result";
+import EmotionVideoResult from "./turn-result-modal/emotion-video-result";
 import FaceEmotionResult from "./turn-result-modal/face-emotion-result";
-import FilmResult from "./turn-result-modal/film-result";
 import MimeResult from "./turn-result-modal/mime-result";
 import MusicEmotionResult from "./turn-result-modal/music-emotion-result";
 import PhysicalTestResult from "./turn-result-modal/physical-test-result";
@@ -44,7 +44,7 @@ interface DiceResultModalProps {
     | Quiz
     | BackWrite
     | FaceEmotion
-    | Film
+    | EmotionVideo
     | MusicEmotion
     | PhysicalTest
     | WhatWouldYouDo
@@ -55,7 +55,7 @@ interface DiceResultModalProps {
   onResolveQuiz?: (success: boolean) => void;
   onResolveBackWrite?: (success: boolean, guessPlayerId?: number) => void;
   onResolveFaceEmotion?: (success: boolean) => void;
-  onResolveFilm?: (success: boolean) => void;
+  onResolveEmotionVideo?: (success: boolean) => void;
   onResolveMusicEmotion?: (success: boolean) => void;
   onResolvePhysicalTest?: (success: boolean) => void;
   onResolveWhatWouldYouDo?: (success: boolean) => void;
@@ -78,7 +78,7 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
   onResolveQuiz,
   onResolveBackWrite,
   onResolveFaceEmotion,
-  onResolveFilm,
+  onResolveEmotionVideo,
   onResolveMusicEmotion,
   onResolvePhysicalTest,
   onResolveWhatWouldYouDo,
@@ -190,12 +190,12 @@ const DiceResultModal: React.FC<DiceResultModalProps> = ({
             />
           )}
 
-        {actionType === "film" &&
+        {actionType === "emotion-video" &&
           actionData &&
-          (actionData as Film).cardEmotion && (
-            <FilmResult
-              actionData={actionData as Film}
-              onResolveFilm={onResolveFilm}
+          (actionData as EmotionVideo).cardEmotion && (
+            <EmotionVideoResult
+              actionData={actionData as EmotionVideo}
+              onResolveEmotionVideo={onResolveEmotionVideo}
               onClose={onClose}
             />
           )}

@@ -6,8 +6,10 @@
 # Cartella predefinita: ../elaborato
 #
 # Regole:
-# - si copiano solo gli screenshot citati in tesi.tex (\shot, \shotS, \shotH,
+# - si copiano gli screenshot citati in tesi.tex (\shot, \shotS, \shotH,
 #   \storypanel, \includegraphics{immagini/screenshots/...});
+# - si copiano anche tutti gli altri screenshot delle spec screenshots*, anche
+#   se tesi.tex non li cita ancora, così sono pronti da citare;
 # - se esiste la versione "-faces" di uno screenshot (fotografia FACES vera,
 #   ignorata da git, vedi tests/e2e/video/face-photos.ts) si copia quella;
 # - gli screenshot della sfida dei volti senza versione "-faces" non vengono
@@ -43,8 +45,19 @@ for src in "$SNAPSHOTS_DIR"/*/*.png "$SNAPSHOTS_DIR"/*.png; do
   snapshot["${name/-chromium-linux/}"]="$src"
 done
 
+# Altri screenshot delle spec screenshots*, non citati da tesi.tex
+# (la versione "-faces" vale come lo screenshot senza suffisso)
+extra=()
+for src in "$SNAPSHOTS_DIR"/screenshots*-snapshots/*.png; do
+  name=$(basename "$src" .png)
+  name=${name/-chromium-linux/}
+  name=${name%"$FACE_SUFFIX"}
+  printf '%s\n' "${used[@]}" "${extra[@]}" | grep -qxF "$name" && continue
+  extra+=("$name")
+done
+
 copied=() unchanged=() placeholder_only=() missing=()
-for name in "${used[@]}"; do
+for name in "${used[@]}" "${extra[@]}"; do
   dest="$DEST_DIR/$name.png"
   src="${snapshot[$name$FACE_SUFFIX]:-}"
   if [ -z "$src" ] && [[ "$name" == *"$FACE_PATTERN"* ]]; then
@@ -67,12 +80,13 @@ done
 unused=()
 for file in "$DEST_DIR"/*.png; do
   name=$(basename "$file" .png)
-  printf '%s\n' "${used[@]}" | grep -qxF "$name" || unused+=("$name")
+  printf '%s\n' "${used[@]}" "${extra[@]}" | grep -qxF "$name" ||
+    unused+=("$name")
 done
 
 list() { [ "$#" -gt 0 ] && printf '    %s\n' "$@"; return 0; }
 
-echo "Screenshot usati dalla tesi: ${#used[@]}"
+echo "Screenshot: ${#used[@]} usati dalla tesi, ${#extra[@]} non ancora citati"
 echo "  copiati: ${#copied[@]}"
 list "${copied[@]}"
 echo "  invariati: ${#unchanged[@]}"
@@ -80,7 +94,15 @@ echo "  sfida dei volti senza versione con foto vera (non copiati): ${#placehold
 list "${placeholder_only[@]}"
 echo "  senza snapshot: ${#missing[@]}"
 list "${missing[@]}"
+new=()
+for name in "${copied[@]}"; do
+  printf '%s\n' "${extra[@]}" | grep -qxF "$name" && new+=("$name")
+done
+if [ "${#new[@]}" -gt 0 ]; then
+  echo "Di questi, copiati ma non ancora citati in tesi.tex: ${#new[@]}"
+  list "${new[@]}"
+fi
 if [ "${#unused[@]}" -gt 0 ]; then
-  echo "In $DEST_DIR ma non usati dalla tesi (non cancellati): ${#unused[@]}"
+  echo "In $DEST_DIR ma senza snapshot né citazione (non cancellati): ${#unused[@]}"
   list "${unused[@]}"
 fi

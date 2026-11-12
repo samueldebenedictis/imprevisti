@@ -173,6 +173,7 @@ export default function PlayerPage() {
           phase="actor"
           actionType={action.type}
           card={action.card}
+          sessionId={sessionId}
         />
         <IdleOverlay idleState={idleState} onResume={resume} />
       </>

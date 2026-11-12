@@ -23,7 +23,7 @@ export class FaceEmotion {
  * Soggetti del dataset FACES (Ebner, Riediger & Lindenberger) usati per le carte.
  * Codice file: {id}_{eta}_{genere}_{emozione}_{versione}.jpg
  */
-const faceEmotionSubjects = [
+export const faceEmotionSubjects = [
   { id: "004", code: "o_m", title: "uomo-anziano" },
   { id: "066", code: "y_m", title: "uomo-giovane" },
   { id: "079", code: "o_f", title: "donna-anziana" },
@@ -32,7 +32,7 @@ const faceEmotionSubjects = [
   { id: "168", code: "m_f", title: "donna-adulta" },
 ];
 
-const faceEmotionLabels = [
+export const faceEmotionLabels = [
   { code: "h", emotion: "felicità" },
   { code: "a", emotion: "rabbia" },
   { code: "s", emotion: "tristezza" },
@@ -43,10 +43,15 @@ const faceEmotionLabels = [
 
 const faceEmotionVersions = ["a", "b"];
 
-/** Le fotografie FACES sono servite dal Route Handler /api/faces/[file]. */
+/** Fotografie e clip FACES sono servite dal Route Handler /api/faces/[file]. */
 export const FACES_API_PREFIX = "/api/faces/";
 
 export const facesImageUrl = (file: string) => `${FACES_API_PREFIX}${file}`;
+
+/** Emozioni giocabili (neutralità esclusa, troppo ambigua da indovinare). */
+export const playableFaceEmotionLabels = faceEmotionLabels.filter(
+  (label) => label.code !== "n",
+);
 
 /** Immagine senza volti per Storybook e per i test. */
 const FACE_PLACEHOLDER_URL = "/images/face-placeholder.svg";
@@ -72,7 +77,7 @@ const buildFaceEmotionCards = (
 
 /** Carte usate in partita: neutralità esclusa (troppo ambigua da indovinare). */
 export const faceEmotionCards = buildFaceEmotionCards(
-  faceEmotionLabels.filter((label) => label.code !== "n"),
+  playableFaceEmotionLabels,
   facesImageUrl,
 );
 
@@ -80,6 +85,51 @@ export const faceEmotionCards = buildFaceEmotionCards(
 export const faceEmotionFiles: ReadonlySet<string> = new Set(
   faceEmotionCards.map((card) => card.file),
 );
+
+/**
+ * Volti illustrati (generati con l'IA per il progetto, non da FACES): usati
+ * quando la partita non ha un codice d'accesso alle fotografie FACES o il
+ * disclaimer non è stato accettato. Sono file pubblici.
+ */
+const aiFaceSubjects = [
+  "anziano",
+  "bambina",
+  "bambino",
+  "donna",
+  "uomo-1",
+  "uomo-2",
+];
+
+const aiFaceLabels = [
+  { code: "felice", emotion: "felicità" },
+  { code: "arrabbiato", emotion: "rabbia" },
+  { code: "triste", emotion: "tristezza" },
+  { code: "sorpreso", emotion: "sorpresa" },
+  { code: "spaventato", emotion: "paura" },
+  { code: "stanco", emotion: "stanchezza" },
+];
+
+export const aiFaceEmotionCards = aiFaceSubjects.flatMap((subject) =>
+  aiFaceLabels.map(({ code, emotion }) => ({
+    title: `${subject}-${code}`,
+    imageUrl: `/images/face-emotion/${subject}-${code}.jpg`,
+    emotion,
+  })),
+);
+
+/**
+ * Volti usati da una partita: fotografie FACES (solo con codice d'accesso e
+ * disclaimer accettato) oppure volti illustrati.
+ */
+export type FaceSet = "faces" | "ai";
+
+export const FACE_SETS: readonly FaceSet[] = ["faces", "ai"];
+
+/** Carte di "Indovina l'emozione" per il set di volti indicato. */
+export const faceEmotionCardsFor = (
+  faceSet: FaceSet,
+): readonly { title: string; imageUrl: string; emotion: string }[] =>
+  faceSet === "faces" ? faceEmotionCards : aiFaceEmotionCards;
 
 /** Set completo (neutralità inclusa) per Storybook. */
 export const faceEmotionStorybookCards = buildFaceEmotionCards(

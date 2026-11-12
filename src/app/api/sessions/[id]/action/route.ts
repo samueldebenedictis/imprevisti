@@ -10,8 +10,8 @@ import { Battle } from "@/model/battle";
 import { BackWrite } from "@/model/deck/backwrite";
 import { Card } from "@/model/deck/card";
 import { DictationDraw } from "@/model/deck/dictation-draw";
+import { EmotionVideo } from "@/model/deck/emotion-video";
 import { FaceEmotion } from "@/model/deck/face-emotion";
-import { Film } from "@/model/deck/film";
 import { Mime } from "@/model/deck/mime";
 import { MusicEmotion } from "@/model/deck/music-emotion";
 import { PhysicalTest } from "@/model/deck/physical-test";
@@ -42,7 +42,7 @@ const HOST_RESOLVED_ACTIONS = [
   "mime",
   "backwrite",
   "face-emotion",
-  "film",
+  "emotion-video",
   "music-emotion",
   "physical-test",
   "what-would-you-do",
@@ -106,7 +106,7 @@ export async function POST(
       return NextResponse.json({ error: "Target not found" }, { status: 400 });
 
     // card può essere primitivo o { topic, imageUrl } per FaceEmotion/DictationDraw,
-    // { topic, videoUrl } per Film
+    // { topic, videoUrl } per EmotionVideo
     const cardData = pendingAction.card as
       | string
       | { topic: string; imageUrl?: string; videoUrl?: string };
@@ -193,9 +193,9 @@ export async function POST(
           success,
         );
         break;
-      case "film":
-        collisions = game.resolveFilm(
-          new Film(actorPlayer, toCard(cardTopic), videoUrl),
+      case "emotion-video":
+        collisions = game.resolveEmotionVideo(
+          new EmotionVideo(actorPlayer, toCard(cardTopic), videoUrl),
           success,
         );
         break;

@@ -180,7 +180,7 @@ const rollDice = async () => {
 
 ## `FaceEmotionImage` (`src/app/components/face-emotion-image.tsx`)
 
-Renders the face-emotion photo (for now the placeholder, see "Face-emotion images (FACES)" in [game-model.md](game-model.md)).
+Renders the face-emotion image (see "Face-emotion images and clips (FACES)" in [game-model.md](game-model.md)). Access to FACES material is handled by `FacesAccessGate` (`faces-access-gate.tsx`), shared with `EmotionVideoPlayer` (`emotion-video-player.tsx`, "Emozioni in movimento" clips). Illustrated faces and placeholders are shown directly. FACES photos and clips (`/api/faces/...`) need device access: with a `sessionId` (multiplayer) the device can accept the disclaimer and get access from the game; without one (single screen) access only comes from the code entered at setup, otherwise a "not available" message is shown.
 
 It is the only place that renders a face-emotion image, used by:
 

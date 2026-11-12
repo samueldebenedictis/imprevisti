@@ -7,8 +7,8 @@ import {
 } from "@/types/session";
 import { imagePrefix } from "../image-prefix";
 import { ACTION_LABELS } from "./action-labels";
+import EmotionVideoPlayer from "./emotion-video-player";
 import FaceEmotionImage from "./face-emotion-image";
-import FilmVideo from "./film-video";
 import SpecialEffectInfoIcon from "./turn-result-modal/special-effect-info-icon";
 import Button from "./ui/button";
 
@@ -23,7 +23,7 @@ const AWAITING_TARGET_MESSAGES: Record<string, string> = {
 // Tipi in cui il testo della carta è segreto: il topic è visibile solo sul dispositivo del giocatore
 const HIDE_CARD_ON_HOST = [
   "face-emotion",
-  "film",
+  "emotion-video",
   "backwrite",
   "mime",
   "dictation-draw",
@@ -35,6 +35,8 @@ export interface HostActionOverlayProps {
   onResolve: (success: boolean) => void;
   onResolveWithWinner: (winnerId: string) => void;
   isResolving?: boolean;
+  /** Partita: serve per l'accesso alle fotografie FACES. */
+  sessionId?: string;
 }
 
 export default function HostActionOverlay({
@@ -43,6 +45,7 @@ export default function HostActionOverlay({
   onResolve,
   onResolveWithWinner,
   isResolving = false,
+  sessionId,
 }: HostActionOverlayProps) {
   const [selectingWinner, setSelectingWinner] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
@@ -80,14 +83,15 @@ export default function HostActionOverlay({
   const showForQuiz = showCardAnswer;
   const showForBackwrite = pendingAction.type === "backwrite" && !!cardTitle;
   const showForMime = pendingAction.type === "mime" && !!cardTitle;
-  const showForFilm = pendingAction.type === "film" && !!cardTitle;
+  const showForEmotionVideo =
+    pendingAction.type === "emotion-video" && !!cardTitle;
   const showForFaceEmotion =
     pendingAction.type === "face-emotion" && !!cardTitle;
   const showReveal =
     showForQuiz ||
     showForBackwrite ||
     showForMime ||
-    showForFilm ||
+    showForEmotionVideo ||
     showForFaceEmotion;
   const revealLabel =
     pendingAction.type === "mime" ? "Mostra soluzione" : "Mostra risposta";
@@ -116,6 +120,7 @@ export default function HostActionOverlay({
         {cardImageUrl && pendingAction.type === "face-emotion" && (
           <FaceEmotionImage
             imageUrl={cardImageUrl}
+            sessionId={sessionId}
             alt="card"
             className="ui-border-dark mx-auto block max-w-xs rounded"
           />
@@ -132,8 +137,10 @@ export default function HostActionOverlay({
             />
           )}
 
-        {/* Scena di film (film only): il nome dell'emozione è la risposta */}
-        {cardVideoUrl && <FilmVideo videoUrl={cardVideoUrl} title={cardBody} />}
+        {/* Clip di "Emozioni in movimento": il nome dell'emozione è la risposta */}
+        {cardVideoUrl && (
+          <EmotionVideoPlayer videoUrl={cardVideoUrl} sessionId={sessionId} />
+        )}
 
         {/* Testo carta (nascosto per face-emotion: il nome emozione è la risposta) */}
         {showCardTitle && (
@@ -142,7 +149,7 @@ export default function HostActionOverlay({
           </div>
         )}
 
-        {/* Risposta/soluzione nascosta: quiz (cardBody), backwrite, mime, film e face-emotion (cardTitle) */}
+        {/* Risposta/soluzione nascosta: quiz (cardBody), backwrite, mime, emotion-video e face-emotion (cardTitle) */}
         {showReveal &&
           (showAnswer ? (
             <div className="ui-border-dark bg-green-50 p-4 text-center">

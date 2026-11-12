@@ -2,8 +2,8 @@ import type { Battle } from "@/model/battle";
 import type { BackWrite } from "@/model/deck/backwrite";
 import type { Card } from "@/model/deck/card";
 import type { DictationDraw } from "@/model/deck/dictation-draw";
+import type { EmotionVideo } from "@/model/deck/emotion-video";
 import type { FaceEmotion } from "@/model/deck/face-emotion";
-import type { Film } from "@/model/deck/film";
 import type { Mime } from "@/model/deck/mime";
 import type { MusicEmotion } from "@/model/deck/music-emotion";
 import type { PhysicalTest } from "@/model/deck/physical-test";
@@ -34,8 +34,8 @@ export function extractCard(result: GameActionResult): {
       const d = result.data as FaceEmotion;
       return { card: d.cardEmotion, imageUrl: d.imageUrl };
     }
-    case "film": {
-      const d = result.data as Film;
+    case "emotion-video": {
+      const d = result.data as EmotionVideo;
       return { card: d.cardEmotion, videoUrl: d.videoUrl };
     }
     case "dictation-draw": {

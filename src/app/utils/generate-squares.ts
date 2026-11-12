@@ -3,7 +3,78 @@ import type {
   SquareJSON,
   SquareType,
 } from "@/model/square/square";
-import { FACE_EMOTION_ENABLED, FILM_ENABLED } from "@/vars";
+import { EMOTION_VIDEO_ENABLED, FACE_EMOTION_ENABLED } from "@/vars";
+
+/** Tipi di caselle speciali che si possono spuntare nella configurazione. */
+export interface SpecialSquareTypes {
+  mime: boolean;
+  quiz: boolean;
+  move: boolean;
+  backwrite: boolean;
+  "face-emotion": boolean;
+  "emotion-video": boolean;
+  "music-emotion": boolean;
+  "physical-test": boolean;
+  "what-would-you-do": boolean;
+  "dictation-draw": boolean;
+}
+
+/** Tipi di caselle speciali abilitati (le sfide spente dai flag sono escluse). */
+export function getEnabledSpecialTypes(
+  squareTypes: SpecialSquareTypes,
+): SquareType[] {
+  const enabled: SquareType[] = [];
+  if (squareTypes.mime) enabled.push("mime");
+  if (squareTypes.quiz) enabled.push("quiz");
+  if (squareTypes.move) enabled.push("move");
+  if (squareTypes.backwrite) enabled.push("backwrite");
+  if (squareTypes["face-emotion"] && FACE_EMOTION_ENABLED)
+    enabled.push("face-emotion");
+  if (squareTypes["emotion-video"] && EMOTION_VIDEO_ENABLED)
+    enabled.push("emotion-video");
+  if (squareTypes["music-emotion"]) enabled.push("music-emotion");
+  if (squareTypes["physical-test"]) enabled.push("physical-test");
+  if (squareTypes["what-would-you-do"]) enabled.push("what-would-you-do");
+  if (squareTypes["dictation-draw"]) enabled.push("dictation-draw");
+  return enabled;
+}
+
+/**
+ * Quante caselle speciali avrà il tabellone generato: la percentuale delle
+ * caselle, arrotondata per difetto, senza contare START e fine. Zero se non
+ * c'è nessun tipo di casella speciale abilitato.
+ */
+export function countSpecialSquares(
+  numSquares: number,
+  squareTypes: SpecialSquareTypes,
+  specialPercentage: number,
+): number {
+  if (getEnabledSpecialTypes(squareTypes).length === 0) return 0;
+  return specialSquaresForPercentage(numSquares, specialPercentage);
+}
+
+/** Caselle disponibili per le sfide: tutte tranne START e fine. */
+export const maxSpecialSquares = (numSquares: number) =>
+  Number.isFinite(numSquares) && numSquares >= 3 ? numSquares - 2 : 0;
+
+/**
+ * Caselle speciali per una percentuale, arrotondate per difetto. Il margine
+ * evita che una percentuale calcolata da un numero (es. 6 / 30) dia 5,999…
+ */
+export const specialSquaresForPercentage = (
+  numSquares: number,
+  specialPercentage: number,
+) => {
+  const max = maxSpecialSquares(numSquares);
+  if (max === 0) return 0;
+  return Math.min(Math.floor(numSquares * specialPercentage + 1e-9), max);
+};
+
+/** Percentuale (0–100) che dà esattamente `count` caselle speciali. */
+export const percentageForSpecialSquares = (
+  numSquares: number,
+  count: number,
+) => (numSquares > 0 ? (count / numSquares) * 100 : 0);
 
 /**
  * Genera un array di caselle per l'avvio di una nuova partita.
@@ -30,18 +101,7 @@ import { FACE_EMOTION_ENABLED, FILM_ENABLED } from "@/vars";
  */
 export const generateSquares = (
   numSquares: number,
-  squareTypes: {
-    mime: boolean;
-    quiz: boolean;
-    move: boolean;
-    backwrite: boolean;
-    "face-emotion": boolean;
-    film: boolean;
-    "music-emotion": boolean;
-    "physical-test": boolean;
-    "what-would-you-do": boolean;
-    "dictation-draw": boolean;
-  },
+  squareTypes: SpecialSquareTypes,
   specialPercentage: number = 0.4,
 ): SquareJSON[] => {
   // Validazione input
@@ -79,30 +139,17 @@ export const generateSquares = (
     ];
   }
 
-  // Determina quali tipi di caselle speciali sono abilitati
-  const enabledSpecialTypes: SquareType[] = [];
-  if (squareTypes.mime) enabledSpecialTypes.push("mime");
-  if (squareTypes.quiz) enabledSpecialTypes.push("quiz");
-  if (squareTypes.move) enabledSpecialTypes.push("move");
-  if (squareTypes.backwrite) enabledSpecialTypes.push("backwrite");
-  if (squareTypes["face-emotion"] && FACE_EMOTION_ENABLED)
-    enabledSpecialTypes.push("face-emotion");
-  if (squareTypes.film && FILM_ENABLED) enabledSpecialTypes.push("film");
-  if (squareTypes["music-emotion"]) enabledSpecialTypes.push("music-emotion");
-  if (squareTypes["physical-test"]) enabledSpecialTypes.push("physical-test");
-  if (squareTypes["what-would-you-do"])
-    enabledSpecialTypes.push("what-would-you-do");
-  if (squareTypes["dictation-draw"]) enabledSpecialTypes.push("dictation-draw");
+  const enabledSpecialTypes = getEnabledSpecialTypes(squareTypes);
 
   // Se nessun tipo speciale è abilitato, restituisci solo caselle normali
   if (enabledSpecialTypes.length === 0) {
     return squares;
   }
 
-  // Calcola quante caselle speciali posizionare
-  const specialSquaresToPlace = Math.min(
-    Math.floor(numSquares * specialPercentage),
-    specialSquareIndices.length,
+  const specialSquaresToPlace = countSpecialSquares(
+    numSquares,
+    squareTypes,
+    specialPercentage,
   );
 
   let currentSpecialTypeIndex = 0;

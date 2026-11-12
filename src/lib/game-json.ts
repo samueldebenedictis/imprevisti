@@ -1,3 +1,4 @@
+import { FACE_SETS, type FaceSet } from "@/model/deck/face-emotion";
 import type { GameJSON } from "@/model/game";
 import type { SquareType } from "@/model/square/square";
 import { MAX_PLAYERS, MAX_SQUARES, MIN_PLAYERS, MIN_SQUARES } from "@/vars";
@@ -95,6 +96,11 @@ export function validateGameJSON(raw: unknown): string | null {
     typeof game.battlesEnabled !== "boolean"
   )
     return "battlesEnabled non valido";
+  if (
+    game.faceSet !== undefined &&
+    !FACE_SETS.includes(game.faceSet as FaceSet)
+  )
+    return "set di volti non valido";
 
   return null;
 }

@@ -6,13 +6,13 @@ export const LABEL_PLAYER_NAME = (n: number) => `Nome giocatore ${n}:`;
 export const LABEL_SQUARES_NUMBER = "Numero di caselle:";
 export const LABEL_GAME_CONFIGURATION = "Configurazione gioco";
 export const LABEL_SPECIAL_SQUARES = "Caselle speciali";
-export const LABEL_SPECIAL_PERCENTAGE = (n: number) =>
-  `Percentuale di caselle speciali: ${n}%`;
+export const LABEL_SPECIAL_SQUARES_COUNT = (count: number) =>
+  `Numero di caselle speciali: ${count}`;
 export const LABEL_MIME = "Mimo";
 export const LABEL_QUIZ = "Quiz";
 export const LABEL_BACKWRITE = "Parole alle spalle";
 export const LABEL_FACE_EMOTION = "Indovina l'emozione";
-export const LABEL_FILM = "Film";
+export const LABEL_EMOTION_VIDEO = "Emozioni in movimento";
 export const LABEL_MOVE = "Caselle movimento";
 export const LABEL_MUSIC_EMOTION = "Emozioni in musica";
 export const LABEL_PHYSICAL_TEST = "Test fisico";
@@ -46,7 +46,14 @@ export const MODAL_FACE_EMOTION_WRONG = "Sbagliato";
 export const FACES_DISCLAIMER_TITLE = "Prima di vedere la foto";
 export const FACES_SETUP_TITLE = "Fotografie FACES";
 export const FACES_SETUP_INTRO =
-  "La partita include la sfida \"Indovina l'emozione\", con fotografie del database FACES. Per mostrarle bisogna accettare l'impegno qui sotto; se non lo accetti, la sfida viene tolta dal tabellone.";
+  "La partita include sfide sulle emozioni. Con il codice dato dall'educatore si usano fotografie e video del database FACES, che richiedono l'impegno qui sotto. Senza codice si gioca con volti illustrati.";
+export const FACES_CODE_LABEL = "Codice dell'educatore";
+export const FACES_CODE_PLACEHOLDER = "Es. K7PM-3XQ2";
+export const FACES_SETUP_DECLINE = "Gioca senza codice";
+export const FACES_CODE_MISSING = "Inserisci il codice dell'educatore.";
+export const FACES_CODE_INVALID = "Codice non valido, scaduto o già usato.";
+export const FACES_SESSION_NO_ACCESS =
+  "Foto non disponibile: l'accesso alle fotografie FACES per questa partita non è attivo o è scaduto.";
 export const FACES_DISCLAIMER_ACCEPT = "Accetto";
 export const FACES_DISCLAIMER_DECLINE = "Non accetto";
 export const FACES_DISCLAIMER_DECLINED =
@@ -54,11 +61,11 @@ export const FACES_DISCLAIMER_DECLINED =
 export const FACES_DISCLAIMER_SHOW_AGAIN = "Leggi di nuovo";
 export const FACES_DISCLAIMER_ERROR =
   "Impossibile registrare l'accettazione. Riprova.";
-export const MODAL_FILM_TITLE = "Guarda la scena!";
-export const MODAL_FILM_SHOW_ANSWER = "Mostra risposta";
-export const MODAL_FILM_ANSWER = "Emozione:";
-export const MODAL_FILM_CORRECT = "Corretto";
-export const MODAL_FILM_WRONG = "Sbagliato";
+export const MODAL_EMOTION_VIDEO_TITLE = "Emozioni in movimento!";
+export const MODAL_EMOTION_VIDEO_SHOW_ANSWER = "Mostra risposta";
+export const MODAL_EMOTION_VIDEO_ANSWER = "Emozione:";
+export const MODAL_EMOTION_VIDEO_CORRECT = "Corretto";
+export const MODAL_EMOTION_VIDEO_WRONG = "Sbagliato";
 // Mimo
 export const MODAL_MIME_TITLE = "Mimo!";
 export const MODAL_MIME_SHOW_TOPIC = "Mostra mimo";
@@ -131,8 +138,8 @@ export const MODAL_SPECIAL_EFFECT_INFO_WHAT_WOULD_YOU_DO =
   "Se un giocatore atterra su questa casella dovrà rispondere a una domanda ipotetica del tipo \"Cosa faresti se...\". Gli altri giocatori diranno se la risposta li convince e l'educatore registrerà l'esito. Se la risposta è convincente, il giocatore potrà avanzare di una casella. Altrimenti, salterà il prossimo turno.";
 export const MODAL_SPECIAL_EFFECT_INFO_FACE_EMOTION =
   "Il giocatore dovrà indovinare l'emozione espressa dal volto che gli verrà mostrato. Se risponde correttamente, potrà avanzare di una casella. Se sbaglia, dovrà saltare un turno.";
-export const MODAL_SPECIAL_EFFECT_INFO_FILM =
-  "Il giocatore dovrà guardare una breve scena di un film e indovinare l'emozione che trasmette. Se risponde correttamente, potrà avanzare di una casella. Se sbaglia, dovrà saltare un turno.";
+export const MODAL_SPECIAL_EFFECT_INFO_EMOTION_VIDEO =
+  "Il giocatore guarderà un breve video di un volto che passa da un'espressione neutra a un'emozione, e dovrà indovinare quale. Se risponde correttamente, potrà avanzare di una casella. Se sbaglia, dovrà saltare un turno.";
 
 // Game Save and Restore
 export const LABEL_SAVE_GAME_BUTTON = "Salva partita";
@@ -150,6 +157,7 @@ export const LABEL_NO_SAVE_NO_STORAGE =
 export const DICE_BUTTON_CONTINUE = "Continua";
 export const DICE_BUTTON_ROLLING = "Lanciando...";
 export const DICE_BUTTON_ROLL = "Lancia il dado";
+export const DICE_ARIA_ROLL = "Dado: clicca per lanciare";
 export const DICE_BUTTON_SKIP_TURN = "Salta il turno";
 export const DICE_SKIP_TURN_MESSAGE = (playerName: string) =>
   `${playerName} ha saltato il turno!`;
@@ -187,7 +195,8 @@ export const SQUARE_WHAT_WOULD_YOU_DO_TOP = "COSA";
 export const SQUARE_WHAT_WOULD_YOU_DO_BOTTOM = "FARESTI SE...";
 export const SQUARE_FACE_EMOTION_TOP = "INDOVINA";
 export const SQUARE_FACE_EMOTION_BOTTOM = "L'EMOZIONE";
-export const SQUARE_FILM = "FILM";
+export const SQUARE_EMOTION_VIDEO_TOP = "EMOZIONI";
+export const SQUARE_EMOTION_VIDEO_BOTTOM = "IN MOVIMENTO";
 
 // Advanced mode
 export const LABEL_ADVANCED_MODE = "Modalità avanzata";

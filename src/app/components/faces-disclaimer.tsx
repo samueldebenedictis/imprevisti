@@ -1,19 +1,20 @@
 import type React from "react";
 import { FACES_DISCLAIMER_EN, FACES_DISCLAIMER_IT } from "@/lib/faces";
-import {
-  FACES_DISCLAIMER_ACCEPT,
-  FACES_DISCLAIMER_DECLINE,
-  FACES_DISCLAIMER_ERROR,
-} from "../texts";
+import { FACES_DISCLAIMER_ACCEPT, FACES_DISCLAIMER_DECLINE } from "../texts";
 import Button from "./ui/button";
 
 interface FacesDisclaimerProps {
   title: string;
   /** Testo prima dell'impegno, ad esempio cosa succede se non si accetta. */
   intro?: string;
-  error?: boolean;
+  /** Messaggio d'errore, ad esempio codice non valido. */
+  error?: string;
   /** Riquadro grigio con bordo; false quando sta già dentro una finestra. */
   boxed?: boolean;
+  acceptLabel?: string;
+  declineLabel?: string;
+  /** Contenuto tra l'impegno e i pulsanti, ad esempio il campo del codice. */
+  children?: React.ReactNode;
   onAccept: () => void;
   onDecline: () => void;
 }
@@ -28,6 +29,9 @@ const FacesDisclaimer: React.FC<FacesDisclaimerProps> = ({
   intro,
   error,
   boxed = true,
+  acceptLabel = FACES_DISCLAIMER_ACCEPT,
+  declineLabel = FACES_DISCLAIMER_DECLINE,
+  children,
   onAccept,
   onDecline,
 }) => (
@@ -40,17 +44,18 @@ const FacesDisclaimer: React.FC<FacesDisclaimerProps> = ({
     <p className="text-gray-600 text-sm italic" lang="en">
       {FACES_DISCLAIMER_EN}
     </p>
+    {children}
     {error && (
-      <p className="ui-text-normal mt-2 text-red-600">
-        {FACES_DISCLAIMER_ERROR}
+      <p className="ui-text-normal mt-2 text-red-600" role="alert">
+        {error}
       </p>
     )}
     <div className="flex justify-center">
       <Button onClick={onAccept} color="green">
-        {FACES_DISCLAIMER_ACCEPT}
+        {acceptLabel}
       </Button>
       <Button onClick={onDecline} color="red">
-        {FACES_DISCLAIMER_DECLINE}
+        {declineLabel}
       </Button>
     </div>
   </div>

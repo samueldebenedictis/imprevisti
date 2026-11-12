@@ -134,11 +134,14 @@ export const Film: Story = {
   args: {
     ...baseArgs,
     pendingAction: {
-      type: "film",
+      type: "emotion-video",
       actorPlayerId: "1",
       card: {
-        topic: { cardTitle: "tristezza", cardText: "scena-tristezza" },
-        videoUrl: "/videos/film-placeholder.mp4",
+        topic: {
+          cardTitle: "tristezza",
+          cardText: "uomo-giovane-tristezza-video",
+        },
+        videoUrl: "/videos/emotion-video-placeholder.mp4",
       },
     },
   },

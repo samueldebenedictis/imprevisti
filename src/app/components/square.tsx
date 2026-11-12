@@ -6,9 +6,10 @@ import {
   SQUARE_BACKWRITE_TOP,
   SQUARE_DICTATION_DRAW_BOTTOM,
   SQUARE_DICTATION_DRAW_TOP,
+  SQUARE_EMOTION_VIDEO_BOTTOM,
+  SQUARE_EMOTION_VIDEO_TOP,
   SQUARE_FACE_EMOTION_BOTTOM,
   SQUARE_FACE_EMOTION_TOP,
-  SQUARE_FILM,
   SQUARE_MIME,
   SQUARE_MOVE_BACKWARD,
   SQUARE_MOVE_FORWARD,
@@ -41,7 +42,7 @@ const typeToColor = (type: ExtendedSquareType, moveValue?: number): Color => {
       return "orange";
     case "face-emotion":
       return "violet";
-    case "film":
+    case "emotion-video":
       return "emerald";
     case "dictation-draw":
       return "indigo";
@@ -109,8 +110,9 @@ const typeText = (type: ExtendedSquareType, moveValue: number | undefined) => {
   } else if (type === "face-emotion") {
     topDisplayText = SQUARE_FACE_EMOTION_TOP;
     bottomDisplayText = SQUARE_FACE_EMOTION_BOTTOM;
-  } else if (type === "film") {
-    topDisplayText = SQUARE_FILM;
+  } else if (type === "emotion-video") {
+    topDisplayText = SQUARE_EMOTION_VIDEO_TOP;
+    bottomDisplayText = SQUARE_EMOTION_VIDEO_BOTTOM;
   } else {
     return null;
   }

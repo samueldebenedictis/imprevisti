@@ -98,7 +98,9 @@ describe("Face emotion square", () => {
   test("Face emotion falls back to empty imageUrl when card has no image data", () => {
     const faceEmotionSquare = new FaceEmotionSquare(0);
     const player = new Player(0, "Renzo");
-    const deck = new FaceEmotionDeck([new Card("Unknown", "no-match-text")]);
+    const deck = new FaceEmotionDeck("ai", [
+      new Card("Unknown", "no-match-text"),
+    ]);
 
     const command = faceEmotionSquare.getCommand();
     const result = command.execute({

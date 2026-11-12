@@ -1,13 +1,16 @@
 #!/usr/bin/env node
-// Carica le fotografie FACES del mazzo "Indovina l'emozione" nell'archivio
-// Vercel Blob privato (cartella faces/). Le foto NON vanno nel repository.
+// Carica nell'archivio Vercel Blob privato (cartella faces/) le fotografie
+// FACES di "Indovina l'emozione" e le clip Dynamic FACES di "Emozioni in
+// movimento". Non vanno nel repository.
 //
 // Uso:
 //   BLOB_READ_WRITE_TOKEN=... node scripts/upload-faces-to-blob.mjs <cartella>
 //
-// <cartella> contiene i file {id}_{eta}_{genere}_{emozione}_{versione}.jpg
-// (480 px di larghezza). Vengono caricati solo i 60 file usati dal mazzo:
-// sei soggetti, cinque emozioni (la neutralità è esclusa), due versioni.
+// <cartella> contiene:
+// - {id}_{eta}_{genere}_{emozione}_{versione}.jpg (480 px di larghezza);
+// - {id}_{eta}_{genere}_n_{emozione}.mp4 (clip originali, non modificate).
+// Vengono caricati solo i file usati dai mazzi: sei soggetti, cinque emozioni
+// (la neutralità è esclusa); 60 foto (due versioni) e 30 clip.
 
 import { readFile } from "node:fs/promises";
 import path from "node:path";
@@ -34,20 +37,21 @@ if (!process.env.BLOB_READ_WRITE_TOKEN) {
   process.exit(1);
 }
 
-const files = SUBJECTS.flatMap((s) =>
+const photos = SUBJECTS.flatMap((s) =>
   EMOTIONS.flatMap((e) => VERSIONS.map((v) => `${s}_${e}_${v}.jpg`)),
 );
+const videos = SUBJECTS.flatMap((s) => EMOTIONS.map((e) => `${s}_n_${e}.mp4`));
 
 let uploaded = 0;
-for (const file of files) {
+for (const file of [...photos, ...videos]) {
   const body = await readFile(path.join(dir, file));
   await put(`faces/${file}`, body, {
     access: "private",
     addRandomSuffix: false,
     allowOverwrite: true,
-    contentType: "image/jpeg",
+    contentType: file.endsWith(".mp4") ? "video/mp4" : "image/jpeg",
   });
   uploaded++;
   console.log(`  ${file}`);
 }
-console.log(`\nCaricate ${uploaded} fotografie in faces/`);
+console.log(`\nCaricati ${uploaded} file in faces/`);

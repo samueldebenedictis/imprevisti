@@ -1,8 +1,8 @@
 import type { Board } from "../board";
 import type { Deck } from "../deck";
 import type { DictationDraw } from "../deck/dictation-draw";
+import type { EmotionVideo } from "../deck/emotion-video";
 import type { FaceEmotion } from "../deck/face-emotion";
-import type { Film } from "../deck/film";
 import type { MusicEmotion } from "../deck/music-emotion";
 import type { PhysicalTest } from "../deck/physical-test";
 import type { WhatWouldYouDo } from "../deck/what-would-you-do";
@@ -19,8 +19,8 @@ import {
   SpecialSquare,
 } from "../square";
 import { DictationDrawSquare } from "../square/dictation-draw-square";
+import { EmotionVideoSquare } from "../square/emotion-video-square";
 import { FaceEmotionSquare } from "../square/face-emotion-square";
-import { FilmSquare } from "../square/film-square";
 import { MusicEmotionSquare } from "../square/music-emotion-square";
 import { PhysicalTestSquare } from "../square/physical-test-square";
 import { WhatWouldYouDoSquare } from "../square/what-would-you-do-square";
@@ -43,7 +43,7 @@ export class SpecialSquareProcessor {
    * @param physicalTestDeck - Il mazzo di carte per i test fisici
    * @param whatWouldYouDoDeck - Il mazzo di carte per le domande "cosa faresti se"
    * @param dictationDrawDeck - Il mazzo di carte per il disegno dettato
-   * @param filmDeck - Il mazzo di carte per le scene di film
+   * @param emotionVideoDeck - Il mazzo di carte per le scene di film
    * @param dice - Il dado del gioco
    * @param movementManager - Manager per gestire i movimenti
    * @param gameStateManager - Manager per gestire lo stato del gioco
@@ -58,7 +58,7 @@ export class SpecialSquareProcessor {
     private physicalTestDeck: Deck,
     private whatWouldYouDoDeck: Deck,
     private dictationDrawDeck: Deck,
-    private filmDeck: Deck,
+    private emotionVideoDeck: Deck,
     private dice: Dice,
     private movementManager: MovementManager,
     private gameStateManager: GameStateManager,
@@ -70,7 +70,7 @@ export class SpecialSquareProcessor {
    * ed esegue il comando associato.
    * @param player - Il giocatore per cui elaborare gli effetti della casella
    * @param allPlayers - Array di tutti i giocatori della partita
-   * @returns Un oggetto Mime, Quiz, BackWrite, FaceEmotion, Film, MusicEmotion, PhysicalTest, WhatWouldYouDo o DictationDraw se il giocatore atterra su una casella speciale, undefined altrimenti
+   * @returns Un oggetto Mime, Quiz, BackWrite, FaceEmotion, EmotionVideo, MusicEmotion, PhysicalTest, WhatWouldYouDo o DictationDraw se il giocatore atterra su una casella speciale, undefined altrimenti
    */
   processSquareEffects(
     player: Player,
@@ -80,7 +80,7 @@ export class SpecialSquareProcessor {
     | Quiz
     | BackWrite
     | FaceEmotion
-    | Film
+    | EmotionVideo
     | MusicEmotion
     | PhysicalTest
     | WhatWouldYouDo
@@ -102,7 +102,7 @@ export class SpecialSquareProcessor {
       physicalTestDeck: this.physicalTestDeck,
       whatWouldYouDoDeck: this.whatWouldYouDoDeck,
       dictationDrawDeck: this.dictationDrawDeck,
-      filmDeck: this.filmDeck,
+      emotionVideoDeck: this.emotionVideoDeck,
       dice: this.dice,
       movementManager: this.movementManager,
       gameStateManager: this.gameStateManager,
@@ -128,8 +128,8 @@ export class SpecialSquareProcessor {
         const command = (landingSquare as FaceEmotionSquare).getCommand();
         return command.execute(commandDependencies);
       }
-      case "film": {
-        const command = (landingSquare as FilmSquare).getCommand();
+      case "emotion-video": {
+        const command = (landingSquare as EmotionVideoSquare).getCommand();
         return command.execute(commandDependencies);
       }
       case "music-emotion": {
@@ -163,7 +163,7 @@ export class SpecialSquareProcessor {
   /**
    * Restituisce il tipo di casella speciale alla posizione specificata.
    * @param position - La posizione della casella da controllare
-   * @returns Il tipo di casella ('mime', 'special', 'normal', 'quiz', 'backwrite', 'face-emotion', 'film', 'music-emotion', 'physical-test', 'what-would-you-do', 'dictation-draw')
+   * @returns Il tipo di casella ('mime', 'special', 'normal', 'quiz', 'backwrite', 'face-emotion', 'emotion-video', 'music-emotion', 'physical-test', 'what-would-you-do', 'dictation-draw')
    */
   getSquareType(
     position: number,
@@ -174,7 +174,7 @@ export class SpecialSquareProcessor {
     | "quiz"
     | "backwrite"
     | "face-emotion"
-    | "film"
+    | "emotion-video"
     | "music-emotion"
     | "physical-test"
     | "what-would-you-do"
@@ -197,8 +197,8 @@ export class SpecialSquareProcessor {
       return "face-emotion";
     }
 
-    if (square instanceof FilmSquare) {
-      return "film";
+    if (square instanceof EmotionVideoSquare) {
+      return "emotion-video";
     }
 
     if (square instanceof MusicEmotionSquare) {

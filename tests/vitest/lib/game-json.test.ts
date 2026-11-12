@@ -116,4 +116,16 @@ describe("validateGameJSON", () => {
     const g = { ...validGame(), battlesEnabled: "sì" };
     expect(validateGameJSON(g)).toMatch(/battlesEnabled/);
   });
+
+  it("accepts the face sets and old saves without one", () => {
+    expect(validateGameJSON({ ...validGame(), faceSet: "faces" })).toBeNull();
+    expect(validateGameJSON({ ...validGame(), faceSet: "ai" })).toBeNull();
+    const { faceSet: _, ...old } = validGame();
+    expect(validateGameJSON(old)).toBeNull();
+  });
+
+  it("rejects an unknown face set", () => {
+    const g = { ...validGame(), faceSet: "altro" };
+    expect(validateGameJSON(g)).toMatch(/volti/);
+  });
 });
