@@ -1,5 +1,6 @@
 import { FACE_SETS, type FaceSet } from "@/model/deck/face-emotion";
 import type { GameJSON } from "@/model/game";
+import { isPawnStyle } from "@/model/pawn";
 import type { SquareType } from "@/model/square/square";
 import { MAX_PLAYERS, MAX_SQUARES, MIN_PLAYERS, MIN_SQUARES } from "@/vars";
 import { MAX_MOVE, SQUARE_TYPES } from "./board-config";
@@ -37,7 +38,8 @@ export function validateGameJSON(raw: unknown): string | null {
       !isIntInRange(p.id, 0, Number.MAX_SAFE_INTEGER) ||
       typeof p.name !== "string" ||
       !p.name.trim() ||
-      !isIntInRange(p.turnsToSkip, 0, Number.MAX_SAFE_INTEGER)
+      !isIntInRange(p.turnsToSkip, 0, Number.MAX_SAFE_INTEGER) ||
+      (p.pawn !== undefined && !isPawnStyle(p.pawn))
     )
       return "giocatore non valido";
     if (playerIds.has(p.id)) return "id dei giocatori ripetuto";

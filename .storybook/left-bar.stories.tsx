@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import LeftBar from "../src/app/components/left-bar";
+import { defaultPawn } from "../src/model/pawn";
 import { Player } from "../src/model/player";
 
 // Mock GameJSON
@@ -35,10 +36,15 @@ const mockPlayers = [
   new Player(3, "Giocatore 3"),
 ];
 
+// Pallino del colore della pedina accanto a ogni nome
 const playersPositions = [
-  { name: "Giocatore 1", position: 5 },
-  { name: "Giocatore 2", position: 3 },
-  { name: "Giocatore 3", position: 7 },
+  { name: "Giocatore 1", position: 5, pawn: defaultPawn(0) },
+  { name: "Giocatore 2", position: 3, pawn: defaultPawn(1) },
+  {
+    name: "Giocatore 3",
+    position: 7,
+    pawn: { color: "purple", shape: "hexagon" } as const,
+  },
 ];
 
 export const Default: Story = {

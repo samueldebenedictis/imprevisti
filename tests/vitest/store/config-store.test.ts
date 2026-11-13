@@ -1,5 +1,6 @@
 import { renderHook } from "@testing-library/react";
 import { beforeEach, describe, expect, test } from "vitest";
+import { defaultPawn } from "@/model/pawn";
 import {
   useConfigActions,
   useConfigStore,
@@ -175,5 +176,58 @@ describe("hook", () => {
     expect(config.current.numSquares).toBe(state().numSquares);
     expect(hookActions.current).toBe(state().actions);
     expect(validate.current()).toBe(false);
+  });
+});
+
+describe("pedine", () => {
+  test("predefinite e allineate al numero di giocatori", () => {
+    expect(state().playerPawns).toEqual([defaultPawn(0)]);
+    actions().setNumPlayers(3);
+    expect(state().playerPawns).toEqual([0, 1, 2].map(defaultPawn));
+    actions().addPlayer();
+    expect(state().playerPawns).toHaveLength(4);
+  });
+
+  test("scelta, rimozione di un giocatore e creazione della partita", () => {
+    actions().setNumPlayers(3);
+    ["Luca", "Anna", "Sara"].forEach((name, i) => {
+      actions().setPlayerName(i, name);
+    });
+    actions().setPlayerPawn(2, { color: "pink", shape: "pill" });
+    actions().removePlayer(1);
+    expect(state().playerPawns).toEqual([
+      defaultPawn(0),
+      { color: "pink", shape: "pill" },
+    ]);
+
+    actions().createGame();
+    const game = useGameStore.getState().game;
+    expect(game?.getPlayers().map((p) => [p.getName(), p.getPawn()])).toEqual([
+      ["Luca", defaultPawn(0)],
+      ["Sara", { color: "pink", shape: "pill" }],
+    ]);
+  });
+
+  test("setPlayerPawn oltre l'elenco: completa con le predefinite", () => {
+    actions().setPlayerPawn(2, { color: "cyan", shape: "hexagon" });
+    expect(state().playerPawns).toEqual([
+      defaultPawn(0),
+      defaultPawn(1),
+      { color: "cyan", shape: "hexagon" },
+    ]);
+  });
+
+  test("configurazione salvata senza pedine: quelle predefinite", async () => {
+    localStorage.setItem(
+      "game-config",
+      JSON.stringify({
+        state: { numPlayers: 2, playerNames: ["Luca", "Anna"] },
+        version: 0,
+      }),
+    );
+    await useConfigStore.persist.rehydrate();
+    expect(state().playerNames).toEqual(["Luca", "Anna"]);
+    expect(state().playerPawns).toEqual([defaultPawn(0), defaultPawn(1)]);
+    localStorage.removeItem("game-config");
   });
 });

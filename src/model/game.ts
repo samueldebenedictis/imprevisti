@@ -32,6 +32,7 @@ import {
   WhatWouldYouDoManager,
 } from "./managers";
 import { specialActionToResult } from "./managers/action-result";
+import { pawnOrDefault } from "./pawn";
 import { Player, type PlayerJSON } from "./player";
 import type {
   BackWrite,
@@ -173,6 +174,7 @@ export class Game {
         id: p.getId(),
         name: p.getName(),
         turnsToSkip: p.getTurnsToSkip(), // Usa il getter
+        pawn: p.getPawn(),
       })),
       currentTurn: this.turnManager.getCurrentTurn(),
       currentRound: this.turnManager.getCurrentRound(),
@@ -192,7 +194,7 @@ export class Game {
    */
   static fromJSON(json: GameJSON): Game {
     const players: Player[] = json.players.map((p: PlayerJSON) => {
-      const player = new Player(p.id, p.name);
+      const player = new Player(p.id, p.name, pawnOrDefault(p.pawn, p.id));
       player.setTurnsToSkip(p.turnsToSkip); // Usa il setter
       return player;
     });

@@ -14,6 +14,7 @@ import { Board } from "@/model/board";
 import { squaresForFaceSet } from "@/model/deck/emotion-video";
 import type { FaceSet } from "@/model/deck/face-emotion";
 import { Game } from "@/model/game";
+import { pawnOrDefault } from "@/model/pawn";
 import { Player } from "@/model/player";
 import type { GameConfig } from "@/store/config-store";
 
@@ -50,7 +51,8 @@ export async function POST(
 
     // Player(id: number, name: string) — id è l'indice numerico
     const players = session.players.map(
-      (p) => new Player(Number(p.id), p.name),
+      (p) =>
+        new Player(Number(p.id), p.name, pawnOrDefault(p.pawn, Number(p.id))),
     );
 
     // Fotografie FACES solo se l'host ha usato un codice valido per una
