@@ -54,6 +54,7 @@ export default function Page() {
             id: String(player.getId()),
             name: player.getName(),
             position: game.getPlayerPosition(player),
+            pawn: player.getPawn(),
           }))
         : [],
     [game],

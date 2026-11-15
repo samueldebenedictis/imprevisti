@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { GameJSON } from "@/model/game";
+import type { PawnStyle } from "@/model/pawn";
 import type { Player } from "@/model/player";
 import { URL_RESTORE_GAME } from "../../vars";
 import {
@@ -17,11 +18,16 @@ import {
 } from "../texts";
 import { saveGame } from "../utils/game-storage";
 import DiceRollDisplay from "./dice-roll-display";
+import PawnDot from "./pawn-dot";
 import Button from "./ui/button";
 
 type LeftBarProps = {
   currentPlayer: Player;
-  playersPositions: Array<{ name: string; position: number }>;
+  playersPositions: Array<{
+    name: string;
+    position: number;
+    pawn?: PawnStyle;
+  }>;
   gameEnded: boolean;
   winnerName: string | undefined;
   onPlayTurnClick: () => void;
@@ -93,7 +99,10 @@ export default function LeftBar({
         {!gameEnded && (
           <p>
             {LEFT_BAR_CURRENT_TURN}{" "}
-            <span className="text-blue-500">{currentPlayer.getName()}</span>
+            <span className="text-blue-500">
+              <PawnDot color={currentPlayer.getPawn().color} />
+              {currentPlayer.getName()}
+            </span>
           </p>
         )}
         <div id="players-position" className="ui-text-subtitle mt-2">
@@ -101,6 +110,7 @@ export default function LeftBar({
           <ul className="ui-text-normal">
             {playersPositions.map((p) => (
               <li key={p.name}>
+                {p.pawn && <PawnDot color={p.pawn.color} />}
                 <span className="text-blue-500">{p.name}</span>: {p.position}
               </li>
             ))}

@@ -2,6 +2,7 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { Board } from "@/model/board";
 import { Game } from "@/model/game";
+import { defaultPawn } from "@/model/pawn";
 import { Player } from "@/model/player";
 import { Square } from "@/model/square/square";
 import type { GameConfig } from "@/store/config-store";
@@ -54,6 +55,7 @@ function mockSession(overrides: Partial<SessionState> = {}): SessionState {
 const defaultBoardConfig: GameConfig = {
   numPlayers: 2,
   playerNames: ["Alice", "Bob"],
+  playerPawns: [],
   numSquares: 20,
   faceSet: "ai",
   squareTypes: {
@@ -651,5 +653,72 @@ describe("POST /api/sessions/[id]/select-target", () => {
 
     const data = await res.json();
     expect(data.hostToken).toBeUndefined();
+  });
+});
+
+describe("pedine dei giocatori multigiocatore", () => {
+  const join = (body: unknown) =>
+    joinPOST(
+      new Request("http://localhost/api/sessions/TEST01/join", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      }),
+      { params: Promise.resolve({ id: "TEST01" }) },
+    );
+  const savedPlayers = () =>
+    vi.mocked(sessionStore.saveSession).mock.calls.at(-1)?.[1].players;
+
+  test("join salva la pedina scelta, o quella predefinita", async () => {
+    // Sessione nuova a ogni chiamata: Bob entra sempre come secondo giocatore
+    vi.mocked(sessionStore.getSession).mockImplementation(async () =>
+      mockSession({ started: false, players: [{ id: "0", name: "Alice" }] }),
+    );
+    vi.mocked(sessionStore.saveSession).mockResolvedValue(undefined);
+
+    await join({ playerName: "Bob", pawn: { color: "pink", shape: "pill" } });
+    expect(savedPlayers()?.at(-1)?.pawn).toEqual({
+      color: "pink",
+      shape: "pill",
+    });
+
+    for (const pawn of [undefined, { color: "black", shape: "pill" }]) {
+      await join({ playerName: "Bob", pawn });
+      expect(savedPlayers()?.at(-1)?.pawn).toEqual(defaultPawn(1));
+    }
+  });
+
+  test("start crea i giocatori con le loro pedine", async () => {
+    vi.mocked(sessionStore.getSession).mockResolvedValue(
+      mockSession({
+        players: [
+          {
+            id: "0",
+            name: "Alice",
+            pawn: { color: "orange", shape: "hexagon" },
+          },
+          { id: "1", name: "Bob" },
+        ],
+      }),
+    );
+    vi.mocked(sessionStore.saveSession).mockResolvedValue(undefined);
+
+    const res = await startPOST(
+      new Request("http://localhost/api/sessions/TEST01/start", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          hostToken: "host-tok",
+          boardConfig: defaultBoardConfig,
+        }),
+      }),
+      { params: Promise.resolve({ id: "TEST01" }) },
+    );
+    expect(res.status).toBe(200);
+    const saved = vi.mocked(sessionStore.saveSession).mock.calls.at(-1)?.[1];
+    expect(saved?.gameState?.players.map((p) => p.pawn)).toEqual([
+      { color: "orange", shape: "hexagon" },
+      defaultPawn(1),
+    ]);
   });
 });

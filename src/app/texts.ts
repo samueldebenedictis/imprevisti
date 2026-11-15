@@ -3,6 +3,31 @@
 // Homepage
 export const LABEL_PLAYERS_NUMBER = "Numero di giocatori:";
 export const LABEL_PLAYER_NAME = (n: number) => `Nome giocatore ${n}:`;
+export const LABEL_PAWN = "Pedina:";
+export const LABEL_PAWN_COLOR = "Colore";
+export const LABEL_PAWN_SHAPE = "Forma";
+export const LABEL_PAWN_EDIT = (name: string) =>
+  name ? `Personalizza la pedina di ${name}` : "Personalizza la pedina";
+export const LABEL_PAWN_TITLE = (name: string) =>
+  name ? `Pedina di ${name}` : "Pedina";
+export const LABEL_PAWN_DONE = "Fatto";
+export const PAWN_COLOR_NAMES = {
+  blue: "blu",
+  red: "rosso",
+  green: "verde",
+  yellow: "giallo",
+  purple: "viola",
+  orange: "arancione",
+  pink: "rosa",
+  cyan: "azzurro",
+} as const;
+export const PAWN_SHAPE_NAMES = {
+  square: "rettangolo",
+  rounded: "angoli arrotondati",
+  pill: "capsula",
+  hexagon: "esagono",
+  parallelogram: "parallelogramma",
+} as const;
 export const LABEL_SQUARES_NUMBER = "Numero di caselle:";
 export const LABEL_GAME_CONFIGURATION = "Configurazione gioco";
 export const LABEL_SPECIAL_SQUARES = "Caselle speciali";

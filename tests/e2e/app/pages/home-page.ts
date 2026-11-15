@@ -11,6 +11,7 @@ import {
   LABEL_MIME,
   LABEL_MOVE,
   LABEL_MUSIC_EMOTION,
+  LABEL_PAWN_DONE,
   LABEL_PHYSICAL_TEST,
   LABEL_PLAYER_NAME,
   LABEL_PLAYERS_NUMBER,
@@ -18,7 +19,10 @@ import {
   LABEL_SQUARES_NUMBER,
   LABEL_SUBMIT,
   LABEL_WHAT_WOULD_YOU_DO,
+  PAWN_COLOR_NAMES,
+  PAWN_SHAPE_NAMES,
 } from "@/app/texts";
+import type { PawnColor, PawnShape } from "@/model/pawn";
 import { GamePage } from "./game-page";
 
 export class HomePage {
@@ -62,6 +66,34 @@ export class HomePage {
     name: LABEL_SQUARES_NUMBER,
   });
   submit = this.page.getByRole("button", { name: LABEL_SUBMIT });
+
+  /** Anteprima della pedina accanto al nome del giocatore `number` (da 1). */
+  pawnButton = (number: number) =>
+    this.page
+      .getByRole("button", { name: /Personalizza la pedina/ })
+      .nth(number - 1);
+  pawnDialog = this.page.getByRole("dialog");
+  pawnDone = this.pawnDialog.getByRole("button", { name: LABEL_PAWN_DONE });
+
+  /**
+   * Sceglie colore e forma della pedina del giocatore `number` nella finestra
+   * che si apre cliccando l'anteprima (radio nascoste: si forza il clic).
+   */
+  async choosePawn(
+    number: number,
+    pawn: { color?: PawnColor; shape?: PawnShape },
+  ) {
+    await this.pawnButton(number).click();
+    if (pawn.color)
+      await this.pawnDialog
+        .getByRole("radio", { name: PAWN_COLOR_NAMES[pawn.color], exact: true })
+        .check({ force: true });
+    if (pawn.shape)
+      await this.pawnDialog
+        .getByRole("radio", { name: PAWN_SHAPE_NAMES[pawn.shape], exact: true })
+        .check({ force: true });
+    await this.pawnDone.click();
+  }
 
   // Checkbox locators
   mimeCheckbox = this.page.getByRole("checkbox", { name: LABEL_MIME });

@@ -1,3 +1,5 @@
+import { defaultPawn, type PawnStyle } from "./pawn";
+
 /**
  * Rappresenta un giocatore del gioco.
  * Ogni giocatore ha un identificativo univoco e un nome.
@@ -6,6 +8,8 @@ export interface PlayerJSON {
   id: number;
   name: string;
   turnsToSkip: number;
+  /** Colore e forma della pedina (assente nei salvataggi precedenti). */
+  pawn?: PawnStyle;
 }
 
 /**
@@ -16,17 +20,26 @@ export class Player {
   private name: string;
   private id: number;
   private turnsToSkip: number;
+  private pawn: PawnStyle;
 
   /**
    * Crea un nuovo giocatore con ID e nome specificati.
    * @param id - Identificativo univoco del giocatore
    * @param name - Nome del giocatore
+   * @param pawn - Pedina; senza, quella predefinita per l'id
    */
-  constructor(id: number, name: string) {
+  constructor(id: number, name: string, pawn: PawnStyle = defaultPawn(id)) {
     this.name = name;
     this.id = id;
     this.turnsToSkip = 0;
+    this.pawn = pawn;
   }
+
+  /**
+   * Restituisce colore e forma della pedina.
+   * @returns Pedina del giocatore
+   */
+  getPawn = () => this.pawn;
 
   /**
    * Restituisce il nome del giocatore.

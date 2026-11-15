@@ -35,14 +35,19 @@ board.getPlayers(): Player[]
 
 ### `Player` (`src/model/player.ts`)
 ```ts
-new Player(id: number, name: string)
+new Player(id: number, name: string, pawn?: PawnStyle)
 
 player.getId(): number          // NOTE: number, not string
 player.getName(): string
+player.getPawn(): PawnStyle     // { color, shape } of the pawn
 player.getPosition(): number
 player.getTurnsToSkip(): number
 player.skipTurn(): void
 ```
+
+**Pawn** (`src/model/pawn.ts`): `PawnStyle = { color, shape }`, with 8 colors (`PAWN_COLORS`) and 5 shapes (`PAWN_SHAPES`: `square`, `rounded`, `pill`, `hexagon`, `parallelogram`). Repeated colors are allowed. Without a choice, `defaultPawn(index)` gives `PAWN_COLORS[index % 8]` and `square`: deterministic (no randomness), so tests and screenshots are stable. `PAWN_COLORS` is in hue order (red, orange, yellow, green, cyan, blue, purple, pink) and is used both by the picker and for defaults, so player N gets the N-th swatch. `PlayerJSON.pawn` is optional: old saves get the default pawn, an invalid pawn makes `validateGameJSON` fail. `pawnOrDefault(value, index)` validates untrusted input (saves, `/join`, persisted config).
+
+On the board (`PawnsLayer`) up to 3 pawns on the same square are all shown with their color and shape; with 4 or more, the current player's pawn plus one neutral "N giocatori" pawn. The current player is shown by the bounce animation. `hexagon` and `parallelogram` are drawn with `clip-path` and an SVG polygon border, with `py-1` so every shape has the same height.
 
 **ID type mismatch**: `Player.getId()` returns `number`; `SessionPlayer.id` is `string`.
 

@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { LEFT_BAR_CURRENT_TURN, LEFT_BAR_PLAYERS_POSITION } from "@/app/texts";
 import { useSessionPolling } from "@/lib/use-session-polling";
 import { Game } from "@/model/game";
+import { pawnOrDefault } from "@/model/pawn";
 import { MoveSquare } from "@/model/square";
 import { useConfigStore } from "@/store/config-store";
 import { ACTION_TYPE_LABELS } from "@/store/game-store";
@@ -14,6 +15,7 @@ import GameOverOverlay from "../../components/game-over-overlay";
 import HostActionOverlay from "../../components/host-action-overlay";
 import HostBattleOverlay from "../../components/host-battle-overlay";
 import { IdleOverlay } from "../../components/idle-overlay";
+import PawnDot from "../../components/pawn-dot";
 import PawnsLayer from "../../components/pawns-layer";
 import { QrCode } from "../../components/qr-code";
 import SquareC from "../../components/square";
@@ -173,6 +175,7 @@ export default function MultiplayerSessionPage() {
             id: String(player.getId()),
             name: player.getName(),
             position: game.getPlayerPosition(player),
+            pawn: player.getPawn(),
           }))
         : [],
     [game],
@@ -243,6 +246,7 @@ export default function MultiplayerSessionPage() {
               <ul className="ui-text-normal">
                 {playersPositions.map((p) => (
                   <li key={p.id}>
+                    <PawnDot color={p.pawn.color} />
                     <span className="text-blue-500">{p.name}</span>:{" "}
                     {p.position}
                   </li>
@@ -342,12 +346,12 @@ function LobbyView({
             In attesa dei giocatori...
           </p>
         )}
-        {(session?.players ?? []).map((p) => (
+        {(session?.players ?? []).map((p, index) => (
           <div
             key={p.id}
             className="ui-border-dark flex items-center gap-2 bg-gray-100 px-4 py-2"
           >
-            <span className="inline-block h-2 w-2 rounded-full bg-green-500" />
+            <PawnDot color={pawnOrDefault(p.pawn, index).color} />
             <span className="ui-text-normal">{p.name}</span>
           </div>
         ))}

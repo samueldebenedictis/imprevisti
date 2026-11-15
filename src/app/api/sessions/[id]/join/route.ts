@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSession, saveSession, withSessionLock } from "@/lib/session-store";
+import { pawnOrDefault } from "@/model/pawn";
 import { MAX_PLAYERS } from "@/vars";
 
 export async function POST(
@@ -7,7 +8,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
-  const { playerName } = await req.json();
+  const { playerName, pawn } = await req.json();
 
   if (
     typeof playerName !== "string" ||
@@ -30,7 +31,12 @@ export async function POST(
 
     // ID numerico come stringa: Player(id: number) usa Number(p.id)
     const playerId = String(session.players.length);
-    session.players.push({ id: playerId, name: playerName.trim() });
+    session.players.push({
+      id: playerId,
+      name: playerName.trim(),
+      // Pedina scelta sul telefono; se manca o non è valida, quella predefinita
+      pawn: pawnOrDefault(pawn, session.players.length),
+    });
     // Segreto del giocatore: serve al telefono per l'accesso alle foto FACES
     const playerSecret = crypto.randomUUID();
     session.playerSecrets = [...(session.playerSecrets ?? []), playerSecret];

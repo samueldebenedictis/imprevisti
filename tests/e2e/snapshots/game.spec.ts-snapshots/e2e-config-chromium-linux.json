@@ -126,17 +126,29 @@
             {
               "id": 0,
               "name": "Qui",
-              "turnsToSkip": 0
+              "turnsToSkip": 0,
+              "pawn": {
+                "color": "red",
+                "shape": "square"
+              }
             },
             {
               "id": 1,
               "name": "Quo",
-              "turnsToSkip": 0
+              "turnsToSkip": 0,
+              "pawn": {
+                "color": "orange",
+                "shape": "square"
+              }
             },
             {
               "id": 2,
               "name": "Qua",
-              "turnsToSkip": 0
+              "turnsToSkip": 0,
+              "pawn": {
+                "color": "yellow",
+                "shape": "square"
+              }
             }
           ],
           "currentTurn": 0,
@@ -159,6 +171,20 @@
           "Qui",
           "Quo",
           "Qua"
+        ],
+        "playerPawns": [
+          {
+            "color": "red",
+            "shape": "square"
+          },
+          {
+            "color": "orange",
+            "shape": "square"
+          },
+          {
+            "color": "yellow",
+            "shape": "square"
+          }
         ],
         "numSquares": 25,
         "squareTypes": {

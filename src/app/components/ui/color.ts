@@ -11,6 +11,7 @@ export type Color =
   | "orange"
   | "teal"
   | "black"
+  | "gray"
   | "pink"
   | "cyan"
   | "lime";
@@ -46,6 +47,9 @@ export const colorToCss = (color: Color) => {
       return `${base} from-violet-600 to-violet-400`;
     case "emerald":
       return `${base} from-emerald-600 to-emerald-400`;
+    // Grigio chiaro neutro (miniature delle forme della pedina)
+    case "gray":
+      return `${base} from-gray-400 to-gray-200`;
     default:
       return `${base} from-gray-600 to-gray-400`;
   }

@@ -1,12 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { PawnStyle } from "@/model/pawn";
 import { LABEL_OTHER_PLAYERS } from "../texts";
 import { soundManager } from "../utils/sound-manager";
 import Pawn from "./pawn";
 import type { Color } from "./ui/color";
 
-type PlayerPosition = { id: string; name: string; position: number };
+type PlayerPosition = {
+  id: string;
+  name: string;
+  position: number;
+  pawn: PawnStyle;
+};
 
 type PawnsLayerProps = {
   players: PlayerPosition[];
@@ -18,7 +24,12 @@ type PawnsLayerProps = {
 // Durata di un singolo balzo da una casella alla successiva.
 const HOP_DURATION_MS = 260;
 
-const OTHER_PLAYER_COLOR: Color = "teal";
+// Pedina riassuntiva "N giocatori": colore neutro, raccoglie pedine diverse
+const GROUP_COLOR: Color = "black";
+
+// Fino a tante pedine sulla stessa casella si vedono tutte; oltre, quella di
+// chi è di turno più una pedina riassuntiva
+const MAX_VISIBLE_PAWNS = 3;
 
 function cellStyle(position: number, cols: number, rows: number) {
   const row = Math.floor(position / cols);
@@ -138,25 +149,29 @@ export default function PawnsLayer(props: PawnsLayerProps) {
                 <div key={`hop-${position}`} className="pawn-hop">
                   <Pawn
                     name={currentPlayer.name}
-                    color="green"
+                    color={currentPlayer.pawn.color}
+                    shape={currentPlayer.pawn.shape}
                     isCurrentPlayerTurn={!isHopping}
                   />
                 </div>
               )}
-              {otherPlayers.length === 1 && (
-                <Pawn
-                  name={otherPlayers[0].name}
-                  color={OTHER_PLAYER_COLOR}
-                  isCurrentPlayerTurn={false}
-                />
-              )}
-              {otherPlayers.length > 1 && (
-                <Pawn
-                  name={`${otherPlayers.length.toString()} ${LABEL_OTHER_PLAYERS}`}
-                  color={OTHER_PLAYER_COLOR}
-                  isCurrentPlayerTurn={false}
-                />
-              )}
+              {group.length <= MAX_VISIBLE_PAWNS
+                ? otherPlayers.map((player) => (
+                    <Pawn
+                      key={`pawn-${player.id}`}
+                      name={player.name}
+                      color={player.pawn.color}
+                      shape={player.pawn.shape}
+                      isCurrentPlayerTurn={false}
+                    />
+                  ))
+                : otherPlayers.length > 0 && (
+                    <Pawn
+                      name={`${otherPlayers.length.toString()} ${LABEL_OTHER_PLAYERS}`}
+                      color={GROUP_COLOR}
+                      isCurrentPlayerTurn={false}
+                    />
+                  )}
             </div>
           </div>
         );

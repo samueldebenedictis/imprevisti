@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import Pawn from "../src/app/components/pawn";
+import { PAWN_COLORS, PAWN_SHAPES } from "../src/model/pawn";
 
 const meta = {
   title: "Example/Pawn",
@@ -67,4 +68,58 @@ export const LongName: Story = {
     name: "Giocatore con nome molto lungo",
     isCurrentPlayerTurn: false,
   },
+};
+
+export const Rounded: Story = {
+  args: {
+    color: "red",
+    name: "Marco",
+    shape: "rounded",
+    isCurrentPlayerTurn: false,
+  },
+};
+
+export const Pill: Story = {
+  args: {
+    color: "purple",
+    name: "Sara",
+    shape: "pill",
+    isCurrentPlayerTurn: false,
+  },
+};
+
+export const Hexagon: Story = {
+  args: {
+    color: "pink",
+    name: "Anna",
+    shape: "hexagon",
+    isCurrentPlayerTurn: false,
+  },
+};
+
+export const Parallelogram: Story = {
+  args: {
+    color: "orange",
+    name: "Giulia",
+    shape: "parallelogram",
+    isCurrentPlayerTurn: false,
+  },
+};
+
+/** Tutte le forme con i colori predefiniti. */
+export const AllShapes: Story = {
+  args: { color: "red", name: "Luca", isCurrentPlayerTurn: false },
+  render: () => (
+    <div className="flex w-40 flex-col">
+      {PAWN_SHAPES.map((shape, i) => (
+        <Pawn
+          key={shape}
+          name={shape}
+          color={PAWN_COLORS[i]}
+          shape={shape}
+          isCurrentPlayerTurn={false}
+        />
+      ))}
+    </div>
+  ),
 };

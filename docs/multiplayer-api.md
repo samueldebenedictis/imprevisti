@@ -93,7 +93,7 @@ Response: `PublicSessionState`
 ### `POST /api/sessions/[id]/join`
 A player joins the session.
 
-Body: `{ playerName: string }` (max 50 chars, validated server-side)
+Body: `{ playerName: string, pawn?: { color, shape } }` (name max 50 chars, validated server-side). `pawn` is sent only if the player changed it on `/join`; a missing or invalid pawn becomes `defaultPawn(index)`, where `index` is the join order. Stored in `SessionPlayer.pawn` and passed to `Player` by `/start`
 
 Response: `{ playerId: string, playerSecret: string }` — `playerId` is a numeric string ("0", "1", ...); `playerSecret` is a random UUID kept in `session.playerSecrets` (never public), saved by the phone in `localStorage` (`playerSecret:{sessionId}`) and sent to `POST /api/faces/access {sessionId, secret}` to see FACES photos and clips
 

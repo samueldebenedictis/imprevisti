@@ -1,8 +1,11 @@
 import type { GameJSON } from "@/model/game";
+import type { PawnStyle } from "@/model/pawn";
 
 export interface SessionPlayer {
   id: string; // stringa numerica "0", "1", "2" — corrisponde a Player(id: number)
   name: string;
+  /** Pedina scelta entrando dal telefono (assente nelle sessioni precedenti). */
+  pawn?: PawnStyle;
 }
 
 export interface PendingAction {
