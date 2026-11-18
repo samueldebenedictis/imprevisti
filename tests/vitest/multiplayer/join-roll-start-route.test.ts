@@ -73,6 +73,7 @@ const defaultBoardConfig: GameConfig = {
   specialPercentage: 20,
   customSquares: null,
   battlesEnabled: true,
+  customDecks: {},
 };
 
 afterEach(() => {
@@ -371,6 +372,49 @@ describe("POST /api/sessions/[id]/start", () => {
 });
 
 // ─── ROLL ────────────────────────────────────────────────────────────────────
+
+describe("POST /api/sessions/[id]/start — domande personalizzate", () => {
+  const start = (customDecks: unknown) =>
+    startPOST(
+      new Request("http://localhost/api/sessions/TEST01/start", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          hostToken: "host-tok",
+          boardConfig: defaultBoardConfig,
+          customDecks,
+        }),
+      }),
+      { params: Promise.resolve({ id: "TEST01" }) },
+    );
+
+  test("salva nella partita le carte personalizzate", async () => {
+    vi.mocked(sessionStore.getSession).mockResolvedValue(mockSession());
+    vi.mocked(sessionStore.saveSession).mockResolvedValue(undefined);
+    const quiz = [{ domanda: "Capitale d'Italia?", risposta: "Roma" }];
+
+    const res = await start({ quiz });
+
+    expect(res.status).toBe(200);
+    const saved = vi.mocked(sessionStore.saveSession).mock.calls[0][1];
+    expect(saved.gameState?.customCards).toEqual({ quiz });
+    expect(saved.gameState?.decks?.quiz?.pile).toEqual([0]);
+  });
+
+  test.each([
+    ["mazzo vuoto", { quiz: [] }],
+    ["mazzo sconosciuto", { volti: ["x"] }],
+    ["carta senza risposta", { quiz: [{ domanda: "Ciao?" }] }],
+    ["testo troppo lungo", { mime: ["x".repeat(201)] }],
+  ])("400 con carte non valide (%s)", async (_, customDecks) => {
+    vi.mocked(sessionStore.getSession).mockResolvedValue(mockSession());
+
+    const res = await start(customDecks);
+
+    expect(res.status).toBe(400);
+    expect(sessionStore.saveSession).not.toHaveBeenCalled();
+  });
+});
 
 describe("POST /api/sessions/[id]/roll", () => {
   test("400 when game is not started", async () => {

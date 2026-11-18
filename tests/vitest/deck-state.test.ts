@@ -3,7 +3,7 @@ import { validateGameJSON } from "@/lib/game-json";
 import { Board } from "@/model/board";
 import { Card } from "@/model/deck/card";
 import { Deck } from "@/model/deck/deck";
-import { quizCards } from "@/model/deck/quiz";
+import { Quiz, quizCards } from "@/model/deck/quiz";
 import { DECK_IDS, Game, type GameJSON } from "@/model/game";
 import { Player } from "@/model/player";
 import { QuizSquare, Square } from "@/model/square";
@@ -82,7 +82,7 @@ describe("Game: mazzi nel salvataggio", () => {
     const questions: string[] = [];
     while (questions.length < 6 && !game.toJSON().gameEnded) {
       const result = game.playTurn();
-      if (result.type === "quiz")
+      if (result.data instanceof Quiz)
         questions.push(result.data.cardTopic.cardTitle);
       // Come il server multigiocatore: partita ricostruita dopo ogni lancio
       game = Game.fromJSON(JSON.parse(JSON.stringify(game.toJSON())));

@@ -34,7 +34,10 @@ test("Fill form @snapshot", async ({ homePage }) => {
     };
   });
 
-  expect(JSON.stringify(storageGame, undefined, 2)).toMatchSnapshot(
+  // L'ordine dei mazzi è casuale: nello snapshot resta solo quante carte ci sono
+  const stable = (key: string, value: unknown) =>
+    key === "pile" && Array.isArray(value) ? `${value.length} carte` : value;
+  expect(JSON.stringify(storageGame, stable, 2)).toMatchSnapshot(
     "e2e-config.json",
   );
 });
