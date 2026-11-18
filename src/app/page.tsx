@@ -17,6 +17,7 @@ import {
   MIN_PLAYERS,
   MIN_SQUARES,
   URL_ADVANCED_MODE,
+  URL_CUSTOM_DECKS,
   URL_MULTIPLAYER,
 } from "../vars";
 import FacesDisclaimer from "./components/faces-disclaimer";
@@ -40,6 +41,8 @@ import {
   LABEL_ADVANCED_MODE_REMOVE,
   LABEL_BACKWRITE,
   LABEL_BATTLES_ENABLED,
+  LABEL_CUSTOM_DECKS,
+  LABEL_CUSTOM_DECKS_ACTIVE,
   LABEL_DICTATION_DRAW,
   LABEL_EMOTION_VIDEO,
   LABEL_FACE_EMOTION,
@@ -130,10 +133,12 @@ export default function Home() {
   );
   const customSquares = useConfigStore((state) => state.customSquares);
   const battlesEnabled = useConfigStore((state) => state.battlesEnabled);
+  const customDecks = useConfigStore((state) => state.customDecks);
   const actions = useConfigStore((state) => state.actions);
 
   const hasCustomSquares =
     customSquares !== null && customSquares.length === numSquares;
+  const hasCustomDecks = Object.keys(customDecks ?? {}).length > 0;
 
   const squareTypeOptions = [
     { key: "move", label: LABEL_MOVE },
@@ -451,6 +456,22 @@ export default function Home() {
                   {LABEL_ADVANCED_MODE}
                 </Button>
               )}
+            </div>
+
+            {/* Domande personalizzate */}
+            <div className="mb-2 flex flex-col items-center gap-2 border-gray-200 border-b pb-2">
+              {hasCustomDecks && (
+                <span className="ui-text-normal font-bold text-green-700">
+                  ✓ {LABEL_CUSTOM_DECKS_ACTIVE}
+                </span>
+              )}
+              <Button
+                color="blue"
+                onClick={() => router.push(URL_CUSTOM_DECKS)}
+                className="mx-0 w-full"
+              >
+                {LABEL_CUSTOM_DECKS}
+              </Button>
             </div>
             <div className="mt-4">
               <Button color="green" type="submit" className="mx-0 w-full">
