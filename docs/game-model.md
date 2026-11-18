@@ -118,7 +118,9 @@ Each action type has a manager handling pre/post resolution logic. 15 managers t
 
 ## Deck System (`src/model/deck/`)
 
-10 decks, one per action type. Each deck is a shuffled array of cards dealt in rotation.
+9 decks, one per action type (`DECK_IDS` in `game.ts`). A deck deals without repeats: a card comes back only after all the others have been drawn. When the deck runs out it is reshuffled, and the first card of the new round is never the last one drawn.
+
+The deck state is saved with the game: `GameJSON.decks[id] = { pile, last }`, where `pile` lists the indices of the cards still to draw (the last one is drawn next) and `last` is the index of the last card drawn. This matters because the game is rebuilt from JSON after every move (server in multiplayer, `game-store` in single-player): without it every rebuild would reshuffle the deck and the same card could come out several times in a row. `decks` is optional: old saves, or a state that does not match the deck (index out of range or repeated), start from a freshly shuffled deck (`Deck.restore()` returns `false`).
 
 ```ts
 // Simple card
