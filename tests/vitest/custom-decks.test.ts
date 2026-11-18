@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import {
   CUSTOM_DECKS_FILE_VERSION,
+  cleanDeckCards,
   customDecksFromFile,
   customDecksToFile,
 } from "@/lib/custom-decks-file";
@@ -118,6 +119,39 @@ describe("file delle domande personalizzate", () => {
   ])("errore chiaro: %s", (_, raw, message) => {
     const result = customDecksFromFile(raw);
     expect("error" in result && result.error).toMatch(message);
+  });
+});
+
+describe("cleanDeckCards indica la carta sbagliata", () => {
+  test.each([
+    [
+      "quiz senza risposta",
+      "quiz" as const,
+      [
+        { domanda: "A?", risposta: "a" },
+        { domanda: "B?", risposta: " " },
+      ],
+      { card: 1, field: "answer" },
+    ],
+    [
+      "quiz senza domanda",
+      "quiz" as const,
+      [{ domanda: "", risposta: "a" }],
+      { card: 0, field: "text" },
+    ],
+    [
+      "testo vuoto",
+      "mime" as const,
+      ["Gatto", "Cane", ""],
+      { card: 2, field: "text" },
+    ],
+  ])("%s", (_, id, cards, where) => {
+    expect(cleanDeckCards(id, cards, id)).toMatchObject(where);
+  });
+
+  test("errori sul mazzo intero: nessuna carta indicata", () => {
+    const result = cleanDeckCards("mime", [], "mimo");
+    expect(result).toEqual({ error: "mimo: nessuna carta" });
   });
 });
 

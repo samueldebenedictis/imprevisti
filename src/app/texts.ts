@@ -249,11 +249,11 @@ export const LABEL_CUSTOM_DECKS_TEXT = "Testo";
 export const LABEL_CUSTOM_DECKS_DELETE = (n: number) => `Elimina carta ${n}`;
 export const LABEL_CUSTOM_DECKS_ADD = "Aggiungi carta";
 export const LABEL_CUSTOM_DECKS_REMOVE_ALL = "Rimuovi tutte";
-export const LABEL_CUSTOM_DECKS_RESTORE = "Ripristina predefinite";
+export const LABEL_CUSTOM_DECKS_RESTORE = "Ripristina";
 export const LABEL_CUSTOM_DECKS_EMPTY =
   "Nessuna carta: aggiungine almeno una o ripristina quelle predefinite.";
-export const LABEL_CUSTOM_DECKS_IMPORT = "Importa JSON";
-export const LABEL_CUSTOM_DECKS_EXPORT = "Esporta JSON";
+export const LABEL_CUSTOM_DECKS_IMPORT = "Importa";
+export const LABEL_CUSTOM_DECKS_EXPORT = "Esporta";
 export const LABEL_CUSTOM_DECKS_IMPORTED = "File importato";
 export const LABEL_CUSTOM_DECKS_IMPORT_ERROR = "File non valido";
 export const LABEL_SQUARE_NORMAL = "Normale";

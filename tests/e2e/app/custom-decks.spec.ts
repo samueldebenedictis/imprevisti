@@ -19,20 +19,28 @@ test("Domande personalizzate - il docente sostituisce il quiz e applica", async 
     "",
   );
 
-  await page.getByRole("button", { name: "Rimuovi tutte" }).click();
+  await page
+    .getByRole("button", { name: "Rimuovi tutte", exact: true })
+    .click();
   await expect(page.getByText(/Nessuna carta/)).toBeVisible();
 
   // Mazzo vuoto: non si può applicare
-  await page.getByRole("button", { name: "Applica e torna" }).click();
+  await page
+    .getByRole("button", { name: "Applica e torna", exact: true })
+    .click();
   await expect(page.locator("p[role=alert]")).toHaveText("Quiz: nessuna carta");
 
-  await page.getByRole("button", { name: "Aggiungi carta" }).click();
+  await page
+    .getByRole("button", { name: "Aggiungi carta", exact: true })
+    .click();
   await page.getByLabel("Domanda 1", { exact: true }).fill(QUESTION);
   await page.getByLabel("Risposta 1", { exact: true }).fill(ANSWER);
   await expect(page.getByLabel("Mazzo")).toContainText(
     "Quiz (1 carta, personalizzato)",
   );
-  await page.getByRole("button", { name: "Applica e torna" }).click();
+  await page
+    .getByRole("button", { name: "Applica e torna", exact: true })
+    .click();
 
   await page.waitForURL("/");
   const saved = await page.evaluate(
@@ -51,13 +59,17 @@ test("Domande personalizzate - esporta e reimporta il file JSON", async ({
 }, testInfo) => {
   await page.goto("/custom-decks");
   await page.getByLabel("Mazzo").selectOption("mime");
-  await page.getByRole("button", { name: "Rimuovi tutte" }).click();
-  await page.getByRole("button", { name: "Aggiungi carta" }).click();
+  await page
+    .getByRole("button", { name: "Rimuovi tutte", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "Aggiungi carta", exact: true })
+    .click();
   await page.getByLabel("Testo 1", { exact: true }).fill("Giraffa");
 
   const [download] = await Promise.all([
     page.waitForEvent("download"),
-    page.getByRole("button", { name: "Esporta JSON" }).click(),
+    page.getByRole("button", { name: "Esporta", exact: true }).click(),
   ]);
   expect(download.suggestedFilename()).toBe("domande-imprevisti.json");
   const file = testInfo.outputPath("domande.json");
@@ -68,7 +80,7 @@ test("Domande personalizzate - esporta e reimporta il file JSON", async ({
   expect(exported.quiz.length).toBeGreaterThan(1);
 
   // Ripristino e reimporto il file esportato
-  await page.getByRole("button", { name: "Ripristina predefinite" }).click();
+  await page.getByRole("button", { name: "Ripristina", exact: true }).click();
   await expect(page.getByLabel("Testo 1", { exact: true })).not.toHaveValue(
     "Giraffa",
   );
@@ -91,6 +103,34 @@ test("Domande personalizzate - esporta e reimporta il file JSON", async ({
   await expect(page.getByLabel("Testo 1", { exact: true })).toHaveValue(
     "Giraffa",
   );
+});
+
+test("Domande personalizzate - porta alla carta sbagliata", async ({
+  page,
+}) => {
+  await page.goto("/custom-decks");
+  const answer = page.getByLabel("Risposta 3", { exact: true });
+  await answer.fill("");
+  // L'errore è su un altro mazzo: si torna al quiz
+  await page.getByLabel("Mazzo").selectOption("mime");
+  await page
+    .getByRole("button", { name: "Applica e torna", exact: true })
+    .click();
+
+  await expect(page.getByLabel("Mazzo")).toHaveValue("quiz");
+  await expect(page.locator("p[role=alert]")).toHaveText(
+    "Quiz, carta 3: il testo della risposta non può essere vuoto",
+  );
+  await expect(answer).toBeFocused();
+  await expect(answer).toHaveAttribute("aria-invalid", "true");
+  await expect(
+    page.getByLabel("Domanda 3", { exact: true }),
+  ).not.toHaveAttribute("aria-invalid");
+
+  // Correggendo la carta l'evidenziazione sparisce
+  await answer.fill("Sette");
+  await expect(answer).not.toHaveAttribute("aria-invalid");
+  await expect(page.locator("p[role=alert]")).toHaveCount(0);
 });
 
 test.describe("partita con domande personalizzate", () => {

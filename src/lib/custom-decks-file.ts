@@ -52,6 +52,16 @@ function cleanText(value: unknown, what: string): string | { error: string } {
 type DeckCards = string[] | QuizCardData[];
 
 /**
+ * Errore su un mazzo. `card` (da 0) e `field` indicano la carta e il campo
+ * sbagliati, quando l'errore riguarda una carta sola.
+ */
+export type DeckCardsError = {
+  error: string;
+  card?: number;
+  field?: "text" | "answer";
+};
+
+/**
  * Ripulisce le carte di un mazzo: toglie gli spazi ai bordi e conta una volta
  * sola le carte ripetute.
  * @param label - Nome del mazzo da usare nei messaggi di errore
@@ -61,7 +71,7 @@ export function cleanDeckCards(
   id: EditableDeckId,
   cards: unknown,
   label: string,
-): { cards: DeckCards } | { error: string } {
+): { cards: DeckCards } | DeckCardsError {
   if (!Array.isArray(cards))
     return { error: `${label}: serve un elenco di carte` };
 
@@ -72,17 +82,26 @@ export function cleanDeckCards(
     let clean: string | QuizCardData;
     if (id === "quiz") {
       if (!isObject(card))
-        return { error: `${where}: servono domanda e risposta` };
+        return {
+          error: `${where}: servono domanda e risposta`,
+          card: i,
+          field: "text",
+        };
       const domanda = cleanText(card.domanda, "il testo della domanda");
       if (typeof domanda !== "string")
-        return { error: `${where}: ${domanda.error}` };
+        return { error: `${where}: ${domanda.error}`, card: i, field: "text" };
       const risposta = cleanText(card.risposta, "il testo della risposta");
       if (typeof risposta !== "string")
-        return { error: `${where}: ${risposta.error}` };
+        return {
+          error: `${where}: ${risposta.error}`,
+          card: i,
+          field: "answer",
+        };
       clean = { domanda, risposta };
     } else {
       const text = cleanText(card, "il testo");
-      if (typeof text !== "string") return { error: `${where}: ${text.error}` };
+      if (typeof text !== "string")
+        return { error: `${where}: ${text.error}`, card: i, field: "text" };
       clean = text;
     }
     const signature = JSON.stringify(clean);
@@ -118,7 +137,7 @@ export function customDecksFromFile(
     const key = FILE_KEYS[id];
     if (raw[key] === undefined) continue;
     const result = cleanDeckCards(id, raw[key], key);
-    if ("error" in result) return result;
+    if ("error" in result) return { error: result.error };
     (decks as Record<string, unknown>)[id] = result.cards;
   }
   return { decks };

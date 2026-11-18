@@ -362,15 +362,14 @@ export default function InstructionsPage() {
             alle spalle, Emozioni in musica e Test fisico. Ogni mazzo parte
             dalle carte predefinite: puoi toglierle, modificarle e aggiungerne
             di nuove. Un mazzo deve avere almeno una carta;{" "}
-            <strong>Ripristina predefinite</strong> rimette quelle originali.
+            <strong>Ripristina</strong> rimette quelle originali.
           </p>
           <p className="mb-2">
-            Con <strong>Esporta JSON</strong> salvi tutte le carte in un file,
-            che puoi reimportare in seguito con <strong>Importa JSON</strong>:
-            così puoi preparare mazzi diversi per gruppi o livelli diversi. Le
-            domande personalizzate valgono sia a schermo singolo sia nella
-            modalità multi-dispositivo e restano nel file di salvataggio della
-            partita.
+            Con <strong>Esporta</strong> salvi tutte le carte in un file, che
+            puoi reimportare in seguito con <strong>Importa</strong>: così puoi
+            preparare mazzi diversi per gruppi o livelli diversi. Le domande
+            personalizzate valgono sia a schermo singolo sia nella modalità
+            multi-dispositivo e restano nel file di salvataggio della partita.
           </p>
         </section>
 
