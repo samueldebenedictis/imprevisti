@@ -3,6 +3,7 @@ import { Board, type BoardJSON } from "./board";
 import {
   BackWriteDeck,
   type Deck,
+  type DeckJSON,
   DictationDrawDeck,
   EmotionVideoDeck,
   FaceEmotionDeck,
@@ -46,6 +47,20 @@ import type {
   WhatWouldYouDo,
 } from "./square";
 
+/** Mazzi della partita, con il nome usato nel salvataggio. */
+export const DECK_IDS = [
+  "mime",
+  "quiz",
+  "backWrite",
+  "faceEmotion",
+  "emotionVideo",
+  "musicEmotion",
+  "physicalTest",
+  "whatWouldYouDo",
+  "dictationDraw",
+] as const;
+export type DeckId = (typeof DECK_IDS)[number];
+
 export interface GameJSON {
   board: BoardJSON;
   players: PlayerJSON[];
@@ -56,6 +71,11 @@ export interface GameJSON {
   battlesEnabled: boolean;
   /** Volti di "Indovina l'emozione"; assente nei salvataggi precedenti. */
   faceSet?: FaceSet;
+  /**
+   * Carte ancora da pescare in ogni mazzo; assente nei salvataggi precedenti
+   * (i mazzi ripartono mescolati).
+   */
+  decks?: Partial<Record<DeckId, DeckJSON>>;
 }
 
 /**
@@ -182,6 +202,27 @@ export class Game {
       winnerId: this.gameStateManager.getWinner()?.getId(),
       battlesEnabled: this.battlesEnabled,
       faceSet: this.faceSet,
+      decks: Object.fromEntries(
+        Object.entries(this.getDecks()).map(([id, deck]) => [
+          id,
+          deck.toJSON(),
+        ]),
+      ),
+    };
+  }
+
+  /** I mazzi della partita, per nome. */
+  private getDecks(): Record<DeckId, Deck> {
+    return {
+      mime: this.mimeDeck,
+      quiz: this.quizDeck,
+      backWrite: this.backWriteDeck,
+      faceEmotion: this.faceEmotionDeck,
+      emotionVideo: this.emotionVideoDeck,
+      musicEmotion: this.musicEmotionDeck,
+      physicalTest: this.physicalTestDeck,
+      whatWouldYouDo: this.whatWouldYouDoDeck,
+      dictationDraw: this.dictationDrawDeck,
     };
   }
 
@@ -207,6 +248,11 @@ export class Game {
       json.battlesEnabled ?? true,
       json.faceSet ?? "ai",
     );
+
+    // Riprende i mazzi da dove erano: senza, ogni ricostruzione (a ogni mossa)
+    // li rimescolerebbe e le stesse carte potrebbero uscire di continuo
+    const decks = game.getDecks();
+    for (const id of DECK_IDS) decks[id].restore(json.decks?.[id]);
 
     game.turnManager = TurnManager.fromJSON(
       json.currentTurn,

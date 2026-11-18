@@ -1,9 +1,12 @@
 import { FACE_SETS, type FaceSet } from "@/model/deck/face-emotion";
-import type { GameJSON } from "@/model/game";
+import { DECK_IDS, type DeckId, type GameJSON } from "@/model/game";
 import { isPawnStyle } from "@/model/pawn";
 import type { SquareType } from "@/model/square/square";
 import { MAX_PLAYERS, MAX_SQUARES, MIN_PLAYERS, MIN_SQUARES } from "@/vars";
 import { MAX_MOVE, SQUARE_TYPES } from "./board-config";
+
+// Limite largo: il mazzo più grande (volti FACES) ha qualche centinaio di carte
+const MAX_DECK_CARDS = 10_000;
 
 const isObject = (v: unknown): v is Record<string, unknown> =>
   typeof v === "object" && v !== null && !Array.isArray(v);
@@ -103,6 +106,23 @@ export function validateGameJSON(raw: unknown): string | null {
     !FACE_SETS.includes(game.faceSet as FaceSet)
   )
     return "set di volti non valido";
+
+  // Mazzi: facoltativi; indici non coerenti con le carte vengono poi ignorati
+  // da Deck.restore(), qui si controlla solo la forma
+  if (game.decks !== undefined) {
+    if (!isObject(game.decks)) return "mazzi non validi";
+    for (const [id, deck] of Object.entries(game.decks)) {
+      if (
+        !DECK_IDS.includes(id as DeckId) ||
+        !isObject(deck) ||
+        !Array.isArray(deck.pile) ||
+        deck.pile.length > MAX_DECK_CARDS ||
+        !deck.pile.every((i) => isIntInRange(i, 0, MAX_DECK_CARDS)) ||
+        (deck.last !== undefined && !isIntInRange(deck.last, 0, MAX_DECK_CARDS))
+      )
+        return "mazzi non validi";
+    }
+  }
 
   return null;
 }
