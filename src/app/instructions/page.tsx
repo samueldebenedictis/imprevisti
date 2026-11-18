@@ -353,6 +353,25 @@ export default function InstructionsPage() {
             modalità standard, usa il pulsante{" "}
             <strong>Rimuovi configurazione avanzata</strong>.
           </p>
+          <h3 className="mt-4 mb-2 font-semibold text-lg">
+            Domande personalizzate
+          </h3>
+          <p className="mb-2">
+            Con il pulsante <strong>Personalizza domande</strong> puoi
+            modificare le carte dei mazzi Quiz, Cosa faresti se..., Mimo, Parole
+            alle spalle, Emozioni in musica e Test fisico. Ogni mazzo parte
+            dalle carte predefinite: puoi toglierle, modificarle e aggiungerne
+            di nuove. Un mazzo deve avere almeno una carta;{" "}
+            <strong>Ripristina predefinite</strong> rimette quelle originali.
+          </p>
+          <p className="mb-2">
+            Con <strong>Esporta JSON</strong> salvi tutte le carte in un file,
+            che puoi reimportare in seguito con <strong>Importa JSON</strong>:
+            così puoi preparare mazzi diversi per gruppi o livelli diversi. Le
+            domande personalizzate valgono sia a schermo singolo sia nella
+            modalità multi-dispositivo e restano nel file di salvataggio della
+            partita.
+          </p>
         </section>
 
         <section id="turno" className="mb-6">

@@ -102,9 +102,9 @@ Response: `{ playerId: string, playerSecret: string }` — `playerId` is a numer
 ### `POST /api/sessions/[id]/start`
 Host starts the game.
 
-Body: `{ hostToken: string, boardConfig: BoardConfig }`
+Body: `{ hostToken: string, boardConfig: BoardConfig, faceSet?: FaceSet, customDecks?: CustomDecks }`
 
-Creates a `Game` instance from `boardConfig`, saves `game.toJSON()` as `gameState`.
+Creates a `Game` instance from `boardConfig`, saves `game.toJSON()` as `gameState`. `customDecks` (the teacher's cards, see [game-model.md](game-model.md#custom-decks)) is checked with `validateCustomDecks`: an invalid value returns `400`.
 
 Response: `PublicSessionState`
 

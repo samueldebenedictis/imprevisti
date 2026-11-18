@@ -133,6 +133,17 @@ The deck state is saved with the game: `GameJSON.decks[id] = { pile, last }`, wh
 { topic: { cardTitle: string, cardText: string }, videoUrl: string }
 ```
 
+### Custom decks
+
+The teacher can replace the cards of six decks (`EDITABLE_DECK_IDS` in `src/model/deck/custom-decks.ts`): `quiz` (`{ domanda, risposta }`), and `whatWouldYouDo`, `mime`, `backWrite`, `musicEmotion`, `physicalTest` (plain text). Image and video decks cannot be edited.
+
+- `CustomDecks` maps a deck to its cards; a missing deck uses the default cards, a present one replaces them completely.
+- `validateCustomDecks` checks the shape: from 1 to `MAX_CUSTOM_CARDS` (200) cards per deck, each text from 1 to `MAX_CARD_TEXT` (200) characters.
+- `new Game(board, dice, battles, faceSet, customCards)` builds the decks from these cards. `GameJSON.customCards` stores them (only when there are some), so a saved game or a multiplayer session keeps them; `validateGameJSON` checks them too.
+- Config: `config-store.customDecks`, persisted in the browser and sent to `/start` in multiplayer.
+- Editor: `/custom-decks`. It starts from the default cards; only decks that differ from the defaults are saved.
+- File (`src/lib/custom-decks-file.ts`): Italian keys so the teacher can edit it by hand — `versione`, `quiz`, `cosaFaresti`, `mimo`, `paroleAlleSpalle`, `emozioniInMusica`, `proveFisiche`. Export writes every deck (default cards where not customized). Import trims spaces, drops repeated cards, keeps a missing key as the default deck and reports errors with deck and card number (`quiz, carta 4: manca il testo della risposta`). Example: [`custom-decks-example.json`](custom-decks-example.json).
+
 ### Face-emotion images and clips (FACES)
 
 Each game has a **face set** (`faceSet` in `GameJSON`, `Game.getFaceSet()`):

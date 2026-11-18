@@ -1,0 +1,15 @@
+{
+  "versione": 1,
+  "quiz": [
+    {
+      "domanda": "Quanti giorni ci sono in una settimana?",
+      "risposta": "Sette"
+    },
+    { "domanda": "Qual è il contrario di aperto?", "risposta": "Chiuso" }
+  ],
+  "cosaFaresti": [
+    "Cosa faresti se un amico si dimenticasse di un appuntamento con te?",
+    "Cosa faresti se perdessi l'autobus per andare a scuola?"
+  ],
+  "mimo": ["Gatto 🐱", "Lavarsi i denti 🪥"]
+}

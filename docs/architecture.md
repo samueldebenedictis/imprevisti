@@ -37,6 +37,7 @@ src/
 │   ├── join/                   # QR code redirect
 │   ├── instructions/           # Game rules
 │   ├── advanced-mode/          # Custom square configuration
+│   ├── custom-decks/           # Custom cards editor (import/export JSON)
 │   ├── restore-game/           # Load saved game
 │   └── feedback/               # Feedback form
 ├── lib/                        # Shared libraries
