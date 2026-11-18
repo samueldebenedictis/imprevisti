@@ -11,6 +11,10 @@ import {
   withSessionLock,
 } from "@/lib/session-store";
 import { Board } from "@/model/board";
+import {
+  type CustomDecks,
+  validateCustomDecks,
+} from "@/model/deck/custom-decks";
 import { squaresForFaceSet } from "@/model/deck/emotion-video";
 import type { FaceSet } from "@/model/deck/face-emotion";
 import { Game } from "@/model/game";
@@ -27,10 +31,12 @@ export async function POST(
     hostToken,
     boardConfig,
     faceSet: requestedFaceSet,
+    customDecks,
   }: {
     hostToken: string;
     boardConfig: GameConfig;
     faceSet?: FaceSet;
+    customDecks?: CustomDecks;
   } = await req.json();
 
   const facesToken = (await cookies()).get(FACES_ACCESS_COOKIE)?.value;
@@ -44,6 +50,10 @@ export async function POST(
     const configError = validateBoardConfig(boardConfig);
     if (configError)
       return NextResponse.json({ error: configError }, { status: 400 });
+    const decksError =
+      customDecks === undefined ? null : validateCustomDecks(customDecks);
+    if (decksError)
+      return NextResponse.json({ error: decksError }, { status: 400 });
     if (session.players.length < 2)
       return NextResponse.json({ error: "Min 2 players" }, { status: 400 });
     if (session.started)
@@ -96,6 +106,7 @@ export async function POST(
       6,
       boardConfig.battlesEnabled ?? true,
       faceSet,
+      customDecks ?? {},
     );
 
     if (facesGrantId) session.facesGrantId = facesGrantId;

@@ -2,6 +2,10 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { generateSquares } from "@/app/utils/generate-squares";
 import { Board } from "@/model/board";
+import {
+  type CustomDecks,
+  validateCustomDecks,
+} from "@/model/deck/custom-decks";
 import { squaresForFaceSet } from "@/model/deck/emotion-video";
 import type { FaceSet } from "@/model/deck/face-emotion";
 import { Game as GameModel } from "@/model/game";
@@ -44,6 +48,8 @@ export interface GameConfig {
   battlesEnabled: boolean;
   /** Volti di "Indovina l'emozione", scelti all'avvio (codice FACES o volti illustrati). */
   faceSet: FaceSet;
+  /** Carte personalizzate dal docente; i mazzi assenti usano le predefinite. */
+  customDecks: CustomDecks;
 }
 
 export interface ConfigActions {
@@ -71,6 +77,7 @@ export interface ConfigActions {
   setCustomSquares: (squares: SquareJSON[]) => void;
   clearCustomSquares: () => void;
   setFaceSet: (faceSet: FaceSet) => void;
+  setCustomDecks: (decks: CustomDecks) => void;
 
   // Creazione partita
   createGame: () => void;
@@ -108,6 +115,7 @@ const defaultConfig: GameConfig = {
   customSquares: null,
   battlesEnabled: true,
   faceSet: "ai",
+  customDecks: {},
 };
 
 export const useConfigStore = create<ConfigStore>()(
@@ -196,6 +204,8 @@ export const useConfigStore = create<ConfigStore>()(
 
         setFaceSet: (faceSet) => set({ faceSet }),
 
+        setCustomDecks: (customDecks) => set({ customDecks }),
+
         resetConfig: () => set(defaultConfig),
 
         validateConfig: () => {
@@ -274,6 +284,7 @@ export const useConfigStore = create<ConfigStore>()(
             6,
             config.battlesEnabled,
             config.faceSet,
+            config.customDecks,
           );
 
           const gameStore = useGameStore.getState();
@@ -296,6 +307,11 @@ export const useConfigStore = create<ConfigStore>()(
             saved?.playerPawns,
             (saved?.playerNames ?? current.playerNames).length,
           ),
+          // Carte personalizzate rovinate (modificate a mano): predefinite
+          customDecks:
+            saved?.customDecks && !validateCustomDecks(saved.customDecks)
+              ? saved.customDecks
+              : current.customDecks,
         };
       },
       partialize: (state) => ({
@@ -308,6 +324,7 @@ export const useConfigStore = create<ConfigStore>()(
         customSquares: state.customSquares,
         battlesEnabled: state.battlesEnabled,
         faceSet: state.faceSet,
+        customDecks: state.customDecks,
       }),
     },
   ),

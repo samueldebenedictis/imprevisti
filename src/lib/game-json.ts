@@ -1,3 +1,4 @@
+import { validateCustomDecks } from "@/model/deck/custom-decks";
 import { FACE_SETS, type FaceSet } from "@/model/deck/face-emotion";
 import { DECK_IDS, type DeckId, type GameJSON } from "@/model/game";
 import { isPawnStyle } from "@/model/pawn";
@@ -106,6 +107,11 @@ export function validateGameJSON(raw: unknown): string | null {
     !FACE_SETS.includes(game.faceSet as FaceSet)
   )
     return "set di volti non valido";
+
+  if (game.customCards !== undefined) {
+    const error = validateCustomDecks(game.customCards);
+    if (error) return error;
+  }
 
   // Mazzi: facoltativi; indici non coerenti con le carte vengono poi ignorati
   // da Deck.restore(), qui si controlla solo la forma
