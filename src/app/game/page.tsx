@@ -1,6 +1,6 @@
 "use client";
 
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { MoveSquare } from "@/model/square";
 import { useCurrentPlayer, useGameStore } from "../../store/game-store";
@@ -15,6 +15,7 @@ import Button from "../components/ui/button";
 import { LABEL_BACK_TO_HOME, LABEL_NO_GAME_FOUND } from "../texts";
 
 export default function Page() {
+  const router = useRouter();
   // Game state store
   const game = useGameStore((state) => state.game);
   const actions = useGameStore((state) => state.actions);
@@ -43,7 +44,7 @@ export default function Page() {
 
   const handleDeleteGame = () => {
     actions.deleteGame();
-    redirect(URL_HOME);
+    router.push(URL_HOME);
   };
 
   // Memoize posizioni dei giocatori
@@ -88,7 +89,7 @@ export default function Page() {
     return (
       <div className="ui-text-dark flex h-96 flex-col items-center justify-center">
         <p className="ui-text-title m-4">{LABEL_NO_GAME_FOUND}</p>
-        <Button onClick={() => redirect(URL_HOME)} color="blue">
+        <Button onClick={() => router.push(URL_HOME)} color="blue">
           {LABEL_BACK_TO_HOME}
         </Button>
       </div>
