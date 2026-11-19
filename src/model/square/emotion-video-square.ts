@@ -6,8 +6,9 @@ import {
 } from "./special-square";
 
 /**
- * Special square for the film game.
- * When a player lands on this square, they watch a film scene drawn from the film deck.
+ * Special square for the emotion video game ("Emozioni in movimento").
+ * When a player lands on this square, they watch a short clip drawn from the
+ * emotion video deck.
  */
 export class EmotionVideoSquare extends SpecialSquare {
   constructor(id: number) {
@@ -16,8 +17,8 @@ export class EmotionVideoSquare extends SpecialSquare {
   }
 
   /**
-   * Returns the command to execute the film action.
-   * @returns Command that handles the film logic.
+   * Returns the command to execute the emotion video action.
+   * @returns Command that handles the emotion video logic.
    */
   getCommand(): Command {
     return new EmotionVideoCommand();
@@ -25,12 +26,12 @@ export class EmotionVideoSquare extends SpecialSquare {
 }
 
 /**
- * Command that implements the film game logic.
+ * Command that implements the emotion video game logic.
  */
 class EmotionVideoCommand implements Command {
   /**
-   * Executes the film action.
-   * The player who lands on the square watches the scene and must guess the emotion it conveys.
+   * Executes the emotion video action.
+   * The player who lands on the square watches the clip and must guess the emotion it conveys.
    * If the answer is correct, the player advances one square.
    * Otherwise, the player who answered skips the next turn.
    * @param dependencies - Object containing the necessary dependencies (player, emotionVideoDeck).
