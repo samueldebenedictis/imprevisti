@@ -118,7 +118,9 @@ Each action type has a manager handling pre/post resolution logic. 15 managers t
 
 ## Deck System (`src/model/deck/`)
 
-10 decks, one per action type. Each deck is a shuffled array of cards dealt in rotation.
+9 decks, one per action type (`DECK_IDS` in `game.ts`). A deck deals without repeats: a card comes back only after all the others have been drawn. When the deck runs out it is reshuffled, and the first card of the new round is never the last one drawn.
+
+The deck state is saved with the game: `GameJSON.decks[id] = { pile, last }`, where `pile` lists the indices of the cards still to draw (the last one is drawn next) and `last` is the index of the last card drawn. This matters because the game is rebuilt from JSON after every move (server in multiplayer, `game-store` in single-player): without it every rebuild would reshuffle the deck and the same card could come out several times in a row. `decks` is optional: old saves, or a state that does not match the deck (index out of range or repeated), start from a freshly shuffled deck (`Deck.restore()` returns `false`).
 
 ```ts
 // Simple card
@@ -130,6 +132,17 @@ Each action type has a manager handling pre/post resolution logic. 15 managers t
 // Card with video (emotion-video)
 { topic: { cardTitle: string, cardText: string }, videoUrl: string }
 ```
+
+### Custom decks
+
+The teacher can replace the cards of six decks (`EDITABLE_DECK_IDS` in `src/model/deck/custom-decks.ts`): `quiz` (`{ domanda, risposta }`), and `whatWouldYouDo`, `mime`, `backWrite`, `musicEmotion`, `physicalTest` (plain text). Image and video decks cannot be edited.
+
+- `CustomDecks` maps a deck to its cards; a missing deck uses the default cards, a present one replaces them completely.
+- `validateCustomDecks` checks the shape: from 1 to `MAX_CUSTOM_CARDS` (200) cards per deck, each text from 1 to `MAX_CARD_TEXT` (200) characters.
+- `new Game(board, dice, battles, faceSet, customCards)` builds the decks from these cards. `GameJSON.customCards` stores them (only when there are some), so a saved game or a multiplayer session keeps them; `validateGameJSON` checks them too.
+- Config: `config-store.customDecks`, persisted in the browser and sent to `/start` in multiplayer.
+- Editor: `/custom-decks`. It starts from the default cards; only decks that differ from the defaults are saved.
+- File (`src/lib/custom-decks-file.ts`): Italian keys so the teacher can edit it by hand — `versione`, `quiz`, `cosaFaresti`, `mimo`, `paroleAlleSpalle`, `emozioniInMusica`, `proveFisiche`. Export writes every deck (default cards where not customized). Import trims spaces, drops repeated cards, keeps a missing key as the default deck and reports errors with deck and card number (`quiz, carta 4: manca il testo della risposta`). Example: [`custom-decks-example.json`](custom-decks-example.json).
 
 ### Face-emotion images and clips (FACES)
 

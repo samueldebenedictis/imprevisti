@@ -118,6 +118,7 @@ export default function MultiplayerSessionPage() {
           battlesEnabled: config.battlesEnabled,
         },
         faceSet: config.faceSet,
+        customDecks: config.customDecks,
       }),
     });
     if (!res.ok) {

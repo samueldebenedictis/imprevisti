@@ -2,7 +2,9 @@ import type { Battle } from "./battle";
 import { Board, type BoardJSON } from "./board";
 import {
   BackWriteDeck,
+  Card,
   type Deck,
+  type DeckJSON,
   DictationDrawDeck,
   EmotionVideoDeck,
   FaceEmotionDeck,
@@ -12,6 +14,7 @@ import {
   QuizDeck,
   WhatWouldYouDoDeck,
 } from "./deck";
+import type { CustomDecks } from "./deck/custom-decks";
 import type { FaceSet } from "./deck/face-emotion";
 import { Dice } from "./dice";
 import {
@@ -46,6 +49,20 @@ import type {
   WhatWouldYouDo,
 } from "./square";
 
+/** Mazzi della partita, con il nome usato nel salvataggio. */
+export const DECK_IDS = [
+  "mime",
+  "quiz",
+  "backWrite",
+  "faceEmotion",
+  "emotionVideo",
+  "musicEmotion",
+  "physicalTest",
+  "whatWouldYouDo",
+  "dictationDraw",
+] as const;
+export type DeckId = (typeof DECK_IDS)[number];
+
 export interface GameJSON {
   board: BoardJSON;
   players: PlayerJSON[];
@@ -56,7 +73,18 @@ export interface GameJSON {
   battlesEnabled: boolean;
   /** Volti di "Indovina l'emozione"; assente nei salvataggi precedenti. */
   faceSet?: FaceSet;
+  /**
+   * Carte ancora da pescare in ogni mazzo; assente nei salvataggi precedenti
+   * (i mazzi ripartono mescolati).
+   */
+  decks?: Partial<Record<DeckId, DeckJSON>>;
+  /** Carte scelte dal docente al posto di quelle predefinite. */
+  customCards?: CustomDecks;
 }
+
+/** Carte del mazzo personalizzato, o undefined per quelle predefinite. */
+const textCards = (cards?: string[]) =>
+  cards?.map((text) => new Card(text, ""));
 
 /**
  * Classe principale che gestisce la logica del gioco da tavolo.
@@ -67,6 +95,7 @@ export class Game {
   private dice: Dice;
   private battlesEnabled: boolean;
   private faceSet: FaceSet;
+  private customCards: CustomDecks;
   private mimeDeck: Deck;
   private quizDeck: Deck;
   private backWriteDeck: Deck;
@@ -100,26 +129,37 @@ export class Game {
    * @param diceFaces - Numero di facce del dado (opzionale, default 6)
    * @param battlesEnabled - Se false, le collisioni tra giocatori non generano battaglie (opzionale, default true)
    * @param faceSet - Volti di "Indovina l'emozione": fotografie FACES, solo per partite con codice d'accesso, o volti illustrati (default)
+   * @param customCards - Carte personalizzate dal docente; i mazzi assenti usano quelle predefinite
    */
   constructor(
     board: Board,
     diceFaces = 6,
     battlesEnabled = true,
     faceSet: FaceSet = "ai",
+    customCards: CustomDecks = {},
   ) {
     // Inizializzazione componenti base
     this.board = board;
     this.dice = new Dice(diceFaces);
     this.battlesEnabled = battlesEnabled;
     this.faceSet = faceSet;
-    this.mimeDeck = new MimeDeck();
-    this.quizDeck = new QuizDeck();
-    this.backWriteDeck = new BackWriteDeck();
+    this.customCards = customCards;
+    this.mimeDeck = new MimeDeck(textCards(customCards.mime));
+    this.quizDeck = new QuizDeck(
+      customCards.quiz?.map((c) => new Card(c.domanda, c.risposta)),
+    );
+    this.backWriteDeck = new BackWriteDeck(textCards(customCards.backWrite));
     this.faceEmotionDeck = new FaceEmotionDeck(faceSet);
     this.emotionVideoDeck = new EmotionVideoDeck();
-    this.musicEmotionDeck = new MusicEmotionDeck();
-    this.physicalTestDeck = new PhysicalTestDeck();
-    this.whatWouldYouDoDeck = new WhatWouldYouDoDeck();
+    this.musicEmotionDeck = new MusicEmotionDeck(
+      textCards(customCards.musicEmotion),
+    );
+    this.physicalTestDeck = new PhysicalTestDeck(
+      textCards(customCards.physicalTest),
+    );
+    this.whatWouldYouDoDeck = new WhatWouldYouDoDeck(
+      textCards(customCards.whatWouldYouDo),
+    );
     this.dictationDrawDeck = new DictationDrawDeck();
 
     // Inizializzazione manager
@@ -182,6 +222,30 @@ export class Game {
       winnerId: this.gameStateManager.getWinner()?.getId(),
       battlesEnabled: this.battlesEnabled,
       faceSet: this.faceSet,
+      decks: Object.fromEntries(
+        Object.entries(this.getDecks()).map(([id, deck]) => [
+          id,
+          deck.toJSON(),
+        ]),
+      ),
+      ...(Object.keys(this.customCards).length > 0
+        ? { customCards: this.customCards }
+        : {}),
+    };
+  }
+
+  /** I mazzi della partita, per nome. */
+  private getDecks(): Record<DeckId, Deck> {
+    return {
+      mime: this.mimeDeck,
+      quiz: this.quizDeck,
+      backWrite: this.backWriteDeck,
+      faceEmotion: this.faceEmotionDeck,
+      emotionVideo: this.emotionVideoDeck,
+      musicEmotion: this.musicEmotionDeck,
+      physicalTest: this.physicalTestDeck,
+      whatWouldYouDo: this.whatWouldYouDoDeck,
+      dictationDraw: this.dictationDrawDeck,
     };
   }
 
@@ -206,7 +270,13 @@ export class Game {
       6,
       json.battlesEnabled ?? true,
       json.faceSet ?? "ai",
+      json.customCards ?? {},
     );
+
+    // Riprende i mazzi da dove erano: senza, ogni ricostruzione (a ogni mossa)
+    // li rimescolerebbe e le stesse carte potrebbero uscire di continuo
+    const decks = game.getDecks();
+    for (const id of DECK_IDS) decks[id].restore(json.decks?.[id]);
 
     game.turnManager = TurnManager.fromJSON(
       json.currentTurn,

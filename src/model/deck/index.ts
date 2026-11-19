@@ -1,7 +1,7 @@
 export { BackWrite } from "./backwrite";
 export { BackWriteDeck } from "./backwrite-deck";
 export { Card } from "./card";
-export { Deck } from "./deck";
+export { Deck, type DeckJSON } from "./deck";
 export { DictationDraw } from "./dictation-draw";
 export { DictationDrawDeck } from "./dictation-draw-deck";
 export { EmotionVideo } from "./emotion-video";

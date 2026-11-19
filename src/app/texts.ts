@@ -233,6 +233,29 @@ export const LABEL_ADVANCED_MODE_APPLY = "Applica e torna";
 export const LABEL_ADVANCED_MODE_CANCEL = "Annulla";
 export const LABEL_ADVANCED_MODE_RESET = "Reimposta tutto";
 export const LABEL_MOVE_VALUE = "Valore";
+
+// Domande personalizzate
+export const LABEL_CUSTOM_DECKS = "Personalizza domande";
+export const LABEL_CUSTOM_DECKS_DESCRIPTION =
+  "Modifica le carte dei mazzi: togli quelle che non servono e aggiungi le tue. Puoi esportarle in un file e reimportarle in seguito.";
+export const LABEL_CUSTOM_DECKS_ACTIVE = "Domande personalizzate attive";
+export const LABEL_CUSTOM_DECKS_DECK = "Mazzo";
+export const LABEL_CUSTOM_DECKS_CUSTOMIZED = "personalizzato";
+export const LABEL_CUSTOM_DECKS_COUNT = (n: number) =>
+  n === 1 ? "1 carta" : `${n} carte`;
+export const LABEL_CUSTOM_DECKS_QUESTION = "Domanda";
+export const LABEL_CUSTOM_DECKS_ANSWER = "Risposta";
+export const LABEL_CUSTOM_DECKS_TEXT = "Testo";
+export const LABEL_CUSTOM_DECKS_DELETE = (n: number) => `Elimina carta ${n}`;
+export const LABEL_CUSTOM_DECKS_ADD = "Aggiungi carta";
+export const LABEL_CUSTOM_DECKS_REMOVE_ALL = "Rimuovi tutte";
+export const LABEL_CUSTOM_DECKS_RESTORE = "Ripristina";
+export const LABEL_CUSTOM_DECKS_EMPTY =
+  "Nessuna carta: aggiungine almeno una o ripristina quelle predefinite.";
+export const LABEL_CUSTOM_DECKS_IMPORT = "Importa";
+export const LABEL_CUSTOM_DECKS_EXPORT = "Esporta";
+export const LABEL_CUSTOM_DECKS_IMPORTED = "File importato";
+export const LABEL_CUSTOM_DECKS_IMPORT_ERROR = "File non valido";
 export const LABEL_SQUARE_NORMAL = "Normale";
 export const LABEL_SQUARE_MOVE = "Movimento";
 

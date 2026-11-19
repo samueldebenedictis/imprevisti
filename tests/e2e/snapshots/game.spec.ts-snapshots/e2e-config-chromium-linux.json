@@ -155,7 +155,36 @@
           "currentRound": 1,
           "gameEnded": false,
           "battlesEnabled": true,
-          "faceSet": "ai"
+          "faceSet": "ai",
+          "decks": {
+            "mime": {
+              "pile": "65 carte"
+            },
+            "quiz": {
+              "pile": "47 carte"
+            },
+            "backWrite": {
+              "pile": "30 carte"
+            },
+            "faceEmotion": {
+              "pile": "36 carte"
+            },
+            "emotionVideo": {
+              "pile": "30 carte"
+            },
+            "musicEmotion": {
+              "pile": "19 carte"
+            },
+            "physicalTest": {
+              "pile": "22 carte"
+            },
+            "whatWouldYouDo": {
+              "pile": "20 carte"
+            },
+            "dictationDraw": {
+              "pile": "20 carte"
+            }
+          }
         },
         "hasSavedGame": true
       },
@@ -202,7 +231,8 @@
         "specialPercentage": 20,
         "customSquares": null,
         "battlesEnabled": true,
-        "faceSet": "ai"
+        "faceSet": "ai",
+        "customDecks": {}
       },
       "version": 0
     }

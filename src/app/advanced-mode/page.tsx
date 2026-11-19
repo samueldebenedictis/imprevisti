@@ -209,7 +209,7 @@ export default function AdvancedMode() {
           })}
         </div>
 
-        <div className="flex flex-wrap justify-center">
+        <div className="grid w-full grid-cols-1 sm:grid-cols-3">
           <Button color="red" onClick={handleCancel}>
             {LABEL_ADVANCED_MODE_CANCEL}
           </Button>

@@ -8,12 +8,21 @@ import { SAVEFILE } from "@/vars";
  * @param gameInstance - L'istanza di gioco da salvare
  */
 export function saveGame(gameInstance: GameJSON): void {
-  const gameJSON = JSON.stringify(gameInstance, null, 2);
-  const blob = new Blob([gameJSON], { type: "application/json" });
+  downloadJSON(gameInstance, SAVEFILE);
+}
+
+/**
+ * Scarica un oggetto come file JSON nel browser.
+ * @param data - Il contenuto da salvare
+ * @param filename - Il nome del file scaricato
+ */
+export function downloadJSON(data: unknown, filename: string): void {
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = SAVEFILE;
+  a.download = filename;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
