@@ -8,7 +8,6 @@ import {
   DictationDrawSquare,
   EmotionVideoSquare,
   FaceEmotionSquare,
-  GoToStartSquare,
   MimeSquare,
   MoveSquare,
   MusicEmotionSquare,
@@ -154,7 +153,7 @@ const SPECIAL_SQUARES: Record<number, (id: number) => Square> = {
   17: (id) => new PhysicalTestSquare(id),
   19: (id) => new EmotionVideoSquare(id),
   21: (id) => new DictationDrawSquare(id),
-  22: (id) => new GoToStartSquare(id),
+  22: (id) => new MoveSquare(id, -2),
 };
 
 test("screenshot-game-board", async ({ page }) => {
