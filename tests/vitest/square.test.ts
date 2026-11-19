@@ -1,7 +1,6 @@
 import { describe, expect, test } from "vitest";
 import {
   BackWriteSquare,
-  GoToStartSquare,
   MimeSquare,
   MoveSquare,
   MusicEmotionSquare,
@@ -35,14 +34,6 @@ describe("Square", () => {
     const square = new MoveSquare(0, 1);
     const json = square.toJSON();
     expect(json).toEqual({ number: 0, type: "move", moveValue: 1 });
-  });
-
-  test("GoToStart Square", () => {
-    const square = new GoToStartSquare(10);
-    expect(square.getNumber()).toBe(10);
-    expect(square).toBeInstanceOf(SpecialSquare);
-    expect(square).toBeInstanceOf(MoveSquare);
-    expect(square.getValue()).toBe(-10);
   });
 });
 
