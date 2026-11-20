@@ -3,7 +3,19 @@ import { FACES_CODE_INVALID } from "@/app/texts";
 import { Board } from "@/model/board";
 import { Game } from "@/model/game";
 import { Player } from "@/model/player";
-import { Square } from "@/model/square";
+import {
+  BackWriteSquare,
+  DictationDrawSquare,
+  EmotionVideoSquare,
+  FaceEmotionSquare,
+  MimeSquare,
+  MoveSquare,
+  MusicEmotionSquare,
+  PhysicalTestSquare,
+  QuizSquare,
+  Square,
+  WhatWouldYouDoSquare,
+} from "@/model/square";
 import { expect, test } from "../app/fixtures";
 import { GamePage } from "../app/pages/game-page";
 import { HomePage } from "../app/pages/home-page";
@@ -125,9 +137,31 @@ test("screenshot-advanced-mode", async ({ page }) => {
   await expect(page).toHaveScreenshot("advanced-mode.png", { fullPage: true });
 });
 
+/**
+ * Tabellone con tutti i tipi di casella, alternati a caselle normali come in
+ * una partita vera: la figura della tesi mostra i colori per tipologia.
+ */
+const SPECIAL_SQUARES: Record<number, (id: number) => Square> = {
+  2: (id) => new QuizSquare(id),
+  4: (id) => new MimeSquare(id),
+  6: (id) => new MoveSquare(id, 2),
+  8: (id) => new FaceEmotionSquare(id),
+  10: (id) => new WhatWouldYouDoSquare(id),
+  12: (id) => new BackWriteSquare(id),
+  13: (id) => new MoveSquare(id, -3),
+  15: (id) => new MusicEmotionSquare(id),
+  17: (id) => new PhysicalTestSquare(id),
+  19: (id) => new EmotionVideoSquare(id),
+  21: (id) => new DictationDrawSquare(id),
+  22: (id) => new MoveSquare(id, -2),
+};
+
 test("screenshot-game-board", async ({ page }) => {
   await page.setViewportSize(VIEWPORT);
-  const squares = Array.from({ length: 25 }, (_, i) => new Square(i));
+  const squares = Array.from(
+    { length: 25 },
+    (_, i) => SPECIAL_SQUARES[i]?.(i) ?? new Square(i),
+  );
   const players = ["Alice", "Bob", "Carol"].map(
     (name, i) => new Player(i, name),
   );
@@ -143,6 +177,10 @@ test("screenshot-game-board", async ({ page }) => {
   await seedRandom(page);
   await addZustandInitScript(gamePage.page, gameData);
   await page.goto("/game");
+
+  // Il dado compare dopo "Gioca un turno"
+  await gamePage.playTurnButton.click();
+  await gamePage.rollDiceButton.waitFor();
 
   await expect(page).toHaveScreenshot("game-board.png", { fullPage: true });
 });

@@ -39,20 +39,6 @@ export class MoveSquare extends SpecialSquare {
 }
 
 /**
- * Casella speciale che riporta il giocatore alla casella di partenza (posizione 0).
- * Estende MoveSquare calcolando automaticamente il valore negativo necessario.
- */
-export class GoToStartSquare extends MoveSquare {
-  /**
-   * Crea una nuova casella "vai all'inizio".
-   * @param id - Numero identificativo della casella
-   */
-  constructor(id: number) {
-    super(id, -id);
-  }
-}
-
-/**
  * Comando che implementa il movimento del giocatore.
  * Calcola la nuova posizione e sposta il giocatore sul tabellone.
  */

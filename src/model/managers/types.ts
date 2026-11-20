@@ -12,7 +12,7 @@ import type {
 } from "../square";
 
 /**
- * Risultato di un'azione di gioco che può essere una battaglia, un mimo, un quiz, uno scrivere sulla schiena, musica emozioni, test fisico, cosa faresti se, disegno dettato, emozione facciale o nessuna azione speciale.
+ * Risultato di un'azione di gioco che può essere una battaglia, un mimo, un quiz, uno scrivere sulla schiena, musica emozioni, test fisico, cosa faresti se, disegno dettato, emozione facciale, emozioni in movimento o nessuna azione speciale.
  */
 export type GameActionResult = {
   type:

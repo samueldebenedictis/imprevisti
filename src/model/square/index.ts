@@ -14,7 +14,7 @@ export { DictationDrawSquare } from "./dictation-draw-square";
 export { EmotionVideoSquare } from "./emotion-video-square";
 export { FaceEmotionSquare } from "./face-emotion-square";
 export { MimeSquare } from "./mime-square";
-export { GoToStartSquare, MoveSquare } from "./move-square";
+export { MoveSquare } from "./move-square";
 export { MusicEmotionSquare } from "./music-emotion-square";
 export { PhysicalTestSquare } from "./physical-test-square";
 export { QuizSquare } from "./quiz-square";

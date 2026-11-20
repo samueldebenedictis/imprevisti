@@ -21,8 +21,7 @@ export const SAVEFILE = "save.json";
 // dell'educatore). Senza codice le caselle diventano "Indovina l'emozione".
 export const EMOTION_VIDEO_ENABLED: boolean = true;
 
-// Casella "Indovina l'emozione" disattivata: le fotografie FACES non sono più
-// nei file pubblici e verranno servite da un archivio privato (in attesa
-// della conferma del FACES Technical Agent). Rimettere a true quando il
-// Route Handler che le serve è pronto.
+// Casella "Indovina l'emozione": fotografie FACES servite da un archivio
+// privato, visibili solo con il codice dell'educatore e dopo l'accettazione
+// del disclaimer; senza codice si usano volti generati.
 export const FACE_EMOTION_ENABLED: boolean = true;
